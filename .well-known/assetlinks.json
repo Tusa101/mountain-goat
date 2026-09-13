@@ -1,0 +1,9 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.tusa101.twa",
+        "sha256_cert_fingerprints": ["DC:D0:E5:A3:E3:B4:4D:DF:11:91:6C:5E:CF:DC:F5:60:4F:45:4A:70:0E:31:9F:CC:92:61:AE:7C:61:89:CC:B2"]
+      }
+    }]
+
