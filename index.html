@@ -8,7 +8,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
   html, body { margin:0; height:100%; overflow:hidden; background:#d9cbb2; }
   body { font-family: "Trebuchet MS", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-user-select:none; user-select:none; touch-action:none; overscroll-behavior:none; color:#fff8ee; }
@@ -1177,6 +1178,7 @@ function update(dt) {
 //  Main loop
 // ============================================================
 buildLevel(0); goMenu();
+{ const m = new URLSearchParams(location.search).get('mode'); if (m === 'endless-down') startLevel(0, endlessDef(false)); else if (m === 'endless-up') startLevel(0, endlessDef(true)); }
 G.camFy = preferredFy(-6); camera.position.set(camDist * 0.24, G.camFy + camDist * 0.07, camDist); camera.lookAt(0, G.camFy, 0);
 sun.position.set(26, G.camFy + 42, 34); sun.target.position.set(0, G.camFy - 6, 0);
 function loop(now) {

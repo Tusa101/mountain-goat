@@ -1,13 +1,91 @@
 {
+  "id": "/mountain-goat/",
   "name": "Mountain Goat",
-  "short_name": "Goat",
+  "short_name": "Mountain Goat",
+  "description": "Descend and climb desert, canyon and alpine cliffs as a Nubian ibex: aim, leap, catch the edge, collect crystals, outrun the drifting camera.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
   "orientation": "portrait",
   "background_color": "#d9cbb2",
   "theme_color": "#b9865a",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "games"
+  ],
+  "iarc_rating_id": "",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "icons": [
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-1.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Red Canyon \u2014 aim your leap between the ledges"
+    },
+    {
+      "src": "screenshot-2.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Mountain Goat"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Endless descent",
+      "url": "./index.html?mode=endless-down",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Endless ascent",
+      "url": "./index.html?mode=endless-up",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }
