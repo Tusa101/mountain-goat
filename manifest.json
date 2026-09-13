@@ -1,0 +1,13 @@
+{
+  "name": "Mountain Goat",
+  "short_name": "Goat",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#d9cbb2",
+  "theme_color": "#b9865a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Mountain Goat</title>
+<meta name="theme-color" content="#b9865a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; background:#d9cbb2; }
+  body { font-family: "Trebuchet MS", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-user-select:none; user-select:none; touch-action:none; overscroll-behavior:none; color:#fff8ee; }
+  #c { display:block; width:100%; height:100%; touch-action:none; }
+  .hud { position:fixed; top:0; left:0; right:0; padding:calc(12px + env(safe-area-inset-top)) 16px 0; display:flex; justify-content:space-between; pointer-events:none; text-shadow:0 1px 3px rgba(60,30,10,.55); }
+  .lbl { font-size:11px; letter-spacing:.14em; opacity:.85; }
+  .val { font-size:24px; font-weight:700; line-height:1.05; }
+  .hud .mid { text-align:center; } .hud .right { text-align:right; }
+  #hint { position:fixed; left:0; right:0; top:60%; text-align:center; text-shadow:0 1px 4px rgba(60,30,10,.6); font-size:17px; line-height:1.5; pointer-events:none; transition:opacity .6s; }
+  #vig { position:fixed; inset:0; pointer-events:none; opacity:0; background: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 45%, rgba(120,40,20,.75) 100%); }
+  #botwarn { position:fixed; left:0; right:0; bottom:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,0), rgba(140,40,20,.7)); }
+  #topwarn { position:fixed; left:0; right:0; top:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,.7), rgba(140,40,20,0)); }
+  #wind { position:fixed; inset:0; pointer-events:none; opacity:0; background: repeating-linear-gradient(180deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0) 22px, rgba(255,255,255,.18) 23px, rgba(255,255,255,0) 26px); background-size:100% 260px; animation: windy .35s linear infinite; }
+  @keyframes windy { from { background-position:0 0; } to { background-position:0 260px; } }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; }
+  .screen.show { display:flex; }
+  .screen h1 { font-size:40px; margin:0 0 4px; letter-spacing:.06em; font-weight:800; }
+  .screen h2 { font-size:22px; margin:0 0 18px; letter-spacing:.04em; font-weight:700; opacity:.95; }
+  .screen .sub { font-size:16px; opacity:.9; line-height:1.7; margin-bottom:18px; }
+  .btn { display:block; width:min(320px, 80vw); margin:8px auto; padding:14px 18px; border:2px solid rgba(255,248,238,.7); border-radius:10px; font-size:17px; font-weight:700; letter-spacing:.1em; background:rgba(255,248,238,.08); cursor:pointer; }
+  .btn:active { background:rgba(255,248,238,.25); }
+  .btn.dim { opacity:.4; }
+  .btn small { display:block; font-size:12px; font-weight:400; letter-spacing:.14em; opacity:.85; margin-top:4px; }
+  .stars { font-size:15px; line-height:1.9; margin:6px 0 18px; text-align:left; display:inline-block; }
+  .stars .on { color:#ffd76a; } .stars .off { opacity:.5; }
+  .salt { font-size:14px; letter-spacing:.12em; opacity:.9; margin-top:14px; }
+  .back { position:fixed; left:16px; top:calc(14px + env(safe-area-inset-top)); font-size:14px; letter-spacing:.1em; cursor:pointer; opacity:.85; }
+  #dbg { position:fixed; left:8px; bottom:calc(8px + env(safe-area-inset-bottom)); font:11px/1.45 Menlo, Consolas, monospace; background:rgba(0,0,0,.55); padding:6px 8px; white-space:pre; display:none; pointer-events:none; border-radius:4px; }
+  .dline { position:fixed; left:0; right:0; height:0; border-top:1px dashed; display:none; pointer-events:none; }
+  #dpref { border-color:#4cff7a; } #ddanger { border-color:#ff4c4c; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="topwarn"></div><div id="botwarn"></div><div id="vig"></div><div id="wind"></div>
+<div class="hud" id="hud" style="display:none">
+  <div><div class="lbl" id="hDescLbl">DESCENT</div><div class="val" id="hDesc">0 m</div></div>
+  <div class="mid"><div class="lbl" id="hSaltLbl">SALT</div><div class="val" id="hSalt">◆ 0 / 0</div></div>
+  <div class="right"><div class="lbl">TIME</div><div class="val" id="hTime">00:00</div></div>
+</div>
+<div id="hint" style="opacity:0">Drag toward your jump<br>Release to leap</div>
+
+<div class="screen" id="scMenu">
+  <h1>MOUNTAIN GOAT</h1>
+  <div class="sub">A descent through the Negev cliffs</div>
+  <div class="btn" id="bPlay">PLAY</div>
+  <div class="btn" id="bEndless">ENDLESS</div>
+  <div class="btn" id="bIbex">IBEX</div>
+  <div class="salt" id="menuSalt">◆ 0</div>
+</div>
+<div class="screen" id="scSelect">
+  <div class="back" id="bBackMenu">◀ MENU</div>
+  <h1>MOUNTAIN GOAT</h1>
+  <div id="levelList" style="max-height:72vh;overflow-y:auto;touch-action:pan-y;width:100%"></div>
+</div>
+<div class="screen" id="scEndless">
+  <div class="back" id="bBackMenu3">◀ MENU</div>
+  <h1>ENDLESS</h1>
+  <div class="sub">Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.</div>
+  <div class="btn" id="bEndDown">ENDLESS DESCENT<small id="bestDown">best 0 m</small></div>
+  <div class="btn" id="bEndUp">ENDLESS ASCENT<small id="bestUp">best 0 m</small></div>
+</div>
+<div class="screen" id="scIbex">
+  <div class="back" id="bBackMenu2">◀ MENU</div>
+  <h1>IBEX</h1>
+  <div class="salt" id="ibexSalt" style="margin:0 0 10px">◆ 0</div>
+  <div id="skinList" style="max-height:70vh;overflow-y:auto;touch-action:pan-y;width:100%"></div>
+  <div class="sub" style="margin-top:10px;font-size:13px;opacity:.75">Skins change the coat only — never the jump.</div>
+</div>
+<div class="screen" id="scResult">
+  <h1 id="rTitle">DESCENT COMPLETE</h1>
+  <div class="sub" id="rSub"></div>
+  <div class="stars" id="rStars"></div>
+  <div class="btn" id="bContinue">CONTINUE FROM LAST LEDGE<small id="contCost">◆ 3</small></div>
+  <div class="btn" id="bRetry">RETRY</div>
+  <div class="btn" id="bNext">NEXT LEVEL</div>
+  <div class="btn" id="bLevels">LEVELS</div>
+</div>
+<div id="dbg"></div>
+<div class="dline" id="dpref"></div><div class="dline" id="ddanger"></div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+// ============================================================
+//  CONFIG — everything that matters for game feel lives here
+// ============================================================
+const CONFIG = {
+  gravity: 20,
+  minJumpPower: 4.5, maxJumpPower: 13, maxDragDistance: 170, dragDeadZone: 12, jumpPowerCurve: 1.25, minLaunchUp: 2.5,
+  ascentJumpBoost: 1.25,     // jump power multiplier on climbing levels (preview uses it too)
+  airControl: 5.0, maxAirCorrection: 1.3,
+  goatHalfWidth: 0.5, goatBodyHeight: 1.2, // collision body (hooves to top of head; horns may overlap rock)
+  landingTolerance: 0.25, edgeGrabDistance: 0.45, edgeGrabDepth: 1.0, maxEdgeGrabFallSpeed: 12, takeoffGrace: 0.2,
+  hardLandingSpeed: 12, perfectLandingSpeed: 8.5, deathFallTime: 1.5,
+  maxLedgesSkipped: 3, ledgeRowGap: 2.5,   // drop past more than this many rows of ledges = the goat collapses, exhausted
+  cameraIdleSpeed: 0.45, cameraAimMultiplier: 0.75, cameraDownFollowSpeed: 5, cameraUpFollowSpeed: 0.8, cameraXFollow: 3,
+  goatScreenFraction: 0.35, cameraWarnFraction: 0.2, cameraDangerFraction: 0.07, cameraFailureGrace: 1.25,
+  trajectoryPoints: 14, trajectoryPreviewFraction: 0.65,
+  // Twin (used in the next build)
+  twinCameraPressureMultiplier: 0.75, twinCameraPadding: 3,
+  // collectibles
+  crystalPickupRadius: 0.9,
+  hawkHitRadius: 0.7,
+  // cosmetics
+  darkIbexCost: 11,   // ~70% of the 15 crystals in levels 1–2
+  continueCost: 3,    // salt to respawn on the last safe ledge after a fall
+  fov: 50, baseHalfHeight: 10.7, minHalfWidth: 7.5, shadows: true, hintJumps: 3,
+};
+
+// ============================================================
+//  LEVELS — hand-designed. surfaces: [id, x, y, width, type]
+//  crystals: [x, y] (on a ledge = its top y + 0.6, or floating in the air)
+// ============================================================
+const STYLES = {
+  desert: { sky: [0x7fb0dc, 0xeadcc6], haze: 0xe3d4bd, sun: 0xfff0d8, sunI: 2.6, hemi: [0xc7dcf2, 0x9a7048], hemiI: 1.0,
+    bands: [0xbf8b5e, 0xcf9d6c, 0xb07a50, 0xd4ab7a, 0xa8714b], tops: [0xd9bc8e, 0xd3b283, 0xdcc199], sides: [0xb9865a, 0xc08f5f, 0xad7a52, 0xb37f55],
+    dark: 0x8d6240, plateau: 0xcdb48c, mesa: 0xc9a180, canyon: [0xb58257, 0xbb8a5d], bush: 0x5f6b3d, blocker: 0x8f5a3a, spike: 0x5a4a44, crystal: [0xf4f6ff, 0x9fb7d8],
+    bird: 'hawk', veg: 'bush', pickup: 'salt', pickupName: 'SALT' },
+  red: { sky: [0x6d7fb5, 0xf2b48c], haze: 0xe8b28c, sun: 0xffc48a, sunI: 2.3, hemi: [0xb8a0d8, 0x8a3a24], hemiI: 0.9,
+    bands: [0xa04a30, 0xb85a3a, 0x8e4028, 0xc4684a, 0x7f3a26], tops: [0xd9956c, 0xd48a60, 0xe0a078], sides: [0xa4442c, 0xb05034, 0x963e28, 0xac4a30],
+    dark: 0x6e2c1c, plateau: 0xb86f4c, mesa: 0xa85a44, canyon: [0x9c4630, 0xa64e36], bush: 0x5a5a36, blocker: 0x6b2e20, spike: 0x3d2620, crystal: [0xff9a8a, 0xc02a2a],
+    bird: 'hawk', veg: 'dry', pickup: 'garnet', pickupName: 'GARNET' },
+  chalk: { sky: [0x8fc3ec, 0xf5f2ea], haze: 0xece7db, sun: 0xffffff, sunI: 3.0, hemi: [0xd8e8f8, 0xb8a888], hemiI: 1.1,
+    bands: [0xd8cfbb, 0xe6dcc6, 0xc9bfa8, 0xefe7d3, 0xbfb49c], tops: [0xf4eee0, 0xefe8d8, 0xf7f2e6], sides: [0xd3c8b0, 0xdacfb8, 0xcabfa6, 0xd7ccb4],
+    dark: 0xb3a68c, plateau: 0xe0d7c2, mesa: 0xd5cab3, canyon: [0xcdc2aa, 0xd2c7ae], bush: 0x6f7e4a, blocker: 0xa89a80, spike: 0x7a7266, crystal: [0xd9c8a0, 0x7a6a40],
+    bird: 'falcon', veg: 'bush', pickup: 'fossil', pickupName: 'FOSSIL' },
+  night: { sky: [0x0a1230, 0x2c3d6e], haze: 0x2a3858, sun: 0xa8bdf0, sunI: 1.7, hemi: [0x4a5f9a, 0x14121e], hemiI: 0.9,
+    bands: [0x3f4a6e, 0x4a5680, 0x35405f, 0x55628c, 0x2e3654], tops: [0x7383ad, 0x6d7ca6, 0x7a8ab4], sides: [0x4a5478, 0x505b82, 0x434c70, 0x4d5780],
+    dark: 0x2b3350, plateau: 0x2f3a5a, mesa: 0x33406a, canyon: [0x3c4668, 0x40496c], bush: 0x2f4a3a, blocker: 0x232b48, spike: 0x1a1e30, crystal: [0xeaf2ff, 0x8fd0ff],
+    bird: 'raven', veg: 'bush', pickup: 'moon', pickupName: 'MOONSTONE' },
+  alpine: { sky: [0x4f86c8, 0xe9f0f6], haze: 0xe6edf3, sun: 0xfff8ee, sunI: 3.0, hemi: [0xd6e6f8, 0x6e7a86], hemiI: 1.1, snow: true,
+    bands: [0x8a8f96, 0x9aa0a8, 0x767c84, 0xa9afb6, 0x6b7179], tops: [0xf4f7fa, 0xeef3f7, 0xf8fafc], sides: [0x8e949c, 0x979da5, 0x848a92, 0x9299a1],
+    dark: 0x5f656d, plateau: 0xeef3f7, mesa: 0xb8c4cf, canyon: [0x8b9199, 0x9096a0], bush: 0x2e5a3c, blocker: 0x6f7680, spike: 0xd8ecfa, crystal: [0xdff4ff, 0x4aa8e8],
+    bird: 'eagle', veg: 'pine', pickup: 'ice', pickupName: 'ICE' },
+};
+let STYLE = STYLES.desert;
+const TYPE = {
+  terrace:  { h: 2.6, d: 5.5, jitter: 0.22 }, broad: { h: 2.0, d: 4.6, jitter: 0.25 }, slab: { h: 1.5, d: 4.2, jitter: 0.22 },
+  narrow:   { h: 1.5, d: 3.6, jitter: 0.28 }, sloped: { h: 1.7, d: 4.2, jitter: 0.22, tilt: 0.11 },
+  stone:    { h: 1.3, d: 2.8, jitter: 0.38 }, foothold: { h: 1.2, d: 2.4, jitter: 0.32 },
+};
+let LEVELS = [];
+function defineLevels() { LEVELS = [
+  {
+    key: 'descent', name: 'THE DESCENT', stars: { crystals: 4, time: 75 },
+    surfaces: [
+      ['start', 0, 0, 8, 'terrace'], ['l1', 8, -7, 4, 'broad'], ['l2', 0, -13, 5, 'broad'],
+      ['fA', -7, -19, 3.5, 'slab'], ['fB', 6, -18, 3, 'broad'],
+      ['a2', -8, -26, 2.2, 'narrow'], ['b2', 11, -23, 1.8, 'stone'], ['b3', 4, -30, 2.5, 'sloped'],
+      ['m1', -3, -33, 3, 'slab'], ['d1', -9, -38, 4, 'sloped'], ['d2', -11, -44, 3.5, 'broad'], ['rec1', -6.5, -41.5, 1.3, 'foothold'],
+      ['r1', 3, -39, 2, 'narrow'], ['r2', 1, -45, 2.5, 'slab'],
+      ['p1', -3, -53, 1.3, 'foothold'], ['f1', 6, -52, 3, 'broad'], ['f2', 2, -59, 3.5, 'slab'], ['f3', 7, -65, 4, 'sloped'],
+      ['finish', 0, -74, 80, 'terrace'],
+    ],
+    herd: [{ surface: 'finish', x: -5, dir: -1, n: 4 }],
+    blockers: [{ x1: -9.5, x2: -5.2, top: -47, h: 6 }],
+    crystals: [[0, -12.4], [1, -44.4], [11, -22.4], [-6.5, -40.9], [-3, -52.4]],
+  },
+  {
+    key: 'crystal', name: 'CRYSTAL RUN', stars: { crystals: 7, time: 105 },
+    surfaces: [
+      ['start', 0, 0, 8, 'terrace'], ['s1', -5, -6, 4, 'broad'], ['s2', 1, -12, 3.5, 'slab'], ['sa', 8, -15, 1.4, 'foothold'],
+      ['s3', -3, -19, 3, 'broad'], ['s4', 4, -26, 3, 'slab'], ['s5', -2, -33, 2.5, 'narrow'], ['ub', -7, -30.5, 1.2, 'foothold'],
+      ['s6', -6, -41, 3, 'broad'], ['s7', 0, -48, 2.5, 'slab'], ['s8', -5, -55, 3, 'broad'], ['s9', 2, -63, 3, 'slab'],
+      ['t', 8, -61, 1.0, 'foothold'], ['s10', 5, -70, 3, 'broad'], ['rs', -7, -73, 1.4, 'foothold'],
+      ['s11', -1, -80, 3, 'slab'], ['s12', 5, -87, 3.5, 'broad'], ['finish', 0, -96, 80, 'terrace'],
+    ],
+    herd: [{ surface: 'finish', x: 10, dir: 1, n: 4 }],
+    blockers: [{ x1: -9.5, x2: -5, top: -25, h: 4 }],   // overhang: the foothold below it is only reachable by jumping UP
+    crystals: [[-5, -5.4], [-3, -18.4], [8, -14.4], [-7, -29.9], [-6, -40.4], [1, -57], [8, -60.4], [-7, -72.4], [-1, -79.4], [2, -78.2]],
+  },
+  {
+    key: 'twin', name: 'TWIN DESCENT', twin: true, starts: ['A0', 'B0'], stars: { crystals: 0, time: 90 },
+    // A = left goat, B = right goat. One shared jump vector: wide ledges forgive, narrow ledges demand a precise dx.
+    surfaces: [
+      ['A0', -5, 0, 6, 'terrace'], ['B0', 5, 0, 6, 'terrace'],
+      ['A1', -9, -6, 4, 'broad'], ['B1', 1, -6, 4, 'broad'],               // 1: identical, drop down-left
+      ['A2', -4, -12, 4.5, 'broad'], ['B2', 5, -12, 2, 'narrow'],          // 2: down-right, different widths
+      ['A3', 1, -18, 4, 'slab'], ['B3', 9, -18, 1.6, 'stone'],             // 3: down-right, B needs a precise dx
+      ['A4', -5, -25, 2, 'narrow'], ['B4', 4.5, -24, 3.5, 'slab'],         // 4: down-left, A precise + lower, B forgiving
+      ['A5a', -8, -32, 2, 'narrow'], ['B5a', 0.5, -32, 2, 'narrow'],       // 5: route choice — left pair
+      ['A5b', -1, -31, 2, 'sloped'], ['B5b', 9, -30, 1.5, 'foothold'],     //    or right pair
+      ['A6', -4, -39, 3, 'broad'], ['B6', 4.5, -39, 2.5, 'slab'],          // 6: both branches converge
+      ['A7', -8, -46, 1.6, 'foothold'], ['B7', 1, -45, 3, 'broad'],        // 7: down-left, tiny for A
+      ['A8', -4, -53, 2.5, 'slab'], ['B8', 6, -52, 1.4, 'foothold'],       // 8: down-right, tiny for B
+      ['finishA', -21, -61, 40, 'terrace'], ['finishB', 21, -61, 40, 'terrace'],
+    ],
+    herd: [{ surface: 'finishA', x: -11, dir: -1, n: 3 }, { surface: 'finishB', x: 11, dir: 1, n: 3 }],
+    blockers: [], crystals: [],
+  },
+  {
+    key: 'hawk', name: 'HAWK PASS', stars: { crystals: 2, time: 90 },
+    // hawks patrol between x1 and x2 at height y; touching one knocks the goat off the mountain
+    surfaces: [
+      ['start', 0, 0, 8, 'terrace'], ['h1', -6, -6, 4, 'broad'], ['h2', 2, -12, 3.5, 'slab'],
+      ['h3', -4, -19, 3, 'broad'], ['h4', 5, -25, 2.5, 'slab'], ['h5', -2, -32, 2, 'narrow'],
+      ['h6', -7, -38, 2, 'narrow'], ['h7', 0, -44, 3, 'slab'], ['h8', 6, -51, 1.5, 'foothold'],
+      ['h9', -1, -58, 3, 'broad'], ['h10', -6, -65, 2.5, 'narrow'], ['h11', 2, -72, 3.5, 'slab'],
+      ['finish', 0, -82, 80, 'terrace'],
+    ],
+    herd: [{ surface: 'finish', x: -6, dir: -1, n: 4 }],
+    blockers: [], crystals: [[-6, -5.4], [1, -28.5], [6, -50.4]],
+    hawks: [{ x1: -8, x2: 4, y: -9.5, speed: 4 }, { x1: -6, x2: 7, y: -28.5, speed: 5.5 }, { x1: -5, x2: 8, y: -54.5, speed: 6.5 }],
+  },
+  {
+    key: 'red', name: 'RED CANYON', style: 'red', stars: { crystals: 4, time: 100 },
+    // 6th element: which half of the ledge is covered in spikes ('L' / 'R')
+    surfaces: [
+      ['start', 0, 0, 8, 'terrace'], ['r1', 7, -7, 4, 'broad'], ['r2', 1, -13, 5, 'broad', 'L'],
+      ['r3', -6, -19, 3.5, 'slab'], ['r4', 2, -26, 4.5, 'slab', 'R'], ['r5', -4, -33, 2, 'narrow'],
+      ['r6', 4, -38, 3, 'sloped'], ['r7', -2, -45, 5, 'broad', 'L'], ['r8', 6, -52, 1.5, 'foothold'],
+      ['r9', -1, -58, 4, 'slab', 'R'], ['r10', -7, -65, 2.5, 'narrow'], ['r11', 0, -72, 3, 'slab'],
+      ['r12', 6, -79, 3.5, 'broad', 'L'], ['finish', 0, -90, 80, 'terrace'],
+    ],
+    herd: [{ surface: 'finish', x: 10, dir: 1, n: 4 }], blockers: [],
+    crystals: [[1, -25.4], [-4, -32.4], [6, -51.4], [-7, -64.4], [-4, -67]],
+  },
+  {
+    key: 'chalk', name: 'CHALK CLIFFS', style: 'chalk', stars: { crystals: 4, time: 110 },
+    surfaces: [
+      ['start', 0, 0, 8, 'terrace'], ['c1', -6, -6, 4, 'broad'], ['c2', 1, -12, 4, 'slab', 'R'],
+      ['c3', -4, -19, 3, 'broad'], ['c4', 4, -25, 2.5, 'slab'], ['c5', -3, -31, 5, 'broad', 'L'],
+      ['c6', 5, -38, 2, 'narrow'], ['c7', -1, -45, 3, 'slab'], ['c8', -7, -51, 1.4, 'foothold'],
+      ['c9', 1, -57, 4, 'slab', 'R'], ['c10', 7, -63, 2.5, 'broad'], ['c11', 0, -70, 3, 'slab'],
+      ['c12', -5, -77, 4, 'broad', 'L'], ['finish', 0, -88, 80, 'terrace'],
+    ],
+    herd: [{ surface: 'finish', x: -6, dir: -1, n: 4 }], blockers: [],
+    crystals: [[4, -24.4], [1, -34.5], [-1, -44.4], [-7, -50.4], [7, -62.4]],
+    hawks: [{ x1: -8, x2: 4, y: -15.5, speed: 5 }, { x1: -4, x2: 8, y: -34.5, speed: 6 }, { x1: 0, x2: 10, y: -60, speed: 7 }],
+  },
+  {
+    key: 'night', name: 'NIGHT TWIN', style: 'night', twin: true, starts: ['A0', 'B0'], stars: { crystals: 0, time: 80 },
+    surfaces: [
+      ['A0', -5, 0, 6, 'terrace'], ['B0', 5, 0, 6, 'terrace'],
+      ['A1', -9, -6, 4, 'broad'], ['B1', 1, -6, 4, 'broad', 'L'],
+      ['A2', -4, -12, 4, 'slab', 'R'], ['B2', 6, -12, 3, 'slab'],
+      ['A3', -9, -19, 3, 'slab'], ['B3', 1, -18, 4, 'broad', 'L'],
+      ['A4', -3, -26, 4, 'slab', 'R'], ['B4', 7, -25, 2.5, 'narrow'],
+      ['A5', -8, -33, 2, 'narrow'], ['B5', 3, -32, 3.5, 'slab', 'L'],
+      ['A6', -3, -40, 3, 'broad'], ['B6', 8, -39, 1.6, 'stone'],
+      ['finishA', -21, -49, 40, 'terrace'], ['finishB', 21, -49, 40, 'terrace'],
+    ],
+    herd: [{ surface: 'finishA', x: -12, dir: -1, n: 3 }, { surface: 'finishB', x: 12, dir: 1, n: 3 }],
+    blockers: [], crystals: [],
+  },
+  {
+    key: 'alpine', name: 'ALPINE PASS', style: 'alpine', stars: { crystals: 4, time: 110 },
+    surfaces: [
+      ['start', 0, 0, 8, 'terrace'], ['p1', 6, -6, 4, 'broad'], ['p2', -1, -12, 4, 'slab', 'L'],
+      ['p3', -7, -18, 3, 'broad'], ['p4', 1, -24, 2.5, 'slab'], ['p5', 7, -30, 3, 'broad', 'R'],
+      ['p6', 0, -37, 2, 'narrow'], ['p7', -6, -43, 3.5, 'slab', 'L'], ['p8', 2, -50, 1.4, 'foothold'],
+      ['p9', -3, -56, 3, 'broad'], ['p10', 4, -63, 3, 'slab', 'R'], ['p11', -2, -70, 2.5, 'narrow'],
+      ['p12', 5, -77, 4, 'broad', 'L'], ['finish', 0, -88, 80, 'terrace'],
+    ],
+    herd: [{ surface: 'finish', x: -6, dir: -1, n: 4 }], blockers: [],
+    crystals: [[-7, -17.4], [6, -29.4], [-3, -40], [-5, -42.4], [2, -49.4], [-2, -69.4]],
+    hawks: [{ x1: -6, x2: 6, y: -21, speed: 5 }, { x1: -8, x2: 5, y: -53, speed: 6 }],
+  },
+  {
+    key: 'redclimb', name: 'CANYON CLIMB', style: 'red', ascent: true, stars: { crystals: 4, time: 120 },
+    // ASCENT: start at the bottom, the camera drifts UP; every jump gains ~3 m, falling back only costs time
+    surfaces: [
+      ['start', 0, 0, 8, 'terrace'], ['u1', 6.5, 3, 3, 'broad'], ['u2', 0, 6, 3, 'slab'], ['u3', 5, 9, 2.5, 'slab'],
+      ['u4', -1, 12, 3, 'broad'], ['u5', 4, 15, 2, 'narrow'], ['u6', -3, 18, 3.5, 'broad'], ['u7', 2, 21, 2, 'narrow'],
+      ['u8', 7, 24, 2.5, 'slab'], ['u9', 1, 27, 3, 'broad'], ['u10', -4, 30, 1.5, 'foothold'], ['u11', 1, 33, 3, 'slab'],
+      ['u12', 6, 36, 2.5, 'broad', 'L'], ['u13', 1, 39, 3, 'slab'], ['u14', -4, 42, 2, 'narrow'], ['u15', 2, 45, 3, 'broad'],
+      ['u16', 7, 48, 2, 'narrow'], ['u17', 2, 51, 3.5, 'slab', 'R'], ['u18', -3, 54, 2.5, 'broad'], ['u19', 2, 57, 2, 'narrow'],
+      ['u20', -2, 60, 3, 'slab'], ['finish', 21, 63, 40, 'terrace'],
+    ],
+    herd: [{ surface: 'finish', x: 12, dir: 1, n: 4 }], blockers: [],
+    crystals: [[-3, 18.6], [-4, 30.6], [-4, 42.6], [-3, 54.6], [4, 20.5]],
+  },
+  makeClimb({ key: 'chalkclimb', name: 'WHITE ASCENT', style: 'chalk', seed: 41, n: 22, spikes: true, hawks: [{ x1: -6, x2: 7, y: 22, speed: 5.5 }, { x1: -7, x2: 6, y: 46, speed: 6.5 }] }),
+  makeClimb({ key: 'summit', name: 'THE SUMMIT', style: 'alpine', seed: 77, n: 26, spikes: true, hawks: [{ x1: -7, x2: 7, y: 30, speed: 6 }, { x1: -6, x2: 8, y: 58, speed: 7 }] }),
+  makeDescent({ key: 'redrun', name: 'DUSK RUN', style: 'red', seed: 5, n: 16, spikes: true, hawks: 2 }),
+  makeDescent({ key: 'chalkrun', name: 'SEA CLIFFS', style: 'chalk', seed: 9, n: 18, spikes: true, hawks: 3 }),
+  makeDescent({ key: 'nightrun', name: 'MOONLIT DESCENT', style: 'night', seed: 13, n: 16, spikes: true, hawks: 1 }),
+  makeClimb({ key: 'nightclimb', name: 'NIGHT CLIMB', style: 'night', seed: 21, n: 20, spikes: false, hawks: [{ x1: -7, x2: 7, y: 26, speed: 5.5 }, { x1: -8, x2: 6, y: 44, speed: 6.5 }] }),
+  makeDescent({ key: 'icefall', name: 'ICE FALL', style: 'alpine', seed: 31, n: 20, spikes: true, hawks: 2 }),
+]; }
+// zig-zag descent generator (deterministic): widths shrink and gaps grow along the way, forks with a pickup, spikes on wide ledges, bird lanes spread evenly
+function makeDescent(o) {
+  const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = []; let x = 0, y = 0, side = 1;
+  const hawkAt = []; for (let k = 0; k < (o.hawks || 0); k++) hawkAt.push(Math.floor((k + 1) * o.n / ((o.hawks || 0) + 1)));
+  for (let i = 1; i <= o.n; i++) {
+    const t = i / o.n; const gain = 4.5 + t * 3 + r() * 1.5; const prevY = y, prevX = x; y -= gain;
+    if (r() > 0.25) side = -side;
+    const w = Math.max(1.4, +(4.2 - t * 2.4 + (r() - .5) * 1.2).toFixed(1)); const dx = 2.5 + r() * (2.5 + t * 3);
+    x = x + side * dx; if (x > 8 || x < -8) { side = -side; x = clamp(prevX + side * dx, -8, 8); }
+    const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : (r() < 0.4 ? 'sloped' : 'narrow');
+    const spk = o.spikes && w >= 2.8 && i > 3 && i % 3 === 0 ? (side > 0 ? 'R' : 'L') : null;
+    const row = ['d' + i, +x.toFixed(1), +y.toFixed(1), w, type]; if (spk) row.push(spk); surfaces.push(row);
+    if (i % 5 === 2 && i < o.n - 1) { const fx = clamp(prevX - side * (2.5 + r() * 3), -8, 8); const fw = 1.4 + r() * 0.6;
+      surfaces.push(['k' + i, +fx.toFixed(1), +y.toFixed(1), +fw.toFixed(1), fw < 1.7 ? 'foothold' : 'narrow']); crystals.push([+fx.toFixed(1), +(y + 0.6).toFixed(1)]); }
+    else if (i % 4 === 1) crystals.push([+(spk ? (spk === 'L' ? x + w / 4 : x - w / 4) : x).toFixed(1), +(y + 0.6).toFixed(1)]);
+    else if (i % 7 === 5) crystals.push([+((prevX + x) / 2).toFixed(1), +((prevY + y) / 2 + 2.5).toFixed(1)]);
+    if (hawkAt.includes(i)) hawks.push({ x1: -8 + r() * 2, x2: 6 + r() * 2, y: +((prevY + y) / 2 - 0.5).toFixed(1), speed: 4 + t * 3 });
+  }
+  y -= 9; surfaces.push(['finish', 0, +y.toFixed(1), 80, 'terrace']);
+  return { key: o.key, name: o.name, style: o.style, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 50 + o.n * 5 }, surfaces, crystals, blockers: [], hawks, herd: [{ surface: 'finish', x: o.seed % 2 ? 8 : -8, dir: o.seed % 2 ? 1 : -1, n: 4 }] };
+}
+// zig-zag climb generator (deterministic by seed): alternating sides, ~3 m gain per ledge, spikes on the far side of wide ledges
+function makeClimb(o) {
+  const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = []; let x = 0, y = 0, side = 1, lastW = 8;
+  for (let i = 1; i <= o.n; i++) {
+    const gain = 3.0 + r() * 0.6; y += gain; side = -side;
+    const tiny = i % 5 === 3; const w = tiny ? 1.4 : 1.8 + r() * 1.4;
+    const dx = lastW / 2 + w / 2 + 1.8 + r() * 1.5; x = x + side * dx; if (x > 8 || x < -8) { side = -side; x = clamp(x - 2 * side * dx, -8, 8); } lastW = w;
+    const spk = o.spikes && !tiny && w > 3.2 && i % 3 === 0 ? (side > 0 ? 'R' : 'L') : null;   // safe half faces the arriving goat
+    const row = ['u' + i, +x.toFixed(1), +y.toFixed(1), +w.toFixed(1), tiny ? 'foothold' : w > 3 ? 'broad' : w > 2.4 ? 'slab' : 'narrow']; if (spk) row.push(spk);
+    surfaces.push(row);
+    if (i % 4 === 2) crystals.push([+(x - side * (spk ? w / 4 : 0)).toFixed(1), +(y + 0.6).toFixed(1)]);
+  }
+  y += 2.6; const fs = x < 0 ? 1 : -1; surfaces.push(['finish', +(x + fs * (lastW / 2 + 22)).toFixed(1), +y.toFixed(1), 40, 'terrace']);   // wide terrace to the side, never above the last ledge
+  const fx = surfaces[surfaces.length - 1][1];
+  return { key: o.key, name: o.name, style: o.style, ascent: true, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, blockers: [], hawks: o.hawks || [], herd: [{ surface: 'finish', x: fx + fs * 6, dir: fs, n: 4 }] };
+}
+const WORLDS = [
+  { name: 'NEGEV', sub: 'desert cliffs', levels: ['descent', 'crystal', 'twin', 'hawk'] },
+  { name: 'RED CANYON', sub: 'sandstone at dusk', levels: ['red', 'redrun', 'redclimb'] },
+  { name: 'CHALK COAST', sub: 'white limestone', levels: ['chalk', 'chalkrun', 'chalkclimb'] },
+  { name: 'MOONLIT RIDGE', sub: 'under the moon', levels: ['nightrun', 'night', 'nightclimb'] },
+  { name: 'THE ALPS', sub: 'snow and granite', levels: ['alpine', 'icefall', 'summit'] },
+];
+// flatten LEVELS into world order so NEXT LEVEL walks through a world, then the next
+function orderLevels() { const byKey = Object.fromEntries(LEVELS.map(l => [l.key, l])); LEVELS = []; for (const w of WORLDS) for (const k of w.levels) LEVELS.push(byKey[k]); }
+
+// ============================================================
+//  Persistence
+// ============================================================
+const SAVE_KEY = 'mountainGoatSave';
+let save = { totalSaltCrystals: 0, levels: {}, skin: 'classic', unlocked: { classic: true } };
+try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s) save = Object.assign(save, s); } catch (e) {}
+save.unlocked = Object.assign({ classic: true }, save.unlocked || {});
+{ const oldOrder = ['descent', 'crystal', 'twin', 'hawk', 'red', 'chalk', 'night', 'alpine']; for (const k of Object.keys(save.levels)) if (/^\d+$/.test(k) && oldOrder[+k]) { save.levels[oldOrder[+k]] = save.levels[k]; delete save.levels[k]; } } if (save.darkUnlocked) save.unlocked.dark = true;
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+
+// ============================================================
+//  Renderer / scene
+// ============================================================
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = CONFIG.shadows; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color(STYLE.haze); scene.fog = new THREE.Fog(STYLE.haze, 45, 170);
+const camera = new THREE.PerspectiveCamera(CONFIG.fov, 1, 0.1, 500);
+let halfH = CONFIG.baseHalfHeight, camDist = 20, baseHalf = CONFIG.baseHalfHeight;
+function setHalfH(h) { halfH = h; camDist = halfH / Math.tan(THREE.MathUtils.degToRad(CONFIG.fov / 2)); }
+function resize() {
+  renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight;
+  baseHalf = Math.max(CONFIG.baseHalfHeight, CONFIG.minHalfWidth / camera.aspect); setHalfH(Math.max(baseHalf, halfH)); camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+const sun = new THREE.DirectionalLight(0xfff0d8, 2.6);
+sun.castShadow = CONFIG.shadows; const sm = innerWidth < 700 ? 1024 : 2048; sun.shadow.mapSize.set(sm, sm);
+Object.assign(sun.shadow.camera, { left: -28, right: 28, top: 28, bottom: -28, near: 1, far: 160 }); sun.shadow.bias = -0.0015;
+const hemi = new THREE.HemisphereLight(0xc7dcf2, 0x9a7048, 1.0); scene.add(sun); scene.add(sun.target); scene.add(hemi);
+
+// ============================================================
+//  Helpers
+// ============================================================
+function hash(x, y, z, seed) { const n = Math.sin(Math.round(x * 100) * 0.0127 + Math.round(y * 100) * 0.0311 + Math.round(z * 100) * 0.0074 + seed * 13.7) * 43758.5453; return n - Math.floor(n); }
+function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const lerp = THREE.MathUtils.lerp, clamp = THREE.MathUtils.clamp;
+function damp(a, b, rate, dt) { return lerp(a, b, 1 - Math.exp(-rate * dt)); }
+function vary(hex, amt, r) { const c = new THREE.Color(hex); c.offsetHSL((r() - .5) * .02, (r() - .5) * amt, (r() - .5) * amt); return c; }
+function fmtTime(t) { return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(Math.floor(t % 60)).padStart(2, '0'); }
+
+function makeRock(w, h, d, seed, jitter, opts = {}) {
+  const geo = new THREE.BoxGeometry(w, h, d, 3, 2, 3); const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    let x = p.getX(i), y = p.getY(i), z = p.getZ(i); const isTop = y > h / 2 - 1e-4;
+    const r1 = hash(x, y, z, seed), r2 = hash(x, y, z, seed + 1), r3 = hash(x, y, z, seed + 2);
+    if (isTop) { y += (r2 - .5) * 0.08; if (Math.abs(Math.abs(x) - w / 2) < 1e-4) x += (r1 - .5) * 0.35; if (z > d / 2 - 1e-4) z += (r3 - .5) * 0.3; }
+    else { x += opts.solid ? -Math.sign(x) * r1 * jitter : (r1 - .5) * 2 * jitter; y += opts.solid ? Math.abs(r2 - .5) * jitter : (r2 - .5) * 2 * jitter; z += (r3 - .5) * 2 * jitter * 1.4; if (opts.undercut && y < -h / 2 + 0.01 && z > 0) z -= d * 0.45; }
+    p.setXYZ(i, x, y, z);
+  }
+  p.needsUpdate = true; return geo;
+}
+function rockMaterials(seed, sat = 0.06) {
+  const r = mulberry(seed);
+  const side = new THREE.MeshLambertMaterial({ color: vary(STYLE.sides[seed % STYLE.sides.length], sat, r), flatShading: true });
+  const top = new THREE.MeshLambertMaterial({ color: vary(STYLE.tops[seed % STYLE.tops.length], sat, r), flatShading: true });
+  const dark = new THREE.MeshLambertMaterial({ color: vary(STYLE.dark, sat, r), flatShading: true });
+  return [side, side, top, dark, side, side];
+}
+
+// ============================================================
+//  Static environment (shared by all levels)
+defineLevels(); orderLevels();
+//
+// ============================================================
+const LEVEL_TOP = 1500, LEVEL_BOTTOM = -1500, FLOOR_Y = -148;
+const ENV = { mesas: [], canyon: [] };
+{
+  const g = new THREE.PlaneGeometry(900, 600, 1, 8); const cols = []; const top = new THREE.Color(0x7fb0dc), bot = new THREE.Color(0xeadcc6); const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) { const t = clamp((p.getY(i) + 300) / 600, 0, 1); const c = bot.clone().lerp(top, Math.pow(t, 0.7)); cols.push(c.r, c.g, c.b); }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+  const sky = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, fog: false })); sky.position.set(0, -20, -300); scene.add(sky); ENV.sky = sky;
+  const pg = new THREE.PlaneGeometry(700, 500, 40, 30); const pp = pg.attributes.position;
+  for (let i = 0; i < pp.count; i++) pp.setZ(i, (hash(pp.getX(i), pp.getY(i), 0, 7) - .5) * 3);
+  const plateau = new THREE.Mesh(pg, new THREE.MeshLambertMaterial({ color: 0xcdb48c, flatShading: true })); ENV.plateau = plateau; plateau.rotation.x = -Math.PI / 2; plateau.position.set(0, FLOOR_Y, -150); ENV.floor = new THREE.Group(); scene.add(ENV.floor); ENV.floor.add(plateau);
+  const r = mulberry(99);
+  for (let i = 0; i < 9; i++) {
+    const w = 18 + r() * 40, h = 25 + r() * 55, d = 14 + r() * 20;
+    const m = new THREE.Mesh(makeRock(w, h, d, 200 + i, 1.4), new THREE.MeshLambertMaterial({ color: new THREE.Color(0xc9a180).offsetHSL(0, -0.05, (r() - .5) * .1), flatShading: true }));
+    m.position.set(-90 + i * 24 + (r() - .5) * 12, FLOOR_Y + h / 2, -70 - r() * 60); ENV.floor.add(m); ENV.mesas.push(m);
+  }
+  const W = 80, H = LEVEL_TOP - LEVEL_BOTTOM + 20; const wg = new THREE.PlaneGeometry(W, H, 40, 600); const wp = wg.attributes.position; const wc = [];
+  const bands = [0xbf8b5e, 0xcf9d6c, 0xb07a50, 0xd4ab7a, 0xa8714b];
+  for (let i = 0; i < wp.count; i++) {
+    const x = wp.getX(i), y = wp.getY(i); const n1 = Math.sin(x * 0.35 + y * 0.12) * Math.cos(y * 0.23 - x * 0.1); const n2 = hash(x, y, 0, 3) - .5;
+    wp.setZ(i, n1 * 1.6 + n2 * 1.2 + Math.sin(y * 0.6) * 0.35);
+    const band = Math.floor(((y + 1000) / 6.5 + n2 * 0.9)) % bands.length; const c = new THREE.Color(bands[(band + bands.length) % bands.length]); c.offsetHSL(0, 0, n2 * 0.06 - 0.04); wc.push(c.r, c.g, c.b);
+  }
+  wg.setAttribute('color', new THREE.Float32BufferAttribute(wc, 3));
+  const wall = new THREE.Mesh(wg, new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true })); wall.position.set(2, (LEVEL_TOP + LEVEL_BOTTOM) / 2, -3.8); wall.receiveShadow = true; scene.add(wall); ENV.wall = wall;
+  for (const side of [-1, 1]) {
+    const m = new THREE.Mesh(makeRock(14, LEVEL_TOP - LEVEL_BOTTOM + 30, 10, 400 + side, 1.0), new THREE.MeshLambertMaterial({ color: side < 0 ? 0xb58257 : 0xbb8a5d, flatShading: true }));
+    m.position.set(side * 27, (LEVEL_TOP + LEVEL_BOTTOM) / 2, -6); m.receiveShadow = true; scene.add(m); ENV.canyon.push(m);
+  }
+}
+{ const n = 400, pos = new Float32Array(n * 3); for (let i = 0; i < n; i++) { pos[i * 3] = (Math.random() - .5) * 50; pos[i * 3 + 1] = (Math.random() - .5) * 40; pos[i * 3 + 2] = Math.random() * 14 - 6; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  ENV.snow = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xffffff, size: 0.16, transparent: true, opacity: 0.85, fog: false })); ENV.snow.visible = false; scene.add(ENV.snow); }
+function updateSnow(dt, fx, fy) {
+  if (!ENV.snow.visible) return; const a = ENV.snow.geometry.attributes.position, t = performance.now() / 1000;
+  for (let i = 0; i < a.count; i++) { let y = a.getY(i) - (2.2 + (i % 5) * 0.3) * dt, x = a.getX(i) + Math.sin(t * 1.3 + i) * 0.4 * dt; if (y < fy - 20) { y += 40; x = fx + (Math.random() - .5) * 50; } a.setXY(i, x, y); }
+  a.needsUpdate = true;
+}
+function applyStyle(st) {
+  STYLE = st; ENV.snow.visible = !!st.snow;
+  scene.background.set(st.haze); scene.fog.color.set(st.haze);
+  sun.color.set(st.sun); sun.intensity = st.sunI; hemi.color.set(st.hemi[0]); hemi.groundColor.set(st.hemi[1]); hemi.intensity = st.hemiI;
+  ENV.plateau.material.color.set(st.plateau);
+  ENV.mesas.forEach((m, i) => m.material.color.set(st.mesa).offsetHSL(0, -0.05, ((i * 0.37) % 1 - .5) * .1));
+  ENV.canyon.forEach((m, i) => m.material.color.set(st.canyon[i]));
+  { const col = ENV.sky.geometry.attributes.color, p = ENV.sky.geometry.attributes.position; const top = new THREE.Color(st.sky[0]), bot = new THREE.Color(st.sky[1]);
+    for (let i = 0; i < p.count; i++) { const t = clamp((p.getY(i) + 300) / 600, 0, 1); const c = bot.clone().lerp(top, Math.pow(t, 0.7)); col.setXYZ(i, c.r, c.g, c.b); } col.needsUpdate = true; }
+  { const col = ENV.wall.geometry.attributes.color, p = ENV.wall.geometry.attributes.position, bands = st.bands;
+    for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i); const n2 = hash(x, y, 0, 3) - .5;
+      const band = Math.floor(((y + 1000) / 6.5 + n2 * 0.9)) % bands.length; const c = new THREE.Color(bands[(band + bands.length) % bands.length]); c.offsetHSL(0, 0, n2 * 0.06 - 0.04); col.setXYZ(i, c.r, c.g, c.b); } col.needsUpdate = true; }
+  crystalMat.color.set(st.crystal[0]); crystalMat.emissive.set(st.crystal[1]);
+}
+
+// ============================================================
+//  Level build / teardown
+// ============================================================
+let L = null; // current level runtime
+const levelGroup = new THREE.Group(); scene.add(levelGroup);
+const crystalGeo = new THREE.OctahedronGeometry(0.28, 0);
+const crystalMat = new THREE.MeshLambertMaterial({ color: 0xf4f6ff, emissive: 0x9fb7d8, emissiveIntensity: 0.35, flatShading: true });
+function makeCrystal() {
+  const g = new THREE.Group(); const kind = STYLE.pickup;
+  if (kind === 'ice') { // single tall ice shard
+    const m = new THREE.Mesh(crystalGeo, crystalMat); m.scale.set(0.9, 2.4, 0.9); m.position.y = 0.3; m.castShadow = true; g.add(m);
+    const m2 = new THREE.Mesh(crystalGeo, crystalMat); m2.scale.set(0.5, 1.2, 0.5); m2.position.set(0.25, 0, 0.1); m2.rotation.z = -0.5; g.add(m2);
+  } else if (kind === 'garnet') { const m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.34, 0), crystalMat); m.position.y = 0.3; m.castShadow = true; g.add(m); }
+  else if (kind === 'fossil') { const m = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.11, 5, 9), crystalMat); m.position.y = 0.32; m.rotation.y = 0.4; m.castShadow = true; g.add(m);
+    const c = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.06, 4, 6), crystalMat); c.position.set(0.02, 0.32, 0.0); g.add(c); }
+  else if (kind === 'moon') { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3, 1), crystalMat); m.position.y = 0.32; g.add(m); }
+  else { const specs = [[0, 0.1, 0, 1.0, 1.8, 0.1], [0.22, 0, 0.1, 0.7, 1.2, -0.4], [-0.2, 0, -0.08, 0.6, 1.0, 0.45]];
+    for (const [x, y, z, s, sy, rz] of specs) { const m = new THREE.Mesh(crystalGeo, crystalMat); m.position.set(x, y, z); m.scale.set(s, sy, s); m.rotation.z = rz; m.castShadow = true; g.add(m); } }
+  return g;
+}
+function makeHawk() {
+  const g = new THREE.Group();
+  const hs = HAWK_SKINS[STYLE.bird] || HAWK_SKINS.hawk;
+  const dark = new THREE.MeshLambertMaterial({ color: hs.dark, flatShading: true }), light = new THREE.MeshLambertMaterial({ color: hs.light, flatShading: true }), beakM = new THREE.MeshLambertMaterial({ color: hs.beak, flatShading: true });
+  const body = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3, 0), dark); body.scale.set(1.9, 0.75, 0.9); g.add(body);
+  const head = new THREE.Mesh(new THREE.IcosahedronGeometry(0.17, 0), light); head.position.set(0.6, 0.08, 0); g.add(head);
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.2, 4), beakM); beak.position.set(0.8, 0.05, 0); beak.rotation.z = -Math.PI / 2; g.add(beak);
+  const tail = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.42), light); tail.position.set(-0.68, 0.02, 0); g.add(tail);
+  g.wings = [];
+  for (const sd of [-1, 1]) {
+    const w = new THREE.Group(); w.position.set(0.05, 0.12, sd * 0.2); g.add(w);
+    const inner = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.05, 0.75), dark); inner.position.set(-0.05, 0, sd * 0.37); w.add(inner);
+    const outer = new THREE.Group(); outer.position.set(0, 0, sd * 0.75); w.add(outer);
+    const om = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.04, 0.8), light); om.position.set(-0.15, 0, sd * 0.4); outer.add(om);
+    for (let f = 0; f < 3; f++) { const fe = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.03, 0.34), dark); fe.position.set(-0.42 + f * 0.17, 0, sd * 0.9); fe.rotation.y = sd * (0.25 - f * 0.18); outer.add(fe); }
+    w.userData.side = sd; w.outer = outer; g.wings.push(w);
+  }
+  g.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  return g;
+}
+function makeVegetation(r) {
+  const g = new THREE.Group(); const leaf = new THREE.MeshLambertMaterial({ color: STYLE.bush, flatShading: true });
+  if (STYLE.veg === 'pine') {
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 0.5, 5), new THREE.MeshLambertMaterial({ color: 0x4a3526, flatShading: true })); trunk.position.y = 0.25; g.add(trunk);
+    const hgt = 1.2 + r() * 0.8; for (let i = 0; i < 3; i++) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.45 - i * 0.11, hgt * 0.45, 6), leaf); c.position.y = 0.45 + i * hgt * 0.26; c.castShadow = true; g.add(c); }
+    if (STYLE.snow) { const cap = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.2, 6), new THREE.MeshLambertMaterial({ color: 0xf4f7fa, flatShading: true })); cap.position.y = 0.45 + 2 * hgt * 0.26 + hgt * 0.16; g.add(cap); }
+  } else if (STYLE.veg === 'dry') {
+    for (let i = 0; i < 5; i++) { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.03, 0.5 + r() * 0.4, 4), leaf); t.position.set((r() - .5) * 0.4, 0.25, (r() - .5) * 0.3); t.rotation.z = (r() - .5) * 0.9; t.rotation.x = (r() - .5) * 0.6; g.add(t); }
+  } else {
+    const bush = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28 + r() * 0.2, 0), leaf); bush.position.y = 0.15; bush.scale.set(1, 0.7 + r() * 0.4, 1); bush.castShadow = true; g.add(bush);
+  }
+  return g;
+}
+function L_isStart(idx, id) { const d = LEVELS[idx]; return d.starts ? d.starts.includes(id) : d.surfaces[0][0] === id; }
+function makeSurface(r, i, seed) {
+  const t = TYPE[r[4]]; const tilt = t.tilt ? t.tilt * ((i % 2) ? 1 : -1) : 0;
+  const s = { id: r[0], x: r[1], y: r[2], w: r[3], type: r[4], x1: r[1] - r[3] / 2, x2: r[1] + r[3] / 2, h: t.h, d: t.d, jitter: t.jitter, tilt, idx: i, finish: r[0].startsWith('finish'),
+    spikes: r[5] ? (r[5] === 'L' ? { x1: r[1] - r[3] / 2, x2: r[1] } : { x1: r[1], x2: r[1] + r[3] / 2 }) : null, group: new THREE.Group() };
+  const g = s.group;
+  const m = new THREE.Mesh(makeRock(s.w + 0.3, s.h + 0.6, s.d, seed, s.jitter, { undercut: true, solid: true }), rockMaterials(seed));
+  m.position.set(s.x, s.y - (s.h + 0.6) / 2, s.d / 2 - 3.6); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m);
+  if (s.spikes) { // upward stone spikes over half the ledge
+    const spikeMat = new THREE.MeshLambertMaterial({ color: STYLE.spike, flatShading: true }); const rr = mulberry(seed + 7);
+    const n = Math.max(3, Math.round((s.spikes.x2 - s.spikes.x1) / 0.42));
+    for (let row = 0; row < 2; row++) for (let k = 0; k < n; k++) {
+      const hgt = 0.7 + rr() * 0.5; const sp = new THREE.Mesh(new THREE.ConeGeometry(0.16 + rr() * 0.08, hgt, 5), spikeMat);
+      sp.position.set(s.spikes.x1 + 0.2 + (s.spikes.x2 - s.spikes.x1 - 0.4) * (k + row * 0.5) / Math.max(1, n - 0.5), s.y + hgt / 2 - 0.05, row ? -0.9 : -0.2);
+      sp.rotation.z = (rr() - .5) * 0.35; sp.rotation.x = (rr() - .5) * 0.2; sp.castShadow = true; g.add(sp);
+    }
+  }
+  if (s.w >= 3.5 && i > 0) { const rr = mulberry(seed + 3); const n = 1 + Math.floor(rr() * 2);
+    for (let k = 0; k < n; k++) { const v = makeVegetation(rr); v.position.set(s.x + (rr() - .5) * Math.min(s.w - 1.2, 12), s.y, -0.9 - rr() * 1.2); g.add(v); } }
+  levelGroup.add(g); return s;
+}
+function makeCrystalObj(x, y, i, surfaces) {
+  const g = makeCrystal(); g.position.set(x, y, 0.2); levelGroup.add(g);
+  const onLedge = surfaces.find(s => Math.abs(y - s.y - 0.6) < 0.3 && x >= s.x1 && x <= s.x2) || null;
+  return { x, y, mesh: g, taken: false, phase: i * 1.3, surface: onLedge };
+}
+function makeHawkObj(h, i) { const m = makeHawk(); m.position.set(h.x1, h.y, 0.1); levelGroup.add(m); return { ...h, mesh: m, t: i * 1.7, x: h.x1, dir: 1 }; }
+function buildLevel(idx, defOverride) {
+  const def = defOverride || LEVELS[idx];
+  applyStyle(STYLES[def.style] || STYLES.desert);
+  while (levelGroup.children.length) levelGroup.remove(levelGroup.children[0]);
+  const surfaces = def.surfaces.map((r, i) => makeSurface(r, i, 10 + i + idx * 100));
+  const blockers = def.blockers.map((b, i) => {
+    const w = b.x2 - b.x1, cx = (b.x1 + b.x2) / 2; const geo = makeRock(w, b.h + 0.6, 3.6, 300 + i + idx * 11, 0.45, { solid: true }); const p = geo.attributes.position;
+    for (let k = 0; k < p.count; k++) { const x = p.getX(k), y = p.getY(k), z = p.getZ(k); if (y > 0) { const t = y / ((b.h + 0.6) / 2); p.setX(k, x * (1 - t * 0.45) + t * (i % 2 ? -1 : 1) * 0.25); p.setY(k, y - Math.abs(x) / (w / 2) * 1.9 * t); p.setZ(k, z * (1 - t * 0.55) - t * 0.6); } }
+    const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: STYLE.blocker, flatShading: true }));
+    m.position.set(cx, b.top - (b.h + 0.6) / 2, -2.0); m.castShadow = m.receiveShadow = true; levelGroup.add(m); return { ...b };
+  });
+  const crystals = def.crystals.map(([x, y], i) => makeCrystalObj(x, y, i, surfaces));
+  const hawks = (def.hawks || []).map((h, i) => makeHawkObj(h, i));
+  const starts = (def.starts || [surfaces[0].id]).map(id => surfaces.find(s => s.id === id));
+  const bottom = Math.min(...surfaces.map(s => s.y)), top = Math.max(...surfaces.map(s => s.y));
+  L = { idx, def, surfaces, blockers, crystals, hawks, starts, start: starts[0], bottom, top, twin: !!def.twin, ascent: !!def.ascent, dir: def.ascent ? -1 : 1, endless: !!def.endless,
+        gen: { lastX: 0, lastY: 0, lastW: 8, n: 0, sinceHawk: 0, sincePickup: 0, biome: 0, seed: 1000 } };
+  buildDebug();
+}
+
+// ============================================================
+//  Endless mode — procedural ledges ahead, difficulty grows with distance, biomes cycle
+// ============================================================
+const BIOME_CYCLE = ['desert', 'red', 'night', 'alpine', 'chalk'];   // dusk → night → dawn feel
+const ENDLESS = { biomeLength: 120, hawkStart: 70, spikeStart: 50, forkStart: 25 };
+function endlessDef(ascent) {
+  return { key: ascent ? 'endlessUp' : 'endlessDown', name: ascent ? 'ENDLESS ASCENT' : 'ENDLESS DESCENT', style: 'desert', endless: true, ascent, stars: { crystals: 0, time: 0 },
+    surfaces: [['start', 0, 0, 8, 'terrace']], crystals: [], blockers: [], hawks: [], herd: [] };
+}
+function genNext() {
+  const g = L.gen, R = Math.random, dirY = L.dir > 0 ? -1 : 1;   // world direction of progress
+  const dist = Math.abs(g.lastY), d = dist / 100;                 // difficulty 0 → 1 over the first 100 m, keeps growing
+  g.n++; g.seed++;
+  const gain = L.ascent ? 3.0 + R() * 0.7 : 4.5 + Math.min(3.5, d * 1.6) + R() * 1.5;
+  let side = (g.n % 2 ? 1 : -1); if (R() < 0.25) side = -side;
+  let w = L.ascent ? 2.8 - Math.min(1.4, d * 0.7) + (R() - .5) * 0.8 : 4.2 - Math.min(2.6, d * 1.0) + (R() - .5) * 1.4; w = Math.max(1.3, +w.toFixed(1));
+  // ascent: the next ledge must sit fully beside the current one (no ceiling above the goat) and stay within reach of a ~3 m jump
+  const dxMag = L.ascent ? g.lastW / 2 + w / 2 + 1.8 + R() * Math.min(2.5, 1.2 + d * 0.5) : 2 + R() * (3 + Math.min(4, d * 1.6));
+  let x = g.lastX + side * dxMag; if (x > 8 || x < -8) { side = -side; x = g.lastX + side * dxMag; }
+  if (x > 8 || x < -8) { x = clamp(x, -8, 8); if (L.ascent) w = Math.max(1.3, +(Math.abs(x - g.lastX) * 2 - g.lastW - 2.2).toFixed(1)); }
+  const y = g.lastY + dirY * gain;
+  const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : (R() < 0.4 ? 'sloped' : 'narrow');
+  const spk = dist > ENDLESS.spikeStart && w >= 2.8 && R() < Math.min(0.5, (dist - ENDLESS.spikeStart) / 150) ? (side > 0 ? 'R' : 'L') : null;
+  const row = ['e' + g.n, +x.toFixed(1), +y.toFixed(1), w, type]; if (spk) row.push(spk);
+  const s = makeSurface(row, g.n, g.seed); L.surfaces.push(s);
+  // optional fork: a narrower ledge on the other side with a pickup — route choice
+  if (dist > ENDLESS.forkStart && R() < 0.22) {
+    const fx = clamp(g.lastX - side * (2.5 + R() * 3), -8, 8); const fw = Math.max(1.3, +(w * 0.6).toFixed(1));
+    const f = makeSurface(['f' + g.n, +fx.toFixed(1), +y.toFixed(1), fw, fw < 1.7 ? 'foothold' : 'narrow'], g.n, g.seed + 500); L.surfaces.push(f);
+    L.crystals.push(makeCrystalObj(fx, y + 0.6, L.crystals.length, L.surfaces));
+  }
+  g.sincePickup++; if (g.sincePickup >= 4 && R() < 0.6) { g.sincePickup = 0;
+    const px = spk ? (spk === 'L' ? s.x + s.w / 4 : s.x - s.w / 4) : s.x; L.crystals.push(makeCrystalObj(px, y + 0.6, L.crystals.length, L.surfaces)); }
+  else if (R() < 0.12) L.crystals.push(makeCrystalObj((g.lastX + x) / 2, (g.lastY + y) / 2 + (L.ascent ? 1.5 : 2.5), L.crystals.length, L.surfaces));
+  g.sinceHawk++;
+  if (dist > ENDLESS.hawkStart && g.sinceHawk >= Math.max(3, 8 - Math.floor(d * 2)) && R() < 0.6) { g.sinceHawk = 0;
+    const hy = (g.lastY + y) / 2 + (L.ascent ? 0.6 : -0.6); L.hawks.push(makeHawkObj({ x1: -8 + R() * 2, x2: 6 + R() * 2, y: +hy.toFixed(1), speed: 3.8 + Math.min(4.5, d * 1.6) }, L.hawks.length)); }
+  g.lastX = x; g.lastY = y; g.lastW = w;
+  L.bottom = Math.min(L.bottom, y); L.top = Math.max(L.top, y);
+}
+function endlessTick() {
+  const ahead = L.dir > 0 ? (goats[0].pos.y - L.bottom) : (L.top - goats[0].pos.y);
+  while (ahead < 45 && L.surfaces.length < 400) { genNext(); if ((L.dir > 0 ? (goats[0].pos.y - L.bottom) : (L.top - goats[0].pos.y)) >= 45) break; }
+  // trim what is far behind
+  const gy = goats[0].pos.y, behind = s => L.dir > 0 ? s.y > gy + 50 : s.y < gy - 50;
+  for (let i = L.surfaces.length - 1; i >= 0; i--) { const s = L.surfaces[i]; if (behind(s) && s !== goats[0].onSurface && !(goats[0].lastSafe && goats[0].lastSafe.s === s)) { levelGroup.remove(s.group); L.surfaces.splice(i, 1); } }
+  for (let i = L.crystals.length - 1; i >= 0; i--) { const c = L.crystals[i]; if (behind(c)) { levelGroup.remove(c.mesh); L.crystals.splice(i, 1); } }
+  for (let i = L.hawks.length - 1; i >= 0; i--) { const h = L.hawks[i]; if (behind(h)) { levelGroup.remove(h.mesh); L.hawks.splice(i, 1); } }
+  L.bottom = Math.min(...L.surfaces.map(s => s.y)); L.top = Math.max(...L.surfaces.map(s => s.y));
+  // biome cycling with a colour fade
+  const bi = Math.floor(Math.abs(gy) / ENDLESS.biomeLength) % BIOME_CYCLE.length;
+  if (bi !== L.gen.biome) { L.gen.biome = bi; startStyleTween(STYLES[BIOME_CYCLE[bi]], 3); }
+}
+// ---- style tween (biome fade) ----
+let styleTween = null;
+function lerpColor(a, b, t) { return new THREE.Color(a).lerp(new THREE.Color(b), t).getHex(); }
+function blendStyle(a, b, t) {
+  const out = Object.assign({}, b);
+  for (const k of Object.keys(b)) { const va = a[k], vb = b[k];
+    if (typeof vb === 'number' && typeof va === 'number') out[k] = (k === 'sunI' || k === 'hemiI') ? lerp(va, vb, t) : lerpColor(va, vb, t);
+    else if (Array.isArray(vb) && Array.isArray(va) && typeof vb[0] === 'number') out[k] = vb.map((c, i) => lerpColor(va[i % va.length], c, t)); }
+  return out;
+}
+function startStyleTween(target, dur) { styleTween = { from: Object.assign({}, STYLE), to: target, t: 0, dur }; }
+function updateStyleTween(dt) {
+  if (!styleTween) return; styleTween.t += dt; const k = clamp(styleTween.t / styleTween.dur, 0, 1);
+  applyStyle(blendStyle(styleTween.from, styleTween.to, k * k * (3 - 2 * k))); if (k >= 1) { applyStyle(styleTween.to); styleTween = null; }
+}
+
+// ============================================================
+//  Goat (procedural Nubian ibex) — one class, N instances, one physics model
+// ============================================================
+const ST = { IDLE: 'idle', AIM: 'aim', WALK: 'walk', HERD: 'herd', TIRED: 'tired', JUMP: 'jump', LAND: 'land', CATCH: 'catch', FALL: 'fall', DEAD: 'dead', WIN: 'win' };
+const SKINS = {
+  classic: { body: 0xb28b5c, belly: 0xd8c39d, dark: 0x5a3f2a, horn: 0x6b5641 },
+  dark:    { body: 0x4a3a2f, belly: 0x8c7a66, dark: 0x2a201a, horn: 0x3d3128 },
+  snow:    { body: 0xe6e0d4, belly: 0xf6f2ea, dark: 0x8c8276, horn: 0x5c5249 },
+  rust:    { body: 0x9e5a33, belly: 0xdba97e, dark: 0x4a2a18, horn: 0x3a2a20 },
+};
+const GOAT_SKINS = [{ id: 'classic', name: 'CLASSIC IBEX', cost: 0 }, { id: 'dark', name: 'DARK IBEX', cost: CONFIG.darkIbexCost }, { id: 'snow', name: 'SNOW IBEX', cost: 15 }, { id: 'rust', name: 'RUST IBEX', cost: 18 }];
+const HAWK_SKINS = { hawk: { dark: 0x4a3324, light: 0xa88664, beak: 0xd9b23c }, raven: { dark: 0x15131c, light: 0x2c2936, beak: 0x4a4a4a }, eagle: { dark: 0x5e3a1a, light: 0xeee6d6, beak: 0xe6c23c }, falcon: { dark: 0x596270, light: 0xd9d5cc, beak: 0xd6b23a } };
+
+class Goat {
+  constructor(skin) {
+    this.pos = new THREE.Vector2(); this.vel = new THREE.Vector2(); this.corr = 0; this.facing = 1;
+    this.state = ST.IDLE; this.stateT = 0; this.onSurface = null; this.originSurface = null; this.graceT = 0; this.descendT = 0;
+    this.landKind = 'normal'; this.slideV = 0; this.catchEdge = null; this.catchSide = 1; this.fallTumble = 0; this.saves = 0;
+    this.A = { crouch: 0, tuck: 0, pitch: 0, headPitch: 0, face: 1, roll: 0 };
+    this.buildModel(SKINS[skin] || SKINS.classic);
+  }
+  buildModel(sk) {
+    const M = { body: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), belly: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }),
+      dark: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), cream: new THREE.MeshLambertMaterial({ color: 0xe9dcc3, flatShading: true }),
+      hoof: new THREE.MeshLambertMaterial({ color: 0x2b211a, flatShading: true }), horn: new THREE.MeshLambertMaterial({ color: sk.horn, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0x120c08 }) };
+    const goat = this.root = new THREE.Group(); const bodyG = this.bodyG = new THREE.Group(); goat.add(bodyG); this.legs = [];
+    const tg = new THREE.BoxGeometry(1.4, 0.62, 0.5, 4, 1, 1); const tp = tg.attributes.position;
+    for (let i = 0; i < tp.count; i++) { const x = tp.getX(i); let y = tp.getY(i), z = tp.getZ(i); const s = x < 0 ? 1 + (x / 0.7) * 0.22 : 1 + (x / 0.7) * 0.06; y *= s; z *= s; if (y < 0) y *= 0.92; if (x > 0.5 && y > 0) y += 0.06; tp.setXYZ(i, x, y, z); }
+    const torso = new THREE.Mesh(tg, M.body); torso.position.y = 1.12; bodyG.add(torso);
+    const chest = new THREE.Mesh(new THREE.IcosahedronGeometry(0.33, 0), M.body); chest.position.set(0.62, 1.02, 0); chest.scale.set(1, 1.15, 0.85); bodyG.add(chest);
+    const rump = new THREE.Mesh(new THREE.IcosahedronGeometry(0.26, 0), M.body); rump.position.set(-0.62, 1.12, 0); rump.scale.set(1, 1.1, 0.8); bodyG.add(rump);
+    const belly = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.16, 0.42), M.belly); belly.position.set(0, 0.84, 0); bodyG.add(belly);
+    const neckG = new THREE.Group(); neckG.position.set(0.74, 1.3, 0); neckG.rotation.z = -0.78; bodyG.add(neckG);
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.16, 0.6, 6), M.body); neck.position.y = 0.3; neckG.add(neck);
+    const headG = this.headG = new THREE.Group(); headG.position.set(0.72 + Math.sin(0.78) * 0.6, 1.3 + Math.cos(0.78) * 0.6, 0); bodyG.add(headG);
+    headG.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.27, 0.24), M.body)));
+    const muzzle = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.17, 0.16), M.dark); muzzle.position.set(0.3, -0.05, 0); headG.add(muzzle);
+    const nose = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, 0.1), M.hoof); nose.position.set(0.45, -0.03, 0); headG.add(nose);
+    const beard = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.16, 5), M.dark); beard.position.set(0.16, -0.2, 0); beard.rotation.z = 0.3; headG.add(beard);
+    for (const s of [-1, 1]) {
+      const eye = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.04), M.eye); eye.position.set(0.12, 0.05, s * 0.125); headG.add(eye);
+      const ear = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.18, 4), M.body); ear.position.set(-0.06, 0.08, s * 0.17); ear.rotation.z = -0.9; ear.rotation.x = s * 0.9; headG.add(ear);
+      const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(-0.02, 0.12, s * 0.07), new THREE.Vector3(-0.02, 0.42, s * 0.1), new THREE.Vector3(-0.28, 0.66, s * 0.15), new THREE.Vector3(-0.62, 0.62, s * 0.2), new THREE.Vector3(-0.82, 0.42, s * 0.24)]);
+      const N = 8;
+      for (let i = 0; i < N; i++) { const a = curve.getPoint(i / N), b = curve.getPoint((i + 1) / N); const dir = b.clone().sub(a); const len = dir.length();
+        const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.065 * (1 - (i + 1) / N) + 0.018, 0.065 * (1 - i / N) + 0.02, len * 1.15, 6), M.horn);
+        seg.position.copy(a).lerp(b, 0.5); seg.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize()); headG.add(seg); }
+    }
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.24, 5), M.dark); tail.position.set(-0.86, 1.4, 0); tail.rotation.z = 0.9; bodyG.add(tail);
+    const makeLeg = (x, z, front) => { const g = new THREE.Group(); g.position.set(x, 0.84, z); bodyG.add(g);
+      const up = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.42, 6), M.body); up.position.y = -0.21; g.add(up);
+      const low = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.055, 0.38, 6), M.dark); low.position.y = -0.61; g.add(low);
+      const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.06, 0.09, 6), M.cream); sock.position.y = -0.46; g.add(sock);
+      const hoof = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.08, 0.1), M.hoof); hoof.position.y = -0.8; g.add(hoof); g.userData.front = front; this.legs.push(g); };
+    makeLeg(0.48, 0.16, true); makeLeg(0.48, -0.16, true); makeLeg(-0.5, 0.15, false); makeLeg(-0.5, -0.15, false);
+    goat.traverse(o => { if (o.isMesh) o.castShadow = true; });
+    scene.add(goat);
+  }
+  setState(s) { this.state = s; this.stateT = 0; }
+  spawn(surface, x) {
+    this.pos.set(x, surface.y); this.vel.set(0, 0); this.corr = 0; this.facing = 1; this.onSurface = surface; this.originSurface = null; this.graceT = 0; this.descendT = 0;
+    this.slideV = 0; this.catchEdge = null; this.fallTumble = 0; this.saves = 0; Object.assign(this.A, { crouch: 0, tuck: 0, pitch: 0, headPitch: 0, face: 1, roll: 0 });
+    this.root.rotation.set(0, 0, 0); this.bodyG.rotation.set(0, 0, 0); this.setState(ST.IDLE);
+  }
+  get stable() { return this.state === ST.IDLE || this.state === ST.WIN; }
+  get airborne() { return this.state === ST.JUMP; }
+  jump(aim) {
+    const ls = launchStart(this, aim);
+    if (ls.walk) { this.walk = { from: this.pos.x, to: ls.x, t: 0, dur: Math.min(0.35, 0.09 * Math.abs(ls.x - this.pos.x) + 0.05), aim }; this.facing = Math.sign(ls.x - this.pos.x); this.setState(ST.WALK); return; }
+    this.launch(aim);
+  }
+  launch(aim) {
+    this.launchY = this.pos.y;
+    this.vel.copy(launchVelocity(aim)); this.corr = 0; this.originSurface = this.onSurface; this.onSurface = null; this.graceT = CONFIG.takeoffGrace; this.descendT = 0;
+    if (Math.abs(aim.dir.x) > 0.12) this.facing = Math.sign(aim.dir.x);
+    spawnDust(this.pos.x, this.pos.y, 3, 0.8); this.setState(ST.JUMP);
+  }
+  // one fixed step of flight; returns event or null
+  airStep() {
+    const prev = this.pos.clone(); integrate(this.pos, this.vel, this.corr, FIXED); this.graceT -= FIXED;
+    const p = this.pos, v = this.vel, tol = CONFIG.landingTolerance, o = this.originSurface, g = this.graceT > 0;
+    if (v.y <= 0) for (const s of L.surfaces) { if (s === o && g) continue; if (prev.y >= s.y - 1e-4 && p.y < s.y && p.x >= s.x1 - tol && p.x <= s.x2 + tol) return { type: 'land', s, speed: -v.y }; }
+    if (v.y < 0 && -v.y <= CONFIG.maxEdgeGrabFallSpeed) for (const s of L.surfaces) {
+      if (s === o && g) continue; if (p.y > s.y - 0.05 || p.y < s.y - CONFIG.edgeGrabDepth) continue; const gd = CONFIG.edgeGrabDistance;
+      if (p.x >= s.x1 - tol - gd && p.x <= s.x1 + 0.1 && (v.x + this.corr) > -1.5) return { type: 'catch', s, edge: s.x1, side: 1 };
+      if (p.x <= s.x2 + tol + gd && p.x >= s.x2 - 0.1 && (v.x + this.corr) < 1.5) return { type: 'catch', s, edge: s.x2, side: -1 };
+    }
+    // solid rock vs the goat's body box (not just the hooves)
+    const gw = CONFIG.goatHalfWidth, gh = CONFIG.goatBodyHeight, g0 = 0.05, rects = [];
+    for (const s of L.surfaces) {
+      if (s === o) { // own ledge stays passable while the goat is still hugging it (vertical drop along its face)
+        const hugging = p.y > s.y - s.h - 0.6 && p.x > s.x1 - gw - 0.25 && p.x < s.x2 + gw + 0.25;
+        if (g || hugging) continue;
+      }
+      rects.push({ x1: s.x1 - 0.15, x2: s.x2 + 0.15, top: s.y - 0.3, bot: s.y - s.h - 0.6 });
+    }
+    for (const b of L.blockers) rects.push({ x1: b.x1, x2: b.x2, top: b.top, bot: b.top - b.h });
+    for (const r of rects) if (p.x + gw > r.x1 && p.x - gw < r.x2 && p.y + gh > r.bot && p.y + g0 < r.top) {
+      if (prev.y + gh <= r.bot + 1e-3 && v.y > 0) { p.y = r.bot - gh - 0.02; v.y = 0; v.x *= 0.3; this.corr = 0; spawnPebbles(p.x, p.y + gh, 2, 0.6); return { type: 'scrape' }; }
+      let left; if (prev.x + gw <= r.x1 + 1e-3) left = true; else if (prev.x - gw >= r.x2 - 1e-3) left = false; else left = (p.x - r.x1) < (r.x2 - p.x);
+      p.x = left ? r.x1 - gw - 0.02 : r.x2 + gw + 0.02; v.x = 0; this.corr = 0; if (v.y > 0) v.y = 0; return { type: 'scrape' };
+    }
+    return null;
+  }
+  land(s, speed) {
+    this.onSurface = s; this.pos.y = s.y; this.pos.x = clamp(this.pos.x, s.x1, s.x2); this.vel.set(0, 0); this.corr = 0; this.descendT = 0;
+    { // nudge away from any rock the standing body would overlap
+      const gw = CONFIG.goatHalfWidth, gh = CONFIG.goatBodyHeight, p = this.pos, rects = [];
+      for (const o of L.surfaces) if (o !== s) rects.push({ x1: o.x1 - 0.15, x2: o.x2 + 0.15, top: o.y - 0.3, bot: o.y - o.h - 0.6 });
+      for (const b of L.blockers) rects.push({ x1: b.x1, x2: b.x2, top: b.top, bot: b.top - b.h });
+      for (const r of rects) if (p.x + gw > r.x1 && p.x - gw < r.x2 && p.y + gh > r.bot && p.y + 0.05 < r.top) p.x = clamp((p.x - r.x1 < r.x2 - p.x) ? r.x1 - gw - 0.05 : r.x2 + gw + 0.05, s.x1, s.x2);
+    }
+    if (s.spikes && this.pos.x + 0.3 > s.spikes.x1 && this.pos.x - 0.3 < s.spikes.x2) { this.spiked(s, s.spikes.x1 <= s.x1 + 1e-6 ? -1 : 1); return; }
+    // how many rows of ledges did this jump drop past?
+    const between = L.surfaces.filter(o => o !== s && o !== this.originSurface && o.y < this.launchY - 0.5 && o.y > s.y + 0.5).map(o => o.y).sort((a, b) => b - a);
+    let rows = 0, lastY = Infinity; for (const y of between) { if (lastY - y > CONFIG.ledgeRowGap) rows++; lastY = y; }
+    if (rows > CONFIG.maxLedgesSkipped && !s.finish) {
+      spawnDust(this.pos.x, this.pos.y, 14, 2); spawnPebbles(this.pos.x, this.pos.y - 0.2, 8, 1.8); thud(1, 160, 0.2);
+      this.setState(ST.TIRED); return;
+    }
+    const central = Math.abs(this.pos.x - s.x) < s.w * 0.25;
+    if (speed >= CONFIG.hardLandingSpeed) { this.landKind = 'hard'; this.slideV = this.facing * 1.6; spawnDust(this.pos.x, this.pos.y, 10, 1.6); spawnPebbles(this.pos.x, this.pos.y - 0.2, 6, 1.5); thud(0.9, 200, 0.14); }
+    else if (central && speed < CONFIG.perfectLandingSpeed) { this.landKind = 'perfect'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 4, 0.7); thud(0.5, 900, 0.05); thud(0.4, 300, 0.07); }
+    else { this.landKind = 'normal'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 6, 1); thud(0.55, 320, 0.08); }
+    this.setState(s.finish ? ST.WIN : ST.LAND);
+  }
+  catch(s, edge, side) {
+    if (s.spikes && edge >= s.spikes.x1 - 0.01 && edge <= s.spikes.x2 + 0.01) { this.pos.x = edge - side * 0.4; this.spiked(s, -side); return; }
+    this.onSurface = s; this.catchEdge = edge; this.catchSide = side; this.facing = side; this.saves++;
+    this.pos.x = edge - side * 0.18; this.pos.y = s.y - 0.85; this.vel.set(0, 0); this.corr = 0; this.descendT = 0;
+    spawnPebbles(edge, s.y - 0.1, 5, 1.2); spawnDust(edge, s.y, 3, 0.6); thud(0.7, 260, 0.1); this.setState(ST.CATCH);
+  }
+  spiked(s, dir) { G.failReason = 'spikes'; spawnPebbles(this.pos.x, this.pos.y + 0.2, 6, 1.5); thud(0.9, 700, 0.1); this.vel.set(dir * 3, 6); this.corr = 0; this.state = ST.JUMP; this.fall(); }
+  fall() { this.vel.x *= 0.5; this.corr = 0; if (this.state !== ST.JUMP) this.vel.set(this.facing * 0.5, 1.5); this.setState(ST.FALL); }
+  update(dt, input) {
+    this.stateT += dt; const s = this.state;
+    if (s === ST.JUMP) {
+      this.acc = (this.acc || 0) + dt;
+      while (this.acc >= FIXED) {
+        this.acc -= FIXED;
+        this.corr = clamp(this.corr + input * CONFIG.airControl * FIXED, -CONFIG.maxAirCorrection, CONFIG.maxAirCorrection);
+        if (!input) this.corr = damp(this.corr, 0, 2, FIXED);
+        const ev = this.airStep();
+        if (ev) { if (ev.type === 'land') { this.land(ev.s, ev.speed); break; } if (ev.type === 'catch') { this.catch(ev.s, ev.edge, ev.side); break; } if (Math.random() < 0.15) spawnPebbles(this.pos.x, this.pos.y + 0.3, 1, 0.6); }
+      }
+      if (this.state === ST.JUMP) { if (this.vel.y < 0) this.descendT += dt; else this.descendT = 0; if (this.descendT > CONFIG.deathFallTime || this.pos.y < L.bottom - 8) this.fall(); }
+    } else if (s === ST.WALK) {
+      const w = this.walk; w.t += dt; const k = clamp(w.t / w.dur, 0, 1); this.pos.x = lerp(w.from, w.to, k); this.pos.y = this.onSurface.y;
+      if (k >= 1) { this.pos.x = w.to; this.launch(w.aim); }
+    } else if (s === ST.HERD) {
+      if (this.stateT > this.herdDelay) this.pos.x += this.herdDir * 3.2 * dt; this.pos.y = this.onSurface.y; this.facing = this.herdDir;
+    } else if (s === ST.LAND) {
+      this.acc = 0; if (this.landKind === 'hard') { this.pos.x = clamp(this.pos.x + this.slideV * dt, this.onSurface.x1 + 0.1, this.onSurface.x2 - 0.1); this.slideV = damp(this.slideV, 0, 8, dt); }
+      if (this.stateT > (this.landKind === 'hard' ? 0.45 : 0.22)) this.setState(ST.IDLE);
+    } else if (s === ST.CATCH) {
+      this.acc = 0; const sf = this.onSurface, e = this.catchEdge, side = this.catchSide;
+      if (this.stateT < 0.3) { this.pos.x = e - side * 0.18; this.pos.y = sf.y - 0.85; if (Math.random() < 0.2) spawnPebbles(e, sf.y - 0.4, 1, 0.5); }
+      else if (this.stateT < 0.68) { const t = (this.stateT - 0.3) / 0.38, k = t * t * (3 - 2 * t); this.pos.x = lerp(e - side * 0.18, e + side * 0.55, k); this.pos.y = lerp(sf.y - 0.85, sf.y, k); }
+      else { this.pos.x = e + side * 0.55; this.pos.y = sf.y; spawnDust(this.pos.x, this.pos.y, 3, 0.6); this.setState(ST.IDLE); }
+    } else if (s === ST.FALL || s === ST.DEAD) {
+      if (this.pos.y < L.bottom - 40) return;
+      this.fallTumble += dt * 4; this.vel.y -= CONFIG.gravity * dt; this.pos.x += this.vel.x * dt; this.pos.y += this.vel.y * dt;
+    }
+    if (s === ST.IDLE || s === ST.AIM || s === ST.TIRED) { this.acc = 0; if (this.onSurface) this.pos.y = this.onSurface.y; }
+    if (s === ST.IDLE && this.onSurface) this.lastSafe = { s: this.onSurface, x: this.pos.x };
+  }
+  animate(dt, aim) {
+    const s = this.state, t = this.stateT, now = performance.now() / 1000, A = this.A;
+    let crouch = 0, tuck = 0, pitch = 0, headPitch = 0, roll = 0, legFwd = 0, px = this.pos.x, py = this.pos.y;
+    if (s === ST.IDLE && !aim) { crouch = 0.03 + Math.sin(now * 2.2) * 0.03; headPitch = Math.sin(now * 0.9) * 0.12 - 0.15; }
+    else if (s === ST.IDLE && aim) { crouch = 0.18 + aim.t * 0.62; headPitch = clamp(aim.dir.y * 0.8, -0.5, 0.7); }
+    else if (s === ST.WALK || (s === ST.HERD && t > this.herdDelay)) { crouch = 0.12 + Math.abs(Math.sin(now * 22)) * 0.08; headPitch = -0.35; }
+    else if (s === ST.HERD) { crouch = 0.03 + Math.sin(now * 2.2 + this.pos.x) * 0.03; headPitch = 0.1; }
+    else if (s === ST.JUMP) { if (t < 0.1) crouch = -0.25; else tuck = clamp((t - 0.1) / 0.15, 0, 1); pitch = Math.atan2(this.vel.y, Math.abs(this.vel.x + this.corr) + 2) * 0.55; headPitch = pitch * 0.4 - 0.1; if (this.vel.y < -4) tuck = 0.5; }
+    else if (s === ST.LAND) { const k = Math.max(0, 1 - t / (this.landKind === 'hard' ? 0.45 : 0.22)); crouch = (this.landKind === 'hard' ? 1.0 : 0.55) * Math.sin(k * Math.PI * 0.5 + 0.2); headPitch = -0.3 * k; }
+    else if (s === ST.CATCH) { const e = this.catchEdge, side = this.catchSide, top = this.onSurface.y; let hang = t < 0.3 ? 1 : clamp(1 - (t - 0.3) / 0.38, 0, 1); hang = hang * hang * (3 - 2 * hang);
+      pitch = 1.3 * hang; legFwd = 1.4 * hang; headPitch = 0.35 * hang; if (t >= 0.3) crouch = 0.5 * (1 - hang); px = lerp(e + side * 0.55, e - side * 0.45, hang); py = lerp(top, top - 1.45, hang); }
+    else if (s === ST.FALL || s === ST.DEAD) { roll = this.fallTumble; tuck = -0.4; headPitch = -0.5; }
+    else if (s === ST.WIN) { crouch = 0.02 + Math.sin(now * 2) * 0.02; headPitch = 0.25; }
+    else if (s === ST.TIRED) { const k = clamp(t / 0.5, 0, 1); crouch = 1.35 * k + Math.sin(now * 5) * 0.06; headPitch = -0.75 * k + Math.sin(now * 5) * 0.05; legFwd = 1.5 * k; pitch = -0.1 * k; }
+    const k = 1 - Math.exp(-18 * dt);
+    A.crouch += (crouch - A.crouch) * k; A.tuck += (tuck - A.tuck) * k; A.pitch += (pitch - A.pitch) * k; A.headPitch += (headPitch - A.headPitch) * k; A.face += (this.facing - A.face) * (1 - Math.exp(-10 * dt));
+    const slope = (s === ST.IDLE || s === ST.LAND || s === ST.WIN || s === ST.HERD || s === ST.TIRED) && this.onSurface ? this.onSurface.tilt : 0;
+    A.roll += ((roll || slope) - A.roll) * k; if (s === ST.FALL || s === ST.DEAD) A.roll = roll;
+    if (slope && this.onSurface) py += (px - this.onSurface.x) * Math.tan(slope);
+    this.root.position.set(px, py, this.herdZ || 0); this.root.rotation.y = lerp(Math.PI - 0.35, 0.35, (A.face + 1) / 2);
+    this.bodyG.position.y = -A.crouch * 0.28; this.bodyG.rotation.z = A.pitch + (s === ST.FALL || s === ST.DEAD ? A.roll : A.roll * (A.face > 0 ? 1 : -1)); this.headG.rotation.z = A.headPitch;
+    for (const l of this.legs) { l.scale.y = 1 - clamp(A.crouch, -0.3, 1) * 0.33; l.rotation.z = (l.userData.front ? -A.tuck * 1.1 : A.tuck * 1.0) + legFwd; if (s === ST.WALK || (s === ST.HERD && t > this.herdDelay)) l.rotation.z = Math.sin(now * 22 + (l.userData.front ? 0 : Math.PI) + l.position.z * 6) * 0.55; if (s === ST.FALL || s === ST.DEAD) l.rotation.z = Math.sin(now * 20 + l.position.x) * 0.5; }
+  }
+}
+
+// ============================================================
+//  Physics — shared by the real jump and the trajectory preview
+// ============================================================
+const FIXED = 1 / 120;
+function launchVelocity(aim) { const k = (L && L.ascent) ? CONFIG.ascentJumpBoost : 1; const v = new THREE.Vector2(aim.dir.x * aim.power * k, aim.dir.y * aim.power * k); if (v.y < CONFIG.minLaunchUp) v.y = CONFIG.minLaunchUp; return v; }
+function integrate(pos, vel, corr, dt) { vel.y -= CONFIG.gravity * dt; pos.x += (vel.x + corr) * dt; pos.y += vel.y * dt; }
+// Where does this jump actually start? A downward jump whose arc would come back onto the goat's own ledge
+// starts from that ledge's edge on the aim side (the goat trots there first). Upward jumps start where the goat stands.
+function launchStart(goat, aim) {
+  const s = goat.onSurface, p = goat.pos;
+  if (!s || aim.dir.y >= 0) return { x: p.x, y: p.y, walk: false };
+  const v = launchVelocity(aim); const xr = p.x + v.x * (2 * v.y / CONFIG.gravity);
+  if (xr < s.x1 - CONFIG.landingTolerance || xr > s.x2 + CONFIG.landingTolerance) return { x: p.x, y: p.y, walk: false };
+  const ex = aim.dir.x > 0.05 ? s.x2 : aim.dir.x < -0.05 ? s.x1 : (p.x - s.x1 <= s.x2 - p.x ? s.x1 : s.x2);
+  return { x: ex, y: s.y, walk: Math.abs(ex - p.x) > 0.05 };
+}
+function previewTrajectory(from, aim) {
+  const pos = from.clone(), vel = launchVelocity(aim); const pts = [pos.clone()]; let t = 0;
+  while (t < 2.4 && pos.y > from.y - 11) { integrate(pos, vel, 0, FIXED); t += FIXED; pts.push(pos.clone()); }
+  return pts;
+}
+
+// ============================================================
+//  Aim visuals, particles, debug, audio
+// ============================================================
+const MAX_GOATS = 2;
+const arrows = [], dotSets = [];
+for (let g = 0; g < MAX_GOATS; g++) {
+  const a = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(), 1, 0xfff6e0, 0.5, 0.35); a.visible = false; scene.add(a); arrows.push(a);
+  const dg = new THREE.IcosahedronGeometry(0.12, 0); const set = [];
+  for (let i = 0; i < 40; i++) { const m = new THREE.Mesh(dg, new THREE.MeshBasicMaterial({ color: 0xfff6e0, transparent: true, opacity: 0.9 })); m.visible = false; m.position.z = 0.5; scene.add(m); set.push(m); }
+  dotSets.push(set);
+}
+const particles = [];
+const dustGeo = new THREE.IcosahedronGeometry(0.16, 0), pebGeo = new THREE.DodecahedronGeometry(0.08, 0);
+const dustMat = new THREE.MeshLambertMaterial({ color: 0xe6d3b2, transparent: true, opacity: 0.8 }), sparkMat = new THREE.MeshBasicMaterial({ color: 0xf6f9ff, transparent: true, opacity: 0.95 });
+const pebMat = new THREE.MeshLambertMaterial({ color: 0x7c5a3d, flatShading: true });
+function spawnDust(x, y, n, spread = 1, mat = dustMat) {
+  for (let i = 0; i < n; i++) { const m = new THREE.Mesh(dustGeo, mat.clone()); m.position.set(x + (Math.random() - .5) * 0.6, y + 0.1, 0.3 + Math.random() * 0.4);
+    m.userData = { kind: 'dust', vx: (Math.random() - .5) * 3 * spread, vy: 0.8 + Math.random() * 1.6, life: 0, ttl: 0.5 + Math.random() * 0.4, s: 0.5 + Math.random() * 0.7 }; scene.add(m); particles.push(m); }
+}
+function spawnSparks(x, y) {
+  for (let i = 0; i < 12; i++) { const m = new THREE.Mesh(dustGeo, sparkMat.clone()); m.position.set(x, y, 0.4); m.scale.setScalar(0.35 + Math.random() * 0.4); const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 4;
+    m.userData = { kind: 'dust', vx: Math.cos(a) * sp, vy: Math.sin(a) * sp + 2, life: 0, ttl: 0.45 + Math.random() * 0.3, s: 0.3 }; scene.add(m); particles.push(m); }
+}
+function spawnPebbles(x, y, n, spread = 1) {
+  for (let i = 0; i < n; i++) { const m = new THREE.Mesh(pebGeo, pebMat); m.position.set(x + (Math.random() - .5) * 0.6, y, 0.2 + Math.random() * 0.4); m.scale.setScalar(0.5 + Math.random());
+    m.userData = { kind: 'peb', vx: (Math.random() - .5) * 4 * spread, vy: Math.random() * 3 - 1, life: 0, ttl: 2.6, rx: Math.random() * 6, rz: Math.random() * 6 }; scene.add(m); particles.push(m); }
+}
+function updateParticles(dt) {
+  for (let i = particles.length - 1; i >= 0; i--) { const m = particles[i], u = m.userData; u.life += dt;
+    if (u.kind === 'dust') { u.vy -= 1.5 * dt; m.position.x += u.vx * dt; m.position.y += u.vy * dt; const t = u.life / u.ttl; m.scale.setScalar(u.s * (0.5 + t * 1.6)); m.material.opacity = 0.75 * (1 - t); }
+    else { u.vy -= CONFIG.gravity * dt; m.position.x += u.vx * dt; m.position.y += u.vy * dt; m.rotation.x += u.rx * dt; m.rotation.z += u.rz * dt; }
+    if (u.life > u.ttl) { scene.remove(m); if (u.kind === 'dust') m.material.dispose(); particles.splice(i, 1); } }
+}
+function clearParticles() { for (const m of particles) scene.remove(m); particles.length = 0; }
+const debugG = new THREE.Group(); debugG.visible = false; scene.add(debugG);
+function buildDebug() {
+  while (debugG.children.length) debugG.remove(debugG.children[0]);
+  const line = (pts, color) => { const g = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p[0], p[1], 0.7))); debugG.add(new THREE.Line(g, new THREE.LineBasicMaterial({ color }))); };
+  const rect = (x1, x2, top, bot, color) => line([[x1, top], [x2, top], [x2, bot], [x1, bot], [x1, top]], color);
+  for (const s of L.surfaces) { line([[s.x1 - CONFIG.landingTolerance, s.y], [s.x2 + CONFIG.landingTolerance, s.y]], 0x40ff70);
+    rect(s.x1 - CONFIG.landingTolerance - CONFIG.edgeGrabDistance, s.x1 + 0.1, s.y, s.y - CONFIG.edgeGrabDepth, 0xffe040); rect(s.x2 - 0.1, s.x2 + CONFIG.landingTolerance + CONFIG.edgeGrabDistance, s.y, s.y - CONFIG.edgeGrabDepth, 0xffe040);
+    rect(s.x1 - 0.15, s.x2 + 0.15, s.y - 0.3, s.y - s.h - 0.6, 0x40a0ff); }
+  for (const b of L.blockers) rect(b.x1, b.x2, b.top, b.top - b.h, 0xff4040);
+  for (const s of L.surfaces) if (s.spikes) rect(s.spikes.x1, s.spikes.x2, s.y + 1, s.y, 0xff2020);
+  for (const c of L.crystals) rect(c.x - CONFIG.crystalPickupRadius, c.x + CONFIG.crystalPickupRadius, c.y + CONFIG.crystalPickupRadius, c.y - CONFIG.crystalPickupRadius, 0xa0e0ff);
+}
+const debugTraj = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xff70ff })); debugTraj.visible = false; scene.add(debugTraj);
+let actx = null;
+function initAudio() { if (actx) return; try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { actx = null; } }
+function thud(vol = 0.5, freq = 260, dur = 0.09) {
+  if (!actx) return; if (actx.state === 'suspended') actx.resume();
+  const n = actx.sampleRate * dur, buf = actx.createBuffer(1, n, actx.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  const src = actx.createBufferSource(); src.buffer = buf; const f = actx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = freq; const g = actx.createGain(); g.gain.value = vol;
+  src.connect(f); f.connect(g); g.connect(actx.destination); src.start();
+}
+function chime() {
+  if (!actx) return; const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(1040, actx.currentTime); o.frequency.exponentialRampToValueAtTime(1560, actx.currentTime + 0.08);
+  g.gain.setValueAtTime(0.18, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.25); o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + 0.25);
+}
+
+// ============================================================
+//  Game flow: menu → select → play → result
+// ============================================================
+const $ = id => document.getElementById(id);
+const hud = $('hud'), hint = $('hint'), vig = $('vig'), topwarn = $('topwarn'), botwarn = $('botwarn'), wind = $('wind'), dbg = $('dbg'), dpref = $('dpref'), ddanger = $('ddanger');
+let mode = 'menu';
+const goats = [], herd = [];
+const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0, dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, hintDone: false, collected: 0, result: null, twin: false };
+
+function showScreen(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); }
+function goMenu() { mode = 'menu'; hud.style.display = 'none'; hint.style.opacity = 0; $('menuSalt').textContent = '◆ ' + save.totalSaltCrystals; showScreen('scMenu'); }
+let curWorld = 0;
+function goSelect() {
+  mode = 'select'; hud.style.display = 'none'; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = '◀ MENU'; $('bBackMenu').onclick = null;
+  WORLDS.forEach((w, wi) => {
+    let got = 0; for (const k of w.levels) got += (save.levels[k] || { stars: 0 }).stars;
+    const b = document.createElement('div'); b.className = 'btn';
+    b.innerHTML = `WORLD ${wi + 1} · ${w.name}<small>${w.sub} · ${w.levels.length} levels</small><small>★ ${got} / ${w.levels.length * 3}</small>`;
+    b.addEventListener('click', e => { e.stopPropagation(); goWorld(wi); });
+    list.appendChild(b);
+  });
+  showScreen('scSelect');
+}
+function goWorld(wi) {
+  mode = 'select'; curWorld = wi; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = '◀ WORLDS';
+  const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `WORLD ${wi + 1} · ${w.name}`; list.appendChild(h);
+  w.levels.forEach((k, li) => {
+    const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
+    const b = document.createElement('div'); b.className = 'btn';
+    b.innerHTML = `${wi + 1}-${li + 1} · ${lv.name}<small>${lv.ascent ? '▲ ascent' : lv.twin ? '⇊ twin descent' : '▼ descent'}${lv.hawks && lv.hawks.length ? ' · birds' : ''}</small><small>${'★'.repeat(stars) + '☆'.repeat(3 - stars)}</small>`;
+    b.addEventListener('click', e => { e.stopPropagation(); startLevel(idx); });
+    list.appendChild(b);
+  });
+  showScreen('scSelect');
+}
+function preferredFy(y) { return y - (L ? L.dir : 1) * (0.5 - CONFIG.goatScreenFraction) * 2 * halfH; }
+function startLevel(idx, defOverride) {
+  buildLevel(idx, defOverride); clearParticles(); styleTween = null;
+  for (const g of goats) scene.remove(g.root); goats.length = 0;
+  for (const st of L.starts) { const g = new Goat(save.skin); g.spawn(st, st.x); goats.push(g); }
+  for (const g of herd) scene.remove(g.root); herd.length = 0;
+  for (const h of (L.def.herd || [])) { const sf = L.surfaces.find(s => s.id === h.surface);
+    for (let i = 0; i < h.n; i++) { const g = new Goat(i % 3 === 2 ? 'dark' : 'classic'); g.spawn(sf, h.x + h.dir * i * 1.5 + (i % 2) * 0.4); g.facing = -h.dir; g.A.face = -h.dir; g.herdDir = h.dir; g.herdDelay = 0.5 + i * 0.12; g.root.position.z = -0.5 - (i % 2) * 0.5; g.herdZ = g.root.position.z; g.isHerd = true; herd.push(g); } }
+  G.twin = L.twin;
+  Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, camFx: 0, camFy: preferredFy(L.start.y), dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, collected: 0, result: null });
+  mode = 'play'; hud.style.display = 'flex'; showScreen(null); if (!G.hintDone) hint.style.opacity = 1;
+  $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = STYLE.pickupName; $('hDescLbl').textContent = L.ascent ? 'ASCENT' : 'DESCENT';
+  hint.innerHTML = L.twin ? 'One drag moves both goats<br>Check both arcs before you release' : 'Drag toward your jump<br>Release to leap'; if (L.twin) hint.style.opacity = 1;
+  if (L.hawks.length) { hint.innerHTML = 'Hawks patrol the gaps<br>Time your jumps between passes'; hint.style.opacity = 1; }
+  if (L.ascent) { hint.innerHTML = 'Climb! The mountain drifts down<br>Jump up before it carries you away'; hint.style.opacity = 1; }
+  if (L.endless) { endlessTick(); hint.innerHTML = (L.ascent ? 'Endless ascent' : 'Endless descent') + ' — how far can you go?<br>It gets harder every 100 m'; hint.style.opacity = 1; }
+  $('hSalt').parentElement.style.visibility = (L.crystals.length || L.endless) ? 'visible' : 'hidden'; if (L.endless) $('hSalt').textContent = '◆ 0';
+}
+function finishLevel(win, reason) {
+  mode = 'result'; G.endT = 0; hint.style.opacity = 0;
+  const idx = L.idx, def = L.def; const saves = goats.reduce((a, g) => a + g.saves, 0);
+  if (L.endless) {
+    save.endless = save.endless || {}; const best = save.endless[def.key] || 0; const distm = Math.round(G.maxDesc); const newBest = distm > best;
+    if (newBest) save.endless[def.key] = distm; const gained = Math.min(5, G.collected); save.totalSaltCrystals += gained; persist();
+    $('rTitle').textContent = reason === 'hawk' ? 'THE HAWK GOT YOU' : reason === 'tired' ? 'TOO FAR' : reason === 'spikes' ? 'SPIKED' : 'YOU FELL';
+    $('rSub').innerHTML = `${L.ascent ? 'Climbed' : 'Descended'} <b>${distm} m</b>${newBest ? ' — NEW BEST!' : ` · best ${best} m`}<br>${STYLE.pickupName} ◆ ${G.collected}${gained ? ` (+${gained} salt)` : ''} · Jumps ${G.jumps}`;
+    $('rStars').innerHTML = ''; $('bNext').style.display = 'none';
+    const canCont = goats.every(g => g.lastSafe) && save.totalSaltCrystals >= CONFIG.continueCost;
+    $('bContinue').style.display = 'block'; $('bContinue').classList.toggle('dim', !canCont); $('contCost').textContent = `◆ ${CONFIG.continueCost}  (you have ${save.totalSaltCrystals})`;
+    G.result = { win: false, delay: reason === 'tired' ? 2.4 : 1.0 }; return;
+  }
+  if (win) {
+    const hasC = L.crystals.length > 0; const st = [true, hasC ? G.collected >= def.stars.crystals : saves === 0, G.time <= def.stars.time]; const stars = st.filter(Boolean).length;
+    const prev = save.levels[def.key] || { crystals: 0, time: Infinity, stars: 0 };
+    const gained = Math.max(0, G.collected - prev.crystals); save.totalSaltCrystals += gained;
+    save.levels[def.key] = { crystals: Math.max(prev.crystals, G.collected), time: Math.min(prev.time, G.time), stars: Math.max(prev.stars, stars) }; persist();
+    $('rTitle').textContent = L.ascent ? 'SUMMIT REACHED' : 'DESCENT COMPLETE';
+    $('rSub').innerHTML = `Time ${fmtTime(G.time)}<br>${hasC ? `${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}${gained ? ` &nbsp;(+${gained})` : ''}<br>` : ''}Jumps ${G.jumps} · Edge saves ${saves}`;
+    $('rStars').innerHTML = `<div class="${st[0] ? 'on' : 'off'}">${st[0] ? '★' : '☆'} COMPLETE</div><div class="${st[1] ? 'on' : 'off'}">${st[1] ? '★' : '☆'} ${hasC ? def.stars.crystals + '+ ' + STYLE.pickupName : 'NO EDGE SAVES'}</div><div class="${st[2] ? 'on' : 'off'}">${st[2] ? '★' : '☆'} UNDER ${fmtTime(def.stars.time)}</div><div>${stars} / 3</div>`;
+    $('bNext').style.display = (idx + 1 < LEVELS.length) ? 'block' : 'none';
+  } else {
+    $('rTitle').textContent = G.twin ? 'ONE GOAT FELL' : 'YOU FELL';
+    $('rTitle').textContent = reason === 'hawk' ? 'THE HAWK GOT YOU' : reason === 'tired' ? 'TOO FAR' : reason === 'spikes' ? 'SPIKED' : $('rTitle').textContent;
+    $('rSub').innerHTML = (reason === 'camera' ? 'The mountain stopped waiting for you.<br>' : reason === 'tired' ? 'That drop was too long. The goat is exhausted and cannot go on.<br>' : reason === 'spikes' ? 'Those spikes were not a landing spot.<br>' : '') + `${L.ascent ? 'Ascent' : 'Descent'} ${Math.round(G.maxDesc)} m` + (L.crystals.length ? ` · ${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}` : '');
+    $('rStars').innerHTML = ''; $('bNext').style.display = 'none';
+  }
+  const canCont = !win && goats.every(g => g.lastSafe) && save.totalSaltCrystals >= CONFIG.continueCost;
+  $('bContinue').style.display = win ? 'none' : 'block'; $('bContinue').classList.toggle('dim', !canCont); $('contCost').textContent = `◆ ${CONFIG.continueCost}  (you have ${save.totalSaltCrystals})`;
+  G.result = { win, delay: win ? 3.2 : reason === 'tired' ? 2.4 : 1.0 };
+}
+$('bPlay').addEventListener('pointerdown', e => { e.stopPropagation(); initAudio(); goSelect(); });
+$('bBackMenu').addEventListener('pointerdown', e => { e.stopPropagation(); if ($('bBackMenu').textContent.includes('WORLDS')) goSelect(); else goMenu(); });
+$('bBackMenu2').addEventListener('pointerdown', e => { e.stopPropagation(); goMenu(); });
+$('bIbex').addEventListener('pointerdown', e => { e.stopPropagation(); goIbex(); });
+$('bEndless').addEventListener('pointerdown', e => { e.stopPropagation(); initAudio(); goEndless(); });
+$('bBackMenu3').addEventListener('pointerdown', e => { e.stopPropagation(); goMenu(); });
+$('bEndDown').addEventListener('pointerdown', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
+$('bEndUp').addEventListener('pointerdown', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
+function goEndless() { mode = 'select'; hud.style.display = 'none'; const b = save.endless || {}; $('bestDown').textContent = `best ${b.endlessDown || 0} m`; $('bestUp').textContent = `best ${b.endlessUp || 0} m`; showScreen('scEndless'); }
+function goIbex() {
+  mode = 'ibex'; hud.style.display = 'none'; $('ibexSalt').textContent = '◆ ' + save.totalSaltCrystals;
+  const list = $('skinList'); list.innerHTML = '';
+  const section = (title, items, key) => {
+    const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '10px 0 2px'; h.textContent = title; list.appendChild(h);
+    for (const it of items) {
+      const un = !!save.unlocked[it.id], sel = save[key] === it.id, can = save.totalSaltCrystals >= it.cost;
+      const b = document.createElement('div'); b.className = 'btn' + (!un && !can ? ' dim' : '');
+      b.innerHTML = `${it.name}<small>${un ? (sel ? 'SELECTED' : 'EQUIP') : `${it.cost} ◆${can ? ' — UNLOCK' : ''}`}</small>`;
+      b.addEventListener('click', e => { e.stopPropagation();
+        if (!un) { if (!can) return; save.totalSaltCrystals -= it.cost; save.unlocked[it.id] = true; }
+        save[key] = it.id; persist(); goIbex(); });
+      list.appendChild(b);
+    }
+  };
+  section('IBEX', GOAT_SKINS, 'skin');
+  showScreen('scIbex');
+}
+$('bRetry').addEventListener('pointerdown', e => { e.stopPropagation(); startLevel(L.idx, L.endless ? endlessDef(L.ascent) : undefined); });
+$('bContinue').addEventListener('pointerdown', e => { e.stopPropagation(); continueRun(); });
+function continueRun() {
+  if (mode !== 'result' || G.result.win || !goats.every(g => g.lastSafe) || save.totalSaltCrystals < CONFIG.continueCost) return;
+  save.totalSaltCrystals -= CONFIG.continueCost; persist();
+  for (const g of goats) { const ls = g.lastSafe, saves = g.saves; g.spawn(ls.s, ls.x); g.saves = saves; g.lastSafe = ls; }
+  clearParticles(); let top = -Infinity; for (const g of goats) top = Math.max(top, g.pos.y);
+  Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, dangerT: 0, endT: 0, result: null, camFy: preferredFy(top) });
+  mode = 'play'; hud.style.display = 'flex'; showScreen(null);
+}
+$('bNext').addEventListener('pointerdown', e => { e.stopPropagation(); startLevel(L.idx + 1); });
+$('bLevels').addEventListener('pointerdown', e => { e.stopPropagation(); if (L.endless) goEndless(); else goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key))); });
+for (const s of document.querySelectorAll('.screen')) s.addEventListener('pointerdown', e => e.stopPropagation());
+
+// ============================================================
+//  Input (shared aim: one drag drives every goat)
+// ============================================================
+function pointerPos(e) { return { x: e.clientX, y: e.clientY }; }
+function computeAim(dx, dy) {
+  const len = Math.hypot(dx, dy); if (len <= CONFIG.dragDeadZone) return null;
+  const t = Math.pow(clamp((len - CONFIG.dragDeadZone) / (CONFIG.maxDragDistance - CONFIG.dragDeadZone), 0, 1), CONFIG.jumpPowerCurve);
+  return { dir: new THREE.Vector2(dx / len, -dy / len), power: lerp(CONFIG.minJumpPower, CONFIG.maxJumpPower, t), t };
+}
+const allStable = () => goats.every(g => g.stable);
+const anyAirborne = () => goats.some(g => g.airborne);
+canvas.addEventListener('pointerdown', e => {
+  initAudio(); if (mode !== 'play') return;
+  if (allStable()) { G.drag = pointerPos(e); G.aim = null; G.aiming = true; G.started = true; }
+  else if (anyAirborne()) G.drag = pointerPos(e);
+  canvas.setPointerCapture?.(e.pointerId);
+});
+addEventListener('pointermove', e => {
+  if (!G.drag || mode !== 'play') return; const p = pointerPos(e);
+  if (G.aiming) G.aim = computeAim(p.x - G.drag.x, p.y - G.drag.y); else G.airInput = clamp((p.x - G.drag.x) / 60, -1, 1);
+});
+function release() {
+  if (mode === 'play' && G.aiming) { if (G.aim && allStable()) doJump(G.aim); G.aim = null; G.aiming = false; }
+  G.drag = null; G.airInput = 0;
+}
+addEventListener('pointerup', release); addEventListener('pointercancel', release);
+addEventListener('keydown', e => {
+  if (e.key === 'd' || e.key === 'D') { debugG.visible = !debugG.visible; dbg.style.display = debugG.visible ? 'block' : 'none'; dpref.style.display = ddanger.style.display = debugG.visible ? 'block' : 'none'; }
+  if ((e.key === 'r' || e.key === 'R') && L && (mode === 'play' || mode === 'result')) startLevel(L.idx, L.endless ? endlessDef(L.ascent) : undefined);
+  if (e.key === 'Escape' && mode === 'play') goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key)));
+  if (e.key === 'ArrowLeft') G.keyInput = -1; if (e.key === 'ArrowRight') G.keyInput = 1;
+});
+addEventListener('keyup', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') G.keyInput = 0; });
+function doJump(aim) {
+  for (const g of goats) if (g.state !== ST.WIN) g.jump(aim);
+  G.jumps++; if (G.jumps >= CONFIG.hintJumps && !G.hintDone) { G.hintDone = true; hint.style.opacity = 0; }
+}
+
+// ============================================================
+//  Update
+// ============================================================
+let last = performance.now(), fps = 60; const _v3 = new THREE.Vector3();
+function screenFraction(x, y) { _v3.set(x, y + 0.7, 0).project(camera); return (1 - _v3.y) / 2; }
+
+function update(dt) {
+  if (mode !== 'play' && mode !== 'result') return;
+  const playing = mode === 'play';
+  if (G.started && playing) G.time += dt;
+  const input = G.drag && !G.aiming ? G.airInput : G.keyInput;
+  for (const g of goats) g.update(dt, input);
+  for (const g of herd) { g.update(dt, 0); g.animate(dt, null); }
+  if (L.endless && playing) endlessTick();
+  updateStyleTween(dt);
+
+  // crystals: pickup + idle animation
+  const now = performance.now() / 1000;
+  for (const c of L.crystals) {
+    if (c.taken) continue; c.mesh.rotation.y = now * 1.2 + c.phase; c.mesh.position.y = c.y + Math.sin(now * 2 + c.phase) * 0.08;
+    if (playing) for (const g of goats) if (Math.hypot(g.pos.x - c.x, g.pos.y + 0.6 - c.y) < CONFIG.crystalPickupRadius || (c.surface && g.onSurface === c.surface && g.state !== ST.JUMP && g.state !== ST.CATCH)) { c.taken = true; c.mesh.visible = false; G.collected++; spawnSparks(c.x, c.y); chime(); $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`; break; }
+  }
+
+  // hawks: patrol, flap, and knock the goat off if its body touches one
+  for (const h of L.hawks) {
+    h.t += dt; const span = h.x2 - h.x1, ph = (h.t * h.speed) % (2 * span); const k = ph < span ? ph : 2 * span - ph; h.dir = ph < span ? 1 : -1;
+    h.x = h.x1 + k; const m = h.mesh; m.position.set(h.x, h.y + Math.sin(h.t * 3) * 0.15, 0.1);
+    m.rotation.y = damp(m.rotation.y, h.dir > 0 ? 0 : Math.PI, 8, dt); m.rotation.z = Math.sin(h.t * 1.3) * 0.08;
+    const flap = Math.sin(h.t * 9); for (const w of m.wings) { w.rotation.x = w.userData.side * flap * 0.55; w.outer.rotation.x = w.userData.side * flap * 0.45; }
+    if (playing) for (const g of goats) { if (g.state !== ST.JUMP) continue;   // birds only strike a goat in the air
+      const r = CONFIG.hawkHitRadius; if (h.x + r > g.pos.x - CONFIG.goatHalfWidth && h.x - r < g.pos.x + CONFIG.goatHalfWidth && h.y + r > g.pos.y + 0.1 && h.y - r < g.pos.y + CONFIG.goatBodyHeight) {
+        G.failReason = 'hawk'; g.vel.set(h.dir * 4, 2); g.corr = 0; g.state = ST.JUMP; g.fall(); spawnDust(g.pos.x, g.pos.y + 0.8, 8, 1.5); thud(0.8, 500, 0.12); } }
+  }
+  // win / fail
+  if (playing) {
+    if (goats.some(g => g.state === ST.FALL)) finishLevel(false, G.failReason || 'fall');
+    else if (goats.some(g => g.state === ST.TIRED)) finishLevel(false, 'tired');
+    else if (goats.every(g => g.state === ST.WIN)) {
+      for (const g of goats) { const h = (L.def.herd || []).find(h => h.surface === g.onSurface.id); g.herdDir = h ? h.dir : -1; g.herdDelay = 0.8; g.setState(ST.HERD); }
+      for (const g of herd) g.setState(ST.HERD);
+      finishLevel(true);
+    }
+  }
+  let minY = Infinity, maxY = -Infinity, minX = Infinity, maxX = -Infinity;
+  for (const g of goats) { minY = Math.min(minY, g.pos.y); maxY = Math.max(maxY, g.pos.y); minX = Math.min(minX, g.pos.x); maxX = Math.max(maxX, g.pos.x); }
+  G.maxDesc = Math.max(G.maxDesc, L.ascent ? maxY - L.start.y : L.start.y - maxY);
+
+  // ---- camera ----
+  const wanted = G.twin ? Math.max(baseHalf, ((maxX - minX) / 2 + CONFIG.twinCameraPadding + 1.5) / camera.aspect) : baseHalf;
+  setHalfH(damp(halfH, wanted, 3, dt));
+  const target = preferredFy(maxY);
+  const idle = CONFIG.cameraIdleSpeed * (halfH / CONFIG.baseHalfHeight) * (G.twin ? CONFIG.twinCameraPressureMultiplier : 1);
+  const ended = mode === 'result';
+  if (ended) { // follow the fall, but never below the bottom terrace (no endless chase into the void)
+    G.camFy = damp(G.camFy, target, G.result.win ? 3 : 6, dt);
+    G.camFy = clamp(G.camFy, preferredFy(L.bottom) - 1, preferredFy(L.top) + 1);
+  }
+  else {
+    const forward = L.dir > 0 ? target < G.camFy : target > G.camFy;   // is the goat ahead of the camera in the level's direction?
+    G.camFy = damp(G.camFy, target, forward ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt);
+    G.camFy -= L.dir * idle * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * dt;
+    G.camFy = clamp(G.camFy, preferredFy(L.bottom) - 1, preferredFy(L.top) + 1);
+  }
+  if (!(ended && G.result.win)) G.camFx = damp(G.camFx, clamp((minX + maxX) / 2 * 0.6, -4, 5), CONFIG.cameraXFollow, dt);
+  camera.position.set(G.camFx + camDist * 0.24, G.camFy + camDist * 0.07, camDist); camera.lookAt(G.camFx, G.camFy, 0);
+  sun.position.set(G.camFx + 26, G.camFy + 42, 34); sun.target.position.set(G.camFx, G.camFy - 6, 0);
+
+  // ---- camera pressure / failure (highest goat is the one in danger) ----
+  let sf = 1, warn = 0;
+  for (const g of goats) sf = Math.min(sf, L.ascent ? 1 - screenFraction(g.pos.x, g.pos.y - 0.4) : screenFraction(g.pos.x, g.pos.y));
+  if (playing) {
+    if (sf < CONFIG.cameraDangerFraction) { G.dangerT += dt; if (G.dangerT > CONFIG.cameraFailureGrace) { for (const g of goats) if (g.state !== ST.JUMP) g.fall(); finishLevel(false, 'camera'); } }
+    else G.dangerT = Math.max(0, G.dangerT - dt * 2);
+    warn = clamp((CONFIG.cameraWarnFraction - sf) / (CONFIG.cameraWarnFraction - CONFIG.cameraDangerFraction), 0, 1);
+    warn = Math.max(warn, clamp(G.dangerT / CONFIG.cameraFailureGrace, 0, 1) * 1.2);
+  }
+  topwarn.style.opacity = L.ascent ? 0 : warn; botwarn.style.opacity = L.ascent ? warn : 0; vig.style.opacity = warn * 0.6;
+  let windAmt = 0; for (const g of goats) if (g.state === ST.JUMP || g.state === ST.FALL) windAmt = Math.max(windAmt, clamp((-g.vel.y - 9) / 12, 0, 1));
+  wind.style.opacity = windAmt * 0.8;
+
+  // ---- aim visuals (one preview per goat, same physics) ----
+  const showAim = playing && G.aiming && G.aim;
+  goats.forEach((g, gi) => {
+    const arrow = arrows[gi], dots = dotSets[gi]; arrow.visible = !!showAim;
+    if (showAim) {
+      arrow.position.set(g.pos.x, g.pos.y + 0.7, 0.6); arrow.setDirection(new THREE.Vector3(G.aim.dir.x, G.aim.dir.y, 0)); arrow.setLength(1.2 + G.aim.t * 2.4, 0.45, 0.3);
+      const ls = launchStart(g, G.aim); const pts = previewTrajectory(new THREE.Vector2(ls.x, ls.y), G.aim); const n = CONFIG.trajectoryPoints, frac = debugG.visible ? 1 : CONFIG.trajectoryPreviewFraction;
+      for (let i = 0; i < dots.length; i++) { const d = dots[i]; if (i < n) { const k = Math.floor((i + 1) / n * frac * (pts.length - 1)); d.visible = true; d.position.set(pts[k].x, pts[k].y + 0.35, 0.5); d.scale.setScalar(1 - i / n * 0.5); d.material.opacity = 0.9 - i / n * 0.5; } else d.visible = false; }
+      if (debugG.visible && gi === 0) { debugTraj.geometry.dispose(); debugTraj.geometry = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p.x, p.y + 0.35, 0.6))); debugTraj.visible = true; }
+    } else { for (const d of dots) d.visible = false; if (gi === 0) debugTraj.visible = false; }
+    g.animate(dt, showAim ? G.aim : null);
+  });
+  for (let gi = goats.length; gi < MAX_GOATS; gi++) { arrows[gi].visible = false; for (const d of dotSets[gi]) d.visible = false; }
+  updateParticles(dt); updateSnow(dt, G.camFx, G.camFy);
+  ENV.floor.position.y = (L.endless && !L.ascent) ? Math.min(0, G.camFy - 45 - FLOOR_Y) : 0; ENV.sky.position.y = G.camFy - 20;
+
+  // ---- result screen reveal ----
+  if (ended) { G.endT += dt; if (G.endT > G.result.delay && !$('scResult').classList.contains('show')) showScreen('scResult'); }
+
+  // ---- HUD ----
+  $('hDesc').textContent = Math.round(G.maxDesc) + ' m'; $('hTime').textContent = fmtTime(G.time);
+  if (debugG.visible) {
+    const g = goats[0];
+    dbg.textContent = `fps ${fps.toFixed(0)}  level ${L.idx + 1}\nstate ${g.state} (${g.stateT.toFixed(2)})\npos ${g.pos.x.toFixed(2)} ${g.pos.y.toFixed(2)}\nvel ${g.vel.x.toFixed(2)} ${g.vel.y.toFixed(2)}  corr ${g.corr.toFixed(2)}\npower ${G.aim ? G.aim.power.toFixed(2) : '-'}\nsurface ${g.onSurface ? g.onSurface.id : '-'}\ncam ${G.camFx.toFixed(2)} ${G.camFy.toFixed(2)}  halfH ${halfH.toFixed(1)}\nscreen ${sf.toFixed(3)}  danger ${G.dangerT.toFixed(2)}\nsalt ${G.collected}/${L.crystals.length}  total ${save.totalSaltCrystals}`;
+    dpref.style.top = ((L.ascent ? 1 - CONFIG.goatScreenFraction : CONFIG.goatScreenFraction) * 100) + '%'; ddanger.style.top = ((L.ascent ? 1 - CONFIG.cameraDangerFraction : CONFIG.cameraDangerFraction) * 100) + '%';
+  }
+}
+
+// ============================================================
+//  Main loop
+// ============================================================
+buildLevel(0); goMenu();
+G.camFy = preferredFy(-6); camera.position.set(camDist * 0.24, G.camFy + camDist * 0.07, camDist); camera.lookAt(0, G.camFy, 0);
+sun.position.set(26, G.camFy + 42, 34); sun.target.position.set(0, G.camFy - 6, 0);
+function loop(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; fps = lerp(fps, 1 / Math.max(dt, 1e-4), 0.05);
+  update(dt);
+  if (mode === 'menu' || mode === 'select' || mode === 'ibex') { const t = now / 1000; for (const c of L.crystals) { c.mesh.rotation.y = t * 1.2 + c.phase; } for (const h of L.hawks) { h.t += dt; const f = Math.sin(h.t * 9); for (const w of h.mesh.wings) w.rotation.x = w.userData.side * f * 0.55; } }
+  renderer.render(scene, camera); requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
