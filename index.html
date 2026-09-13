@@ -24,12 +24,13 @@
   #topwarn { position:fixed; left:0; right:0; top:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,.7), rgba(140,40,20,0)); }
   #wind { position:fixed; inset:0; pointer-events:none; opacity:0; background: repeating-linear-gradient(180deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0) 22px, rgba(255,255,255,.18) 23px, rgba(255,255,255,0) 26px); background-size:100% 260px; animation: windy .35s linear infinite; }
   @keyframes windy { from { background-position:0 0; } to { background-position:0 260px; } }
-  .screen { position:fixed; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; }
+  .screen { position:fixed; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; overflow:hidden; }
+  .list { max-height:72vh; overflow-y:auto; overflow-x:hidden; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
   .screen.show { display:flex; }
   .screen h1 { font-size:40px; margin:0 0 4px; letter-spacing:.06em; font-weight:800; }
   .screen h2 { font-size:22px; margin:0 0 18px; letter-spacing:.04em; font-weight:700; opacity:.95; }
   .screen .sub { font-size:16px; opacity:.9; line-height:1.7; margin-bottom:18px; }
-  .btn { display:block; width:min(320px, 80vw); margin:8px auto; padding:14px 18px; border:2px solid rgba(255,248,238,.7); border-radius:10px; font-size:17px; font-weight:700; letter-spacing:.1em; background:rgba(255,248,238,.08); cursor:pointer; }
+  .btn { display:block; box-sizing:border-box; width:min(360px, 100%); margin:8px auto; padding:14px 18px; border:2px solid rgba(255,248,238,.7); border-radius:10px; font-size:17px; font-weight:700; letter-spacing:.1em; background:rgba(255,248,238,.08); cursor:pointer; }
   .btn:active { background:rgba(255,248,238,.25); }
   .btn.dim { opacity:.4; }
   .btn small { display:block; font-size:12px; font-weight:400; letter-spacing:.14em; opacity:.85; margin-top:4px; }
@@ -63,7 +64,7 @@
 <div class="screen" id="scSelect">
   <div class="back" id="bBackMenu">◀ MENU</div>
   <h1>MOUNTAIN GOAT</h1>
-  <div id="levelList" style="max-height:72vh;overflow-y:auto;touch-action:pan-y;width:100%"></div>
+  <div id="levelList" class="list"></div>
 </div>
 <div class="screen" id="scEndless">
   <div class="back" id="bBackMenu3">◀ MENU</div>
@@ -76,7 +77,7 @@
   <div class="back" id="bBackMenu2">◀ MENU</div>
   <h1>IBEX</h1>
   <div class="salt" id="ibexSalt" style="margin:0 0 10px">◆ 0</div>
-  <div id="skinList" style="max-height:70vh;overflow-y:auto;touch-action:pan-y;width:100%"></div>
+  <div id="skinList" class="list"></div>
   <div class="sub" style="margin-top:10px;font-size:13px;opacity:.75">Skins change the coat only — never the jump.</div>
 </div>
 <div class="screen" id="scResult">
@@ -911,7 +912,9 @@ let mode = 'menu';
 const goats = [], herd = [];
 const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0, dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, hintDone: false, collected: 0, result: null, twin: false };
 
-function showScreen(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); }
+let screenShownAt = 0;
+function showScreen(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now(); }
+const fresh = () => performance.now() - screenShownAt < 300;
 function goMenu() { mode = 'menu'; hud.style.display = 'none'; hint.style.opacity = 0; $('menuSalt').textContent = '◆ ' + save.totalSaltCrystals; showScreen('scMenu'); }
 let curWorld = 0;
 function goSelect() {
@@ -920,7 +923,7 @@ function goSelect() {
     let got = 0; for (const k of w.levels) got += (save.levels[k] || { stars: 0 }).stars;
     const b = document.createElement('div'); b.className = 'btn';
     b.innerHTML = `WORLD ${wi + 1} · ${w.name}<small>${w.sub} · ${w.levels.length} levels</small><small>★ ${got} / ${w.levels.length * 3}</small>`;
-    b.addEventListener('click', e => { e.stopPropagation(); goWorld(wi); });
+    b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goWorld(wi); });
     list.appendChild(b);
   });
   showScreen('scSelect');
@@ -932,7 +935,7 @@ function goWorld(wi) {
     const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
     const b = document.createElement('div'); b.className = 'btn';
     b.innerHTML = `${wi + 1}-${li + 1} · ${lv.name}<small>${lv.ascent ? '▲ ascent' : lv.twin ? '⇊ twin descent' : '▼ descent'}${lv.hawks && lv.hawks.length ? ' · birds' : ''}</small><small>${'★'.repeat(stars) + '☆'.repeat(3 - stars)}</small>`;
-    b.addEventListener('click', e => { e.stopPropagation(); startLevel(idx); });
+    b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startLevel(idx); });
     list.appendChild(b);
   });
   showScreen('scSelect');
@@ -987,14 +990,14 @@ function finishLevel(win, reason) {
   $('bContinue').style.display = win ? 'none' : 'block'; $('bContinue').classList.toggle('dim', !canCont); $('contCost').textContent = `◆ ${CONFIG.continueCost}  (you have ${save.totalSaltCrystals})`;
   G.result = { win, delay: win ? 3.2 : reason === 'tired' ? 2.4 : 1.0 };
 }
-$('bPlay').addEventListener('pointerdown', e => { e.stopPropagation(); initAudio(); goSelect(); });
-$('bBackMenu').addEventListener('pointerdown', e => { e.stopPropagation(); if ($('bBackMenu').textContent.includes('WORLDS')) goSelect(); else goMenu(); });
-$('bBackMenu2').addEventListener('pointerdown', e => { e.stopPropagation(); goMenu(); });
-$('bIbex').addEventListener('pointerdown', e => { e.stopPropagation(); goIbex(); });
-$('bEndless').addEventListener('pointerdown', e => { e.stopPropagation(); initAudio(); goEndless(); });
-$('bBackMenu3').addEventListener('pointerdown', e => { e.stopPropagation(); goMenu(); });
-$('bEndDown').addEventListener('pointerdown', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
-$('bEndUp').addEventListener('pointerdown', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
+$('bPlay').addEventListener('click', e => { e.stopPropagation(); initAudio(); goSelect(); });
+$('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBackMenu').textContent.includes('WORLDS')) goSelect(); else goMenu(); });
+$('bBackMenu2').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('bIbex').addEventListener('click', e => { e.stopPropagation(); goIbex(); });
+$('bEndless').addEventListener('click', e => { e.stopPropagation(); initAudio(); goEndless(); });
+$('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('bEndDown').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
+$('bEndUp').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
 function goEndless() { mode = 'select'; hud.style.display = 'none'; const b = save.endless || {}; $('bestDown').textContent = `best ${b.endlessDown || 0} m`; $('bestUp').textContent = `best ${b.endlessUp || 0} m`; showScreen('scEndless'); }
 function goIbex() {
   mode = 'ibex'; hud.style.display = 'none'; $('ibexSalt').textContent = '◆ ' + save.totalSaltCrystals;
@@ -1005,7 +1008,7 @@ function goIbex() {
       const un = !!save.unlocked[it.id], sel = save[key] === it.id, can = save.totalSaltCrystals >= it.cost;
       const b = document.createElement('div'); b.className = 'btn' + (!un && !can ? ' dim' : '');
       b.innerHTML = `${it.name}<small>${un ? (sel ? 'SELECTED' : 'EQUIP') : `${it.cost} ◆${can ? ' — UNLOCK' : ''}`}</small>`;
-      b.addEventListener('click', e => { e.stopPropagation();
+      b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return;
         if (!un) { if (!can) return; save.totalSaltCrystals -= it.cost; save.unlocked[it.id] = true; }
         save[key] = it.id; persist(); goIbex(); });
       list.appendChild(b);
@@ -1014,8 +1017,8 @@ function goIbex() {
   section('IBEX', GOAT_SKINS, 'skin');
   showScreen('scIbex');
 }
-$('bRetry').addEventListener('pointerdown', e => { e.stopPropagation(); startLevel(L.idx, L.endless ? endlessDef(L.ascent) : undefined); });
-$('bContinue').addEventListener('pointerdown', e => { e.stopPropagation(); continueRun(); });
+$('bRetry').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx, L.endless ? endlessDef(L.ascent) : undefined); });
+$('bContinue').addEventListener('click', e => { e.stopPropagation(); continueRun(); });
 function continueRun() {
   if (mode !== 'result' || G.result.win || !goats.every(g => g.lastSafe) || save.totalSaltCrystals < CONFIG.continueCost) return;
   save.totalSaltCrystals -= CONFIG.continueCost; persist();
@@ -1024,8 +1027,8 @@ function continueRun() {
   Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, dangerT: 0, endT: 0, result: null, camFy: preferredFy(top) });
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
 }
-$('bNext').addEventListener('pointerdown', e => { e.stopPropagation(); startLevel(L.idx + 1); });
-$('bLevels').addEventListener('pointerdown', e => { e.stopPropagation(); if (L.endless) goEndless(); else goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key))); });
+$('bNext').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx + 1); });
+$('bLevels').addEventListener('click', e => { e.stopPropagation(); if (L.endless) goEndless(); else goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key))); });
 for (const s of document.querySelectorAll('.screen')) s.addEventListener('pointerdown', e => e.stopPropagation());
 
 // ============================================================
