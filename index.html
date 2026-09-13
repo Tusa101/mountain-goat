@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
+<!-- build v5 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,7 +12,7 @@
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
-  html, body { margin:0; height:100%; overflow:hidden; background:#d9cbb2; }
+  html, body { margin:0; height:100%; overflow:hidden; overflow-x:hidden; background:#d9cbb2; }
   body { font-family: "Trebuchet MS", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-user-select:none; user-select:none; touch-action:none; overscroll-behavior:none; color:#fff8ee; }
   #c { display:block; width:100%; height:100%; touch-action:none; }
   .hud { position:fixed; top:0; left:0; right:0; padding:calc(12px + env(safe-area-inset-top)) 16px 0; display:flex; justify-content:space-between; pointer-events:none; text-shadow:0 1px 3px rgba(60,30,10,.55); }
@@ -25,7 +26,7 @@
   #wind { position:fixed; inset:0; pointer-events:none; opacity:0; background: repeating-linear-gradient(180deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0) 22px, rgba(255,255,255,.18) 23px, rgba(255,255,255,0) 26px); background-size:100% 260px; animation: windy .35s linear infinite; }
   @keyframes windy { from { background-position:0 0; } to { background-position:0 260px; } }
   .screen { position:fixed; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; overflow:hidden; }
-  .list { max-height:72vh; overflow-y:auto; overflow-x:hidden; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
+  .list { max-height:72vh; overflow-y:auto; overflow-x:hidden !important; scrollbar-width:thin; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
   .screen.show { display:flex; }
   .screen h1 { font-size:40px; margin:0 0 4px; letter-spacing:.06em; font-weight:800; }
   .screen h2 { font-size:22px; margin:0 0 18px; letter-spacing:.04em; font-weight:700; opacity:.95; }
@@ -1191,7 +1192,7 @@ function loop(now) {
   renderer.render(scene, camera); requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) { navigator.serviceWorker.register('sw.js').then(r => r.update()).catch(() => {}); let reloaded = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!reloaded) { reloaded = true; location.reload(); } }); }
 </script>
 </body>
 </html>

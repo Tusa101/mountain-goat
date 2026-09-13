@@ -1,11 +1,17 @@
-// Minimal offline cache: the game shell + Three.js from the CDN once it has been fetched.
-const CACHE = 'mountain-goat-v3';
-const SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
-self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
+// Network-first for the app itself (so every deploy shows up on the next launch),
+// cache-first only for the Three.js CDN module. Cached copies are used when offline.
+const CACHE = 'mountain-goat-v5';
+self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./index.html', './manifest.json']).catch(() => {}))); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-    if (res.ok && (e.request.url.includes('three') || e.request.url.startsWith(self.location.origin))) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
+  const url = e.request.url;
+  if (url.includes('three')) { // vendor module: cache-first
+    e.respondWith(caches.match(e.request).then(hit => hit || fetch(e.request).then(res => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); } return res; })));
+    return;
+  }
+  if (!url.startsWith(self.location.origin)) return;
+  e.respondWith(fetch(e.request, { cache: 'no-store' }).then(res => {
+    if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
     return res;
-  })));
+  }).catch(() => caches.match(e.request).then(hit => hit || caches.match('./index.html'))));
 });
