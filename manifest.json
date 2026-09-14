@@ -1,10 +1,10 @@
 {
-  "id": "/mountain-goat/",
+  "id": "/",
   "name": "Mountain Goat",
   "short_name": "Mountain Goat",
   "description": "Descend and climb desert, canyon and alpine cliffs as a Nubian ibex: aim, leap, catch the edge, collect crystals, outrun the drifting camera.",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "fullscreen",
   "display_override": [
     "fullscreen",
@@ -69,7 +69,7 @@
   "shortcuts": [
     {
       "name": "Endless descent",
-      "url": "./index.html?mode=endless-down",
+      "url": "/?mode=endless-down",
       "icons": [
         {
           "src": "icon-192.png",
@@ -79,7 +79,7 @@
     },
     {
       "name": "Endless ascent",
-      "url": "./index.html?mode=endless-up",
+      "url": "/?mode=endless-up",
       "icons": [
         {
           "src": "icon-192.png",

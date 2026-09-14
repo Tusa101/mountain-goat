@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v5 -->
+<!-- build v6 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -108,7 +108,9 @@ const CONFIG = {
   ascentJumpBoost: 1.25,     // jump power multiplier on climbing levels (preview uses it too)
   airControl: 5.0, maxAirCorrection: 1.3,
   goatHalfWidth: 0.5, goatBodyHeight: 1.2, // collision body (hooves to top of head; horns may overlap rock)
-  landingTolerance: 0.25, edgeGrabDistance: 0.45, edgeGrabDepth: 1.0, maxEdgeGrabFallSpeed: 12, takeoffGrace: 0.2,
+  landingTolerance: 0.6,     // invisible margin around each ledge top: hooves inside it land, then slide onto the rock
+  landingSnapTime: 0.12,     // seconds of that slide
+  edgeGrabDistance: 0.45, edgeGrabDepth: 1.0, maxEdgeGrabFallSpeed: 12, takeoffGrace: 0.2,
   hardLandingSpeed: 12, perfectLandingSpeed: 8.5, deathFallTime: 1.5,
   maxLedgesSkipped: 3, ledgeRowGap: 2.5,   // drop past more than this many rows of ledges = the goat collapses, exhausted
   cameraIdleSpeed: 0.45, cameraAimMultiplier: 0.75, cameraDownFollowSpeed: 5, cameraUpFollowSpeed: 0.8, cameraXFollow: 3,
@@ -736,7 +738,8 @@ class Goat {
     return null;
   }
   land(s, speed) {
-    this.onSurface = s; this.pos.y = s.y; this.pos.x = clamp(this.pos.x, s.x1, s.x2); this.vel.set(0, 0); this.corr = 0; this.descendT = 0;
+    const rawX = this.pos.x;
+    this.onSurface = s; this.pos.y = s.y; this.pos.x = clamp(this.pos.x, s.x1 + 0.15, s.x2 - 0.15); this.vel.set(0, 0); this.corr = 0; this.descendT = 0;
     { // nudge away from any rock the standing body would overlap
       const gw = CONFIG.goatHalfWidth, gh = CONFIG.goatBodyHeight, p = this.pos, rects = [];
       for (const o of L.surfaces) if (o !== s) rects.push({ x1: o.x1 - 0.15, x2: o.x2 + 0.15, top: o.y - 0.3, bot: o.y - o.h - 0.6 });
@@ -751,11 +754,12 @@ class Goat {
       spawnDust(this.pos.x, this.pos.y, 14, 2); spawnPebbles(this.pos.x, this.pos.y - 0.2, 8, 1.8); thud(1, 160, 0.2);
       this.setState(ST.TIRED); return;
     }
+    this.snap = { dx: this.pos.x - rawX, t: 0 };
     const central = Math.abs(this.pos.x - s.x) < s.w * 0.25;
     if (speed >= CONFIG.hardLandingSpeed) { this.landKind = 'hard'; this.slideV = this.facing * 1.6; spawnDust(this.pos.x, this.pos.y, 10, 1.6); spawnPebbles(this.pos.x, this.pos.y - 0.2, 6, 1.5); thud(0.9, 200, 0.14); }
     else if (central && speed < CONFIG.perfectLandingSpeed) { this.landKind = 'perfect'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 4, 0.7); thud(0.5, 900, 0.05); thud(0.4, 300, 0.07); }
     else { this.landKind = 'normal'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 6, 1); thud(0.55, 320, 0.08); }
-    this.setState(s.finish ? ST.WIN : ST.LAND);
+    this.setState(s.finish ? ST.WIN : ST.LAND); if (s.finish) this.snap = null;
   }
   catch(s, edge, side) {
     if (s.spikes && edge >= s.spikes.x1 - 0.01 && edge <= s.spikes.x2 + 0.01) { this.pos.x = edge - side * 0.4; this.spiked(s, -side); return; }
@@ -805,7 +809,8 @@ class Goat {
     else if (s === ST.WALK || (s === ST.HERD && t > this.herdDelay)) { crouch = 0.12 + Math.abs(Math.sin(now * 22)) * 0.08; headPitch = -0.35; }
     else if (s === ST.HERD) { crouch = 0.03 + Math.sin(now * 2.2 + this.pos.x) * 0.03; headPitch = 0.1; }
     else if (s === ST.JUMP) { if (t < 0.1) crouch = -0.25; else tuck = clamp((t - 0.1) / 0.15, 0, 1); pitch = Math.atan2(this.vel.y, Math.abs(this.vel.x + this.corr) + 2) * 0.55; headPitch = pitch * 0.4 - 0.1; if (this.vel.y < -4) tuck = 0.5; }
-    else if (s === ST.LAND) { const k = Math.max(0, 1 - t / (this.landKind === 'hard' ? 0.45 : 0.22)); crouch = (this.landKind === 'hard' ? 1.0 : 0.55) * Math.sin(k * Math.PI * 0.5 + 0.2); headPitch = -0.3 * k; }
+    else if (s === ST.LAND) { const k = Math.max(0, 1 - t / (this.landKind === 'hard' ? 0.45 : 0.22)); crouch = (this.landKind === 'hard' ? 1.0 : 0.55) * Math.sin(k * Math.PI * 0.5 + 0.2); headPitch = -0.3 * k;
+      if (this.snap) { const q = 1 - clamp(t / CONFIG.landingSnapTime, 0, 1); px -= this.snap.dx * q * q; } }
     else if (s === ST.CATCH) { const e = this.catchEdge, side = this.catchSide, top = this.onSurface.y; let hang = t < 0.3 ? 1 : clamp(1 - (t - 0.3) / 0.38, 0, 1); hang = hang * hang * (3 - 2 * hang);
       pitch = 1.3 * hang; legFwd = 1.4 * hang; headPitch = 0.35 * hang; if (t >= 0.3) crouch = 0.5 * (1 - hang); px = lerp(e + side * 0.55, e - side * 0.45, hang); py = lerp(top, top - 1.45, hang); }
     else if (s === ST.FALL || s === ST.DEAD) { roll = this.fallTumble; tuck = -0.4; headPitch = -0.5; }
