@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v11 -->
+<!-- build v12 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -175,14 +175,14 @@ function defineLevels() { LEVELS = [
       ['start', 0, 0, 8, 'terrace'], ['l1', 8, -7, 4, 'broad'], ['l2', 0, -13, 5, 'broad'],
       ['fA', -7, -19, 3.5, 'slab'], ['fB', 6, -18, 3, 'broad'],
       ['a2', -8, -26, 2.2, 'narrow', 'crumble'], ['b2', 11, -23, 1.8, 'stone'], ['b3', 4, -30, 2.5, 'sloped'],
-      ['m1', -3, -33, 3, 'slab'], ['d1', -9, -38, 4, 'sloped'], ['d2', -11, -44, 3.5, 'broad'], ['rec1', -6.5, -41.5, 1.3, 'foothold'],
+      ['m1', -3, -33, 3, 'slab'], ['d1', -9, -38, 4, 'sloped'], ['d2', -11, -44, 3.5, 'broad'], ['rec1', -6.2, -42, 1.3, 'foothold'],
       ['r1', 3, -39, 2, 'narrow'], ['r2', 1, -45, 2.5, 'slab'],
       ['p1', -3, -53, 1.3, 'foothold'], ['f1', 6, -52, 3, 'broad'], ['f2', 2, -59, 3.5, 'slab'], ['f3', 7, -65, 4, 'sloped'],
       ['finish', 0, -74, 80, 'terrace'],
     ],
     herd: [{ surface: 'finish', x: -5, dir: -1, n: 4 }], kids: [{ surface: 'd2', x: -11.8 }],
     blockers: [{ x1: -9.5, x2: -5.2, top: -47, h: 6 }],
-    crystals: [[0, -12.4], [1, -44.4], [11, -22.4], [-6.5, -40.9], [-3, -52.4]],
+    crystals: [[0, -12.4], [1, -44.4], [11, -22.4], [-6.2, -41.4], [-3, -52.4]],
   },
   {
     key: 'crystal', name: 'CRYSTAL RUN', stars: { crystals: 7, time: 105 },
@@ -206,8 +206,8 @@ function defineLevels() { LEVELS = [
       ['A2', -4, -12, 4.5, 'broad'], ['B2', 5, -12, 2, 'narrow'],          // 2: down-right, different widths
       ['A3', 1, -18, 4, 'slab'], ['B3', 9, -18, 1.6, 'stone'],             // 3: down-right, B needs a precise dx
       ['A4', -5, -25, 2, 'narrow'], ['B4', 4.5, -24, 3.5, 'slab'],         // 4: down-left, A precise + lower, B forgiving
-      ['A5a', -8, -32, 2, 'narrow'], ['B5a', 0.5, -32, 2, 'narrow'],       // 5: route choice — left pair
-      ['A5b', -1, -31, 2, 'sloped'], ['B5b', 9, -30, 1.5, 'foothold'],     //    or right pair
+      ['A5a', -8, -32, 2, 'narrow'], ['B5a', 1.5, -32, 2, 'narrow'],       // 5: route choice — left pair
+      ['A5b', -2.5, -31, 2, 'sloped'], ['B5b', 8, -30, 1.5, 'foothold'],   //    or right pair
       ['A6', -4, -39, 3, 'broad'], ['B6', 4.5, -39, 2.5, 'slab'],          // 6: both branches converge
       ['A7', -8, -46, 1.6, 'foothold'], ['B7', 1, -45, 3, 'broad'],        // 7: down-left, tiny for A
       ['A8', -4, -53, 2.5, 'slab'], ['B8', 6, -52, 1.4, 'foothold'],       // 8: down-right, tiny for B
@@ -342,9 +342,10 @@ function makeClimb(o) {
   for (let i = 1; i <= o.n; i++) {
     const gain = 3.0 + r() * 0.6; y += gain; side = -side;
     const tiny = i % 5 === 3; const w = tiny ? 1.4 : 1.8 + r() * 1.4;
-    const dx = lastW / 2 + w / 2 + 1.8 + r() * 1.5; x = x + side * dx; if (x > 8 || x < -8) { side = -side; x = clamp(x - 2 * side * dx, -8, 8); } lastW = w;
+    const xPrev = x, dx = lastW / 2 + w / 2 + 1.8 + r() * 1.5; x = xPrev + side * dx; if (x > 8 || x < -8) { side = -side; x = clamp(xPrev + side * dx, -8, 8); }
+    let wUse = w; const gap = Math.abs(x - xPrev) - lastW / 2 - wUse / 2; if (gap < 1.1) wUse = Math.max(1.3, wUse - (1.1 - gap) * 2); lastW = wUse;
     const spk = o.spikes && !tiny && w > 3.2 && i % 3 === 0 ? (side > 0 ? 'R' : 'L') : null;   // climbs have no forks, so zig-zag side == arrival side
-    const row = ['u' + i, +x.toFixed(1), +y.toFixed(1), +w.toFixed(1), tiny ? 'foothold' : w > 3 ? 'broad' : w > 2.4 ? 'slab' : 'narrow']; if (spk) row.push(spk);
+    const row = ['u' + i, +x.toFixed(1), +y.toFixed(1), +wUse.toFixed(1), tiny ? 'foothold' : wUse > 3 ? 'broad' : wUse > 2.4 ? 'slab' : 'narrow']; if (spk && wUse > 3.2) row.push(spk);
     surfaces.push(row);
     if (i % 4 === 2) crystals.push([+(x - side * (spk ? w / 4 : 0)).toFixed(1), +(y + 0.6).toFixed(1)]);
   }
@@ -440,7 +441,7 @@ function makeRock(w, h, d, seed, jitter, opts = {}) {
     let x = p.getX(i), y = p.getY(i), z = p.getZ(i); const isTop = y > h / 2 - 1e-4;
     const r1 = hash(x, y, z, seed), r2 = hash(x, y, z, seed + 1), r3 = hash(x, y, z, seed + 2);
     if (isTop) { y += (r2 - .5) * 0.08; if (Math.abs(Math.abs(x) - w / 2) < 1e-4) x += (r1 - .5) * 0.35; if (z > d / 2 - 1e-4) z += (r3 - .5) * 0.3; }
-    else { x += opts.solid ? -Math.sign(x) * r1 * jitter : (r1 - .5) * 2 * jitter; y += opts.solid ? Math.abs(r2 - .5) * jitter : (r2 - .5) * 2 * jitter; z += (r3 - .5) * 2 * jitter * 1.4; if (opts.undercut && y < -h / 2 + 0.01 && z > 0) z -= d * 0.45; }
+    else { x += opts.solid ? -Math.sign(x) * r1 * Math.min(jitter, 0.08) : (r1 - .5) * 2 * jitter; y += opts.solid ? Math.abs(r2 - .5) * jitter : (r2 - .5) * 2 * jitter; z += (r3 - .5) * 2 * jitter * 1.4; if (opts.undercut && y < -h / 2 + 0.01 && z > 0) z -= d * 0.45; }
     p.setXYZ(i, x, y, z);
   }
   p.needsUpdate = true; return geo;
@@ -814,7 +815,8 @@ class Goat {
   }
   land(s, speed, vx = 0) {
     const rawX = this.pos.x; this.pathEnd = { s, kind: 'land' };
-    this.onSurface = s; this.pos.y = s.y; this.pos.x = clamp(this.pos.x, s.x1 + 0.15, s.x2 - 0.15); this.vel.set(0, 0); this.corr = 0; this.descendT = 0;
+    const inset = Math.min(0.45, s.w / 2 - 0.05);
+    this.onSurface = s; this.pos.y = s.y; this.pos.x = clamp(this.pos.x, s.x1 + inset, s.x2 - inset); this.vel.set(0, 0); this.corr = 0; this.descendT = 0;
     { // nudge away from any rock the standing body would overlap
       const gw = CONFIG.goatHalfWidth, gh = CONFIG.goatBodyHeight, p = this.pos, rects = [];
       for (const o of L.surfaces) if (o !== s) rects.push({ x1: o.x1 - 0.15, x2: o.x2 + 0.15, top: o.y - 0.3, bot: o.y - o.h - 0.6 });
@@ -874,8 +876,8 @@ class Goat {
     } else if (s === ST.CATCH) {
       this.acc = 0; const sf = this.onSurface, e = this.catchEdge, side = this.catchSide;
       if (this.stateT < 0.3) { this.pos.x = e - side * 0.18; this.pos.y = sf.y - 0.85; if (Math.random() < 0.2) spawnPebbles(e, sf.y - 0.4, 1, 0.5); }
-      else if (this.stateT < 0.68) { const t = (this.stateT - 0.3) / 0.38, k = t * t * (3 - 2 * t); this.pos.x = lerp(e - side * 0.18, e + side * 0.55, k); this.pos.y = lerp(sf.y - 0.85, sf.y, k); }
-      else { this.pos.x = e + side * 0.55; this.pos.y = sf.y; spawnDust(this.pos.x, this.pos.y, 3, 0.6); this.setState(ST.IDLE); }
+      else if (this.stateT < 0.68) { const t = (this.stateT - 0.3) / 0.38, k = t * t * (3 - 2 * t); this.pos.x = lerp(e - side * 0.18, e + side * Math.min(0.55, sf.w / 2), k); this.pos.y = lerp(sf.y - 0.85, sf.y, k); }
+      else { this.pos.x = e + side * Math.min(0.55, sf.w / 2); this.pos.y = sf.y; spawnDust(this.pos.x, this.pos.y, 3, 0.6); this.setState(ST.IDLE); }
     } else if (s === ST.FALL || s === ST.DEAD) {
       if (this.pos.y < L.bottom - 40) return;
       this.fallTumble += dt * 4; this.vel.y -= CONFIG.gravity * dt; this.pos.x += this.vel.x * dt; this.pos.y += this.vel.y * dt;
