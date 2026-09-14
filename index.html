@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v15 -->
+<!-- build v16 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -300,9 +300,9 @@ function defineLevels() { LEVELS = [
       ['u8', 7, 24, 2.5, 'slab'], ['u9', 1, 27, 3, 'broad'], ['u10', -4, 30, 1.5, 'foothold'], ['u11', 1, 33, 3, 'slab'],
       ['u12', 6, 36, 2.5, 'broad', 'L'], ['u13', 1, 39, 3, 'slab'], ['u14', -4, 42, 2, 'narrow'], ['u15', 2, 45, 3, 'broad'],
       ['u16', 7, 48, 2, 'narrow'], ['u17', 2, 51, 3.5, 'slab', 'R'], ['u18', -3, 54, 2.5, 'broad'], ['u19', 2, 57, 2, 'narrow'],
-      ['u20', -2, 60, 3, 'slab'], ['finish', 21, 63, 40, 'terrace'],
+      ['u20', -2, 60, 3, 'slab'], ['finish', -25, 63, 40, 'terrace'],
     ],
-    herd: [{ surface: 'finish', x: 12, dir: 1, n: 4 }], blockers: [],
+    herd: [{ surface: 'finish', x: -12, dir: -1, n: 4 }], blockers: [],
     crystals: [[-3, 18.6], [-4, 30.6], [-4, 42.6], [-3, 54.6], [4, 20.5]],
   },
   makeClimb({ key: 'chalkclimb', name: 'WHITE ASCENT', style: 'chalk', seed: 41, n: 22, spikes: true, hawks: [{ x1: -6, x2: 7, y: 22, speed: 5.5 }, { x1: -7, x2: 6, y: 46, speed: 6.5 }] }),
@@ -353,7 +353,7 @@ function makeClimb(o) {
     surfaces.push(row);
     if (i % 4 === 2) crystals.push([+(x - side * (spk ? w / 4 : 0)).toFixed(1), +(y + 0.6).toFixed(1)]);
   }
-  y += 2.6; const fs = x < 0 ? 1 : -1; surfaces.push(['finish', +(x + fs * (lastW / 2 + 22)).toFixed(1), +y.toFixed(1), 40, 'terrace']);   // wide terrace to the side, never above the last ledge
+  y += 2.6; const fs = side; surfaces.push(['finish', +(x + fs * (lastW / 2 + 22)).toFixed(1), +y.toFixed(1), 40, 'terrace']);   // the terrace continues the zig-zag beyond the last ledge, never back over the route
   const fx = surfaces[surfaces.length - 1][1];
   const winds = o.wind ? [{ y1: +(y * 0.6).toFixed(1), y2: +(y * 0.4).toFixed(1), force: (o.seed % 2 ? 1 : -1) * (2 + r() * 1.5) }] : [];
   return { key: o.key, name: o.name, style: o.style, ascent: true, winds, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, blockers: [], hawks: o.hawks || [], herd: [{ surface: 'finish', x: fx + fs * 6, dir: fs, n: 4 }] };
