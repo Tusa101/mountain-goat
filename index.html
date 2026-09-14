@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v10 -->
+<!-- build v11 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -58,6 +58,7 @@
   <h1>MOUNTAIN GOAT</h1>
   <div class="sub">A descent through the Negev cliffs</div>
   <div class="btn" id="bPlay">PLAY</div>
+  <div class="btn" id="bDaily">DAILY CHALLENGE<small id="dailyInfo"></small></div>
   <div class="btn" id="bEndless">ENDLESS</div>
   <div class="btn" id="bIbex">IBEX</div>
   <div class="salt" id="menuSalt">◆ 0</div>
@@ -330,7 +331,10 @@ function makeDescent(o) {
     if (o.rocks && i % Math.ceil(o.n / o.rocks) === 2) rocks.push({ x: +((prevX + x) / 2).toFixed(1), y: +(prevY + 0.5).toFixed(1), len: gain + 8, period: 3.2 + r() * 1.5, offset: r() * 3 });
   }
   y -= 9; surfaces.push(['finish', 0, +y.toFixed(1), 80, 'terrace']);
-  return { key: o.key, name: o.name, style: o.style, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 50 + o.n * 5 }, surfaces, crystals, blockers: [], hawks, rocks, herd: [{ surface: 'finish', x: o.seed % 2 ? 8 : -8, dir: o.seed % 2 ? 1 : -1, n: 4 }] };
+  const winds = o.wind ? [{ y1: +(y * 0.35).toFixed(1), y2: +(y * 0.55).toFixed(1), force: (o.seed % 2 ? 1 : -1) * (2.5 + r() * 1.5) }] : [];
+  const kidLedge = o.kid ? surfaces.find(sr => sr[0].startsWith('k') && +sr[0].slice(1) >= 7) : null;
+  const kids = kidLedge ? [{ surface: kidLedge[0], x: kidLedge[1] }] : [];
+  return { key: o.key, name: o.name, style: o.style, winds, kids, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 50 + o.n * 5 }, surfaces, crystals, blockers: [], hawks, rocks, herd: [{ surface: 'finish', x: o.seed % 2 ? 8 : -8, dir: o.seed % 2 ? 1 : -1, n: 4 }] };
 }
 // zig-zag climb generator (deterministic by seed): alternating sides, ~3 m gain per ledge, spikes on the far side of wide ledges
 function makeClimb(o) {
@@ -346,8 +350,38 @@ function makeClimb(o) {
   }
   y += 2.6; const fs = x < 0 ? 1 : -1; surfaces.push(['finish', +(x + fs * (lastW / 2 + 22)).toFixed(1), +y.toFixed(1), 40, 'terrace']);   // wide terrace to the side, never above the last ledge
   const fx = surfaces[surfaces.length - 1][1];
-  return { key: o.key, name: o.name, style: o.style, ascent: true, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, blockers: [], hawks: o.hawks || [], herd: [{ surface: 'finish', x: fx + fs * 6, dir: fs, n: 4 }] };
+  const winds = o.wind ? [{ y1: +(y * 0.6).toFixed(1), y2: +(y * 0.4).toFixed(1), force: (o.seed % 2 ? 1 : -1) * (2 + r() * 1.5) }] : [];
+  return { key: o.key, name: o.name, style: o.style, ascent: true, winds, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, blockers: [], hawks: o.hawks || [], herd: [{ surface: 'finish', x: fx + fs * 6, dir: fs, n: 4 }] };
 }
+// ============================================================
+//  Daily challenge — one mountain per UTC day, same for everyone (seed = date)
+// ============================================================
+function dailyDate() { return new Date().toISOString().slice(0, 10); }
+function dailyInfo(date = dailyDate()) {
+  let h = 0; for (const c of date) h = (h * 31 + c.charCodeAt(0)) >>> 0; const r = mulberry(h);
+  const styles = ['desert', 'red', 'chalk', 'night', 'alpine']; const style = styles[Math.floor(r() * styles.length)];
+  const ascent = Math.floor(r() * 3) === 0; const n = 16 + Math.floor(r() * 7);
+  const pool = ['birds', 'rockfall', 'wind', 'spikes', 'crumble', 'kid']; const mods = [];
+  const count = 1 + Math.floor(r() * 3); while (mods.length < count) { const m = pool[Math.floor(r() * pool.length)]; if (!mods.includes(m) && !(ascent && m === 'kid')) mods.push(m); }
+  if (style === 'alpine' && !ascent) mods.push('ice');
+  return { date, seed: h, style, ascent, n, mods, r };
+}
+function dailyDef(info = dailyInfo()) {
+  const { seed, style, ascent, n, mods } = info; const has = m => mods.includes(m);
+  const hawksN = has('birds') ? 2 + (seed % 2) : 0;
+  let def;
+  if (ascent) {
+    const r2 = mulberry(seed + 1); const hawks = []; for (let k = 0; k < hawksN; k++) hawks.push({ x1: -8 + r2() * 2, x2: 6 + r2() * 2, y: +((k + 1) * n * 2.9 / (hawksN + 1)).toFixed(1), speed: 5 + r2() * 2 });
+    def = makeClimb({ key: 'daily', name: 'DAILY CHALLENGE', style, seed, n, spikes: has('spikes'), hawks, wind: has('wind') });
+  } else {
+    def = makeDescent({ key: 'daily', name: 'DAILY CHALLENGE', style, seed, n, spikes: has('spikes'), hawks: hawksN, rocks: has('rockfall') ? 2 : 0, wind: has('wind'), kid: has('kid') });
+    if (!has('crumble')) def.surfaces.forEach(sr => { if (sr[5]) sr[5] = sr[5].split(' ').filter(f => f !== 'crumble').join(' ') || undefined; });
+    if (!has('ice')) def.surfaces.forEach(sr => { if (sr[5]) sr[5] = sr[5].split(' ').filter(f => f !== 'ice').join(' ') || undefined; });
+    if (has('ice')) def.surfaces.forEach((sr, i) => { if (i > 0 && i < def.surfaces.length - 1 && sr[3] >= 2.6 && i % 3 === 0 && !(sr[5] || '').includes('L') && !(sr[5] || '').includes('R')) sr[5] = ((sr[5] || '') + ' ice').trim(); });
+  }
+  def.daily = true; def.date = info.date; def.mods = mods; return def;
+}
+const DAILY_REWARD = [3, 3, 4];
 const WORLDS = [
   { name: 'NEGEV', sub: 'desert cliffs', levels: ['descent', 'crystal', 'twin', 'hawk'] },
   { name: 'RED CANYON', sub: 'sandstone at dusk', levels: ['red', 'redrun', 'redclimb'] },
@@ -1068,7 +1102,14 @@ const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0,
 let screenShownAt = 0;
 function showScreen(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now(); }
 const fresh = () => performance.now() - screenShownAt < 300;
-function goMenu() { mode = 'menu'; hud.style.display = 'none'; hint.style.opacity = 0; $('menuSalt').textContent = '◆ ' + save.totalSaltCrystals; showScreen('scMenu'); }
+function goMenu() {
+  mode = 'menu'; hud.style.display = 'none'; hint.style.opacity = 0; $('menuSalt').textContent = '◆ ' + save.totalSaltCrystals;
+  const info = dailyInfo(); const d = save.daily || {}; const stars = d.date === info.date ? (d.stars || 0) : 0;
+  const worldName = (WORLDS.find(w => LEVELS.some(l => l.key === w.levels[0] && l.style === info.style)) || WORLDS[0]).name;
+  const dt = new Date(info.date + 'T00:00:00Z'); const label = dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).toUpperCase();
+  $('dailyInfo').innerHTML = `${label} · ${worldName} ${info.ascent ? '▲' : '▼'} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · streak ${d.streak}` : ''}`;
+  showScreen('scMenu');
+}
 let curWorld = 0;
 function goSelect() {
   mode = 'select'; hud.style.display = 'none'; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = '◀ MENU'; $('bBackMenu').onclick = null;
@@ -1109,6 +1150,7 @@ function startLevel(idx, defOverride) {
   hint.innerHTML = L.twin ? 'One drag moves both goats<br>Check both arcs before you release' : 'Drag toward your jump<br>Release to leap'; if (L.twin) hint.style.opacity = 1;
   if (L.hawks.length) { hint.innerHTML = 'Hawks patrol the gaps<br>Time your jumps between passes'; hint.style.opacity = 1; }
   if (L.ascent) { hint.innerHTML = 'Climb! The mountain drifts down<br>Jump up before it carries you away'; hint.style.opacity = 1; }
+  if (L.def.daily) { hint.innerHTML = `Daily challenge · ${L.def.mods.join(', ')}<br>Same mountain for everyone today`; hint.style.opacity = 1; }
   if (L.endless) { endlessTick(); hint.innerHTML = (L.ascent ? 'Endless ascent' : 'Endless descent') + ' — how far can you go?<br>It gets harder every 100 m'; hint.style.opacity = 1; }
   $('hSalt').parentElement.style.visibility = (L.crystals.length || L.endless || L.kids.length) ? 'visible' : 'hidden'; if (L.endless) $('hSalt').textContent = '◆ 0';
   $('hSalt').style.display = (L.crystals.length || L.endless) ? 'block' : 'none'; $('hKids').style.display = L.kids.length ? 'block' : 'none'; $('hKids').textContent = `KIDS 0 / ${L.kids.length}`;
@@ -1117,6 +1159,23 @@ function startLevel(idx, defOverride) {
 function finishLevel(win, reason) {
   mode = 'result'; G.endT = 0; hint.style.opacity = 0;
   const idx = L.idx, def = L.def; const saves = goats.reduce((a, g) => a + g.saves, 0);
+  if (L.def.daily) {
+    const info = L.def; const d = (save.daily && save.daily.date === info.date) ? save.daily : { date: info.date, stars: 0, done: [false, false, false], streak: (save.daily && save.daily.streak) || 0, lastDone: save.daily && save.daily.lastDone };
+    let gained = 0, st = [false, false, false];
+    if (win) {
+      const hasC = L.crystals.length > 0, hasK = L.kids.length > 0;
+      st = [true, hasC ? G.collected >= def.stars.crystals : hasK ? G.kidsSaved === L.kids.length : true, G.time <= def.stars.time];
+      st.forEach((ok, i) => { if (ok && !d.done[i]) { d.done[i] = true; gained += DAILY_REWARD[i]; } });
+      if (!d.completedToday) { d.completedToday = true; const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); d.streak = (d.lastDone === y) ? (d.streak || 0) + 1 : 1; d.lastDone = info.date; }
+      d.stars = d.done.filter(Boolean).length; save.totalSaltCrystals += gained;
+    }
+    save.daily = d; persist();
+    $('rTitle').textContent = win ? (L.ascent ? 'SUMMIT REACHED' : 'DESCENT COMPLETE') : reason === 'hawk' ? 'THE HAWK GOT YOU' : reason === 'tired' ? 'TOO FAR' : reason === 'spikes' ? 'SPIKED' : reason === 'rock' ? 'ROCKFALL' : reason === 'kid' ? 'A KID FELL' : 'YOU FELL';
+    $('rSub').innerHTML = `Daily · ${info.date}<br>Time ${fmtTime(G.time)}${L.crystals.length ? ` · ${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}` : ''}${L.kids.length ? ` · Kids ${G.kidsSaved} / ${L.kids.length}` : ''}${gained ? `<br>+${gained} salt` : ''}${win ? `<br>Streak ${d.streak}` : ''}`;
+    $('rStars').innerHTML = win ? `<div class="${st[0] ? 'on' : 'off'}">${st[0] ? '★' : '☆'} COMPLETE</div><div class="${st[1] ? 'on' : 'off'}">${st[1] ? '★' : '☆'} ${L.crystals.length ? def.stars.crystals + '+ ' + STYLE.pickupName : L.kids.length ? 'KID RESCUED' : 'CLEAN RUN'}</div><div class="${st[2] ? 'on' : 'off'}">${st[2] ? '★' : '☆'} UNDER ${fmtTime(def.stars.time)}</div><div>${d.stars} / 3 today</div>` : '';
+    $('bNext').style.display = 'none'; $('bContinue').style.display = 'none';
+    G.result = { win, delay: win ? 3.2 : reason === 'tired' ? 2.4 : 1.0 }; return;
+  }
   if (L.endless) {
     save.endless = save.endless || {}; const best = save.endless[def.key] || 0; const distm = Math.round(G.maxDesc); const newBest = distm > best;
     if (newBest) save.endless[def.key] = distm; const gained = Math.min(5, G.collected); save.totalSaltCrystals += gained; persist();
@@ -1152,6 +1211,7 @@ $('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBac
 $('bBackMenu2').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
 $('bIbex').addEventListener('click', e => { e.stopPropagation(); goIbex(); });
 $('bEndless').addEventListener('click', e => { e.stopPropagation(); initAudio(); goEndless(); });
+$('bDaily').addEventListener('click', e => { e.stopPropagation(); initAudio(); startLevel(0, dailyDef()); });
 $('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
 $('bEndDown').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
 $('bEndUp').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
@@ -1174,7 +1234,7 @@ function goIbex() {
   section('IBEX', GOAT_SKINS, 'skin');
   showScreen('scIbex');
 }
-$('bRetry').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx, L.endless ? endlessDef(L.ascent) : undefined); });
+$('bRetry').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx, L.endless ? endlessDef(L.ascent) : L.def.daily ? dailyDef() : undefined); });
 $('bContinue').addEventListener('click', e => { e.stopPropagation(); continueRun(); });
 function continueRun() {
   if (mode !== 'result' || G.result.win || !goats.every(g => g.lastSafe) || save.totalSaltCrystals < CONFIG.continueCost) return;
@@ -1186,7 +1246,7 @@ function continueRun() {
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
 }
 $('bNext').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx + 1); });
-$('bLevels').addEventListener('click', e => { e.stopPropagation(); if (L.endless) goEndless(); else goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key))); });
+$('bLevels').addEventListener('click', e => { e.stopPropagation(); if (L.endless || L.def.daily) { if (L.def.daily) goMenu(); else goEndless(); } else goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key))); });
 for (const s of document.querySelectorAll('.screen')) s.addEventListener('pointerdown', e => e.stopPropagation());
 
 // ============================================================
@@ -1217,7 +1277,7 @@ function release() {
 addEventListener('pointerup', release); addEventListener('pointercancel', release);
 addEventListener('keydown', e => {
   if (e.key === 'd' || e.key === 'D') { debugG.visible = !debugG.visible; dbg.style.display = debugG.visible ? 'block' : 'none'; dpref.style.display = ddanger.style.display = debugG.visible ? 'block' : 'none'; }
-  if ((e.key === 'r' || e.key === 'R') && L && (mode === 'play' || mode === 'result')) startLevel(L.idx, L.endless ? endlessDef(L.ascent) : undefined);
+  if ((e.key === 'r' || e.key === 'R') && L && (mode === 'play' || mode === 'result')) startLevel(L.idx, L.endless ? endlessDef(L.ascent) : L.def.daily ? dailyDef() : undefined);
   if (e.key === 'Escape' && mode === 'play') goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key)));
   if (e.key === 'ArrowLeft') G.keyInput = -1; if (e.key === 'ArrowRight') G.keyInput = 1;
 });
