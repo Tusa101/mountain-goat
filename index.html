@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v6 -->
+<!-- build v7 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -110,7 +110,7 @@ const CONFIG = {
   goatHalfWidth: 0.5, goatBodyHeight: 1.2, // collision body (hooves to top of head; horns may overlap rock)
   landingTolerance: 0.6,     // invisible margin around each ledge top: hooves inside it land, then slide onto the rock
   landingSnapTime: 0.12,     // seconds of that slide
-  edgeGrabDistance: 0.45, edgeGrabDepth: 1.0, maxEdgeGrabFallSpeed: 12, takeoffGrace: 0.2,
+  edgeGrabDistance: 0.45, edgeGrabDepth: 1.2, maxEdgeGrabFallSpeed: 22, takeoffGrace: 0.2,
   hardLandingSpeed: 12, perfectLandingSpeed: 8.5, deathFallTime: 1.5,
   maxLedgesSkipped: 3, ledgeRowGap: 2.5,   // drop past more than this many rows of ledges = the goat collapses, exhausted
   cameraIdleSpeed: 0.45, cameraAimMultiplier: 0.75, cameraDownFollowSpeed: 5, cameraUpFollowSpeed: 0.8, cameraXFollow: 3,
@@ -714,11 +714,12 @@ class Goat {
   airStep() {
     const prev = this.pos.clone(); integrate(this.pos, this.vel, this.corr, FIXED); this.graceT -= FIXED;
     const p = this.pos, v = this.vel, tol = CONFIG.landingTolerance, o = this.originSurface, g = this.graceT > 0;
-    if (v.y <= 0) for (const s of L.surfaces) { if (s === o && g) continue; if (prev.y >= s.y - 1e-4 && p.y < s.y && p.x >= s.x1 - tol && p.x <= s.x2 + tol) return { type: 'land', s, speed: -v.y }; }
+    if (v.y <= 0) for (const s of L.surfaces) { if (s === o && g) continue; const m = s === o ? 0 : tol; if (prev.y >= s.y - 1e-4 && p.y < s.y && p.x >= s.x1 - m && p.x <= s.x2 + m) return { type: 'land', s, speed: -v.y }; }
     if (v.y < 0 && -v.y <= CONFIG.maxEdgeGrabFallSpeed) for (const s of L.surfaces) {
       if (s === o && g) continue; if (p.y > s.y - 0.05 || p.y < s.y - CONFIG.edgeGrabDepth) continue; const gd = CONFIG.edgeGrabDistance;
-      if (p.x >= s.x1 - tol - gd && p.x <= s.x1 + 0.1 && (v.x + this.corr) > -1.5) return { type: 'catch', s, edge: s.x1, side: 1 };
-      if (p.x <= s.x2 + tol + gd && p.x >= s.x2 - 0.1 && (v.x + this.corr) < 1.5) return { type: 'catch', s, edge: s.x2, side: -1 };
+      if (s === o && g) continue;
+      if (p.x >= s.x1 - tol - gd && p.x <= s.x1 + 0.1) return { type: 'catch', s, edge: s.x1, side: 1 };
+      if (p.x <= s.x2 + tol + gd && p.x >= s.x2 - 0.1) return { type: 'catch', s, edge: s.x2, side: -1 };
     }
     // solid rock vs the goat's body box (not just the hooves)
     const gw = CONFIG.goatHalfWidth, gh = CONFIG.goatBodyHeight, g0 = 0.05, rects = [];
@@ -839,7 +840,7 @@ function launchStart(goat, aim) {
   const s = goat.onSurface, p = goat.pos;
   if (!s || aim.dir.y >= 0) return { x: p.x, y: p.y, walk: false };
   const v = launchVelocity(aim); const xr = p.x + v.x * (2 * v.y / CONFIG.gravity);
-  if (xr < s.x1 - CONFIG.landingTolerance || xr > s.x2 + CONFIG.landingTolerance) return { x: p.x, y: p.y, walk: false };
+  if (xr < s.x1 || xr > s.x2) return { x: p.x, y: p.y, walk: false };
   const ex = aim.dir.x > 0.05 ? s.x2 : aim.dir.x < -0.05 ? s.x1 : (p.x - s.x1 <= s.x2 - p.x ? s.x1 : s.x2);
   return { x: ex, y: s.y, walk: Math.abs(ex - p.x) > 0.05 };
 }
