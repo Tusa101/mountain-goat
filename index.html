@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v8 -->
+<!-- build v10 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -228,7 +228,7 @@ function defineLevels() { LEVELS = [
     herd: [{ surface: 'finish', x: -6, dir: -1, n: 4 }],
     blockers: [], crystals: [[-6, -5.4], [1, -28.5], [6, -50.4]],
     hawks: [{ x1: -8, x2: 4, y: -9.5, speed: 4 }, { x1: -6, x2: 7, y: -28.5, speed: 5.5 }, { x1: -5, x2: 8, y: -54.5, speed: 6.5 }],
-    rocks: [{ x: 3, y: -33, len: 12, period: 3.6, offset: 1 }],
+    rocks: [{ x: 3, y: -31, len: 14, period: 3.6, offset: 1 }],
   },
   {
     key: 'red', name: 'RED CANYON', style: 'red', stars: { crystals: 4, time: 100 },
@@ -256,7 +256,7 @@ function defineLevels() { LEVELS = [
     herd: [{ surface: 'finish', x: -6, dir: -1, n: 4 }], blockers: [],
     crystals: [[4, -24.4], [1, -34.5], [-1, -44.4], [-7, -50.4], [7, -62.4]],
     hawks: [{ x1: -8, x2: 4, y: -15.5, speed: 5 }, { x1: -4, x2: 8, y: -34.5, speed: 6 }, { x1: 0, x2: 10, y: -60, speed: 7 }],
-    rocks: [{ x: -4.2, y: -40, len: 16, period: 4.2, offset: 0 }],
+    rocks: [{ x: -4.2, y: -38, len: 18, period: 4.2, offset: 0 }],
   },
   {
     key: 'night', name: 'NIGHT TWIN', style: 'night', twin: true, starts: ['A0', 'B0'], stars: { crystals: 0, time: 80 },
@@ -318,7 +318,8 @@ function makeDescent(o) {
     const w = Math.max(1.4, +(4.2 - t * 2.4 + (r() - .5) * 1.2).toFixed(1)); const dx = 2.5 + r() * (2.5 + t * 3);
     x = x + side * dx; if (x > 8 || x < -8) { side = -side; x = clamp(prevX + side * dx, -8, 8); }
     const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : (r() < 0.4 ? 'sloped' : 'narrow');
-    const spk = o.spikes && w >= 2.8 && i > 3 && i % 3 === 0 ? (side > 0 ? 'R' : 'L') : null;
+    const afterFork = (i - 1) % 5 === 2;
+    const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 && !afterFork ? (prevX < x ? 'R' : 'L') : null;
     const flags = [spk, o.style === 'alpine' && w >= 2.6 && i % 4 === 1 ? 'ice' : null, i > 4 && i % 6 === 5 && !spk ? 'crumble' : null].filter(Boolean);
     const row = ['d' + i, +x.toFixed(1), +y.toFixed(1), w, type]; if (flags.length) row.push(flags.join(' ')); surfaces.push(row);
     if (i % 5 === 2 && i < o.n - 1) { const fx = clamp(prevX - side * (2.5 + r() * 3), -8, 8); const fw = 1.4 + r() * 0.6;
@@ -326,7 +327,7 @@ function makeDescent(o) {
     else if (i % 4 === 1) crystals.push([+(spk ? (spk === 'L' ? x + w / 4 : x - w / 4) : x).toFixed(1), +(y + 0.6).toFixed(1)]);
     else if (i % 7 === 5) crystals.push([+((prevX + x) / 2).toFixed(1), +((prevY + y) / 2 + 2.5).toFixed(1)]);
     if (hawkAt.includes(i)) hawks.push({ x1: -8 + r() * 2, x2: 6 + r() * 2, y: +((prevY + y) / 2 - 0.5).toFixed(1), speed: 4 + t * 3 });
-    if (o.rocks && i % Math.ceil(o.n / o.rocks) === 2) rocks.push({ x: +((prevX + x) / 2).toFixed(1), y: +(prevY - 1).toFixed(1), len: gain + 6, period: 3.2 + r() * 1.5, offset: r() * 3 });
+    if (o.rocks && i % Math.ceil(o.n / o.rocks) === 2) rocks.push({ x: +((prevX + x) / 2).toFixed(1), y: +(prevY + 0.5).toFixed(1), len: gain + 8, period: 3.2 + r() * 1.5, offset: r() * 3 });
   }
   y -= 9; surfaces.push(['finish', 0, +y.toFixed(1), 80, 'terrace']);
   return { key: o.key, name: o.name, style: o.style, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 50 + o.n * 5 }, surfaces, crystals, blockers: [], hawks, rocks, herd: [{ surface: 'finish', x: o.seed % 2 ? 8 : -8, dir: o.seed % 2 ? 1 : -1, n: 4 }] };
@@ -338,7 +339,7 @@ function makeClimb(o) {
     const gain = 3.0 + r() * 0.6; y += gain; side = -side;
     const tiny = i % 5 === 3; const w = tiny ? 1.4 : 1.8 + r() * 1.4;
     const dx = lastW / 2 + w / 2 + 1.8 + r() * 1.5; x = x + side * dx; if (x > 8 || x < -8) { side = -side; x = clamp(x - 2 * side * dx, -8, 8); } lastW = w;
-    const spk = o.spikes && !tiny && w > 3.2 && i % 3 === 0 ? (side > 0 ? 'R' : 'L') : null;   // safe half faces the arriving goat
+    const spk = o.spikes && !tiny && w > 3.2 && i % 3 === 0 ? (side > 0 ? 'R' : 'L') : null;   // climbs have no forks, so zig-zag side == arrival side
     const row = ['u' + i, +x.toFixed(1), +y.toFixed(1), +w.toFixed(1), tiny ? 'foothold' : w > 3 ? 'broad' : w > 2.4 ? 'slab' : 'narrow']; if (spk) row.push(spk);
     surfaces.push(row);
     if (i % 4 === 2) crystals.push([+(x - side * (spk ? w / 4 : 0)).toFixed(1), +(y + 0.6).toFixed(1)]);
@@ -585,7 +586,7 @@ function buildLevel(idx, defOverride) {
   const hawks = (def.hawks || []).map((h, i) => makeHawkObj(h, i));
   const starts = (def.starts || [surfaces[0].id]).map(id => surfaces.find(s => s.id === id));
   const bottom = Math.min(...surfaces.map(s => s.y)), top = Math.max(...surfaces.map(s => s.y));
-  const rocks = (def.rocks || []).map(r => ({ ...r, t: -(r.offset || 0), warn: null, boulder: null }));
+  const rocks = (def.rocks || []).map((r, i) => ({ ...r, t: -(r.offset || 0), warn: null, boulder: null, chute: makeChute(r.x, r.y, 900 + i + idx * 17) }));
   const winds = (def.winds || []).map(w => ({ ...w }));
   const kids = (def.kids || []).map(k => { const sf = surfaces.find(s => s.id === k.surface); const g = new Goat('classic', 0.6); g.spawn(sf, k.x ?? sf.x); g.root.position.z = -0.4; g.herdZ = -0.4; g.isKid = true; return { surface: sf, goat: g, rescued: false }; });
   L = { idx, def, surfaces, blockers, crystals, hawks, rocks, winds, kids, falling: [], windDust: [], starts, start: starts[0], bottom, top, twin: !!def.twin, ascent: !!def.ascent, dir: def.ascent ? -1 : 1, endless: !!def.endless,
@@ -615,12 +616,14 @@ function genNext() {
   if (x > 8 || x < -8) { x = clamp(x, -8, 8); if (L.ascent) w = Math.max(1.3, +(Math.abs(x - g.lastX) * 2 - g.lastW - 2.2).toFixed(1)); }
   const y = g.lastY + dirY * gain;
   const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : (R() < 0.4 ? 'sloped' : 'narrow');
-  const spk = dist > ENDLESS.spikeStart && w >= 2.8 && R() < Math.min(0.5, (dist - ENDLESS.spikeStart) / 150) ? (side > 0 ? 'R' : 'L') : null;
+  const spk = dist > ENDLESS.spikeStart && w >= 3.0 && !g.lastFork && R() < Math.min(0.5, (dist - ENDLESS.spikeStart) / 150) ? (g.lastX < x ? 'R' : 'L') : null;
   const flags = [spk, dist > 40 && !spk && R() < 0.15 ? 'crumble' : null, BIOME_CYCLE[g.biome] === 'alpine' && w >= 2.4 && R() < 0.35 ? 'ice' : null].filter(Boolean);
   const row = ['e' + g.n, +x.toFixed(1), +y.toFixed(1), w, type]; if (flags.length) row.push(flags.join(' '));
   const s = makeSurface(row, g.n, g.seed); L.surfaces.push(s);
   // optional fork: a narrower ledge on the other side with a pickup — route choice
+  g.lastFork = false;
   if (dist > ENDLESS.forkStart && R() < 0.22) {
+    g.lastFork = true;
     const fx = clamp(g.lastX - side * (2.5 + R() * 3), -8, 8); const fw = Math.max(1.3, +(w * 0.6).toFixed(1));
     const f = makeSurface(['f' + g.n, +fx.toFixed(1), +y.toFixed(1), fw, fw < 1.7 ? 'foothold' : 'narrow'], g.n, g.seed + 500); L.surfaces.push(f);
     L.crystals.push(makeCrystalObj(fx, y + 0.6, L.crystals.length, L.surfaces));
@@ -633,7 +636,7 @@ function genNext() {
     const hy = (g.lastY + y) / 2 + (L.ascent ? 0.6 : -0.6); L.hawks.push(makeHawkObj({ x1: -8 + R() * 2, x2: 6 + R() * 2, y: +hy.toFixed(1), speed: 3.8 + Math.min(4.5, d * 1.6) }, L.hawks.length)); }
   g.sinceWind = (g.sinceWind || 0) + 1; g.sinceRock = (g.sinceRock || 0) + 1;
   if (dist > 60 && g.sinceWind >= 7 && R() < 0.5) { g.sinceWind = 0; const ya = Math.max(g.lastY, y), yb = Math.min(g.lastY, y); L.winds.push({ y1: ya + 1, y2: yb - 6, force: (R() < 0.5 ? -1 : 1) * (2.5 + Math.min(2, d * 0.8)) }); }
-  if (dist > 90 && g.sinceRock >= Math.max(4, 9 - Math.floor(d * 2)) && R() < 0.5) { g.sinceRock = 0; L.rocks.push({ x: +((g.lastX + x) / 2).toFixed(1), y: L.ascent ? y + 12 : g.lastY - 1, len: L.ascent ? 14 : gain + 6, period: 3.2 + R() * 1.5, offset: R() * 3, t: 0, warn: null, boulder: null }); }
+  if (dist > 90 && g.sinceRock >= Math.max(4, 9 - Math.floor(d * 2)) && R() < 0.5) { g.sinceRock = 0; L.rocks.push({ x: +((g.lastX + x) / 2).toFixed(1), y: L.ascent ? y + 10 : g.lastY + 0.5, len: L.ascent ? 14 : gain + 8, period: 3.2 + R() * 1.5, offset: R() * 3, t: 0, warn: null, boulder: null, chute: makeChute(+((g.lastX + x) / 2).toFixed(1), L.ascent ? y + 10 : g.lastY + 0.5, g.seed + 900) }); }
   g.lastX = x; g.lastY = y; g.lastW = w;
   L.bottom = Math.min(L.bottom, y); L.top = Math.max(L.top, y);
 }
@@ -645,7 +648,7 @@ function endlessTick() {
   for (let i = L.surfaces.length - 1; i >= 0; i--) { const s = L.surfaces[i]; if (behind(s) && s !== goats[0].onSurface && !(goats[0].lastSafe && goats[0].lastSafe.s === s)) { levelGroup.remove(s.group); L.surfaces.splice(i, 1); } }
   for (let i = L.crystals.length - 1; i >= 0; i--) { const c = L.crystals[i]; if (behind(c)) { levelGroup.remove(c.mesh); L.crystals.splice(i, 1); } }
   for (let i = L.hawks.length - 1; i >= 0; i--) { const h = L.hawks[i]; if (behind(h)) { levelGroup.remove(h.mesh); L.hawks.splice(i, 1); } }
-  for (let i = L.rocks.length - 1; i >= 0; i--) { const r = L.rocks[i]; if (behind(r)) { if (r.boulder) scene.remove(r.boulder); if (r.warn) scene.remove(r.warn); L.rocks.splice(i, 1); } }
+  for (let i = L.rocks.length - 1; i >= 0; i--) { const r = L.rocks[i]; if (behind(r)) { if (r.boulder) scene.remove(r.boulder); if (r.warn) scene.remove(r.warn); if (r.chute) levelGroup.remove(r.chute); L.rocks.splice(i, 1); } }
   for (let i = L.winds.length - 1; i >= 0; i--) { const w = L.winds[i]; if (behind({ y: (w.y1 + w.y2) / 2 })) L.winds.splice(i, 1); }
   for (let i = L.windDust.length - 1; i >= 0; i--) if (!L.winds.includes(L.windDust[i].userData.w)) { scene.remove(L.windDust[i]); L.windDust.splice(i, 1); }
   L.bottom = Math.min(...L.surfaces.map(s => s.y)); L.top = Math.max(...L.surfaces.map(s => s.y));
@@ -887,7 +890,7 @@ function integrate(pos, vel, corr, dt, windK = 1) { vel.y -= CONFIG.gravity * dt
 // starts from that ledge's edge on the aim side (the goat trots there first). Upward jumps start where the goat stands.
 function launchStart(goat, aim) {
   const s = goat.onSurface, p = goat.pos;
-  if (!s || aim.dir.y >= 0) return { x: p.x, y: p.y, walk: false };
+  if (!s || aim.dir.y >= 0.35) return { x: p.x, y: p.y, walk: false };   // clear upward jumps may hop across the ledge; anything flatter leaves from the edge
   const v = launchVelocity(aim); const xr = p.x + v.x * (2 * v.y / CONFIG.gravity);
   if (xr < s.x1 || xr > s.x2) return { x: p.x, y: p.y, walk: false };
   const ex = aim.dir.x > 0.05 ? s.x2 : aim.dir.x < -0.05 ? s.x1 : (p.x - s.x1 <= s.x2 - p.x ? s.x1 : s.x2);
@@ -965,6 +968,16 @@ function chime() {
 const boulderGeo = new THREE.DodecahedronGeometry(0.55, 0), boulderMat = new THREE.MeshLambertMaterial({ color: 0x5a4030, flatShading: true });
 const warnGeo = new THREE.CircleGeometry(0.9, 12), warnMat = new THREE.MeshBasicMaterial({ color: 0x1a0d08, transparent: true, opacity: 0.45 });
 const streakGeo = new THREE.BoxGeometry(0.9, 0.03, 0.03), streakMat = new THREE.MeshBasicMaterial({ color: 0xf6ead8, transparent: true, opacity: 0.35 });
+function makeChute(x, y, seed) { // a dark crevice in the wall the boulders roll out of
+  const g = new THREE.Group(); const rr = mulberry(seed);
+  const hole = new THREE.Mesh(new THREE.BoxGeometry(1.9, 1.7, 1.2), new THREE.MeshBasicMaterial({ color: 0x0d0805 })); hole.position.set(x, y + 0.85, -2.6); g.add(hole);
+  const rim = new THREE.MeshLambertMaterial({ color: new THREE.Color(STYLE.sides[0]).offsetHSL(0, 0, -0.08), flatShading: true });
+  const chunks = [[-1.25, 0.9, 0.7, 1.9], [1.25, 0.9, 0.7, 1.9], [0, 2.05, 2.4, 0.6]];
+  for (const [dx, dy, w, h] of chunks) { const m = new THREE.Mesh(makeRock(w, h, 1.6, seed + dx * 3 + dy, 0.2, { solid: true }), rim); m.position.set(x + dx, y + dy, -2.2); m.castShadow = m.receiveShadow = true; g.add(m); }
+  const lip = new THREE.Mesh(makeRock(2.2, 0.5, 1.4, seed + 5, 0.2, { solid: true }), rim); lip.position.set(x, y - 0.25, -1.7); lip.rotation.x = 0.35; lip.receiveShadow = true; g.add(lip);
+  for (let k = 0; k < 4; k++) { const p = new THREE.Mesh(pebGeo, pebMat); p.position.set(x + (rr() - .5) * 1.6, y + 0.1 + rr() * 0.2, -1.4 + rr() * 0.5); p.scale.setScalar(0.8 + rr()); g.add(p); }
+  levelGroup.add(g); return g;
+}
 function everyoneOn(s) { const all = goats.concat(followers); return all.filter(g => g.onSurface === s && [ST.IDLE, ST.LAND, ST.WALK, ST.CATCH, ST.AIM].includes(g.state)); }
 function updateHazards(dt, playing) {
   // --- crumbling ledges ---
@@ -986,12 +999,15 @@ function updateHazards(dt, playing) {
   // --- rockfall ---
   for (const r of L.rocks) {
     r.t += dt; const phase = ((r.t % r.period) + r.period) % r.period;
-    if (!r.boulder && !r.warn && phase > r.period - CONFIG.rockWarn) { r.warn = new THREE.Mesh(warnGeo, warnMat.clone()); r.warn.position.set(r.x, r.y - 0.5, 0.9); scene.add(r.warn); spawnPebbles(r.x, r.y + 1.5, 4, 1.2); }
+    if (!r.boulder && !r.warn && phase > r.period - CONFIG.rockWarn) { r.warn = new THREE.Mesh(warnGeo, warnMat.clone()); r.warn.position.set(r.x, r.y + 0.6, -1.0); scene.add(r.warn); spawnPebbles(r.x, r.y + 0.6, 4, 1.2); thud(0.3, 120, 0.25); }
     if (r.warn) { const q = (phase > r.period - CONFIG.rockWarn) ? 1 - (r.period - phase) / CONFIG.rockWarn : 1; r.warn.scale.setScalar(0.4 + q * 0.8); r.warn.material.opacity = 0.2 + q * 0.35; }
     if (!r.boulder && r.warn && phase < CONFIG.rockWarn) { // warning ended → drop
-      scene.remove(r.warn); r.warn = null; r.boulder = new THREE.Mesh(boulderGeo, boulderMat); r.boulder.castShadow = true; r.boulder.position.set(r.x, r.y + 3, 0.3); r.vy = 0; scene.add(r.boulder); thud(0.5, 240, 0.1);
+      scene.remove(r.warn); r.warn = null; r.boulder = new THREE.Mesh(boulderGeo, boulderMat); r.boulder.castShadow = true; r.boulder.position.set(r.x, r.y + 0.6, -2.4); r.vy = 0; r.emerge = 0; scene.add(r.boulder); thud(0.5, 240, 0.1);
     }
-    if (r.boulder) {
+    if (r.boulder && r.emerge < 1) { // rolling out of the crevice onto its lip
+      const b = r.boulder; r.emerge = Math.min(1, r.emerge + dt / 0.35); b.position.z = lerp(-2.4, 0.3, r.emerge); b.position.y = r.y + 0.6 + Math.sin(r.emerge * Math.PI) * 0.35; b.rotation.x -= 9 * dt;
+      if (r.emerge >= 1) { r.vy = -1; spawnPebbles(r.x, r.y, 3, 1); }
+    } else if (r.boulder) {
       const b = r.boulder, prevY = b.position.y; r.vy -= CONFIG.gravity * 0.9 * dt; b.position.y += r.vy * dt; b.rotation.x += 4 * dt; b.rotation.z += 2.5 * dt;
       let shatter = b.position.y < r.y - r.len;
       for (const s of L.surfaces) if (prevY - 0.5 >= s.y && b.position.y - 0.5 < s.y && r.x > s.x1 - 0.3 && r.x < s.x2 + 0.3) { shatter = true; b.position.y = s.y + 0.5; }
