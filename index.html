@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v12 -->
+<!-- build v14 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -792,7 +792,7 @@ class Goat {
     if (v.y <= 0) for (const s of L.surfaces) { if (s === o && g) continue; const m = s === o ? 0 : tol; if (prev.y >= s.y - 1e-4 && p.y < s.y && p.x >= s.x1 - m && p.x <= s.x2 + m) return { type: 'land', s, speed: -v.y }; }
     if (v.y < 0 && -v.y <= CONFIG.maxEdgeGrabFallSpeed) for (const s of L.surfaces) {
       if (s === o && g) continue; if (p.y > s.y - 0.05 || p.y < s.y - CONFIG.edgeGrabDepth) continue; const gd = CONFIG.edgeGrabDistance;
-      if (s === o && g) continue;
+      if (s === o) continue;   // never grab the ledge you just left — a missed hop falls on to whatever is below
       if (p.x >= s.x1 - tol - gd && p.x <= s.x1 + 0.1) return { type: 'catch', s, edge: s.x1, side: 1 };
       if (p.x <= s.x2 + tol + gd && p.x >= s.x2 - 0.1) return { type: 'catch', s, edge: s.x2, side: -1 };
     }
@@ -800,7 +800,7 @@ class Goat {
     const gw = CONFIG.goatHalfWidth, gh = CONFIG.goatBodyHeight, g0 = 0.05, rects = [];
     for (const s of L.surfaces) {
       if (s === o) { // own ledge stays passable while the goat is still hugging it (vertical drop along its face)
-        const hugging = p.y > s.y - s.h - 0.6 && p.x > s.x1 - gw - 0.25 && p.x < s.x2 + gw + 0.25;
+        const hugging = p.y > s.y - s.h - 1.0 && p.x > s.x1 - gw - 0.6 && p.x < s.x2 + gw + 0.6;
         if (g || hugging) continue;
       }
       rects.push({ x1: s.x1 - 0.15, x2: s.x2 + 0.15, top: s.y - 0.3, bot: s.y - s.h - 0.6 });
@@ -1097,7 +1097,7 @@ function updateFollower(f, dt) {
 // ============================================================
 const $ = id => document.getElementById(id);
 const hud = $('hud'), hint = $('hint'), vig = $('vig'), topwarn = $('topwarn'), botwarn = $('botwarn'), wind = $('wind'), dbg = $('dbg'), dpref = $('dpref'), ddanger = $('ddanger');
-let mode = 'menu';
+let mode = 'menu', pendingReload = false;
 const goats = [], herd = [], followers = [];
 const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0, dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, hintDone: false, collected: 0, result: null, twin: false };
 
@@ -1105,6 +1105,7 @@ let screenShownAt = 0;
 function showScreen(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now(); }
 const fresh = () => performance.now() - screenShownAt < 300;
 function goMenu() {
+  if (pendingReload) { pendingReload = false; location.reload(); return; }
   mode = 'menu'; hud.style.display = 'none'; hint.style.opacity = 0; $('menuSalt').textContent = '◆ ' + save.totalSaltCrystals;
   const info = dailyInfo(); const d = save.daily || {}; const stars = d.date === info.date ? (d.stars || 0) : 0;
   const worldName = (WORLDS.find(w => LEVELS.some(l => l.key === w.levels[0] && l.style === info.style)) || WORLDS[0]).name;
@@ -1417,7 +1418,7 @@ function loop(now) {
   renderer.render(scene, camera); requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) { navigator.serviceWorker.register('sw.js').then(r => r.update()).catch(() => {}); let reloaded = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!reloaded) { reloaded = true; location.reload(); } }); }
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) { navigator.serviceWorker.register('sw.js').then(r => r.update()).catch(() => {}); let reloaded = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloaded) return; if (mode === 'menu' || mode === 'select' || mode === 'ibex') { reloaded = true; location.reload(); } else pendingReload = true; }); }
 </script>
 </body>
 </html>
