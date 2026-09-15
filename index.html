@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v16 -->
+<!-- build v18 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -116,7 +116,8 @@ const CONFIG = {
   landingSnapTime: 0.12,     // seconds of that slide
   edgeGrabDistance: 0.45, edgeGrabDepth: 1.2, maxEdgeGrabFallSpeed: 22, takeoffGrace: 0.2,
   hardLandingSpeed: 12, perfectLandingSpeed: 8.5, deathFallTime: 1.5,
-  crumbleTime: 1.3,          // seconds a crumbling ledge holds after someone lands on it
+  crumbleTime: 2.0,          // seconds a crumbling ledge holds after someone lands on it
+  crumbleHazardGap: 9,       // no crumbling ledge within this many metres of a bird lane or a rock chute
   slopeSlideSpeed: 0.25,     // m/s the goat slides toward the low edge of a sloped shelf while standing
   iceKeep: 0.85, iceFriction: 1.1,   // ice: fraction of landing speed kept, and how fast it decays
   rockWarn: 1.0, rockHitRadius: 0.65, // rockfall: warning time before the boulder drops
@@ -212,9 +213,9 @@ function defineLevels() { LEVELS = [
       ['A4', -5, -25, 2, 'narrow'], ['B4', 4.5, -24, 3.5, 'slab'],         // 4: down-left, A precise + lower, B forgiving
       ['A5a', -8, -32, 2, 'narrow'], ['B5a', 1.5, -32, 2, 'narrow'],       // 5: route choice — left pair
       ['A5b', -2.5, -31, 2, 'sloped'], ['B5b', 8, -30, 1.5, 'foothold'],   //    or right pair
-      ['A6', -4, -39, 3, 'broad'], ['B6', 4.5, -39, 2.5, 'slab'],          // 6: both branches converge
-      ['A7', -8, -46, 1.6, 'foothold'], ['B7', 1, -45, 3, 'broad'],        // 7: down-left, tiny for A
-      ['A8', -4, -53, 2.5, 'slab'], ['B8', 6, -52, 1.4, 'foothold'],       // 8: down-right, tiny for B
+      ['A6', -6, -40, 3, 'broad'], ['B6', 4.5, -39, 2.5, 'slab'],          // 6: both branches converge
+      ['A7', -9.5, -46, 1.6, 'foothold'], ['B7', 1, -45, 3, 'broad'],      // 7: down-left, tiny for A
+      ['A8', -4, -53, 2.5, 'slab'], ['B8', 6.8, -52, 1.6, 'foothold'],     // 8: down-right, tiny for B
       ['finishA', -21, -61, 40, 'terrace'], ['finishB', 21, -61, 40, 'terrace'],
     ],
     herd: [{ surface: 'finishA', x: -11, dir: -1, n: 3 }, { surface: 'finishB', x: 11, dir: 1, n: 3 }],
@@ -271,7 +272,7 @@ function defineLevels() { LEVELS = [
       ['A2', -4, -12, 4, 'slab', 'R'], ['B2', 6, -12, 3, 'slab'],
       ['A3', -9, -19, 3, 'slab'], ['B3', 1, -18, 4, 'broad', 'L'],
       ['A4', -3, -26, 4, 'slab', 'R'], ['B4', 7, -25, 2.5, 'narrow'],
-      ['A5', -8, -33, 2, 'narrow'], ['B5', 3, -32, 3.5, 'slab', 'L'],
+      ['A5', -8.5, -33, 3, 'slab'], ['B5', 2, -32, 4, 'slab', 'L'],
       ['A6', -3, -40, 3, 'broad'], ['B6', 8, -39, 1.6, 'stone'],
       ['finishA', -21, -49, 40, 'terrace'], ['finishB', 21, -49, 40, 'terrace'],
     ],
@@ -283,7 +284,7 @@ function defineLevels() { LEVELS = [
     surfaces: [
       ['start', 0, 0, 8, 'terrace'], ['p1', 6, -6, 4, 'broad'], ['p2', -1, -12, 4, 'slab', 'L'],
       ['p3', -7, -18, 3, 'broad', 'ice'], ['p4', 1, -24, 2.5, 'slab'], ['p5', 7, -30, 3, 'broad', 'R'],
-      ['p6', 0, -37, 2, 'narrow'], ['p7', -6, -43, 3.5, 'slab', 'L'], ['p8', 2, -50, 1.4, 'foothold', 'crumble'],
+      ['p6', 0, -37, 2, 'narrow', 'crumble'], ['p7', -6, -43, 3.5, 'slab', 'L'], ['p8', 2, -50, 1.4, 'foothold'],
       ['p9', -3, -56, 3, 'broad', 'ice'], ['p10', 4, -63, 3, 'slab', 'R'], ['p11', -2, -70, 2.5, 'narrow', 'ice'],
       ['p12', 5, -77, 4, 'broad', 'L'], ['finish', 0, -88, 80, 'terrace'],
     ],
@@ -309,9 +310,9 @@ function defineLevels() { LEVELS = [
   makeClimb({ key: 'summit', name: 'THE SUMMIT', style: 'alpine', seed: 77, n: 26, spikes: true, hawks: [{ x1: -7, x2: 7, y: 30, speed: 6 }, { x1: -6, x2: 8, y: 58, speed: 7 }] }),
   makeDescent({ key: 'redrun', name: 'DUSK RUN', style: 'red', seed: 5, n: 16, spikes: true, hawks: 2 }),
   makeDescent({ key: 'chalkrun', name: 'SEA CLIFFS', style: 'chalk', seed: 9, n: 18, spikes: true, hawks: 3, rocks: 2 }),
-  makeDescent({ key: 'nightrun', name: 'MOONLIT DESCENT', style: 'night', seed: 13, n: 16, spikes: true, hawks: 1 }),
+  makeDescent({ key: 'nightrun', name: 'MOONLIT DESCENT', style: 'night', seed: 13, n: 16, spikes: true, hawks: 1, crumble: true }),
   makeClimb({ key: 'nightclimb', name: 'NIGHT CLIMB', style: 'night', seed: 21, n: 20, spikes: false, hawks: [{ x1: -7, x2: 7, y: 26, speed: 5.5 }, { x1: -8, x2: 6, y: 44, speed: 6.5 }] }),
-  makeDescent({ key: 'icefall', name: 'ICE FALL', style: 'alpine', seed: 31, n: 20, spikes: true, hawks: 2, rocks: 2 }),
+  makeDescent({ key: 'icefall', name: 'ICE FALL', style: 'alpine', seed: 31, n: 20, spikes: true, hawks: 2, rocks: 2, crumble: true }),
 ]; }
 // zig-zag descent generator (deterministic): widths shrink and gaps grow along the way, forks with a pickup, spikes on wide ledges, bird lanes spread evenly
 function makeDescent(o) {
@@ -325,7 +326,7 @@ function makeDescent(o) {
     const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : (r() < 0.4 ? 'sloped' : 'narrow');
     const afterFork = (i - 1) % 5 === 2;
     const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 && !afterFork ? (prevX < x ? 'R' : 'L') : null;
-    const flags = [spk, o.style === 'alpine' && w >= 2.6 && i % 4 === 1 ? 'ice' : null, i > 4 && i % 6 === 5 && !spk ? 'crumble' : null].filter(Boolean);
+    const flags = [spk, o.style === 'alpine' && w >= 2.6 && i % 4 === 1 ? 'ice' : null, o.crumble && i > 4 && i % 6 === 5 && !spk ? 'crumble' : null].filter(Boolean);
     const row = ['d' + i, +x.toFixed(1), +y.toFixed(1), w, type]; if (flags.length) row.push(flags.join(' ')); surfaces.push(row);
     if (i % 5 === 2 && i < o.n - 1) { const fx = clamp(prevX - side * (2.5 + r() * 3), -8, 8); const fw = 1.4 + r() * 0.6;
       surfaces.push(['k' + i, +fx.toFixed(1), +y.toFixed(1), +fw.toFixed(1), fw < 1.7 ? 'foothold' : 'narrow']); crystals.push([+fx.toFixed(1), +(y + 0.6).toFixed(1)]); }
@@ -379,8 +380,7 @@ function dailyDef(info = dailyInfo()) {
     const r2 = mulberry(seed + 1); const hawks = []; for (let k = 0; k < hawksN; k++) hawks.push({ x1: -8 + r2() * 2, x2: 6 + r2() * 2, y: +((k + 1) * n * 2.9 / (hawksN + 1)).toFixed(1), speed: 5 + r2() * 2 });
     def = makeClimb({ key: 'daily', name: 'DAILY CHALLENGE', style, seed, n, spikes: has('spikes'), hawks, wind: has('wind') });
   } else {
-    def = makeDescent({ key: 'daily', name: 'DAILY CHALLENGE', style, seed, n, spikes: has('spikes'), hawks: hawksN, rocks: has('rockfall') ? 2 : 0, wind: has('wind'), kid: has('kid') });
-    if (!has('crumble')) def.surfaces.forEach(sr => { if (sr[5]) sr[5] = sr[5].split(' ').filter(f => f !== 'crumble').join(' ') || undefined; });
+    def = makeDescent({ key: 'daily', name: 'DAILY CHALLENGE', style, seed, n, spikes: has('spikes'), hawks: hawksN, rocks: has('rockfall') ? 2 : 0, wind: has('wind'), kid: has('kid'), crumble: has('crumble') });
     if (!has('ice')) def.surfaces.forEach(sr => { if (sr[5]) sr[5] = sr[5].split(' ').filter(f => f !== 'ice').join(' ') || undefined; });
     if (has('ice')) def.surfaces.forEach((sr, i) => { if (i > 0 && i < def.surfaces.length - 1 && sr[3] >= 2.6 && i % 3 === 0 && !(sr[5] || '').includes('L') && !(sr[5] || '').includes('R')) sr[5] = ((sr[5] || '') + ' ice').trim(); });
   }
@@ -614,6 +614,10 @@ function buildLevel(idx, defOverride) {
   if (L) { for (const k of L.kids) scene.remove(k.goat.root); for (const r of L.rocks) { if (r.boulder) scene.remove(r.boulder); if (r.warn) scene.remove(r.warn); } for (const f of L.falling) levelGroup.remove(f.group); for (const d of L.windDust) scene.remove(d); }
   applyStyle(STYLES[def.style] || STYLES.desert);
   while (levelGroup.children.length) levelGroup.remove(levelGroup.children[0]);
+  for (const r of def.surfaces) if (r[5] && r[5].includes('crumble')) { // never a crumbling ledge right next to a bird lane or a rock chute
+    const near = (def.hawks || []).some(h => Math.abs(h.y - r[2]) < CONFIG.crumbleHazardGap) || (def.rocks || []).some(rk => r[2] < rk.y + 2 && r[2] > rk.y - rk.len - 2 && Math.abs(rk.x - r[1]) < r[3] / 2 + 3);
+    if (near) r[5] = r[5].split(' ').filter(f => f !== 'crumble').join(' ') || undefined;
+  }
   const surfaces = def.surfaces.map((r, i) => makeSurface(r, i, 10 + i + idx * 100));
   const blockers = def.blockers.map((b, i) => {
     const w = b.x2 - b.x1, cx = (b.x1 + b.x2) / 2; const geo = makeRock(w, b.h + 0.6, 3.6, 300 + i + idx * 11, 0.45, { solid: true }); const p = geo.attributes.position;
@@ -656,7 +660,8 @@ function genNext() {
   const y = g.lastY + dirY * gain;
   const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : (R() < 0.4 ? 'sloped' : 'narrow');
   const spk = dist > ENDLESS.spikeStart && w >= 3.0 && !g.lastFork && R() < Math.min(0.5, (dist - ENDLESS.spikeStart) / 150) ? (g.lastX < x ? 'R' : 'L') : null;
-  const flags = [spk, dist > 40 && !spk && R() < 0.15 ? 'crumble' : null, BIOME_CYCLE[g.biome] === 'alpine' && w >= 2.4 && R() < 0.35 ? 'ice' : null].filter(Boolean);
+  const nearBird = L.hawks.some(h => Math.abs(h.y - y) < CONFIG.crumbleHazardGap) || (dist > ENDLESS.hawkStart && g.sinceHawk <= 1);
+  const flags = [spk, dist > 120 && !spk && !nearBird && R() < 0.15 ? 'crumble' : null, BIOME_CYCLE[g.biome] === 'alpine' && w >= 2.4 && R() < 0.35 ? 'ice' : null].filter(Boolean);
   const row = ['e' + g.n, +x.toFixed(1), +y.toFixed(1), w, type]; if (flags.length) row.push(flags.join(' '));
   const s = makeSurface(row, g.n, g.seed); L.surfaces.push(s);
   // optional fork: a narrower ledge on the other side with a pickup — route choice
@@ -1097,6 +1102,40 @@ function updateFollower(f, dt) {
 }
 
 // ============================================================
+//  Contextual hints: shown when a mechanic first comes into view, hidden on action, back after idling
+// ============================================================
+const HINT_TEXT = {
+  drag: 'Drag toward your jump<br>Release to leap', twin: 'One drag moves both goats<br>Check both arcs before you release',
+  ascent: 'Climb! The mountain drifts down<br>Jump up before it carries you away', endless: 'How far can you go?<br>It gets harder every 100 m',
+  daily: 'Daily challenge — same mountain for everyone today', birds: 'Birds strike goats in the air<br>Let it pass, then jump',
+  spikes: 'Spikes — land on the clear half', ice: 'Ice — you keep sliding after landing', crumble: 'Cracked ledges crumble in a second<br>Don\'t linger on them',
+  wind: 'Wind in that gap bends your arc<br>The dots show most of it', rocks: 'A crevice — when its shadow grows, a boulder drops', kids: 'A stranded kid — land beside it<br>It will follow your jumps',
+};
+function activeHint() {
+  const g = goats[0], y = g.pos.y, ahead = 15, back = 4; const inView = yy => L.ascent ? (yy > y - back && yy < y + ahead) : (yy < y + back && yy > y - ahead);
+  if (G.jumps === 0) { if (L.twin) return 'twin'; if (L.ascent) return 'ascent'; if (L.def.daily) return 'daily'; if (L.endless) return 'endless'; if (!save.seenDrag) return 'drag'; }
+  for (const k of L.kids) if (!k.rescued && inView(k.surface.y)) return 'kids';
+  if (L.hawks.some(h => inView(h.y))) return 'birds';
+  if (L.rocks.some(r => inView(r.y) || inView(r.y - r.len / 2))) return 'rocks';
+  if (L.winds.some(w => inView(w.y1) || inView(w.y2))) return 'wind';
+  for (const s of L.surfaces) if (inView(s.y)) { if (s.spikes) return 'spikes'; if (s.crumble) return 'crumble'; if (s.ice) return 'ice'; }
+  return null;
+}
+function updateHints(dt, playing) {
+  const H = G.hints; if (!H) return;
+  if (!playing) { hint.style.opacity = 0; return; }
+  const key = activeHint(); const now = performance.now() / 1000;
+  const acted = G.jumps !== H.lastJumps; H.lastJumps = G.jumps; if (acted) { H.idleT = 0; if (H.key) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; } if (G.jumps >= 3) save.seenDrag = true; }
+  const idle = goats.every(g => g.state === ST.IDLE); H.idleT = idle ? H.idleT + dt : 0;
+  if (key && key !== H.key) {
+    const fresh = !H.seen[key], idleAgain = H.hiddenKey === key && H.idleT > 4;
+    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; H.shownAt = now; hint.innerHTML = HINT_TEXT[key] + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
+  }
+  if (H.key && now - H.shownAt > 7 && H.idleT < 4) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; }
+  if (!key && H.key) { hint.style.opacity = 0; H.key = null; }
+}
+
+// ============================================================
 //  Game flow: menu → select → play → result
 // ============================================================
 const $ = id => document.getElementById(id);
@@ -1152,16 +1191,13 @@ function startLevel(idx, defOverride) {
     for (let i = 0; i < h.n; i++) { const g = new Goat(i % 3 === 2 ? 'dark' : 'classic'); g.spawn(sf, h.x + h.dir * i * 1.5 + (i % 2) * 0.4); g.facing = -h.dir; g.A.face = -h.dir; g.herdDir = h.dir; g.herdDelay = 0.5 + i * 0.12; g.root.position.z = -0.5 - (i % 2) * 0.5; g.herdZ = g.root.position.z; g.isHerd = true; herd.push(g); } }
   G.twin = L.twin;
   Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, camFx: 0, camFy: preferredFy(L.start.y), dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, collected: 0, result: null });
-  mode = 'play'; hud.style.display = 'flex'; showScreen(null); if (!G.hintDone) hint.style.opacity = 1;
+  mode = 'play'; hud.style.display = 'flex'; showScreen(null);
   $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = STYLE.pickupName; $('hDescLbl').textContent = L.ascent ? 'ASCENT' : 'DESCENT';
-  hint.innerHTML = L.twin ? 'One drag moves both goats<br>Check both arcs before you release' : 'Drag toward your jump<br>Release to leap'; if (L.twin) hint.style.opacity = 1;
-  if (L.hawks.length) { hint.innerHTML = 'Hawks patrol the gaps<br>Time your jumps between passes'; hint.style.opacity = 1; }
-  if (L.ascent) { hint.innerHTML = 'Climb! The mountain drifts down<br>Jump up before it carries you away'; hint.style.opacity = 1; }
-  if (L.def.daily) { hint.innerHTML = `Daily challenge · ${L.def.mods.join(', ')}<br>Same mountain for everyone today`; hint.style.opacity = 1; }
-  if (L.endless) { endlessTick(); hint.innerHTML = (L.ascent ? 'Endless ascent' : 'Endless descent') + ' — how far can you go?<br>It gets harder every 100 m'; hint.style.opacity = 1; }
+  G.hints = { seen: {}, key: null, shownAt: 0, hiddenKey: null, idleT: 0, lastJumps: 0 }; hint.style.opacity = 0;
+  if (L.endless) endlessTick();
   $('hSalt').parentElement.style.visibility = (L.crystals.length || L.endless || L.kids.length) ? 'visible' : 'hidden'; if (L.endless) $('hSalt').textContent = '◆ 0';
   $('hSalt').style.display = (L.crystals.length || L.endless) ? 'block' : 'none'; $('hKids').style.display = L.kids.length ? 'block' : 'none'; $('hKids').textContent = `KIDS 0 / ${L.kids.length}`;
-  if (L.kids.length) { hint.innerHTML = 'Kids are stranded on dead ends<br>Land beside one and it follows your jumps'; hint.style.opacity = 1; }
+
 }
 function finishLevel(win, reason) {
   mode = 'result'; G.endT = 0; hint.style.opacity = 0;
@@ -1291,7 +1327,7 @@ addEventListener('keydown', e => {
 addEventListener('keyup', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') G.keyInput = 0; });
 function doJump(aim) {
   for (const g of goats) if (g.state !== ST.WIN) g.jump(aim);
-  G.jumps++; if (G.jumps >= CONFIG.hintJumps && !G.hintDone) { G.hintDone = true; hint.style.opacity = 0; }
+  G.jumps++;
 }
 
 // ============================================================
@@ -1399,6 +1435,7 @@ function update(dt) {
   // ---- result screen reveal ----
   if (ended) { G.endT += dt; if (G.endT > G.result.delay && !$('scResult').classList.contains('show')) showScreen('scResult'); }
 
+  updateHints(dt, playing);
   // ---- HUD ----
   $('hDesc').textContent = Math.round(G.maxDesc) + ' m'; $('hTime').textContent = fmtTime(G.time);
   if (debugG.visible) {
