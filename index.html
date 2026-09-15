@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v19 -->
+<!-- build v20 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -156,7 +156,7 @@ const STYLES = {
     bands: [0xd8cfbb, 0xe6dcc6, 0xc9bfa8, 0xefe7d3, 0xbfb49c], tops: [0xf4eee0, 0xefe8d8, 0xf7f2e6], sides: [0xd3c8b0, 0xdacfb8, 0xcabfa6, 0xd7ccb4],
     dark: 0xb3a68c, plateau: 0xe0d7c2, mesa: 0xd5cab3, canyon: [0xcdc2aa, 0xd2c7ae], bush: 0x6f7e4a, blocker: 0xa89a80, spike: 0x7a7266, crystal: [0xd9c8a0, 0x7a6a40],
     bird: 'falcon', veg: 'bush', pickup: 'fossil', pickupName: 'FOSSIL' },
-  night: { sky: [0x0a1230, 0x2c3d6e], haze: 0x2a3858, sun: 0xa8bdf0, sunI: 1.7, hemi: [0x4a5f9a, 0x14121e], hemiI: 0.9,
+  night: { sky: [0x0c1636, 0x33477c], haze: 0x2e3e62, sun: 0xb4c8f6, sunI: 2.0, hemi: [0x56699f, 0x1a1828], hemiI: 1.05, fireflies: true,
     bands: [0x3f4a6e, 0x4a5680, 0x35405f, 0x55628c, 0x2e3654], tops: [0x7383ad, 0x6d7ca6, 0x7a8ab4], sides: [0x4a5478, 0x505b82, 0x434c70, 0x4d5780],
     dark: 0x2b3350, plateau: 0x2f3a5a, mesa: 0x33406a, canyon: [0x3c4668, 0x40496c], bush: 0x2f4a3a, blocker: 0x232b48, spike: 0x1a1e30, crystal: [0xeaf2ff, 0x8fd0ff],
     bird: 'raven', veg: 'bush', pickup: 'moon', pickupName: 'MOONSTONE' },
@@ -496,13 +496,26 @@ const ENV = { mesas: [], canyon: [] };
 { const n = 400, pos = new Float32Array(n * 3); for (let i = 0; i < n; i++) { pos[i * 3] = (Math.random() - .5) * 50; pos[i * 3 + 1] = (Math.random() - .5) * 40; pos[i * 3 + 2] = Math.random() * 14 - 6; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   ENV.snow = new THREE.Points(g, new THREE.PointsMaterial({ color: 0xffffff, size: 0.16, transparent: true, opacity: 0.85, fog: false })); ENV.snow.visible = false; scene.add(ENV.snow); }
+{ const g = new THREE.Group(); g.visible = false; scene.add(g); ENV.fireflies = g; g.flies = [];
+  const geo = new THREE.SphereGeometry(0.07, 6, 5);
+  for (let i = 0; i < 14; i++) { const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xe4f7a8, transparent: true, opacity: 0.9 })); m.userData = { phase: Math.random() * 6.28, rx: 1.5 + Math.random() * 2.5, ry: 0.8 + Math.random() * 1.6, w: 0.5 + Math.random() * 0.9, w2: 0.7 + Math.random() * 1.1, z: -0.6 + Math.random() * 1.8, cur: new THREE.Vector3() }; g.add(m); g.flies.push(m); }
+  g.lightA = new THREE.PointLight(0xd6f0a0, 7, 11, 2); g.add(g.lightA);
+  g.lightB = new THREE.PointLight(0xbfe6a8, 3.5, 7, 2); g.add(g.lightB);
+}
+function updateFireflies(dt) {
+  const g = ENV.fireflies; if (!g.visible || !goats.length) return; const t = performance.now() / 1000; const p = goats[0].pos;
+  g.lightA.position.set(p.x, p.y + 1.0, 1.4);
+  g.flies.forEach((m, i) => { const u = m.userData; const tx = p.x + Math.cos(t * u.w + u.phase) * u.rx, ty = p.y + 1.1 + Math.sin(t * u.w2 + u.phase) * u.ry + Math.sin(t * 3 + i) * 0.15;
+    u.cur.x = damp(u.cur.x, tx, 2.5, dt); u.cur.y = damp(u.cur.y, ty, 2.5, dt); m.position.set(u.cur.x, u.cur.y, u.z); m.material.opacity = 0.45 + 0.5 * Math.abs(Math.sin(t * 2.3 + u.phase * 3));
+    if (i === 0) g.lightB.position.copy(m.position); });
+}
 function updateSnow(dt, fx, fy) {
   if (!ENV.snow.visible) return; const a = ENV.snow.geometry.attributes.position, t = performance.now() / 1000;
   for (let i = 0; i < a.count; i++) { let y = a.getY(i) - (2.2 + (i % 5) * 0.3) * dt, x = a.getX(i) + Math.sin(t * 1.3 + i) * 0.4 * dt; if (y < fy - 20) { y += 40; x = fx + (Math.random() - .5) * 50; } a.setXY(i, x, y); }
   a.needsUpdate = true;
 }
 function applyStyle(st) {
-  STYLE = st; ENV.snow.visible = !!st.snow;
+  STYLE = st; ENV.snow.visible = !!st.snow; ENV.fireflies.visible = !!st.fireflies;
   scene.background.set(st.haze); scene.fog.color.set(st.haze);
   sun.color.set(st.sun); sun.intensity = st.sunI; hemi.color.set(st.hemi[0]); hemi.groundColor.set(st.hemi[1]); hemi.intensity = st.hemiI;
   ENV.plateau.material.color.set(st.plateau);
@@ -1126,12 +1139,12 @@ function updateHints(dt, playing) {
   if (!playing) { hint.style.opacity = 0; return; }
   const key = activeHint(); const now = performance.now() / 1000;
   const acted = G.jumps !== H.lastJumps; H.lastJumps = G.jumps; if (acted) { H.idleT = 0; if (H.key) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; } if (G.jumps >= 3) save.seenDrag = true; }
-  const idle = goats.every(g => g.state === ST.IDLE); H.idleT = idle ? H.idleT + dt : 0;
+  H.idleT += dt;
   if (key && key !== H.key) {
-    const fresh = !H.seen[key], idleAgain = H.hiddenKey === key && H.idleT > 4;
+    const fresh = !H.seen[key], idleAgain = H.idleT > 2.5;
     if (fresh || idleAgain) { H.seen[key] = true; H.key = key; H.shownAt = now; hint.innerHTML = HINT_TEXT[key] + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
   }
-  if (H.key && now - H.shownAt > 7 && H.idleT < 4) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; }
+  if (H.key && now - H.shownAt > 7 && H.idleT < 2.5) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; }
   if (!key && H.key) { hint.style.opacity = 0; H.key = null; }
 }
 
@@ -1429,7 +1442,7 @@ function update(dt) {
     g.animate(dt, showAim ? G.aim : null);
   });
   for (let gi = goats.length; gi < MAX_GOATS; gi++) { arrows[gi].visible = false; for (const d of dotSets[gi]) d.visible = false; }
-  updateParticles(dt); updateSnow(dt, G.camFx, G.camFy);
+  updateParticles(dt); updateSnow(dt, G.camFx, G.camFy); updateFireflies(dt);
   ENV.floor.position.y = (L.endless && !L.ascent) ? Math.min(0, G.camFy - 45 - FLOOR_Y) : 0; ENV.sky.position.y = G.camFy - 20;
 
   // ---- result screen reveal ----
