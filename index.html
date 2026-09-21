@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v30 -->
+<!-- build v34 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -60,41 +60,44 @@
 <canvas id="c"></canvas>
 <div id="topwarn"></div><div id="botwarn"></div><div id="leftwarn"></div><div id="vig"></div><div id="wind"></div>
 <div class="hud" id="hud" style="display:none">
-  <div><div class="lbl" id="hDescLbl">DESCENT</div><div class="val" id="hDesc">0 m</div></div>
+  <div><div class="lbl" id="hDescLbl">DESCENT</div><div class="val" id="hDesc">0 m</div><div class="lbl" id="hGoal" style="opacity:.75;margin-top:4px"></div></div>
   <div class="mid"><div class="lbl" id="hSaltLbl">SALT</div><div class="val" id="hSalt">◆ 0 / 0</div><div class="lbl" id="hKids" style="display:none"></div></div>
-  <div class="right"><div class="lbl">TIME</div><div class="val" id="hTime">00:00</div><div id="hPause" style="pointer-events:auto;cursor:pointer;font-size:20px;line-height:1;margin-top:6px;opacity:.85">❚❚</div></div>
+  <div class="right"><div class="lbl" data-i18n="time">TIME</div><div class="val" id="hTime">00:00</div><div id="hPause" style="pointer-events:auto;cursor:pointer;font-size:20px;line-height:1;margin-top:6px;opacity:.85">❚❚</div></div>
 </div>
 <div class="screen" id="scPause">
-  <h1>PAUSED</h1>
+  <h1 data-i18n="paused">PAUSED</h1>
   <div class="sub" id="pauseSub"></div>
-  <div class="btn" id="bResume">RESUME</div>
-  <div class="btn" id="bPauseRestart">RESTART</div>
-  <div class="btn" id="bPauseExit">EXIT</div>
+  <div class="btn" id="bResume" data-i18n="resume">RESUME</div>
+  <div class="btn" id="bPauseRestart" data-i18n="restart">RESTART</div>
+  <div class="btn" id="bPauseMech" data-i18n="mechanics">MECHANICS</div>
+  <div class="btn" id="bPauseSettings" data-i18n="settings">SETTINGS</div>
+  <div class="btn" id="bPauseExit" data-i18n="exit">EXIT</div>
 </div>
 <div id="hint" style="opacity:0">Drag toward your jump<br>Release to leap</div>
 
 <div class="screen" id="scMenu">
   <h1>MOUNTAIN GOAT</h1>
-  <div class="sub">A descent through the Negev cliffs</div>
-  <div class="btn" id="bPlay">PLAY</div>
-  <div class="btn" id="bDaily">DAILY CHALLENGE<small id="dailyInfo"></small></div>
-  <div class="btn" id="bEndless">ENDLESS</div>
-  <div class="btn" id="bBuilder">LEVEL BUILDER</div>
-  <div class="btn" id="bIbex">CHARACTERS</div>
+  <div class="sub" data-i18n="tagline">A descent through the Negev cliffs</div>
+  <div class="btn" id="bPlay" data-i18n="play">PLAY</div>
+  <div class="btn" id="bDaily"><span data-i18n="daily">DAILY CHALLENGE</span><small id="dailyInfo"></small></div>
+  <div class="btn" id="bEndless" data-i18n="endless">ENDLESS</div>
+  <div class="btn" id="bBuilder" data-i18n="builder">LEVEL BUILDER</div>
+  <div class="btn" id="bIbex" data-i18n="characters">CHARACTERS</div>
+  <div class="btn" id="bSettings" data-i18n="settings">SETTINGS</div>
   <div class="salt" id="menuSalt">◆ 0</div>
 </div>
 <div class="screen" id="scSelect">
-  <div class="back" id="bBackMenu">◀ MENU</div>
+  <div class="back" id="bBackMenu" data-i18n="menu">◀ MENU</div>
   <h1>MOUNTAIN GOAT</h1>
   <div id="levelList" class="list"></div>
 </div>
 <div class="screen" id="scEndless">
   <div class="back" id="bBackMenu3">◀ MENU</div>
   <h1>ENDLESS</h1>
-  <div class="sub">Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.</div>
+  <div class="sub" data-i18n="endlessSub">Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.</div>
   <div id="endResume"></div>
-  <div class="btn" id="bEndDown">ENDLESS DESCENT<small id="bestDown">best 0 m</small></div>
-  <div class="btn" id="bEndUp">ENDLESS ASCENT<small id="bestUp">best 0 m</small></div>
+  <div class="btn" id="bEndDown"><span data-i18n="endlessDown">ENDLESS DESCENT</span><small id="bestDown">best 0 m</small></div>
+  <div class="btn" id="bEndUp"><span data-i18n="endlessUp">ENDLESS ASCENT</span><small id="bestUp">best 0 m</small></div>
 </div>
 <div class="screen" id="scBuilder">
   <div class="back" id="bBackMenu4">◀ MENU</div>
@@ -115,21 +118,31 @@
   <div id="edProps"></div>
   <div id="edMsg"></div>
 </div>
+<div class="screen" id="scMech">
+  <div class="back" id="bBackMech">◀</div>
+  <h1 data-i18n="mechanics">MECHANICS</h1>
+  <div id="mechList" class="list"></div>
+</div>
+<div class="screen" id="scSettings">
+  <div class="back" id="bBackMenu5" data-i18n="menu">◀ MENU</div>
+  <h1 data-i18n="settings">SETTINGS</h1>
+  <div id="settingsList" class="list"></div>
+</div>
 <div class="screen" id="scIbex">
   <div class="back" id="bBackMenu2">◀ MENU</div>
   <h1>CHARACTERS</h1>
   <div class="salt" id="ibexSalt" style="margin:0 0 10px">◆ 0</div>
   <div id="skinList" class="list"></div>
-  <div class="sub" style="margin-top:10px;font-size:13px;opacity:.75">Skins change the coat only — never the jump.</div>
+  <div class="sub" style="margin-top:10px;font-size:13px;opacity:.75" data-i18n="skinsNote">Skins change the coat only — never the jump.</div>
 </div>
 <div class="screen" id="scResult">
   <h1 id="rTitle">DESCENT COMPLETE</h1>
   <div class="sub" id="rSub"></div>
   <div class="stars" id="rStars"></div>
-  <div class="btn" id="bContinue">CONTINUE FROM LAST LEDGE<small id="contCost">◆ 3</small></div>
-  <div class="btn" id="bRetry">RETRY</div>
-  <div class="btn" id="bNext">NEXT LEVEL</div>
-  <div class="btn" id="bLevels">LEVELS</div>
+  <div class="btn" id="bContinue"><span data-i18n="continueFrom">CONTINUE FROM LAST LEDGE</span><small id="contCost">◆ 3</small></div>
+  <div class="btn" id="bRetry" data-i18n="retry">RETRY</div>
+  <div class="btn" id="bNext" data-i18n="next">NEXT LEVEL</div>
+  <div class="btn" id="bLevels" data-i18n="levels">LEVELS</div>
 </div>
 <div id="dbg"></div>
 <div id="errToast" style="position:fixed;left:8px;right:8px;bottom:calc(12px + env(safe-area-inset-bottom));background:rgba(140,20,20,.92);color:#fff;font:12px/1.4 Menlo,Consolas,monospace;padding:8px 10px;border-radius:6px;display:none;z-index:99;word-break:break-all"></div>
@@ -140,6 +153,64 @@
 </script>
 <script type="module">
 import * as THREE from 'three';
+// ============================================================
+//  i18n — every UI string goes through t(); EN is the fallback
+// ============================================================
+const I18N = {
+  en: {
+    play: 'PLAY', daily: 'DAILY CHALLENGE', endless: 'ENDLESS', builder: 'LEVEL BUILDER', characters: 'CHARACTERS', settings: 'SETTINGS', tagline: 'A descent through the Negev cliffs',
+    menu: '◀ MENU', worlds: '◀ WORLDS', resume: 'RESUME', restart: 'RESTART', exit: 'EXIT', paused: 'PAUSED', retry: 'RETRY', next: 'NEXT LEVEL', levels: 'LEVELS', editor: 'EDITOR', continueFrom: 'CONTINUE FROM LAST LEDGE',
+    descent: 'DESCENT', ascent: 'ASCENT', distance: 'DISTANCE', time: 'TIME', kids: 'KIDS', world: 'WORLD', level: 'LEVEL', locked: 'LOCKED', earnStars: 'earn {n} ★ in {w} ({g} so far)', levelsN: '{n} levels',
+    run: '▶ run', up: '▲ ascent', down: '▼ descent', twin: '⇊ twin descent', birds: 'birds',
+    complete: 'COMPLETE', descentDone: 'DESCENT COMPLETE', summit: 'SUMMIT REACHED', across: 'MADE IT ACROSS', fell: 'YOU FELL', oneFell: 'ONE GOAT FELL', hawk: 'THE HAWK GOT YOU', tooFar: 'TOO FAR', spiked: 'SPIKED', rockfall: 'ROCKFALL', kidFell: 'A KID FELL',
+    camMsg: 'The mountain stopped waiting for you.', tiredMsg: 'That drop was too long. The goat is exhausted and cannot go on.', spikeMsg: 'Those spikes were not a landing spot.', rockMsg: 'A boulder came down the chute.', kidMsg: 'The little one did not make that jump.',
+    tipCamera: 'Tip: the top of the screen is the deadline — jump before it reaches you.', tipTired: 'Tip: never drop past more than 3 rows of ledges in one jump.', tipSpikes: 'Tip: land on the clear half of a spiked ledge.', tipHawk: 'Tip: birds only strike in the air — let one pass, then jump.', tipRock: 'Tip: the dark shadow at a crevice means a boulder is about to drop.', tipKid: 'Tip: kids replay your exact jumps — a jump you barely made, they may not.', tipFall: 'Tip: an edge within an arm\'s reach still counts — aim for the ledge, not past it.',
+    jumps: 'Jumps', saves: 'Edge saves', kidsRescued: 'Kids rescued', under: 'UNDER', allKids: 'ALL KIDS RESCUED', noSaves: 'NO EDGE SAVES', cleanRun: 'CLEAN RUN', today: 'today', streak: 'Streak', newBest: 'NEW BEST!', best: 'best', youHave: 'you have', salt: 'salt',
+    soundOn: 'Sound', musicOn: 'Music', vibro: 'Vibration', leftHand: 'Left-handed', dragSens: 'Drag sensitivity', quality: 'Quality', lang: 'Language', resetProgress: 'RESET PROGRESS', resetConfirm: 'Erase all progress, salt and custom levels?', low: 'low', high: 'high', short: 'short', normal: 'normal', long: 'long', auto: 'auto',
+    skinsNote: 'Skins change the coat only — never the jump.', selected: 'SELECTED', equip: 'EQUIP', unlock: 'UNLOCK', playing: 'PLAYING', reachWorld: 'Reach the {w} world',
+    endlessSub: 'Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.', endlessDown: 'ENDLESS DESCENT', endlessUp: 'ENDLESS ASCENT', resumeRun: 'RESUME',
+    h_drag: 'Drag toward your jump<br>Release to leap', h_twin: 'One drag moves both goats<br>Check both arcs before you release', h_ascent: 'Climb! The mountain drifts down<br>Jump up before it carries you away', h_run: 'Run right! The yard scrolls along<br>Keep jumping ahead of the edge',
+    h_endless: 'How far can you go?<br>It gets harder every 100 m', h_daily: 'Daily challenge — same mountain for everyone today', h_birds: 'Birds strike goats in the air<br>Let it pass, then jump', h_spikes: 'Spikes — land on the clear half', h_ice: 'Ice — you keep sliding after landing',
+    h_crumble: 'Cracked ledges crumble in a second<br>Don\'t linger on them', h_wind: 'Wind in that gap bends your arc<br>The dots show most of it', h_rocks: 'A crevice — when its shadow grows, a boulder drops', h_kids: 'A stranded kid — land beside it<br>It will follow your jumps', h_updraft: 'Steam rises from the fissure beside the ledge<br>Jump into it and ride up two ledges',
+    h_newchar: 'New character unlocked: <b>{n}</b><br>You play as it here — switch any time in CHARACTERS',
+    tut1: 'Drag from anywhere toward the ledge below<br>Release to jump', tut2: 'Longer drag — stronger jump<br>The dots show most of the arc', tut3: 'That ledge is small. If you just miss it,<br>the goat catches the edge and pulls up', tut3ok: 'Caught the edge — it counts!', tut4: 'In the air, slide your finger sideways<br>to steer a little', tut5: 'Dead end. Nothing below.<br>Jump back UP to the small ledge', tut6: 'The mountain does not wait — the camera drifts down.<br>Think, but not forever', tutFall: 'Fell — back on the ledge. Try again', tutDone: 'You know everything now. The Negev is below',
+    firstSteps: 'FIRST STEPS', firstStepsSub: 'learn the jump · 2 min', tutResult: 'Salt unlocks coats. Continuing a failed run costs 3 ◆.',
+    goal: 'Goal: {g}', goalCrystals: 'collect {n} of {m} ◆', goalTime: 'under {t}', goalKids: 'rescue all kids',
+    mechanics: 'MECHANICS', m_drag: 'The jump', m_drag_d: 'Drag anywhere toward the target; longer drag, stronger jump. Dots show most of the arc.', m_catch: 'Edge catch', m_catch_d: 'Miss a ledge by an arm\'s length and the goat grabs the edge and pulls up.', m_air: 'Air control', m_air_d: 'While flying, slide your finger sideways to steer a little — enough to save a jump, not to change it.',
+    m_up: 'Jumping up', m_up_d: 'Dead end? Jump back up. Climbing is part of route planning.', m_camera: 'The camera', m_camera_d: 'The camera drifts down on its own. Think, but never for too long.', m_birds: 'Birds', m_birds_d: 'They patrol the gaps and strike only in the air. Let one pass, then jump.',
+    m_spikes: 'Spikes', m_spikes_d: 'Half of the ledge is deadly. Land on the clear half.', m_ice: 'Ice', m_ice_d: 'You keep sliding after landing — even off the edge.', m_crumble: 'Crumbling ledges', m_crumble_d: 'Cracked rock holds for two seconds after you land, then falls.',
+    m_rocks: 'Rockfall', m_rocks_d: 'A crevice in the wall. When its shadow grows, a boulder drops down the chute.', m_wind: 'Wind', m_wind_d: 'A band of wind pushes your arc sideways. The preview shows most of it.', m_updraft: 'Updraft', m_updraft_d: 'Steam from a fissure lifts you. Jump into it to clear two ledges at once.',
+    m_kids: 'Kids', m_kids_d: 'Stranded on dead ends. Land beside one and it repeats your jumps exactly.', m_twin: 'Twin descent', m_twin_d: 'One drag moves two goats over two different routes. Both must survive.', mechSeen: 'seen', mechNew: 'not met yet',
+  },
+  ru: {
+    play: 'ИГРАТЬ', daily: 'ЕЖЕДНЕВНЫЙ ВЫЗОВ', endless: 'БЕСКОНЕЧНЫЙ', builder: 'РЕДАКТОР УРОВНЕЙ', characters: 'ПЕРСОНАЖИ', settings: 'НАСТРОЙКИ', tagline: 'Спуск по скалам Негева',
+    menu: '◀ МЕНЮ', worlds: '◀ МИРЫ', resume: 'ПРОДОЛЖИТЬ', restart: 'ЗАНОВО', exit: 'ВЫЙТИ', paused: 'ПАУЗА', retry: 'ЕЩЁ РАЗ', next: 'СЛЕДУЮЩИЙ', levels: 'УРОВНИ', editor: 'РЕДАКТОР', continueFrom: 'ПРОДОЛЖИТЬ С ПОСЛЕДНЕГО УСТУПА',
+    descent: 'СПУСК', ascent: 'ПОДЪЁМ', distance: 'ПУТЬ', time: 'ВРЕМЯ', kids: 'МАЛЫШИ', world: 'МИР', level: 'УРОВЕНЬ', locked: 'ЗАКРЫТО', earnStars: 'набери {n} ★ в {w} (пока {g})', levelsN: 'уровней: {n}',
+    run: '▶ забег', up: '▲ подъём', down: '▼ спуск', twin: '⇊ двойной спуск', birds: 'птицы',
+    complete: 'ПРОЙДЕНО', descentDone: 'СПУСК ЗАВЕРШЁН', summit: 'ВЕРШИНА ВЗЯТА', across: 'ДОБРАЛСЯ', fell: 'ТЫ УПАЛ', oneFell: 'ОДИН КОЗЁЛ УПАЛ', hawk: 'ПТИЦА СБИЛА', tooFar: 'СЛИШКОМ ДАЛЕКО', spiked: 'НА ШИПЫ', rockfall: 'КАМНЕПАД', kidFell: 'МАЛЫШ УПАЛ',
+    camMsg: 'Гора перестала ждать.', tiredMsg: 'Слишком долгое падение. Козёл выбился из сил.', spikeMsg: 'Шипы — не место для посадки.', rockMsg: 'Валун прилетел из расщелины.', kidMsg: 'Малыш не осилил этот прыжок.',
+    tipCamera: 'Совет: верх экрана — это дедлайн, прыгай раньше, чем он дойдёт до тебя.', tipTired: 'Совет: не пролетай больше 3 рядов уступов за прыжок.', tipSpikes: 'Совет: приземляйся на чистую половину площадки.', tipHawk: 'Совет: птицы бьют только в воздухе — пропусти и прыгай.', tipRock: 'Совет: тёмное пятно у расщелины — сейчас упадёт валун.', tipKid: 'Совет: малыши повторяют твой прыжок точь-в-точь — то, что ты еле взял, они могут не взять.', tipFall: 'Совет: край в пределах досягаемости всё ещё считается — целься в уступ, а не дальше.',
+    jumps: 'Прыжков', saves: 'Зацепов', kidsRescued: 'Спасено малышей', under: 'БЫСТРЕЕ', allKids: 'ВСЕ МАЛЫШИ СПАСЕНЫ', noSaves: 'БЕЗ ЗАЦЕПОВ', cleanRun: 'ЧИСТЫЙ ЗАБЕГ', today: 'сегодня', streak: 'Серия', newBest: 'НОВЫЙ РЕКОРД!', best: 'рекорд', youHave: 'у тебя', salt: 'соли',
+    soundOn: 'Звук', musicOn: 'Музыка', vibro: 'Вибрация', leftHand: 'Левая рука', dragSens: 'Чувствительность драга', quality: 'Качество', lang: 'Язык', resetProgress: 'СБРОСИТЬ ПРОГРЕСС', resetConfirm: 'Стереть весь прогресс, соль и свои уровни?', low: 'низкое', high: 'высокое', short: 'короткий', normal: 'обычный', long: 'длинный', auto: 'авто',
+    skinsNote: 'Скины меняют только шкуру — никогда прыжок.', selected: 'ВЫБРАНО', equip: 'НАДЕТЬ', unlock: 'ОТКРЫТЬ', playing: 'ИГРАЕШЬ', reachWorld: 'Дойди до мира {w}',
+    endlessSub: 'Процедурная гора. Уступы сужаются, пролёты растут,<br>появляются шипы и птицы, биомы плывут от дня к ночи.', endlessDown: 'БЕСКОНЕЧНЫЙ СПУСК', endlessUp: 'БЕСКОНЕЧНЫЙ ПОДЪЁМ', resumeRun: 'ПРОДОЛЖИТЬ',
+    h_drag: 'Тяни в сторону прыжка<br>Отпусти, чтобы прыгнуть', h_twin: 'Один жест двигает обоих<br>Проверь обе дуги перед отпусканием', h_ascent: 'Наверх! Гора уплывает вниз<br>Прыгай вверх, пока она тебя не унесла', h_run: 'Беги вправо! Двор прокручивается<br>Прыгай, опережая край',
+    h_endless: 'Как далеко сможешь?<br>Каждые 100 м сложнее', h_daily: 'Ежедневный вызов — сегодня у всех одна гора', h_birds: 'Птицы бьют в воздухе<br>Пропусти и прыгай', h_spikes: 'Шипы — садись на чистую половину', h_ice: 'Лёд — после посадки скользишь дальше',
+    h_crumble: 'Треснувшие уступы осыпаются за секунду<br>Не задерживайся', h_wind: 'Ветер в пролёте гнёт дугу<br>Точки показывают большую часть', h_rocks: 'Расщелина — когда тень растёт, падает валун', h_kids: 'Малыш застрял — приземлись рядом<br>Он повторит твои прыжки', h_updraft: 'Из трещины у уступа идёт пар<br>Прыгни в него и взлети на два уступа',
+    h_newchar: 'Новый персонаж: <b>{n}</b><br>Здесь ты играешь за него — сменить можно в ПЕРСОНАЖАХ',
+    tut1: 'Тяни от любого места в сторону уступа ниже<br>Отпусти — прыжок', tut2: 'Длиннее драг — сильнее прыжок<br>Точки показывают большую часть дуги', tut3: 'Уступ маленький. Если чуть промахнёшься,<br>козёл зацепится за край и подтянется', tut3ok: 'Зацепился — считается!', tut4: 'В полёте сдвинь палец вбок,<br>чтобы чуть подрулить', tut5: 'Тупик. Внизу ничего.<br>Прыгни обратно ВВЕРХ на маленький уступ', tut6: 'Гора не ждёт — камера ползёт вниз.<br>Думай, но не вечно', tutFall: 'Упал — снова на уступе. Попробуй ещё', tutDone: 'Теперь ты всё знаешь. Негев ниже',
+    firstSteps: 'ПЕРВЫЕ ШАГИ', firstStepsSub: 'учимся прыгать · 2 мин', tutResult: 'Соль открывает окрасы. Продолжить проваленный забег стоит 3 ◆.',
+    goal: 'Цель: {g}', goalCrystals: 'собери {n} из {m} ◆', goalTime: 'быстрее {t}', goalKids: 'спаси всех малышей',
+    mechanics: 'МЕХАНИКИ', m_drag: 'Прыжок', m_drag_d: 'Тяни от любого места в сторону цели; длиннее драг — сильнее прыжок. Точки показывают большую часть дуги.', m_catch: 'Зацеп за край', m_catch_d: 'Промахнись на длину руки — козёл схватится за край и подтянется.', m_air: 'Управление в полёте', m_air_d: 'В полёте сдвинь палец вбок, чтобы чуть подрулить — спасти прыжок, но не поменять его.',
+    m_up: 'Прыжок вверх', m_up_d: 'Тупик? Прыгай обратно вверх. Подъём — часть маршрута.', m_camera: 'Камера', m_camera_d: 'Камера сама ползёт вниз. Думай, но никогда слишком долго.', m_birds: 'Птицы', m_birds_d: 'Патрулируют пролёты и бьют только в воздухе. Пропусти и прыгай.',
+    m_spikes: 'Шипы', m_spikes_d: 'Половина уступа смертельна. Садись на чистую половину.', m_ice: 'Лёд', m_ice_d: 'После посадки скользишь дальше — даже за край.', m_crumble: 'Осыпающиеся уступы', m_crumble_d: 'Треснувший камень держит две секунды после посадки, потом падает.',
+    m_rocks: 'Камнепад', m_rocks_d: 'Расщелина в стене. Когда её тень растёт, вниз летит валун.', m_wind: 'Ветер', m_wind_d: 'Полоса ветра сдувает дугу вбок. Превью показывает большую часть.', m_updraft: 'Восходящий поток', m_updraft_d: 'Пар из трещины поднимает. Прыгни в него — возьмёшь два уступа сразу.',
+    m_kids: 'Малыши', m_kids_d: 'Застряли в тупиках. Приземлись рядом — малыш повторит твои прыжки точь-в-точь.', m_twin: 'Двойной спуск', m_twin_d: 'Один жест двигает двух козлов по двум разным маршрутам. Выжить должны оба.', mechSeen: 'встречалось', mechNew: 'ещё не встречалось',
+  },
+};
+let LANG = 'en';
+function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
+function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
 window.addEventListener('error', e => { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = 'JS error: ' + e.message + ' @' + (e.lineno || '?'); });
 window.addEventListener('unhandledrejection', e => { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = 'Promise error: ' + (e.reason && e.reason.message || e.reason); });
 
@@ -226,6 +297,17 @@ const TYPE = { // every ledge has the same depth so the goat always stands on ro
 const LEDGE_FRONT_Z = 1.0;
 let LEVELS = [];
 function defineLevels() { LEVELS = [
+  {
+    key: 'steps', nameKey: 'firstSteps', name: 'FIRST STEPS', tutorial: true, stars: { crystals: 0, time: 0 },
+    // teaching order: drag → power → edge catch → air control → dead end / jump up → camera pressure
+    surfaces: [
+      ['start', 0, 0, 8, 'terrace'], ['t1', 6, -5, 5, 'broad'], ['t2', -1, -11, 4, 'broad'], ['t3', -7, -17, 1.4, 'foothold'],
+      ['t4', -1, -24, 2.2, 'slab'], ['dead', -6, -30, 3, 'broad'], ['rec', 1, -28.5, 1.3, 'foothold'],
+      ['t5', 8, -35, 2.5, 'slab'], ['t6', 1, -41, 3, 'slab'], ['finish', 0, -49, 80, 'terrace'],
+    ],
+    tutHints: { start: 'tut1', t1: 'tut2', t2: 'tut3', t3: 'tut4', dead: 'tut5', t5: 'tut6', t6: 'tut6' },
+    herd: [{ surface: 'finish', x: -5, dir: -1, n: 4 }], blockers: [], crystals: [[6, -4.4], [-1, -10.4], [-6, -29.4], [8, -34.4]],
+  },
   {
     key: 'descent', name: 'THE DESCENT', stars: { crystals: 4, time: 75 },
     surfaces: [
@@ -475,7 +557,7 @@ function dailyDef(info = dailyInfo()) {
 }
 const DAILY_REWARD = [3, 3, 4];
 const WORLDS = [
-  { name: 'NEGEV', sub: 'desert cliffs', levels: ['descent', 'crystal', 'twin', 'hawk'] },
+  { name: 'NEGEV', sub: 'desert cliffs', levels: ['steps', 'descent', 'crystal', 'twin', 'hawk'] },
   { name: 'RED CANYON', sub: 'sandstone at dusk', levels: ['red', 'redrun', 'redclimb'] },
   { name: 'CHALK COAST', sub: 'white limestone', levels: ['chalk', 'chalkrun', 'chalkclimb'] },
   { name: 'MOONLIT RIDGE', sub: 'under the moon', levels: ['nightrun', 'night', 'nightclimb'] },
@@ -485,14 +567,33 @@ const WORLDS = [
   { name: 'DACHSHUND YARD', sub: 'a long dog, a long fence', character: 'dog', levels: ['yard1', 'yard2', 'yard3'] },
 ];
 // flatten LEVELS into world order so NEXT LEVEL walks through a world, then the next
-function orderLevels() { const byKey = Object.fromEntries(LEVELS.map(l => [l.key, l])); LEVELS = []; for (const w of WORLDS) for (const k of w.levels) LEVELS.push(byKey[k]); }
+function orderLevels() { const byKey = Object.fromEntries(LEVELS.map(l => [l.key, l])); LEVELS = []; for (const w of WORLDS) for (const k of w.levels) LEVELS.push(byKey[k]); markFirstEncounters(); }
+// which level introduces each mechanic (by world order) — those levels get a gentler first version of it
+function levelMechanics(l) {
+  const m = new Set(); const flag = f => l.surfaces.some(r => r[5] && r[5].split(' ').includes(f));
+  if (flag('L') || flag('R')) m.add('spikes'); if (flag('ice')) m.add('ice'); if (flag('crumble')) m.add('crumble');
+  if (l.hawks && l.hawks.length) m.add('birds'); if (l.rocks && l.rocks.length) m.add('rocks'); if (l.winds && l.winds.length) m.add('wind'); if (l.updrafts && l.updrafts.length) m.add('updraft'); if (l.kids && l.kids.length) m.add('kids'); if (l.twin) m.add('twin');
+  return m;
+}
+function markFirstEncounters() { const seen = new Set(); for (const l of LEVELS) { l.firstOf = []; for (const m of levelMechanics(l)) if (!seen.has(m)) { seen.add(m); l.firstOf.push(m); } } }
+function softenFirstEncounters(def) {
+  const f = def.firstOf || []; if (!f.length) return;
+  if (f.includes('spikes')) { const r = def.surfaces.find(r => r[5] && /\b[LR]\b/.test(r[5])); if (r) { r[3] = Math.max(r[3], 3.6); r.softSpikes = true; } }
+  if (f.includes('ice')) { const r = def.surfaces.find(r => r[5] && r[5].includes('ice')); if (r) r.iceStop = true; }
+  if (f.includes('crumble')) { const r = def.surfaces.find(r => r[5] && r[5].includes('crumble')); if (r) r.crumbleSlow = true; }
+  if (f.includes('rocks')) def.rocks[0].period = Math.max(def.rocks[0].period, 5);
+  if (f.includes('wind')) { const w = def.winds[0]; w.force = Math.sign(w.force) * Math.min(Math.abs(w.force), 2); }
+  if (f.includes('birds')) def.hawks[0].speed = Math.min(def.hawks[0].speed, 3.5);
+  if (f.includes('updraft')) { const u = def.updrafts[0]; const tgt = def.surfaces.find(r => r[2] > u.y2 - 3 && r[2] < u.y2 + 1); if (tgt && tgt[3] < 20) tgt[3] = Math.min(tgt[3] + 1.2, 4.5); }
+}
 
 // ============================================================
 //  Persistence
 // ============================================================
 const SAVE_KEY = 'mountainGoatSave';
-let save = { totalSaltCrystals: 0, levels: {}, skin: 'classic', character: 'goat', skins: { goat: 'classic', kong: 'classic', cat: 'ginger' }, unlocked: { classic: true, 'kong:classic': true, 'cat:ginger': true } };
+let save = { settings: { sound: true, music: true, vibro: true, left: false, drag: 1, quality: 'high', lang: 'auto' }, totalSaltCrystals: 0, levels: {}, skin: 'classic', character: 'goat', skins: { goat: 'classic', kong: 'classic', cat: 'ginger' }, unlocked: { classic: true, 'kong:classic': true, 'cat:ginger': true } };
 try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s) save = Object.assign(save, s); } catch (e) {}
+save.settings = Object.assign({ sound: true, music: true, vibro: true, left: false, drag: 1, quality: 'high', lang: 'auto' }, save.settings || {});
 save.unlocked = Object.assign({ classic: true, 'kong:classic': true, 'cat:ginger': true }, save.unlocked || {}); save.skins = Object.assign({ goat: save.skin || 'classic', kong: 'classic', cat: 'ginger' }, save.skins || {}); if (!save.character) save.character = 'goat';
 { const oldOrder = ['descent', 'crystal', 'twin', 'hawk', 'red', 'chalk', 'night', 'alpine']; for (const k of Object.keys(save.levels)) if (/^\d+$/.test(k) && oldOrder[+k]) { save.levels[oldOrder[+k]] = save.levels[k]; delete save.levels[k]; } } if (save.darkUnlocked) save.unlocked.dark = true;
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
@@ -700,6 +801,8 @@ function makeSurface(r, i, seed) {
     if (f === 'L') s.spikes = { x1: s.x1, x2: s.x }; else if (f === 'R') s.spikes = { x1: s.x, x2: s.x2 };
     else if (f === 'crumble') s.crumble = true; else if (f === 'ice') s.ice = true;
   }
+  if (r.softSpikes && s.spikes) { const mid = s.x; s.spikes = s.spikes.x1 < mid ? { x1: s.x1, x2: s.x1 + s.w * 0.4 } : { x1: s.x2 - s.w * 0.4, x2: s.x2 }; }
+  s.iceStop = !!r.iceStop; s.crumbleSlow = !!r.crumbleSlow;
   const g = s.group;
   const mats = rockMaterials(seed);
   if (s.ice) mats[2] = new THREE.MeshPhongMaterial({ color: 0xd8eefc, emissive: 0x6aa9d8, emissiveIntensity: 0.15, shininess: 90, specular: 0xffffff, flatShading: true });
@@ -710,6 +813,7 @@ function makeSurface(r, i, seed) {
     const rail = new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true }); const bar = new THREE.Mesh(new THREE.BoxGeometry(s.w + 0.2, 0.05, 0.05), rail); bar.position.set(s.x, s.y + 0.95, -1.2); g.add(bar);
     for (let k = 0; k <= Math.round(s.w / 0.6); k++) { const post = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.95, 0.05), rail); post.position.set(s.x - s.w / 2 + k * (s.w / Math.max(1, Math.round(s.w / 0.6))), s.y + 0.48, -1.2); g.add(post); }
   }
+  if (s.iceStop) { const stop = new THREE.Mesh(makeRock(0.5, 0.7, 1.2, seed + 9, 0.2, { solid: true }), rockMaterials(seed + 9)); stop.position.set(s.x2 - 0.3, s.y + 0.35, -0.3); s.stopX = s.x2 - 0.65; g.add(stop); const stop2 = stop.clone(); stop2.position.x = s.x1 + 0.3; s.stopX1 = s.x1 + 0.65; g.add(stop2); }
   if (s.crumble) { // cracks across the top
     const crackMat = new THREE.MeshLambertMaterial({ color: 0x2a1c14 }); const rr = mulberry(seed + 11);
     for (let k = 0; k < 3 + Math.floor(s.w); k++) { const c = new THREE.Mesh(new THREE.BoxGeometry(0.5 + rr() * 0.9, 0.03, 0.05), crackMat);
@@ -748,7 +852,7 @@ function styleAt(def, y) { // biome markers: the zone the goat has passed in the
   return best ? (STYLES[best.style] || STYLES.desert) : (STYLES[def.style] || STYLES.desert);
 }
 function buildLevel(idx, defOverride) {
-  const def = defOverride || LEVELS[idx]; forcedChar = def.forceChar || null;   // worlds only suggest a character; daily/endless runs fix it
+  const def = defOverride || LEVELS[idx]; forcedChar = def.forceChar || null; if (!defOverride && !def.softened) { softenFirstEncounters(def); def.softened = true; }   // worlds only suggest a character; daily/endless runs fix it
   if (L) { for (const d of (L.liftDust || [])) scene.remove(d); for (const k of L.kids) scene.remove(k.goat.root); for (const r of L.rocks) { if (r.boulder) scene.remove(r.boulder); if (r.warn) scene.remove(r.warn); } for (const f of L.falling) levelGroup.remove(f.group); for (const d of L.windDust) scene.remove(d); }
   applyStyle(styleAt(def, 0));
   while (levelGroup.children.length) levelGroup.remove(levelGroup.children[0]);
@@ -1074,9 +1178,9 @@ class Goat {
     this.snap = { dx: this.pos.x - rawX, t: 0 };
     const central = Math.abs(this.pos.x - s.x) < s.w * 0.25;
     if (s.ice && !s.finish) { this.landKind = 'ice'; this.slideV = vx * CONFIG.iceKeep; spawnDust(this.pos.x, this.pos.y, 5, 1.2); thud(0.5, 600, 0.06); this.setState(ST.LAND); return; }
-    if (speed >= CONFIG.hardLandingSpeed) { this.landKind = 'hard'; this.slideV = this.facing * 1.6; spawnDust(this.pos.x, this.pos.y, 10, 1.6); spawnPebbles(this.pos.x, this.pos.y - 0.2, 6, 1.5); thud(0.9, 200, 0.14); }
+    if (speed >= CONFIG.hardLandingSpeed) { if (!this.isKid) { G.shake = 0.35; vib(15); } this.landKind = 'hard'; this.slideV = this.facing * 1.6; spawnDust(this.pos.x, this.pos.y, 10, 1.6); spawnPebbles(this.pos.x, this.pos.y - 0.2, 6, 1.5); thud(0.9, 200, 0.14); }
     else if (central && speed < CONFIG.perfectLandingSpeed) { this.landKind = 'perfect'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 4, 0.7); thud(0.5, 900, 0.05); thud(0.4, 300, 0.07); }
-    else { this.landKind = 'normal'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 6, 1); thud(0.55, 320, 0.08); }
+    else { this.landKind = 'normal'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 6, 1); thud(0.55, 320, 0.08); if (!this.isKid) vib(12); }
     this.setState(s.finish ? ST.WIN : ST.LAND); if (s.finish) this.snap = null;
   }
   catch(s, edge, side) {
@@ -1084,7 +1188,7 @@ class Goat {
     this.pathEnd = { s, kind: 'catch' };
     this.onSurface = s; this.catchEdge = edge; this.catchSide = side; this.facing = side; this.saves++;
     this.pos.x = edge - side * 0.18; this.pos.y = s.y - 0.85; this.vel.set(0, 0); this.corr = 0; this.descendT = 0;
-    spawnPebbles(edge, s.y - 0.1, 5, 1.2); spawnDust(edge, s.y, 3, 0.6); thud(0.7, 260, 0.1); this.setState(ST.CATCH);
+    spawnPebbles(edge, s.y - 0.1, 5, 1.2); spawnDust(edge, s.y, 3, 0.6); thud(0.7, 260, 0.1); if (!this.isKid) { G.slowT = 0.35; G.zoomPunch = 0.04; vib(40); } this.setState(ST.CATCH);
   }
   spiked(s, dir) { G.failReason = 'spikes'; spawnPebbles(this.pos.x, this.pos.y + 0.2, 6, 1.5); thud(0.9, 700, 0.1); this.vel.set(dir * 3, 6); this.corr = 0; this.state = ST.JUMP; this.fall(); }
   dropOff(vx) { this.originSurface = this.onSurface; this.onSurface = null; this.graceT = 0.05; this.descendT = 0; this.launchY = this.pos.y; this.path = null; this.vel.set(vx, 0); this.corr = 0; this.snap = null; this.setState(ST.JUMP); }
@@ -1112,7 +1216,8 @@ class Goat {
       this.acc = 0; if (this.landKind === 'hard') { this.pos.x = clamp(this.pos.x + this.slideV * dt, this.onSurface.x1 + 0.1, this.onSurface.x2 - 0.1); this.slideV = damp(this.slideV, 0, 8, dt); }
       if (this.landKind === 'ice') { // slides on, and can go right over the edge
         this.pos.x += this.slideV * dt; this.slideV = damp(this.slideV, 0, CONFIG.iceFriction, dt); if (Math.random() < 0.3) spawnDust(this.pos.x, this.pos.y, 1, 0.4);
-        const sf = this.onSurface; if (this.pos.x < sf.x1 - 0.2 || this.pos.x > sf.x2 + 0.2) { this.dropOff(this.slideV); return; }
+        const sf = this.onSurface; if (sf.iceStop) { if (this.pos.x > sf.stopX) { this.pos.x = sf.stopX; this.slideV = 0; } if (this.pos.x < sf.stopX1) { this.pos.x = sf.stopX1; this.slideV = 0; } }
+        if (this.pos.x < sf.x1 - 0.2 || this.pos.x > sf.x2 + 0.2) { this.dropOff(this.slideV); return; }
         if (Math.abs(this.slideV) < 0.25 && this.stateT > 0.2) this.setState(ST.IDLE);
       } else if (this.stateT > (this.landKind === 'hard' ? 0.45 : 0.22)) this.setState(ST.IDLE);
     } else if (s === ST.CATCH) {
@@ -1234,13 +1339,13 @@ const debugTraj = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasic
 let actx = null;
 function initAudio() { if (actx) return; try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { actx = null; } }
 function thud(vol = 0.5, freq = 260, dur = 0.09) {
-  if (!actx) return; if (actx.state === 'suspended') actx.resume();
+  if (!actx || !save.settings.sound) return; if (actx.state === 'suspended') actx.resume();
   const n = actx.sampleRate * dur, buf = actx.createBuffer(1, n, actx.sampleRate), d = buf.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
   const src = actx.createBufferSource(); src.buffer = buf; const f = actx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = freq; const g = actx.createGain(); g.gain.value = vol;
   src.connect(f); f.connect(g); g.connect(actx.destination); src.start();
 }
 function chime() {
-  if (!actx) return; const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(1040, actx.currentTime); o.frequency.exponentialRampToValueAtTime(1560, actx.currentTime + 0.08);
+  if (!actx || !save.settings.sound) return; const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.setValueAtTime(1040, actx.currentTime); o.frequency.exponentialRampToValueAtTime(1560, actx.currentTime + 0.08);
   g.gain.setValueAtTime(0.18, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.25); o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + 0.25);
 }
 
@@ -1276,11 +1381,11 @@ function updateHazards(dt, playing) {
     const s = L.surfaces[i]; if (!s.crumble) continue;
     const standing = everyoneOn(s);
     if (s.crumbleT == null) { if (standing.length && playing) { s.crumbleT = 0; thud(0.4, 180, 0.12); } else continue; }
-    s.crumbleT += dt; const k = s.crumbleT / CONFIG.crumbleTime;
+    s.crumbleT += dt; const cT = CONFIG.crumbleTime * (s.crumbleSlow ? 1.6 : 1); const k = s.crumbleT / cT;
     s.group.position.x = Math.sin(s.crumbleT * 55) * 0.05 * k; s.group.position.y = Math.sin(s.crumbleT * 41) * 0.03 * k;
     if (Math.random() < 0.35 * k) spawnPebbles(s.x + (Math.random() - .5) * s.w, s.y - s.h - 0.4, 1, 0.8);
-    if (s.crumbleT >= CONFIG.crumbleTime) { // it goes
-      L.surfaces.splice(i, 1); L.falling.push({ group: s.group, vy: 0, t: 0, spin: (Math.random() - .5) * 2 });
+    if (s.crumbleT >= cT) { // it goes
+      L.surfaces.splice(i, 1); L.falling.push({ group: s.group, vy: 0, t: 0, spin: (Math.random() - .5) * 2 }); G.shake = Math.max(G.shake || 0, 0.3);
       spawnDust(s.x, s.y, 10, 2); spawnPebbles(s.x, s.y, 8, 2); thud(0.9, 150, 0.2);
       for (const g of goats.concat(followers)) if (g.onSurface === s) { g.replay = null; g.dropOff((Math.random() - .5) * 0.6); }
       for (const k of L.kids) if (!k.rescued && k.surface === s) { k.goat.dropOff(0); }
@@ -1324,7 +1429,7 @@ function updateKids(dt, playing) {
   if (!playing) return;
   const p = goats[0];
   for (const k of L.kids) if (!k.rescued && p.onSurface === k.surface && [ST.IDLE, ST.LAND, ST.WALK].includes(p.state)) {
-    k.rescued = true; G.kidsSaved++; chime(); spawnSparks(k.goat.pos.x, k.goat.pos.y + 0.6); const f = k.goat; f.replay = null; f.queue = []; f.joinJumps = G.jumps; f.facing = p.facing; followers.push(f); $('hKids').textContent = `KIDS ${G.kidsSaved} / ${L.kids.length}`;
+    k.rescued = true; G.kidsSaved++; chime(); spawnSparks(k.goat.pos.x, k.goat.pos.y + 0.6); const f = k.goat; f.replay = null; f.queue = []; f.joinJumps = G.jumps; f.facing = p.facing; followers.push(f); $('hKids').textContent = `${t('kids')} ${G.kidsSaved} / ${L.kids.length}`;
   }
   // when the player has just finished a flight, queue the replays
   if (p.path && p.pathEnd && !p.pathQueued && (p.state === ST.LAND || p.state === ST.CATCH || p.state === ST.WIN || p.state === ST.IDLE)) {
@@ -1355,7 +1460,7 @@ function updateFollower(f, dt) {
 // ============================================================
 //  Contextual hints: shown when a mechanic first comes into view, hidden on action, back after idling
 // ============================================================
-const HINT_TEXT = {
+const HINT_TEXT_STATIC = {
   drag: 'Drag toward your jump<br>Release to leap', twin: 'One drag moves both goats<br>Check both arcs before you release',
   ascent: 'Climb! The mountain drifts down<br>Jump up before it carries you away', run: 'Run right! The yard scrolls along<br>Keep jumping ahead of the edge', endless: 'How far can you go?<br>It gets harder every 100 m',
   daily: 'Daily challenge — same mountain for everyone today', birds: 'Birds strike goats in the air<br>Let it pass, then jump',
@@ -1376,17 +1481,105 @@ function activeHint() {
 function updateHints(dt, playing) {
   const H = G.hints; if (!H) return;
   if (!playing) { hint.style.opacity = 0; return; }
+  if (L.def.tutorial) { // guided: the hint follows the ledge you stand on, hides while you fly
+    const g = goats[0]; if (G.tutFallT > 0) { G.tutFallT -= dt; return; }
+    let key = null; if (g.state === ST.CATCH) key = 'tut3ok'; else if (g.state === ST.WIN || g.state === ST.HERD) key = 'tutDone'; else if (g.stable && g.onSurface) key = L.def.tutHints[g.onSurface.id] || null;
+    if (key !== H.key) { H.key = key; if (key) { hint.innerHTML = t(key); hint.style.opacity = 1; save.mechSeen = save.mechSeen || {}; const map = { tut1: 'drag', tut3ok: 'catch', tut4: 'air', tut5: 'up', tut6: 'camera' }; if (map[key] && !save.mechSeen[map[key]]) { save.mechSeen[map[key]] = true; persist(); } } else hint.style.opacity = 0; }
+    return;
+  }
   if (H.key === 'newchar') { if (performance.now() / 1000 - H.shownAt < 5 && G.jumps === 0) return; H.key = null; }
   const key = activeHint(); const now = performance.now() / 1000;
   const acted = G.jumps !== H.lastJumps; H.lastJumps = G.jumps; if (acted) { H.idleT = 0; if (H.key) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; } if (G.jumps >= 3) save.seenDrag = true; }
   H.idleT += dt;
   if (key && key !== H.key) {
     const fresh = !H.seen[key], idleAgain = H.idleT > 2.5;
-    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; H.shownAt = now; hint.innerHTML = HINT_TEXT[key] + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
+    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; save.mechSeen = save.mechSeen || {}; if (['birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'kids', 'twin'].includes(key) && !save.mechSeen[key]) { save.mechSeen[key] = true; persist(); } H.shownAt = now; hint.innerHTML = (key.startsWith('tut') ? t(key) : t('h_' + key)) + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
   }
   if (H.key && now - H.shownAt > 7 && H.idleT < 2.5) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; }
   if (!key && H.key) { hint.style.opacity = 0; H.key = null; }
 }
+
+// ============================================================
+//  Stubs — fixed APIs now, real implementations in the final phases
+// ============================================================
+const AudioSys = { play(name, o = {}) { if (!save.settings.sound) return; ({ hoof: () => thud(0.55, 320, 0.08), catch: () => thud(0.7, 260, 0.1), pickup: () => chime(), hit: () => thud(0.9, 300, 0.14) }[name] || (() => {}))(); }, ambient(biome) {}, music(state) {} };
+const Backend = { submitScore(board, score) { save.boards = save.boards || {}; const b = save.boards[board] = save.boards[board] || []; b.push({ score, at: Date.now() }); b.sort((a, c) => c.score - a.score); b.length = Math.min(b.length, 20); persist(); }, getBoard(board) { return (save.boards && save.boards[board]) || []; }, shareLevel(def) { return location.origin + location.pathname + '#lvl=' + btoa(unescape(encodeURIComponent(JSON.stringify(def)))); } };
+function vib(ms) { if (save.settings.vibro && navigator.vibrate) navigator.vibrate(ms); }
+function applySettings() {
+  const S = save.settings; LANG = S.lang === 'auto' ? ((navigator.language || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en') : S.lang;
+  CONFIG.maxDragDistance = [140, 170, 210][S.drag]; renderer.shadowMap.enabled = S.quality === 'high'; sun.castShadow = S.quality === 'high';
+  document.getElementById('hud').style.flexDirection = S.left ? 'row-reverse' : 'row'; applyLang();
+}
+function goSettings(from) {
+  const list = $('settingsList'); list.innerHTML = ''; const S = save.settings; mode = from === 'pause' ? 'pause' : 'select'; hud.style.display = 'none';
+  const row = (label, opts, cur, fn) => { const b = document.createElement('div'); b.className = 'btn'; b.innerHTML = `${label}<small>${opts.map(o => o.v === cur ? `[ ${o.l} ]` : o.l).join('  ·  ')}</small>`; b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; const i = opts.findIndex(o => o.v === cur); fn(opts[(i + 1) % opts.length].v); persist(); applySettings(); goSettings(from); }); list.appendChild(b); };
+  const mb = document.createElement('div'); mb.className = 'btn'; mb.textContent = t('mechanics'); mb.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goMech('menu'); }); list.appendChild(mb);
+  const onoff = [{ v: true, l: 'ON' }, { v: false, l: 'OFF' }];
+  row(t('soundOn'), onoff, S.sound, v => S.sound = v); row(t('musicOn'), onoff, S.music, v => S.music = v); row(t('vibro'), onoff, S.vibro, v => S.vibro = v); row(t('leftHand'), onoff, S.left, v => S.left = v);
+  row(t('dragSens'), [{ v: 0, l: t('short') }, { v: 1, l: t('normal') }, { v: 2, l: t('long') }], S.drag, v => S.drag = v);
+  row(t('quality'), [{ v: 'low', l: t('low') }, { v: 'high', l: t('high') }], S.quality, v => S.quality = v);
+  row(t('lang'), [{ v: 'auto', l: t('auto') }, { v: 'en', l: 'English' }, { v: 'ru', l: 'Русский' }], S.lang, v => S.lang = v);
+  const rs = document.createElement('div'); rs.className = 'btn dim'; rs.textContent = t('resetProgress'); rs.addEventListener('click', e => { e.stopPropagation(); if (confirm(t('resetConfirm'))) { localStorage.removeItem(SAVE_KEY); location.reload(); } }); list.appendChild(rs);
+  $('bBackMenu5').textContent = from === 'pause' ? t('resume') : t('menu'); showScreen('scSettings');
+}
+document.getElementById('bSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('menu'); });
+// ---- mechanics reference: cards with a live mini-scene on the expanded card ----
+const MECHS = ['drag', 'catch', 'air', 'up', 'camera', 'birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'kids', 'twin'];
+let mechFrom = 'menu', mechOpen = null, mechScene = null;
+function goMech(from) {
+  mechFrom = from; mode = from === 'pause' ? 'pause' : 'mech'; hud.style.display = 'none'; const list = document.getElementById('mechList'); list.innerHTML = ''; mechOpen = null; mechScene = null;
+  document.getElementById('bBackMech').textContent = from === 'pause' ? t('resume') : t('menu');
+  for (const m of MECHS) {
+    const seen = (save.mechSeen || {})[m]; const b = document.createElement('div'); b.className = 'btn'; b.style.textAlign = 'left';
+    b.innerHTML = `${t('m_' + m)}<small>${seen ? '✓ ' + t('mechSeen') : t('mechNew')}</small>`;
+    b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; openMech(m, b); }); list.appendChild(b);
+  }
+  showScreen('scMech');
+}
+function openMech(m, card) {
+  for (const c of document.querySelectorAll('#mechList .mechx')) c.remove(); if (mechOpen === m) { mechOpen = null; mechScene = null; return; }
+  mechOpen = m; const x = document.createElement('div'); x.className = 'mechx'; x.style.cssText = 'margin:-4px auto 10px;width:min(360px,100%);box-sizing:border-box;padding:10px;border-radius:10px;background:rgba(0,0,0,.35);font-size:14px;line-height:1.5;text-align:left';
+  x.innerHTML = `<canvas width="320" height="180" style="width:100%;border-radius:8px;background:rgba(255,248,238,.08);display:block;margin-bottom:8px"></canvas>${t('m_' + m + '_d')}`;
+  card.after(x); mechScene = buildMechScene(m, x.querySelector('canvas'));
+}
+function buildMechScene(m, canvas) {
+  const ps = new THREE.Scene(); ps.background = new THREE.Color(STYLE.haze); ps.add(new THREE.HemisphereLight(0xdde8ff, 0x8a6a48, 1.2)); const dl = new THREE.DirectionalLight(0xfff0d8, 2.2); dl.position.set(4, 8, 6); ps.add(dl);
+  const rock = (x, y, w, spikes) => { const g = new THREE.Mesh(makeRock(w, 1.8, 3, 5 + x, 0.15, { solid: true }), rockMaterials(5 + x)); g.position.set(x, y - 0.9, -0.5); ps.add(g); if (spikes) for (let k = 0; k < 4; k++) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.9, 5), new THREE.MeshLambertMaterial({ color: STYLE.spike, flatShading: true })); sp.position.set(x + spikes * (w / 4) + (k - 1.5) * 0.35 * spikes, y + 0.4, -0.5); ps.add(sp); } return g; };
+  const goat = new Goat(currentSkin().sk, 1, currentSkin().ch); scene.remove(goat.root); ps.add(goat.root); goat.root.rotation.y = 0.35;
+  const pc = new THREE.PerspectiveCamera(36, 320 / 180, 0.1, 60); pc.position.set(0.5, 1.2, 12); pc.lookAt(0, 0.8, 0);
+  const S = { ps, pc, goat, t: 0, extra: {} };
+  const arc = (a, b, h, T) => (t) => { const k = (t % T) / T; const x = a.x + (b.x - a.x) * k, y = a.y + (b.y - a.y) * k + h * 4 * k * (1 - k); return { x, y, k }; };
+  if (m === 'drag' || m === 'air' || m === 'catch') { rock(-3, 1, 3); rock(3.2, -1.5, m === 'catch' ? 1.4 : 2.6); S.path = arc({ x: -3, y: 1 }, { x: m === 'catch' ? 2.2 : 3, y: -1.5 }, 1.6, 2.6); S.hang = m === 'catch'; }
+  else if (m === 'up') { rock(2.5, -1.5, 3); rock(-2.5, 0.8, 1.6); S.path = arc({ x: 2.5, y: -1.5 }, { x: -2.5, y: 0.8 }, 2.2, 2.6); }
+  else if (m === 'camera') { rock(0, -0.5, 4); S.camDrift = true; }
+  else if (m === 'birds') { rock(-3, 0.5, 2.6); rock(3, -1.2, 2.6); const h = makeHawk(); levelGroup.remove(h); ps.add(h); S.extra.hawk = h; S.path = arc({ x: -3, y: 0.5 }, { x: 3, y: -1.2 }, 1.4, 3.4); }
+  else if (m === 'spikes') { rock(-3, 1, 2.4); rock(2.6, -1.2, 4, 1); S.path = arc({ x: -3, y: 1 }, { x: 1.5, y: -1.2 }, 1.5, 2.6); }
+  else if (m === 'ice') { rock(-3.2, 1, 2.2); const r = rock(2, -1.2, 4); r.material[2] = new THREE.MeshPhongMaterial({ color: 0xd8eefc, shininess: 90, flatShading: true }); S.path = arc({ x: -3.2, y: 1 }, { x: 0.6, y: -1.2 }, 1.4, 3.2); S.slide = true; }
+  else if (m === 'crumble') { rock(-3.2, 1, 2.2); S.extra.cr = rock(1.6, -1.2, 3); S.path = arc({ x: -3.2, y: 1 }, { x: 1.6, y: -1.2 }, 1.4, 3.6); S.crumble = true; }
+  else if (m === 'rocks') { rock(-1, -1.2, 5); const b = new THREE.Mesh(boulderGeo, boulderMat); ps.add(b); S.extra.b = b; goat.spawn({ y: -1.2, x1: -10, x2: 10, w: 20, x: 0 }, 1.5); }
+  else if (m === 'wind') { rock(-3.2, 1, 2.2); rock(3, -1.4, 2.6); S.path = t => { const k = (t % 2.8) / 2.8; return { x: -3.2 + 6.2 * k + Math.sin(k * Math.PI) * 1.0, y: 1 - 2.4 * k + 1.6 * 4 * k * (1 - k), k }; }; }
+  else if (m === 'updraft') { rock(-3.2, -1.5, 2.2); rock(3, 2.2, 2.4); S.path = t => { const k = (t % 3) / 3; return { x: -3.2 + 6.2 * Math.min(1, k * 1.15), y: -1.5 + 3.7 * Math.sin(k * Math.PI / 2) + 0.6 * Math.sin(k * Math.PI), k }; }; S.steam = true; }
+  else if (m === 'kids') { rock(-3, 0.5, 2.6); rock(3, -1.2, 2.6); const kid = new Goat(currentSkin().sk, 0.6, currentSkin().ch); scene.remove(kid.root); ps.add(kid.root); kid.root.rotation.y = 0.35; S.extra.kid = kid; S.path = arc({ x: -3, y: 0.5 }, { x: 3, y: -1.2 }, 1.4, 3.2); }
+  else if (m === 'twin') { rock(-4, 0.5, 2.4); rock(-3, -1.5, 1.6); rock(2, 0.5, 2.4); rock(4, -1.5, 2.6); const g2 = new Goat(currentSkin().sk, 1, currentSkin().ch); scene.remove(g2.root); ps.add(g2.root); g2.root.rotation.y = 0.35; S.extra.g2 = g2; S.path = arc({ x: -4, y: 0.5 }, { x: -3, y: -1.5 }, 1.4, 2.8); S.path2 = arc({ x: 2, y: 0.5 }, { x: 4, y: -1.5 }, 1.4, 2.8); }
+  S.canvas = canvas; return S;
+}
+function tickMechScene(dt) {
+  const S = mechScene; if (!S) return; S.t += dt; const g = S.goat, t = S.t;
+  const place = (goat, pt, hang) => { goat.pos.set(pt.x, pt.y); goat.state = pt.k < 0.92 && pt.k > 0.02 ? ST.JUMP : ST.IDLE; goat.vel.set(4, (0.5 - pt.k) * 10); goat.facing = 1; goat.stateT = 0.3; if (hang && pt.k > 0.85) { goat.state = ST.CATCH; goat.stateT = 0.1; goat.catchEdge = pt.x + 0.3; goat.catchSide = 1; goat.onSurface = { y: pt.y, w: 1.4 }; } goat.animate(dt, null); };
+  if (S.path) place(g, S.path(t), S.hang); else if (!S.extra.b) { g.state = ST.IDLE; g.pos.set(0, -0.5); g.animate(dt, null); }
+  if (S.path2) place(S.extra.g2, S.path2(t));
+  if (S.extra.kid) { const p = S.path(t - 0.6); place(S.extra.kid, p); }
+  if (S.extra.hawk) { const h = S.extra.hawk; const k = (t % 3.4) / 3.4; const x = -3.5 + 7 * Math.abs(((k * 2) % 2) - 1); h.position.set(x, 0.9, 0.2); h.rotation.y = ((k * 2) % 2) < 1 ? 0 : Math.PI; const f = Math.sin(t * 9); for (const w of h.wings) w.rotation.x = w.userData.side * f * 0.55; }
+  if (S.extra.b) { const b = S.extra.b; const k = (t % 2.5) / 2.5; b.position.set(-2.2, 5 - 7.5 * k * k, 0.3); b.rotation.x += 4 * dt; g.state = ST.IDLE; g.animate(dt, null); }
+  if (S.extra.cr) { const k = (t % 3.6) / 3.6; S.extra.cr.position.y = -1.2 - 0.9 - (k > 0.85 ? (k - 0.85) * 12 : 0); S.extra.cr.position.x = 1.6 + (k > 0.6 && k < 0.85 ? Math.sin(t * 50) * 0.05 : 0); }
+  if (S.camDrift) { S.pc.position.y = 1.2 - (t % 3) * 0.5; S.pc.lookAt(0, 0.8 - (t % 3) * 0.5, 0); }
+  const pr = skinPreview.r || (skinPreview.r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })); pr.setSize(320, 180); pr.render(S.ps, S.pc);
+  const ctx = S.canvas.getContext('2d'); ctx.clearRect(0, 0, 320, 180); ctx.drawImage(pr.domElement, 0, 0);
+}
+document.getElementById('bPauseMech').addEventListener('click', e => { e.stopPropagation(); goMech('pause'); });
+document.getElementById('bBackMech').addEventListener('click', e => { e.stopPropagation(); mechScene = null; if (mechFrom === 'pause') showScreen('scPause'); else goMenu(); });
+document.getElementById('bPauseSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('pause'); });
+document.getElementById('bBackMenu5').addEventListener('click', e => { e.stopPropagation(); if (mode === 'pause') showScreen('scPause'); else goMenu(); });
 
 // ============================================================
 //  Game flow: menu → select → play → result
@@ -1412,26 +1605,28 @@ function goMenu() {
   showScreen('scMenu');
 }
 let curWorld = 0;
-function worldStars(wi) { let got = 0; for (const k of WORLDS[wi].levels) got += (save.levels[k] || { stars: 0 }).stars; return got; }
-function worldOpen(wi) { return wi === 0 || worldStars(wi - 1) >= Math.ceil(WORLDS[wi - 1].levels.length * 3 * 0.8); }
+function worldStars(wi) { let got = 0; for (const k of WORLDS[wi].levels) { const l = LEVELS.find(l => l.key === k); if (l && l.tutorial) continue; got += (save.levels[k] || { stars: 0 }).stars; } return got; }
+function worldMax(wi) { return WORLDS[wi].levels.filter(k => { const l = LEVELS.find(l => l.key === k); return !(l && l.tutorial); }).length * 3; }
+function worldOpen(wi) { return wi === 0 || worldStars(wi - 1) >= Math.ceil(worldMax(wi - 1) * 0.8); }
 function goSelect() {
-  mode = 'select'; hud.style.display = 'none'; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = '◀ MENU'; $('bBackMenu').onclick = null;
+  mode = 'select'; hud.style.display = 'none'; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
   WORLDS.forEach((w, wi) => {
     const got = worldStars(wi), open = worldOpen(wi);
     const b = document.createElement('div'); b.className = 'btn' + (open ? '' : ' dim');
-    b.innerHTML = open ? `WORLD ${wi + 1} · ${w.name}<small>${w.sub} · ${w.levels.length} levels</small><small>★ ${got} / ${w.levels.length * 3}</small>` : `🔒 WORLD ${wi + 1} · ${w.name}<small>${w.sub}</small><small>earn ${Math.ceil(WORLDS[wi - 1].levels.length * 3 * 0.8)} ★ in ${WORLDS[wi - 1].name} (${worldStars(wi - 1)} so far)</small>`;
+    b.innerHTML = open ? `${t('world')} ${wi + 1} · ${w.name}<small>${w.sub} · ${t('levelsN', { n: w.levels.length })}</small><small>★ ${got} / ${worldMax(wi)}</small>` : `🔒 ${t('world')} ${wi + 1} · ${w.name}<small>${w.sub}</small><small>${t('earnStars', { n: Math.ceil(worldMax(wi - 1) * 0.8), w: WORLDS[wi - 1].name, g: worldStars(wi - 1) })}</small>`;
     b.addEventListener('click', e => { e.stopPropagation(); if (!fresh() && open) goWorld(wi); });
     list.appendChild(b);
   });
   showScreen('scSelect');
 }
 function goWorld(wi) {
-  mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = '◀ WORLDS';
-  const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `WORLD ${wi + 1} · ${w.name}`; list.appendChild(h);
+  mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
+  const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `${t('world')} ${wi + 1} · ${w.name}`; list.appendChild(h);
   w.levels.forEach((k, li) => {
     const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
     const b = document.createElement('div'); b.className = 'btn';
-    b.innerHTML = `${wi + 1}-${li + 1} · ${lv.name}<small>${lv.horizontal ? '▶ run' : lv.ascent ? '▲ ascent' : lv.twin ? '⇊ twin descent' : '▼ descent'}${lv.hawks && lv.hawks.length ? ' · birds' : ''}</small><small>${'★'.repeat(stars) + '☆'.repeat(3 - stars)}</small>`;
+    const nm = lv.nameKey ? t(lv.nameKey) : lv.name; const ICO = { birds: '🐦', spikes: '▲', ice: '❄', crumble: '✶', rocks: '●', wind: '≋', updraft: '⇧', kids: '♥', twin: '⇊' }; const icons = [...levelMechanics(lv)].map(m => ICO[m]).join(' ');
+    b.innerHTML = lv.tutorial ? `${wi + 1}-${li} · ${nm}<small>${t('firstStepsSub')}</small><small>${stars ? '✓' : ''}</small>` : `${wi + 1}-${li + (WORLDS[wi].levels.some(k => (LEVELS.find(l => l.key === k) || {}).tutorial) ? 0 : 1)} · ${nm}<small>${t(lv.horizontal ? 'run' : lv.ascent ? 'up' : lv.twin ? 'twin' : 'down')}${icons ? ' · ' + icons : ''}</small><small>${'★'.repeat(stars) + '☆'.repeat(3 - stars)}</small>`;
     b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startLevel(idx); });
     list.appendChild(b);
   });
@@ -1452,19 +1647,21 @@ function startLevel(idx, defOverride) {
   G.twin = L.twin;
   Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, camFx: L.horizontal ? preferredFx(L.start.x) : 0, camFy: preferredFy(L.start.y), dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, collected: 0, result: null });
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
-  $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = STYLE.pickupName; $('hDescLbl').textContent = L.horizontal ? 'DISTANCE' : L.ascent ? 'ASCENT' : 'DESCENT';
+  $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = STYLE.pickupName; $('hDescLbl').textContent = t(L.horizontal ? 'distance' : L.ascent ? 'ascent' : 'descent');
   G.hints = { seen: {}, key: null, shownAt: 0, hiddenKey: null, idleT: 0, lastJumps: 0 }; hint.style.opacity = 0;
-  if (G.newCharToast) { hint.innerHTML = `New character unlocked: <b>${G.newCharToast}</b><br>You play as it here — switch any time in CHARACTERS`; hint.style.opacity = 1; G.hints.shownAt = performance.now() / 1000; G.hints.key = 'newchar'; G.newCharToast = null; }
+  if (G.newCharToast) { hint.innerHTML = t('h_newchar', { n: G.newCharToast }); hint.style.opacity = 1; G.hints.shownAt = performance.now() / 1000; G.hints.key = 'newchar'; G.newCharToast = null; }
   if (L.def.resume) applyResume(L.def.resume); else if (L.endless || L.def.daily) clearRun(L.def.key);
   if (L.endless) endlessTick();
   $('hSalt').parentElement.style.visibility = (L.crystals.length || L.endless || L.kids.length) ? 'visible' : 'hidden'; if (L.endless) $('hSalt').textContent = '◆ 0';
-  $('hSalt').style.display = (L.crystals.length || L.endless) ? 'block' : 'none'; $('hKids').style.display = L.kids.length ? 'block' : 'none'; $('hKids').textContent = `KIDS ${G.kidsSaved || 0} / ${L.kids.length}`;
+  { const gl = []; if (L.crystals.length && L.def.stars.crystals) gl.push(t('goalCrystals', { n: L.def.stars.crystals, m: L.crystals.length })); else if (L.kids.length) gl.push(t('goalKids')); if (L.def.stars.time && !L.endless) gl.push(t('goalTime', { t: fmtTime(L.def.stars.time) })); $('hGoal').textContent = gl.length && !L.def.tutorial ? t('goal', { g: gl.join(' · ') }) : ''; }
+  $('hSalt').style.display = (L.crystals.length || L.endless) ? 'block' : 'none'; $('hKids').style.display = L.kids.length ? 'block' : 'none'; $('hKids').textContent = `${t('kids')} ${G.kidsSaved || 0} / ${L.kids.length}`;
   if (L.def.resume) $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`;
 
 }
 function finishLevel(win, reason) {
+  if (!win) vib(80);
   if (L.endless || L.def.daily) clearRun(L.def.key);
-  mode = 'result'; G.endT = 0; hint.style.opacity = 0; $('bLevels').textContent = L.def.custom ? 'EDITOR' : 'LEVELS';
+  mode = 'result'; G.endT = 0; hint.style.opacity = 0; $('bLevels').textContent = L.def.custom ? t('editor') : t('levels');
   const idx = L.idx, def = L.def; const saves = goats.reduce((a, g) => a + g.saves, 0);
   if (L.def.daily) {
     const info = L.def; const d = (save.daily && save.daily.date === info.date) ? save.daily : { date: info.date, stars: 0, done: [false, false, false], streak: (save.daily && save.daily.streak) || 0, lastDone: save.daily && save.daily.lastDone };
@@ -1507,22 +1704,24 @@ function finishLevel(win, reason) {
     const kidGain = Math.max(0, G.kidsSaved - (prev.kids || 0)) * CONFIG.kidSalt;
     const gained = Math.max(0, G.collected - prev.crystals) + kidGain; save.totalSaltCrystals += gained;
     save.levels[def.key] = { crystals: Math.max(prev.crystals, G.collected), time: Math.min(prev.time, G.time), stars: Math.max(prev.stars, stars), kids: Math.max(prev.kids || 0, G.kidsSaved) }; persist();
-    $('rTitle').textContent = L.horizontal ? 'MADE IT ACROSS' : L.ascent ? 'SUMMIT REACHED' : 'DESCENT COMPLETE';
-    $('rSub').innerHTML = `Time ${fmtTime(G.time)}<br>${hasC ? `${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}${gained ? ` &nbsp;(+${gained})` : ''}<br>` : ''}Jumps ${G.jumps} · Edge saves ${saves}${hasK ? `<br>Kids rescued ${G.kidsSaved} / ${L.kids.length}` : ''}`;
-    $('rStars').innerHTML = `<div class="${st[0] ? 'on' : 'off'}">${st[0] ? '★' : '☆'} COMPLETE</div><div class="${st[1] ? 'on' : 'off'}">${st[1] ? '★' : '☆'} ${hasC ? def.stars.crystals + '+ ' + STYLE.pickupName : hasK ? 'ALL KIDS RESCUED' : 'NO EDGE SAVES'}</div><div class="${st[2] ? 'on' : 'off'}">${st[2] ? '★' : '☆'} UNDER ${fmtTime(def.stars.time)}</div><div>${stars} / 3</div>`;
+    $('rTitle').textContent = t(L.horizontal ? 'across' : L.ascent ? 'summit' : 'descentDone');
+    $('rSub').innerHTML = `Time ${fmtTime(G.time)}<br>${hasC ? `${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}${gained ? ` &nbsp;(+${gained})` : ''}<br>` : ''}${t('jumps')} ${G.jumps} · ${t('saves')} ${saves}${hasK ? `<br>${t('kidsRescued')} ${G.kidsSaved} / ${L.kids.length}` : ''}`;
+    $('rStars').innerHTML = `<div class="${st[0] ? 'on' : 'off'}">${st[0] ? '★' : '☆'} ${t('complete')}</div><div class="${st[1] ? 'on' : 'off'}">${st[1] ? '★' : '☆'} ${hasC ? def.stars.crystals + '+ ◆' : hasK ? t('allKids') : t('noSaves')}</div><div class="${st[2] ? 'on' : 'off'}">${st[2] ? '★' : '☆'} ${t('under')} ${fmtTime(def.stars.time)}</div><div>${stars} / 3</div>`;
     $('bNext').style.display = (idx + 1 < LEVELS.length && worldOpen(WORLDS.findIndex(w => w.levels.includes(LEVELS[idx + 1].key)))) ? 'block' : 'none';
+    if (def.tutorial) { $('rStars').innerHTML = `<div style="font-size:14px;opacity:.9;max-width:320px">${t('tutResult')}</div>`; $('rSub').innerHTML = `${t('jumps')} ${G.jumps} · ${t('saves')} ${saves}`; }
   } else {
-    $('rTitle').textContent = G.twin ? 'ONE GOAT FELL' : 'YOU FELL';
-    $('rTitle').textContent = reason === 'hawk' ? 'THE HAWK GOT YOU' : reason === 'tired' ? 'TOO FAR' : reason === 'spikes' ? 'SPIKED' : reason === 'rock' ? 'ROCKFALL' : reason === 'kid' ? 'A KID FELL' : $('rTitle').textContent;
-    $('rSub').innerHTML = (reason === 'camera' ? 'The mountain stopped waiting for you.<br>' : reason === 'tired' ? 'That drop was too long. The goat is exhausted and cannot go on.<br>' : reason === 'spikes' ? 'Those spikes were not a landing spot.<br>' : reason === 'rock' ? 'A boulder came down the chute.<br>' : reason === 'kid' ? 'The little one did not make that jump.<br>' : '') + `${L.horizontal ? 'Distance' : L.ascent ? 'Ascent' : 'Descent'} ${Math.round(G.maxDesc)} m` + (L.crystals.length ? ` · ${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}` : '');
+    $('rTitle').textContent = G.twin ? t('oneFell') : t('fell');
+    $('rTitle').textContent = reason === 'hawk' ? t('hawk') : reason === 'tired' ? t('tooFar') : reason === 'spikes' ? t('spiked') : reason === 'rock' ? t('rockfall') : reason === 'kid' ? t('kidFell') : $('rTitle').textContent;
+    const why = { camera: 'camMsg', tired: 'tiredMsg', spikes: 'spikeMsg', rock: 'rockMsg', kid: 'kidMsg' }[reason]; const tip = { camera: 'tipCamera', tired: 'tipTired', spikes: 'tipSpikes', hawk: 'tipHawk', rock: 'tipRock', kid: 'tipKid', fall: 'tipFall' }[reason || 'fall'];
+    $('rSub').innerHTML = (why ? t(why) + '<br>' : '') + `${Math.round(G.maxDesc)} m` + (L.crystals.length ? ` · ◆ ${G.collected} / ${L.crystals.length}` : '') + (tip ? `<br><span style="opacity:.8;font-size:14px">${t(tip)}</span>` : '');
     $('rStars').innerHTML = ''; $('bNext').style.display = 'none';
   }
   const canCont = !win && goats.every(g => g.lastSafe) && save.totalSaltCrystals >= CONFIG.continueCost;
   $('bContinue').style.display = win ? 'none' : 'block'; $('bContinue').classList.toggle('dim', !canCont); $('contCost').textContent = `◆ ${CONFIG.continueCost}  (you have ${save.totalSaltCrystals})`;
   G.result = { win, delay: win ? 3.2 : reason === 'tired' ? 2.4 : 1.0 };
 }
-$('bPlay').addEventListener('click', e => { e.stopPropagation(); initAudio(); goSelect(); });
-$('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBackMenu').textContent.includes('WORLDS')) goSelect(); else goMenu(); });
+$('bPlay').addEventListener('click', e => { e.stopPropagation(); initAudio(); if (!save.levels.steps && !Object.keys(save.levels).length) startLevel(LEVELS.findIndex(l => l.key === 'steps')); else goSelect(); });
+$('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBackMenu').textContent === t('worlds')) goSelect(); else goMenu(); });
 $('bBackMenu2').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
 $('bIbex').addEventListener('click', e => { e.stopPropagation(); goIbex(); });
 $('bEndless').addEventListener('click', e => { e.stopPropagation(); initAudio(); goEndless(); });
@@ -1688,7 +1887,7 @@ $('bEndDown').addEventListener('click', e => { e.stopPropagation(); startLevel(0
 $('bEndUp').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
 function pauseGame() {
   if (mode !== 'play') return; mode = 'pause'; G.drag = null; G.aiming = false; G.aim = null; snapshotRun(); hint.style.opacity = 0;
-  $('pauseSub').innerHTML = `${L.def.name}<br>${L.ascent ? 'Ascent' : 'Descent'} ${Math.round(G.maxDesc)} m · ${fmtTime(G.time)}`;
+  $('pauseSub').innerHTML = `${L.def.nameKey ? t(L.def.nameKey) : L.def.name}<br>${Math.round(G.maxDesc)} m · ${fmtTime(G.time)}`;
   showScreen('scPause');
 }
 function resumeGame() { if (mode !== 'pause') return; mode = 'play'; showScreen(null); last = performance.now(); }
@@ -1718,7 +1917,7 @@ function applyResume(snap) {
   L.kids.forEach((k, i) => { if (snap.rescued[i]) { k.rescued = true; const f = k.goat; f.replay = null; f.queue = []; f.joinJumps = snap.stats.jumps; f.spawn(sf, clamp(snap.goat.x - 1, sf.x1 + 0.3, sf.x2 - 0.3)); followers.push(f); } });
   if (snap.gen) { L.gen = Object.assign(L.gen, snap.gen); L.bottom = Math.min(...L.surfaces.map(s => s.y)); L.top = Math.max(...L.surfaces.map(s => s.y)); }
   Object.assign(G, { time: snap.stats.time, jumps: snap.stats.jumps, collected: snap.stats.collected, maxDesc: snap.stats.maxDesc, kidsSaved: snap.stats.kidsSaved || 0, started: true, camFy: preferredFy(g.pos.y) });
-  $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`; if (L.kids.length) $('hKids').textContent = `KIDS ${G.kidsSaved} / ${L.kids.length}`;
+  $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`; if (L.kids.length) $('hKids').textContent = `${t('kids')} ${G.kidsSaved} / ${L.kids.length}`;
   G.lastSnapSurface = sf;
 }
 function goEndless() { mode = 'select'; hud.style.display = 'none'; const b = save.endless || {}; $('bestDown').textContent = `best ${b.endlessDown || 0} m`; $('bestUp').textContent = `best ${b.endlessUp || 0} m`;
@@ -1850,6 +2049,9 @@ function update(dt) {
         G.failReason = 'hawk'; g.vel.set(h.dir * 4, 2); g.corr = 0; g.state = ST.JUMP; g.fall(); spawnDust(g.pos.x, g.pos.y + 0.8, 8, 1.5); thud(0.8, 500, 0.12); } }
   }
   // win / fail
+  if (playing && L.def.tutorial && goats[0].state === ST.FALL && goats[0].lastSafe) { // the tutorial never kills: back on the ledge, try again
+    const g = goats[0]; g.spawn(g.lastSafe.s, g.lastSafe.x); G.camFy = preferredFy(g.pos.y); G.dangerT = 0; G.tutFallT = 2.5; hint.innerHTML = t('tutFall'); hint.style.opacity = 1;
+  }
   if (playing) {
     if (followers.some(f => f.state === ST.FALL)) { G.failReason = 'kid'; finishLevel(false, 'kid'); }
     if (goats.some(g => g.state === ST.FALL)) finishLevel(false, G.failReason || 'fall');
@@ -1869,10 +2071,11 @@ function update(dt) {
   G.maxDesc = Math.max(G.maxDesc, L.horizontal ? maxX - L.start.x : L.ascent ? maxY - L.start.y : L.start.y - maxY);
 
   // ---- camera ----
-  const wanted = G.twin ? Math.max(baseHalf, ((maxX - minX) / 2 + CONFIG.twinCameraPadding + 1.5) / camera.aspect) : baseHalf;
+  let wanted = G.twin ? Math.max(baseHalf, ((maxX - minX) / 2 + CONFIG.twinCameraPadding + 1.5) / camera.aspect) : baseHalf;
+  if (G.aiming) wanted *= 1.05; if (G.zoomPunch) { wanted *= 1 - G.zoomPunch; G.zoomPunch = damp(G.zoomPunch, 0, 4, dt); if (G.zoomPunch < 0.002) G.zoomPunch = 0; }
   setHalfH(damp(halfH, wanted, 3, dt));
   const target = preferredFy(maxY);
-  const idle = CONFIG.cameraIdleSpeed * (halfH / CONFIG.baseHalfHeight) * (G.twin ? CONFIG.twinCameraPressureMultiplier : 1);
+  const idle = CONFIG.cameraIdleSpeed * (halfH / CONFIG.baseHalfHeight) * (G.twin ? CONFIG.twinCameraPressureMultiplier : 1) * (L.def.tutorial ? 0.5 : 1);
   const ended = mode === 'result';
   if (ended) { // follow the fall, but never below the bottom terrace (no endless chase into the void)
     G.camFy = damp(G.camFy, target, G.result.win ? 3 : 6, dt);
@@ -1892,14 +2095,15 @@ function update(dt) {
     else { G.camFx = damp(G.camFx, tx, tx > G.camFx ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt); G.camFx += idle * (halfW / halfH) * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * dt; }
     G.camFx = clamp(G.camFx, preferredFx(L.start.x) - 1, preferredFx(L.right - 6) + 1);
   } else if (!(ended && G.result.win)) G.camFx = damp(G.camFx, clamp((minX + maxX) / 2 * 0.6, -4, 5), CONFIG.cameraXFollow, dt);
-  camera.position.set(G.camFx + camDist * 0.24, G.camFy + camDist * 0.07, camDist); camera.lookAt(G.camFx, G.camFy, 0);
+  G.shake = Math.max(0, (G.shake || 0) - dt * 1.4); const shk = G.shake * G.shake * 0.6, sx = (Math.random() - .5) * shk, sy = (Math.random() - .5) * shk;
+  camera.position.set(G.camFx + camDist * 0.24 + sx, G.camFy + camDist * 0.07 + sy, camDist); camera.lookAt(G.camFx + sx, G.camFy + sy, 0);
   sun.position.set(G.camFx + 26, G.camFy + 42, 34); sun.target.position.set(G.camFx, G.camFy - 6, 0);
 
   // ---- camera pressure / failure (highest goat is the one in danger) ----
   let sf = 1, warn = 0;
   for (const g of goats) sf = Math.min(sf, L.horizontal ? screenFractionX(g.pos.x, g.pos.y) : L.ascent ? 1 - screenFraction(g.pos.x, g.pos.y - 0.4) : screenFraction(g.pos.x, g.pos.y));
   if (playing) {
-    if (sf < CONFIG.cameraDangerFraction) { G.dangerT += dt; if (G.dangerT > CONFIG.cameraFailureGrace) { for (const g of goats) if (g.state !== ST.JUMP) g.fall(); finishLevel(false, 'camera'); } }
+    if (sf < CONFIG.cameraDangerFraction) { G.dangerT += dt; if (G.dangerT > CONFIG.cameraFailureGrace) { if (L.def.tutorial) { const g = goats[0]; if (g.lastSafe) { g.spawn(g.lastSafe.s, g.lastSafe.x); G.camFy = preferredFy(g.pos.y); } G.dangerT = 0; } else { for (const g of goats) if (g.state !== ST.JUMP) g.fall(); finishLevel(false, 'camera'); } } }
     else G.dangerT = Math.max(0, G.dangerT - dt * 2);
     warn = clamp((CONFIG.cameraWarnFraction - sf) / (CONFIG.cameraWarnFraction - CONFIG.cameraDangerFraction), 0, 1);
     warn = Math.max(warn, clamp(G.dangerT / CONFIG.cameraFailureGrace, 0, 1) * 1.2);
@@ -1941,14 +2145,16 @@ function update(dt) {
 // ============================================================
 //  Main loop
 // ============================================================
-buildLevel(0); goMenu();
+applySettings(); buildLevel(0); goMenu();
 { const m = new URLSearchParams(location.search).get('mode'); if (m === 'endless-down') startLevel(0, endlessDef(false)); else if (m === 'endless-up') startLevel(0, endlessDef(true)); }
 G.camFy = preferredFy(-6); camera.position.set(camDist * 0.24, G.camFy + camDist * 0.07, camDist); camera.lookAt(0, G.camFy, 0);
 sun.position.set(26, G.camFy + 42, 34); sun.target.position.set(0, G.camFy - 6, 0);
 function loop(now) {
-  const dt = Math.min(0.05, (now - last) / 1000); last = now; fps = lerp(fps, 1 / Math.max(dt, 1e-4), 0.05);
+  const rawDt = Math.min(0.05, (now - last) / 1000); last = now; fps = lerp(fps, 1 / Math.max(rawDt, 1e-4), 0.05);
+  if (G.slowT > 0) G.slowT -= rawDt; const dt = (mode === 'play' && G.slowT > 0) ? rawDt * 0.3 : rawDt;
   if (mode === 'edit') updateEditor(dt); else update(dt);
-  if (mode === 'menu' || mode === 'select' || mode === 'ibex') { const t = now / 1000; for (const c of L.crystals) { c.mesh.rotation.y = t * 1.2 + c.phase; } for (const h of L.hawks) { h.t += dt; const f = Math.sin(h.t * 9); for (const w of h.mesh.wings) w.rotation.x = w.userData.side * f * 0.55; } }
+  if (mechScene && (mode === 'mech' || mode === 'pause')) tickMechScene(dt);
+  if (mode === 'menu' || mode === 'select' || mode === 'ibex' || mode === 'mech') { const t = now / 1000; for (const c of L.crystals) { c.mesh.rotation.y = t * 1.2 + c.phase; } for (const h of L.hawks) { h.t += dt; const f = Math.sin(h.t * 9); for (const w of h.mesh.wings) w.rotation.x = w.userData.side * f * 0.55; } }
   renderer.render(scene, camera); requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
