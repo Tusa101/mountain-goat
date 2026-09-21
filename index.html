@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v23 -->
+<!-- build v24 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,13 +19,13 @@
   .lbl { font-size:11px; letter-spacing:.14em; opacity:.85; }
   .val { font-size:24px; font-weight:700; line-height:1.05; }
   .hud .mid { text-align:center; } .hud .right { text-align:right; }
-  #hint { position:fixed; left:0; right:0; top:60%; text-align:center; text-shadow:0 1px 4px rgba(60,30,10,.6); font-size:17px; line-height:1.5; pointer-events:none; transition:opacity .6s; }
+  #hint { position:fixed; z-index:5; left:0; right:0; top:60%; text-align:center; text-shadow:0 1px 4px rgba(60,30,10,.6); font-size:17px; line-height:1.5; pointer-events:none; transition:opacity .6s; }
   #vig { position:fixed; inset:0; pointer-events:none; opacity:0; background: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 45%, rgba(120,40,20,.75) 100%); }
   #botwarn { position:fixed; left:0; right:0; bottom:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,0), rgba(140,40,20,.7)); }
   #topwarn { position:fixed; left:0; right:0; top:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,.7), rgba(140,40,20,0)); }
   #wind { position:fixed; inset:0; pointer-events:none; opacity:0; background: repeating-linear-gradient(180deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0) 22px, rgba(255,255,255,.18) 23px, rgba(255,255,255,0) 26px); background-size:100% 260px; animation: windy .35s linear infinite; }
   @keyframes windy { from { background-position:0 0; } to { background-position:0 260px; } }
-  .screen { position:fixed; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; overflow:hidden; }
+  .screen { position:fixed; inset:0; z-index:20; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; overflow:hidden; }
   .list { max-height:72vh; overflow-y:auto; overflow-x:hidden !important; scrollbar-width:thin; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
   .screen.show { display:flex; }
   .screen h1 { font-size:40px; margin:0 0 4px; letter-spacing:.06em; font-weight:800; }
@@ -1480,7 +1480,7 @@ $('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goMenu(); 
 $('bEndDown').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
 $('bEndUp').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
 function pauseGame() {
-  if (mode !== 'play') return; mode = 'pause'; G.drag = null; G.aiming = false; G.aim = null; snapshotRun();
+  if (mode !== 'play') return; mode = 'pause'; G.drag = null; G.aiming = false; G.aim = null; snapshotRun(); hint.style.opacity = 0;
   $('pauseSub').innerHTML = `${L.def.name}<br>${L.ascent ? 'Ascent' : 'Descent'} ${Math.round(G.maxDesc)} m · ${fmtTime(G.time)}`;
   showScreen('scPause');
 }
