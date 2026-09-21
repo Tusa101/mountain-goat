@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v25 -->
+<!-- build v27 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,6 +21,7 @@
   .hud .mid { text-align:center; } .hud .right { text-align:right; }
   #hint { position:fixed; z-index:5; left:0; right:0; top:60%; text-align:center; text-shadow:0 1px 4px rgba(60,30,10,.6); font-size:17px; line-height:1.5; pointer-events:none; transition:opacity .6s; }
   #vig { position:fixed; inset:0; pointer-events:none; opacity:0; background: radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 45%, rgba(120,40,20,.75) 100%); }
+  #leftwarn { position:fixed; top:0; bottom:0; left:0; width:18%; pointer-events:none; opacity:0; background: linear-gradient(90deg, rgba(140,40,20,.7), rgba(140,40,20,0)); }
   #botwarn { position:fixed; left:0; right:0; bottom:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,0), rgba(140,40,20,.7)); }
   #topwarn { position:fixed; left:0; right:0; top:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,.7), rgba(140,40,20,0)); }
   #wind { position:fixed; inset:0; pointer-events:none; opacity:0; background: repeating-linear-gradient(180deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0) 22px, rgba(255,255,255,.18) 23px, rgba(255,255,255,0) 26px); background-size:100% 260px; animation: windy .35s linear infinite; }
@@ -57,7 +58,7 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="topwarn"></div><div id="botwarn"></div><div id="vig"></div><div id="wind"></div>
+<div id="topwarn"></div><div id="botwarn"></div><div id="leftwarn"></div><div id="vig"></div><div id="wind"></div>
 <div class="hud" id="hud" style="display:none">
   <div><div class="lbl" id="hDescLbl">DESCENT</div><div class="val" id="hDesc">0 m</div></div>
   <div class="mid"><div class="lbl" id="hSaltLbl">SALT</div><div class="val" id="hSalt">◆ 0 / 0</div><div class="lbl" id="hKids" style="display:none"></div></div>
@@ -207,6 +208,10 @@ const STYLES = {
     bands: [0xd8cfbf, 0xc9c0b0, 0xe0d8c8, 0xb9b1a2, 0xcfc6b6], tops: [0xd5cec2, 0xcdc6ba, 0xdad3c7], sides: [0xc4bcac, 0xcac2b2, 0xbdb5a5, 0xc8c0b0],
     dark: 0x8a8274, plateau: 0x9a9585, mesa: 0xb6ae9e, canyon: [0xbdb5a5, 0xc2baaa], bush: 0x5c7a3c, blocker: 0x7a7266, spike: 0x5a5650, crystal: [0xf0f0f0, 0x808080],
     bird: 'pigeon', veg: 'laundry', pickup: 'fish', pickupName: 'FISH' },
+  yard: { sky: [0x7fb8e8, 0xeef2e4], haze: 0xe2e8d6, sun: 0xfff4dc, sunI: 2.7, hemi: [0xd8e8f8, 0x6a8a48], hemiI: 1.05, flat: true,
+    bands: [0xb98a5a, 0xa87b4e, 0xc4956a, 0x9f7248, 0xb58656], tops: [0xd2a878, 0xcaa070, 0xd8b080], sides: [0xa6784c, 0xb08252, 0x9c7046, 0xaa7c4e],
+    dark: 0x6e4e30, plateau: 0x7fa74e, mesa: 0x5f8a3e, canyon: [0x6a9444, 0x6f9a48], bush: 0x4f7a34, blocker: 0x8a6a48, spike: 0x7a7a7a, crystal: [0xfff8e8, 0xc8b898],
+    bird: 'wasp', veg: 'flowers', pickup: 'bone', pickupName: 'BONES' },
   alpine: { sky: [0x4f86c8, 0xe9f0f6], haze: 0xe6edf3, sun: 0xfff8ee, sunI: 3.0, hemi: [0xd6e6f8, 0x6e7a86], hemiI: 1.1, snow: true,
     bands: [0x8a8f96, 0x9aa0a8, 0x767c84, 0xa9afb6, 0x6b7179], tops: [0xf4f7fa, 0xeef3f7, 0xf8fafc], sides: [0x8e949c, 0x979da5, 0x848a92, 0x9299a1],
     dark: 0x5f656d, plateau: 0xeef3f7, mesa: 0xb8c4cf, canyon: [0x8b9199, 0x9096a0], bush: 0x2e5a3c, blocker: 0x6f7680, spike: 0xd8ecfa, crystal: [0xdff4ff, 0x4aa8e8],
@@ -366,7 +371,29 @@ function defineLevels() { LEVELS = [
   makeDescent({ key: 'paneldown', name: 'BALCONY HOP', style: 'panel', seed: 51, n: 16, spikes: false, hawks: 1, kid: true }),
   makeDescent({ key: 'panelrun', name: 'PIGEON YARD', style: 'panel', seed: 52, n: 18, spikes: true, hawks: 2, crumble: true }),
   makeClimb({ key: 'panelup', name: 'NINTH FLOOR', style: 'panel', seed: 53, n: 20, spikes: false, hawks: [{ x1: -7, x2: 7, y: 20, speed: 5 }] }),
+  makeRun({ key: 'yard1', name: 'GARDEN FENCE', style: 'yard', seed: 61, n: 14, character: 'dog' }),
+  makeRun({ key: 'yard2', name: 'WASP ALLEY', style: 'yard', seed: 62, n: 16, hawks: 3, spikes: true, character: 'dog' }),
+  makeRun({ key: 'yard3', name: 'THE LONG WAY', style: 'yard', seed: 63, n: 20, hawks: 2, kid: true, character: 'dog' }),
 ]; }
+// left-to-right run generator (deterministic): gaps grow, heights wander, finish far right
+function makeRun(o) {
+  const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = []; let x = 0, y = 0, w = 8;
+  const hawkAt = []; for (let k = 0; k < (o.hawks || 0); k++) hawkAt.push(Math.floor((k + 1) * o.n / ((o.hawks || 0) + 1)));
+  for (let i = 1; i <= o.n; i++) {
+    const t = i / o.n; const prevX = x, prevW = w, prevY = y;
+    const nw = Math.max(1.4, +(3.8 - t * 2 + (r() - .5) * 1.2).toFixed(1)); const gap = 2.5 + r() * 2 + t * 2.5;
+    y = clamp(y + (r() - .5) * 5, -6, 6); if (y > prevY + 3.2) y = prevY + 3.2;
+    x = +(prevX + prevW / 2 + gap + nw / 2).toFixed(1); w = nw;
+    const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : 'narrow';
+    const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 ? 'R' : null;
+    const row = ['r' + i, x, +y.toFixed(1), w, type]; if (spk) row.push(spk); surfaces.push(row);
+    if (i % 3 === 1) crystals.push([+(spk ? x - w / 4 : x).toFixed(1), +(y + 0.6).toFixed(1)]); else if (i % 4 === 2) crystals.push([+((prevX + x) / 2).toFixed(1), +(Math.max(prevY, y) + 2.6).toFixed(1)]);
+    if (hawkAt.includes(i)) hawks.push({ x1: +(prevX + 1).toFixed(1), x2: +(x - 1).toFixed(1), y: +(Math.max(prevY, y) + 2.2).toFixed(1), speed: 4 + t * 3 });
+  }
+  const fx = +(x + w / 2 + 3 + 10).toFixed(1); surfaces.push(['finish', fx, +y.toFixed(1), 20, 'terrace']);
+  const kidLedge = o.kid ? surfaces[Math.floor(o.n * 0.6)] : null; const kids = kidLedge ? [{ surface: kidLedge[0], x: kidLedge[1] }] : [];
+  return { key: o.key, name: o.name, style: o.style, horizontal: true, character: o.character, winds: [], kids, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, blockers: [], hawks, rocks: [], herd: [{ surface: 'finish', x: fx + 6, dir: 1, n: 4 }] };
+}
 // zig-zag descent generator (deterministic): widths shrink and gaps grow along the way, forks with a pickup, spikes on wide ledges, bird lanes spread evenly
 function makeDescent(o) {
   const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = [], rocks = []; let x = 0, y = 0, side = 1;
@@ -418,18 +445,20 @@ function makeClimb(o) {
 function dailyDate() { return new Date().toISOString().slice(0, 10); }
 function dailyInfo(date = dailyDate()) {
   let h = 0; for (const c of date) h = (h * 31 + c.charCodeAt(0)) >>> 0; const r = mulberry(h);
-  const styles = ['desert', 'red', 'chalk', 'night', 'alpine']; const style = styles[Math.floor(r() * styles.length)];
-  const ascent = Math.floor(r() * 3) === 0; const n = 16 + Math.floor(r() * 7);
+  const ub = unlockedBiomes(); const styles = ['desert', 'red', 'chalk', 'night', 'alpine', 'city', 'panel', 'yard'].filter(b => ub.has(b)); const style = styles[Math.floor(r() * styles.length)] || 'desert';
+  const character = style === 'city' ? 'kong' : style === 'panel' ? 'cat' : style === 'yard' ? 'dog' : undefined; const horizontal = style === 'yard';
+  const ascent = !horizontal && Math.floor(r() * 3) === 0; const n = 16 + Math.floor(r() * 7);
   const pool = ['birds', 'rockfall', 'wind', 'spikes', 'crumble', 'kid']; const mods = [];
   const count = 1 + Math.floor(r() * 3); while (mods.length < count) { const m = pool[Math.floor(r() * pool.length)]; if (!mods.includes(m) && !(ascent && m === 'kid')) mods.push(m); }
   if (style === 'alpine' && !ascent) mods.push('ice');
-  return { date, seed: h, style, ascent, n, mods, r };
+  return { date, seed: h, style, ascent, horizontal, character, n, mods, r };
 }
 function dailyDef(info = dailyInfo()) {
-  const { seed, style, ascent, n, mods } = info; const has = m => mods.includes(m);
+  const { seed, style, ascent, horizontal, character, n, mods } = info; const has = m => mods.includes(m);
   const hawksN = has('birds') ? 2 + (seed % 2) : 0;
   let def;
-  if (ascent) {
+  if (horizontal) def = makeRun({ key: 'daily', name: 'DAILY CHALLENGE', style, seed, n, hawks: hawksN, spikes: has('spikes'), kid: has('kid'), character });
+  else if (ascent) {
     const r2 = mulberry(seed + 1); const hawks = []; for (let k = 0; k < hawksN; k++) hawks.push({ x1: -8 + r2() * 2, x2: 6 + r2() * 2, y: +((k + 1) * n * 2.9 / (hawksN + 1)).toFixed(1), speed: 5 + r2() * 2 });
     def = makeClimb({ key: 'daily', name: 'DAILY CHALLENGE', style, seed, n, spikes: has('spikes'), hawks, wind: has('wind') });
   } else {
@@ -437,7 +466,7 @@ function dailyDef(info = dailyInfo()) {
     if (!has('ice')) def.surfaces.forEach(sr => { if (sr[5]) sr[5] = sr[5].split(' ').filter(f => f !== 'ice').join(' ') || undefined; });
     if (has('ice')) def.surfaces.forEach((sr, i) => { if (i > 0 && i < def.surfaces.length - 1 && sr[3] >= 2.6 && i % 3 === 0 && !(sr[5] || '').includes('L') && !(sr[5] || '').includes('R')) sr[5] = ((sr[5] || '') + ' ice').trim(); });
   }
-  def.daily = true; def.date = info.date; def.mods = mods; return def;
+  def.daily = true; def.date = info.date; def.mods = mods; def.character = character; def.forceChar = character; return def;
 }
 const DAILY_REWARD = [3, 3, 4];
 const WORLDS = [
@@ -446,8 +475,9 @@ const WORLDS = [
   { name: 'CHALK COAST', sub: 'white limestone', levels: ['chalk', 'chalkrun', 'chalkclimb'] },
   { name: 'MOONLIT RIDGE', sub: 'under the moon', levels: ['nightrun', 'night', 'nightclimb'] },
   { name: 'THE ALPS', sub: 'snow and granite', levels: ['alpine', 'icefall', 'summit'] },
-  { name: 'SKYSCRAPER', sub: 'balconies and cornices', levels: ['citydown', 'cityrun', 'cityup'] },
-  { name: 'PANELKI', sub: 'soviet housing blocks', levels: ['paneldown', 'panelrun', 'panelup'] },
+  { name: 'SKYSCRAPER', sub: 'balconies and cornices', character: 'kong', levels: ['citydown', 'cityrun', 'cityup'] },
+  { name: 'PANELKI', sub: 'soviet housing blocks', character: 'cat', levels: ['paneldown', 'panelrun', 'panelup'] },
+  { name: 'DACHSHUND YARD', sub: 'a long dog, a long fence', character: 'dog', levels: ['yard1', 'yard2', 'yard3'] },
 ];
 // flatten LEVELS into world order so NEXT LEVEL walks through a world, then the next
 function orderLevels() { const byKey = Object.fromEntries(LEVELS.map(l => [l.key, l])); LEVELS = []; for (const w of WORLDS) for (const k of w.levels) LEVELS.push(byKey[k]); }
@@ -604,6 +634,7 @@ function makeCrystal() {
   } else if (kind === 'garnet') { const m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.34, 0), crystalMat); m.position.y = 0.3; m.castShadow = true; g.add(m); }
   else if (kind === 'fossil') { const m = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.11, 5, 9), crystalMat); m.position.y = 0.32; m.rotation.y = 0.4; m.castShadow = true; g.add(m);
     const c = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.06, 4, 6), crystalMat); c.position.set(0.02, 0.32, 0.0); g.add(c); }
+  else if (kind === 'bone') { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 6), crystalMat); m.rotation.z = Math.PI / 2; m.position.y = 0.3; g.add(m); for (const dx of [-0.25, 0.25]) for (const dy of [-0.08, 0.08]) { const k = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 5), crystalMat); k.position.set(dx, 0.3 + dy, 0); g.add(k); } }
   else if (kind === 'banana') { const m = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.09, 5, 8, Math.PI * 0.9), crystalMat); m.position.y = 0.3; m.rotation.z = -0.5; m.castShadow = true; g.add(m); }
   else if (kind === 'fish') { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28, 0), crystalMat); m.scale.set(1.6, 0.8, 0.5); m.position.y = 0.3; g.add(m); const t = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.3, 4), crystalMat); t.position.set(-0.5, 0.3, 0); t.rotation.z = Math.PI / 2; g.add(t); }
   else if (kind === 'moon') { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3, 1), crystalMat); m.position.y = 0.32; g.add(m); }
@@ -637,6 +668,9 @@ function makeVegetation(r) {
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 0.5, 5), new THREE.MeshLambertMaterial({ color: 0x4a3526, flatShading: true })); trunk.position.y = 0.25; g.add(trunk);
     const hgt = 1.2 + r() * 0.8; for (let i = 0; i < 3; i++) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.45 - i * 0.11, hgt * 0.45, 6), leaf); c.position.y = 0.45 + i * hgt * 0.26; c.castShadow = true; g.add(c); }
     if (STYLE.snow) { const cap = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.2, 6), new THREE.MeshLambertMaterial({ color: 0xf4f7fa, flatShading: true })); cap.position.y = 0.45 + 2 * hgt * 0.26 + hgt * 0.16; g.add(cap); }
+  } else if (STYLE.veg === 'flowers') {
+    const stem = new THREE.MeshLambertMaterial({ color: 0x4f7a34, flatShading: true }); const cols = [0xe85a6a, 0xf0c040, 0xf6f0e8, 0xc06ad0];
+    for (let i = 0; i < 3; i++) { const st = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.03, 0.5 + r() * 0.3, 4), stem); st.position.set(-0.25 + i * 0.25, 0.3, (r() - .5) * 0.2); g.add(st); const head = new THREE.Mesh(new THREE.IcosahedronGeometry(0.11, 0), new THREE.MeshLambertMaterial({ color: cols[Math.floor(r() * cols.length)], flatShading: true })); head.position.set(st.position.x, 0.62 + r() * 0.2, st.position.z); g.add(head); }
   } else if (STYLE.veg === 'antenna') {
     const metal = new THREE.MeshLambertMaterial({ color: 0x9aa0a8, flatShading: true }); const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 1.4 + r() * 0.8, 5), metal); mast.position.y = 0.7; g.add(mast);
     for (let i = 0; i < 3; i++) { const arm = new THREE.Mesh(new THREE.BoxGeometry(0.5 - i * 0.12, 0.03, 0.03), metal); arm.position.y = 0.9 + i * 0.25; g.add(arm); }
@@ -701,7 +735,7 @@ function styleAt(def, y) { // biome markers: the zone the goat has passed in the
   return best ? (STYLES[best.style] || STYLES.desert) : (STYLES[def.style] || STYLES.desert);
 }
 function buildLevel(idx, defOverride) {
-  const def = defOverride || LEVELS[idx];
+  const def = defOverride || LEVELS[idx]; forcedChar = def.forceChar || null;   // worlds only suggest a character; daily/endless runs fix it
   if (L) { for (const k of L.kids) scene.remove(k.goat.root); for (const r of L.rocks) { if (r.boulder) scene.remove(r.boulder); if (r.warn) scene.remove(r.warn); } for (const f of L.falling) levelGroup.remove(f.group); for (const d of L.windDust) scene.remove(d); }
   applyStyle(styleAt(def, 0));
   while (levelGroup.children.length) levelGroup.remove(levelGroup.children[0]);
@@ -723,8 +757,9 @@ function buildLevel(idx, defOverride) {
   const bottom = Math.min(...surfaces.map(s => s.y)), top = Math.max(...surfaces.map(s => s.y));
   const rocks = (def.rocks || []).map((r, i) => ({ ...r, t: -(r.offset || 0), warn: null, boulder: null, chute: makeChute(r.x, r.y, 900 + i + idx * 17) }));
   const winds = (def.winds || []).map(w => ({ ...w }));
-  const kids = (def.kids || []).map(k => { const sf = surfaces.find(s => s.id === k.surface); const cs = currentSkin(); const g = new Goat(cs.sk, 0.6, cs.ch); g.spawn(sf, k.x ?? sf.x); g.root.position.z = -0.4; g.herdZ = -0.4; g.isKid = true; return { surface: sf, goat: g, rescued: false }; });
-  L = { idx, def, surfaces, blockers, crystals, hawks, rocks, winds, kids, falling: [], windDust: [], starts, start: starts[0], bottom, top, twin: !!def.twin, ascent: !!def.ascent, dir: def.ascent ? -1 : 1, endless: !!def.endless,
+  const kids = (def.kids || []).map(k => { const sf = surfaces.find(s => s.id === k.surface); const cs = currentSkin(); const g = cs.ch === 'kong' ? new Goat('classic', 1, 'human') : new Goat(cs.sk, cs.ch === 'dog' ? 0.55 : 0.6, cs.ch); g.spawn(sf, k.x ?? sf.x); g.root.position.z = -0.4; g.herdZ = -0.4; g.isKid = true; return { surface: sf, goat: g, rescued: false }; });
+  L = { idx, def, surfaces, blockers, crystals, hawks, rocks, winds, kids, falling: [], windDust: [], starts, start: starts[0], bottom, top, twin: !!def.twin, ascent: !!def.ascent, horizontal: !!def.horizontal, dir: def.ascent ? -1 : 1, endless: !!def.endless,
+        left: Math.min(...surfaces.map(s => s.x1)), right: Math.max(...surfaces.map(s => s.x2)),
         gen: { lastX: 0, lastY: 0, lastW: 8, n: 0, sinceHawk: 0, sincePickup: 0, biome: 0, seed: 1000 } };
   buildDebug();
 }
@@ -732,10 +767,14 @@ function buildLevel(idx, defOverride) {
 // ============================================================
 //  Endless mode — procedural ledges ahead, difficulty grows with distance, biomes cycle
 // ============================================================
-const BIOME_CYCLE = ['desert', 'red', 'night', 'alpine', 'chalk'];   // dusk → night → dawn feel
+const BIOME_CYCLE_ALL = ['desert', 'red', 'night', 'alpine', 'chalk'];
+let BIOME_CYCLE = BIOME_CYCLE_ALL.slice();
+function unlockedBiomes() { const open = WORLDS.filter((w, i) => worldOpen(i)); const st = new Set(); for (const w of open) for (const k of w.levels) { const l = LEVELS.find(l => l.key === k); if (l) st.add(l.style); } return st; }   // dusk → night → dawn feel
 const ENDLESS = { biomeLength: 120, hawkStart: 70, spikeStart: 50, forkStart: 25 };
-function endlessDef(ascent) {
-  return { key: ascent ? 'endlessUp' : 'endlessDown', name: ascent ? 'ENDLESS ASCENT' : 'ENDLESS DESCENT', style: 'desert', endless: true, ascent, stars: { crystals: 0, time: 0 },
+function endlessDef(ascent, biome, character) {
+  const ub = unlockedBiomes(); BIOME_CYCLE = biome ? [biome] : BIOME_CYCLE_ALL.filter(b => ub.has(b)); if (!BIOME_CYCLE.length) BIOME_CYCLE = ['desert'];
+  const key = biome ? 'endless_' + biome : ascent ? 'endlessUp' : 'endlessDown';
+  return { key, name: biome ? `ENDLESS ${biome.toUpperCase()}` : ascent ? 'ENDLESS ASCENT' : 'ENDLESS DESCENT', style: BIOME_CYCLE[0], endless: true, ascent, biome, character, forceChar: character, stars: { crystals: 0, time: 0 },
     surfaces: [['start', 0, 0, 8, 'terrace']], crystals: [], blockers: [], hawks: [], rocks: [], winds: [], herd: [] };
 }
 function genNext() {
@@ -753,7 +792,7 @@ function genNext() {
   const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : (R() < 0.4 ? 'sloped' : 'narrow');
   const spk = dist > ENDLESS.spikeStart && w >= 3.0 && !g.lastFork && R() < Math.min(0.5, (dist - ENDLESS.spikeStart) / 150) ? (g.lastX < x ? 'R' : 'L') : null;
   const nearBird = L.hawks.some(h => Math.abs(h.y - y) < CONFIG.crumbleHazardGap) || (dist > ENDLESS.hawkStart && g.sinceHawk <= 1);
-  const flags = [spk, dist > 120 && !spk && !nearBird && R() < 0.15 ? 'crumble' : null, BIOME_CYCLE[g.biome] === 'alpine' && w >= 2.4 && R() < 0.35 ? 'ice' : null].filter(Boolean);
+  const flags = [spk, dist > 120 && !spk && !nearBird && R() < 0.15 ? 'crumble' : null, BIOME_CYCLE[g.biome % BIOME_CYCLE.length] === 'alpine' && w >= 2.4 && R() < 0.35 ? 'ice' : null].filter(Boolean);
   const row = ['e' + g.n, +x.toFixed(1), +y.toFixed(1), w, type]; if (flags.length) row.push(flags.join(' '));
   const s = makeSurface(row, g.n, g.seed); L.surfaces.push(s);
   // optional fork: a narrower ledge on the other side with a pickup — route choice
@@ -789,7 +828,7 @@ function endlessTick() {
   for (let i = L.windDust.length - 1; i >= 0; i--) if (!L.winds.includes(L.windDust[i].userData.w)) { scene.remove(L.windDust[i]); L.windDust.splice(i, 1); }
   L.bottom = Math.min(...L.surfaces.map(s => s.y)); L.top = Math.max(...L.surfaces.map(s => s.y));
   // biome cycling with a colour fade
-  const bi = Math.floor(Math.abs(gy) / ENDLESS.biomeLength) % BIOME_CYCLE.length;
+  const bi = BIOME_CYCLE.length > 1 ? Math.floor(Math.abs(gy) / ENDLESS.biomeLength) % BIOME_CYCLE.length : 0;
   if (bi !== L.gen.biome) { L.gen.biome = bi; startStyleTween(STYLES[BIOME_CYCLE[bi]], 3); }
 }
 // ---- style tween (biome fade) ----
@@ -823,11 +862,16 @@ const KONG_SKINS = { classic: { body: 0x2a2320, belly: 0x4a3f3a, dark: 0x1a1512,
 const CAT_SKINS = { ginger: { body: 0xd6803a, belly: 0xf4e6cc, dark: 0x8a4a1e, horn: 0 }, black: { body: 0x1e1c1f, belly: 0x3a3538, dark: 0x101010, horn: 0 }, grey: { body: 0x8a8a90, belly: 0xd8d8dc, dark: 0x505058, horn: 0 } };
 const CHARACTERS = {
   goat: { name: 'IBEX', skins: SKINS, list: GOAT_SKINS },
-  kong: { name: 'KONG', skins: KONG_SKINS, list: [{ id: 'classic', name: 'KONG', cost: 0 }, { id: 'silver', name: 'SILVERBACK', cost: 14 }, { id: 'ginger', name: 'ORANG', cost: 18 }] },
-  cat:  { name: 'YARD CAT', skins: CAT_SKINS, list: [{ id: 'ginger', name: 'GINGER CAT', cost: 0 }, { id: 'black', name: 'BLACK CAT', cost: 12 }, { id: 'grey', name: 'GREY CAT', cost: 16 }] },
+  kong: { name: 'KONG', world: 'SKYSCRAPER', skins: KONG_SKINS, list: [{ id: 'classic', name: 'KONG', cost: 0 }, { id: 'silver', name: 'SILVERBACK', cost: 14 }, { id: 'ginger', name: 'ORANG', cost: 18 }] },
+  cat:  { name: 'YARD CAT', world: 'PANELKI', skins: CAT_SKINS, list: [{ id: 'ginger', name: 'GINGER CAT', cost: 0 }, { id: 'black', name: 'BLACK CAT', cost: 12 }, { id: 'grey', name: 'GREY CAT', cost: 16 }] },
 };
-function currentSkin() { const ch = CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id; return { ch, sk }; }
-const HAWK_SKINS = { chopper: { dark: 0x2c3138, light: 0x6b7480, beak: 0xff3030 }, pigeon: { dark: 0x6f7480, light: 0xc9cbd3, beak: 0xe0b060 }, hawk: { dark: 0x4a3324, light: 0xa88664, beak: 0xd9b23c }, raven: { dark: 0x15131c, light: 0x2c2936, beak: 0x4a4a4a }, eagle: { dark: 0x5e3a1a, light: 0xeee6d6, beak: 0xe6c23c }, falcon: { dark: 0x596270, light: 0xd9d5cc, beak: 0xd6b23a } };
+const DOG_SKINS = { red: { body: 0xb5622a, belly: 0xd28a52, dark: 0x5a2e14, horn: 0 }, blacktan: { body: 0x1e1a18, belly: 0xb0703a, dark: 0x120f0e, horn: 0 }, dapple: { body: 0x8a8a8a, belly: 0xd8d8d8, dark: 0x3a3a3a, horn: 0 } };
+CHARACTERS.dog = { name: 'DACHSHUND', world: 'DACHSHUND YARD', skins: DOG_SKINS, list: [{ id: 'red', name: 'RED DACHSHUND', cost: 0 }, { id: 'blacktan', name: 'BLACK & TAN', cost: 14 }, { id: 'dapple', name: 'DAPPLE', cost: 18 }] };
+const HUMAN_SKINS = { classic: { body: 0x3a5a8a, belly: 0xe8c8a8, dark: 0x2a2a30, horn: 0 } };
+CHARACTERS.human = { name: 'PERSON', hidden: true, skins: HUMAN_SKINS, list: [{ id: 'classic', name: 'PERSON', cost: 0 }] };
+let forcedChar = null;
+function currentSkin() { const ch = forcedChar && CHARACTERS[forcedChar] ? forcedChar : CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id; return { ch, sk }; }
+const HAWK_SKINS = { wasp: { dark: 0x2a2418, light: 0xf0c020, beak: 0x222222 }, chopper: { dark: 0x2c3138, light: 0x6b7480, beak: 0xff3030 }, pigeon: { dark: 0x6f7480, light: 0xc9cbd3, beak: 0xe0b060 }, hawk: { dark: 0x4a3324, light: 0xa88664, beak: 0xd9b23c }, raven: { dark: 0x15131c, light: 0x2c2936, beak: 0x4a4a4a }, eagle: { dark: 0x5e3a1a, light: 0xeee6d6, beak: 0xe6c23c }, falcon: { dark: 0x596270, light: 0xd9d5cc, beak: 0xd6b23a } };
 
 class Goat {
   constructor(skin, scale = 1, character = 'goat') {
@@ -841,6 +885,8 @@ class Goat {
   buildModel(sk) {
     if (this.character === 'kong') return this.buildKong(sk);
     if (this.character === 'cat') return this.buildCat(sk);
+    if (this.character === 'human') return this.buildHuman(sk);
+    if (this.character === 'dog') return this.buildDog(sk);
     const M = { body: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), belly: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }),
       dark: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), cream: new THREE.MeshLambertMaterial({ color: 0xe9dcc3, flatShading: true }),
       hoof: new THREE.MeshLambertMaterial({ color: 0x2b211a, flatShading: true }), horn: new THREE.MeshLambertMaterial({ color: sk.horn, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0x120c08 }) };
@@ -876,6 +922,31 @@ class Goat {
     makeLeg(0.48, 0.16, true); makeLeg(0.48, -0.16, true); makeLeg(-0.5, 0.15, false); makeLeg(-0.5, -0.15, false);
     goat.traverse(o => { if (o.isMesh) o.castShadow = true; }); goat.scale.setScalar(this.scale);
     scene.add(goat);
+  }
+  buildDog(sk) { // dachshund: very long body, short legs, floppy ears, tail up
+    const M = { fur: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), tan: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }), dark: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0x120c08 }) };
+    const root = this.root = new THREE.Group(); const bodyG = this.bodyG = new THREE.Group(); root.add(bodyG); this.legs = [];
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.44, 0.4), M.fur); torso.position.set(0, 0.58, 0); bodyG.add(torso);
+    const belly = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.12, 0.34), M.tan); belly.position.set(0, 0.38, 0); bodyG.add(belly);
+    const chest = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.5, 0.42), M.fur); chest.position.set(0.8, 0.62, 0); bodyG.add(chest);
+    const headG = this.headG = new THREE.Group(); headG.position.set(1.05, 0.9, 0); bodyG.add(headG);
+    headG.add(new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.3, 0.32), M.fur)); const muzzle = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.18, 0.2), M.tan); muzzle.position.set(0.32, -0.06, 0); headG.add(muzzle);
+    const nose = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.09), M.eye); nose.position.set(0.53, -0.02, 0); headG.add(nose);
+    for (const sd of [-1, 1]) { const ear = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.34, 0.06), M.dark); ear.position.set(-0.08, -0.1, sd * 0.19); ear.rotation.x = sd * 0.25; headG.add(ear); const eye = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.05, 0.05), M.eye); eye.position.set(0.19, 0.06, sd * 0.11); headG.add(eye); }
+    const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.045, 0.5, 5), M.dark); tail.position.set(-1.0, 0.85, 0); tail.rotation.z = 0.9; bodyG.add(tail); this.tailG = tail;
+    const makeLeg = (x, z, front) => { const g = new THREE.Group(); g.position.set(x, 0.42, z); bodyG.add(g); const up = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.24, 5), M.fur); up.position.y = -0.12; g.add(up); const low = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.18, 5), M.tan); low.position.y = -0.33; g.add(low); const paw = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 0.1), M.dark); paw.position.set(0.03, -0.42, 0); g.add(paw); g.userData.front = front; this.legs.push(g); };
+    makeLeg(0.7, 0.14, true); makeLeg(0.7, -0.14, true); makeLeg(-0.7, 0.14, false); makeLeg(-0.7, -0.14, false);
+    root.traverse(o => { if (o.isMesh) o.castShadow = true; }); root.scale.setScalar(this.scale); scene.add(root);
+  }
+  buildHuman(sk) { // a small person for Kong to rescue: arms are the "front legs", legs the hind ones
+    const M = { shirt: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), skin: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }), pants: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), hair: new THREE.MeshLambertMaterial({ color: 0x3a2a1a, flatShading: true }) };
+    const root = this.root = new THREE.Group(); const bodyG = this.bodyG = new THREE.Group(); root.add(bodyG); this.legs = [];
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.5, 0.24), M.shirt); torso.position.set(0, 0.95, 0); bodyG.add(torso);
+    const headG = this.headG = new THREE.Group(); headG.position.set(0, 1.36, 0); bodyG.add(headG);
+    headG.add(new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.26, 0.24), M.skin)); const hair = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.1, 0.26), M.hair); hair.position.y = 0.14; headG.add(hair);
+    const limb = (x, y, z, len, mat, front) => { const g = new THREE.Group(); g.position.set(x, y, z); bodyG.add(g); const m = new THREE.Mesh(new THREE.BoxGeometry(0.1, len, 0.1), mat); m.position.y = -len / 2; g.add(m); g.userData.front = front; this.legs.push(g); };
+    limb(0.04, 1.18, 0.22, 0.5, M.shirt, true); limb(0.04, 1.18, -0.22, 0.5, M.shirt, true); limb(0, 0.7, 0.08, 0.7, M.pants, false); limb(0, 0.7, -0.08, 0.7, M.pants, false);
+    root.traverse(o => { if (o.isMesh) o.castShadow = true; }); root.scale.setScalar(this.scale); scene.add(root);
   }
   buildKong(sk) { // hunched ape: long arms as the "front legs", short bowed legs behind
     const M = { fur: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), chest: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }), skin: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0xf0e0c0 }) };
@@ -977,7 +1048,7 @@ class Goat {
     // how many rows of ledges did this jump drop past?
     const between = L.surfaces.filter(o => o !== s && o !== this.originSurface && o.y < this.launchY - 0.5 && o.y > s.y + 0.5).map(o => o.y).sort((a, b) => b - a);
     let rows = 0, lastY = Infinity; for (const y of between) { if (lastY - y > CONFIG.ledgeRowGap) rows++; lastY = y; }
-    if (rows > CONFIG.maxLedgesSkipped && !s.finish) {
+    if (rows > CONFIG.maxLedgesSkipped && !s.finish && !L.horizontal) {
       spawnDust(this.pos.x, this.pos.y, 14, 2); spawnPebbles(this.pos.x, this.pos.y - 0.2, 8, 1.8); thud(1, 160, 0.2);
       this.setState(ST.TIRED); return;
     }
@@ -1015,7 +1086,9 @@ class Goat {
       const w = this.walk; w.t += dt; const k = clamp(w.t / w.dur, 0, 1); this.pos.x = lerp(w.from, w.to, k); this.pos.y = this.onSurface.y;
       if (k >= 1) { this.pos.x = w.to; this.launch(w.aim); }
     } else if (s === ST.HERD) {
-      if (this.stateT > this.herdDelay) this.pos.x += this.herdDir * 3.2 * dt; this.pos.y = this.onSurface.y; this.facing = this.herdDir;
+      if (this.finale === 'chest') { this.pos.y = this.onSurface.y; }
+      else { if (this.stateT > this.herdDelay) this.pos.x += this.herdDir * (this.finale === 'chase' ? 4.2 : 3.2) * dt; this.pos.y = this.onSurface.y; this.facing = this.herdDir; }
+      if (this.chaseBird) { const b = this.chaseBird; b.position.x += this.herdDir * 4.6 * dt; b.position.y += 0.6 * dt; const f = Math.sin(this.stateT * 12); for (const w of b.wings) { w.rotation.x = w.userData.side * f * 0.6; w.outer.rotation.x = w.userData.side * f * 0.5; } }
     } else if (s === ST.LAND) {
       this.acc = 0; if (this.landKind === 'hard') { this.pos.x = clamp(this.pos.x + this.slideV * dt, this.onSurface.x1 + 0.1, this.onSurface.x2 - 0.1); this.slideV = damp(this.slideV, 0, 8, dt); }
       if (this.landKind === 'ice') { // slides on, and can go right over the edge
@@ -1044,6 +1117,7 @@ class Goat {
     let crouch = 0, tuck = 0, pitch = 0, headPitch = 0, roll = 0, legFwd = 0, px = this.pos.x, py = this.pos.y;
     if (s === ST.IDLE && !aim) { crouch = 0.03 + Math.sin(now * 2.2) * 0.03; headPitch = Math.sin(now * 0.9) * 0.12 - 0.15; }
     else if (s === ST.IDLE && aim) { crouch = 0.18 + aim.t * 0.62; headPitch = clamp(aim.dir.y * 0.8, -0.5, 0.7); }
+    else if (s === ST.HERD && this.finale === 'chest') { pitch = 0.9; crouch = -0.1; headPitch = 0.4; legFwd = 0; }
     else if (s === ST.WALK || (s === ST.HERD && t > this.herdDelay)) { crouch = 0.12 + Math.abs(Math.sin(now * 22)) * 0.08; headPitch = -0.35; }
     else if (s === ST.HERD) { crouch = 0.03 + Math.sin(now * 2.2 + this.pos.x) * 0.03; headPitch = 0.1; }
     else if (s === ST.JUMP) { if (t < 0.1) crouch = -0.25; else tuck = clamp((t - 0.1) / 0.15, 0, 1); pitch = Math.atan2(this.vel.y, Math.abs(this.vel.x + this.corr) + 2) * 0.55; headPitch = pitch * 0.4 - 0.1; if (this.vel.y < -4) tuck = 0.5; }
@@ -1062,7 +1136,8 @@ class Goat {
     this.root.position.set(px, py, this.herdZ || 0); this.root.rotation.y = lerp(Math.PI - 0.35, 0.35, (A.face + 1) / 2);
     if (this.tailG) this.tailG.rotation.y = Math.sin(now * 2.5 + this.pos.x) * 0.4;
     this.bodyG.position.y = -A.crouch * 0.28; this.bodyG.rotation.z = A.pitch + (s === ST.FALL || s === ST.DEAD ? A.roll : A.roll * (A.face > 0 ? 1 : -1)); this.headG.rotation.z = A.headPitch;
-    for (const l of this.legs) { l.scale.y = 1 - clamp(A.crouch, -0.3, 1) * 0.33; l.rotation.z = (l.userData.front ? -A.tuck * 1.1 : A.tuck * 1.0) + legFwd; if (s === ST.WALK || (s === ST.HERD && t > this.herdDelay)) l.rotation.z = Math.sin(now * 22 + (l.userData.front ? 0 : Math.PI) + l.position.z * 6) * 0.55; if (s === ST.FALL || s === ST.DEAD) l.rotation.z = Math.sin(now * 20 + l.position.x) * 0.5; }
+    for (const l of this.legs) { l.scale.y = 1 - clamp(A.crouch, -0.3, 1) * 0.33; l.rotation.z = (l.userData.front ? -A.tuck * 1.1 : A.tuck * 1.0) + legFwd; if (s === ST.HERD && this.finale === 'chest') { l.rotation.z = l.userData.front ? 2.3 + Math.sin(now * 16 + (l.position.z > 0 ? 0 : Math.PI)) * 0.5 : 0.9; }
+      else if (s === ST.WALK || (s === ST.HERD && t > this.herdDelay)) l.rotation.z = Math.sin(now * 22 + (l.userData.front ? 0 : Math.PI) + l.position.z * 6) * 0.55; if (s === ST.FALL || s === ST.DEAD) l.rotation.z = Math.sin(now * 20 + l.position.x) * 0.5; }
   }
 }
 
@@ -1249,14 +1324,14 @@ function updateFollower(f, dt) {
 // ============================================================
 const HINT_TEXT = {
   drag: 'Drag toward your jump<br>Release to leap', twin: 'One drag moves both goats<br>Check both arcs before you release',
-  ascent: 'Climb! The mountain drifts down<br>Jump up before it carries you away', endless: 'How far can you go?<br>It gets harder every 100 m',
+  ascent: 'Climb! The mountain drifts down<br>Jump up before it carries you away', run: 'Run right! The yard scrolls along<br>Keep jumping ahead of the edge', endless: 'How far can you go?<br>It gets harder every 100 m',
   daily: 'Daily challenge — same mountain for everyone today', birds: 'Birds strike goats in the air<br>Let it pass, then jump',
   spikes: 'Spikes — land on the clear half', ice: 'Ice — you keep sliding after landing', crumble: 'Cracked ledges crumble in a second<br>Don\'t linger on them',
   wind: 'Wind in that gap bends your arc<br>The dots show most of it', rocks: 'A crevice — when its shadow grows, a boulder drops', kids: 'A stranded kid — land beside it<br>It will follow your jumps',
 };
 function activeHint() {
-  const g = goats[0], y = g.pos.y, ahead = 15, back = 4; const inView = yy => L.ascent ? (yy > y - back && yy < y + ahead) : (yy < y + back && yy > y - ahead);
-  if (G.jumps === 0) { if (L.twin) return 'twin'; if (L.ascent) return 'ascent'; if (L.def.daily) return 'daily'; if (L.endless) return 'endless'; if (!save.seenDrag) return 'drag'; }
+  const g = goats[0], y = g.pos.y, ahead = 15, back = 4; const inView = yy => L.horizontal ? Math.abs(yy - y) < 10 : L.ascent ? (yy > y - back && yy < y + ahead) : (yy < y + back && yy > y - ahead);
+  if (G.jumps === 0) { if (L.twin) return 'twin'; if (L.horizontal) return 'run'; if (L.ascent) return 'ascent'; if (L.def.daily) return 'daily'; if (L.endless) return 'endless'; if (!save.seenDrag) return 'drag'; }
   for (const k of L.kids) if (!k.rescued && inView(k.surface.y)) return 'kids';
   if (L.hawks.some(h => inView(h.y))) return 'birds';
   if (L.rocks.some(r => inView(r.y) || inView(r.y - r.len / 2))) return 'rocks';
@@ -1267,6 +1342,7 @@ function activeHint() {
 function updateHints(dt, playing) {
   const H = G.hints; if (!H) return;
   if (!playing) { hint.style.opacity = 0; return; }
+  if (H.key === 'newchar') { if (performance.now() / 1000 - H.shownAt < 5 && G.jumps === 0) return; H.key = null; }
   const key = activeHint(); const now = performance.now() / 1000;
   const acted = G.jumps !== H.lastJumps; H.lastJumps = G.jumps; if (acted) { H.idleT = 0; if (H.key) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; } if (G.jumps >= 3) save.seenDrag = true; }
   H.idleT += dt;
@@ -1282,7 +1358,7 @@ function updateHints(dt, playing) {
 //  Game flow: menu → select → play → result
 // ============================================================
 const $ = id => document.getElementById(id);
-const hud = $('hud'), hint = $('hint'), vig = $('vig'), topwarn = $('topwarn'), botwarn = $('botwarn'), wind = $('wind'), dbg = $('dbg'), dpref = $('dpref'), ddanger = $('ddanger');
+const hud = $('hud'), hint = $('hint'), vig = $('vig'), topwarn = $('topwarn'), botwarn = $('botwarn'), leftwarn = $('leftwarn'), wind = $('wind'), dbg = $('dbg'), dpref = $('dpref'), ddanger = $('ddanger');
 let mode = 'menu', pendingReload = false;
 const goats = [], herd = [], followers = [];
 const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0, dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, hintDone: false, collected: 0, result: null, twin: false };
@@ -1296,48 +1372,55 @@ function goMenu() {
   const info = dailyInfo(); const d = save.daily || {}; const stars = d.date === info.date ? (d.stars || 0) : 0;
   const worldName = (WORLDS.find(w => LEVELS.some(l => l.key === w.levels[0] && l.style === info.style)) || WORLDS[0]).name;
   const dt = new Date(info.date + 'T00:00:00Z'); const label = dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).toUpperCase();
+  const dirMark = info.horizontal ? '▶' : info.ascent ? '▲' : '▼';
   const sn = save.runs && save.runs.daily; const resumeTxt = sn && sn.def.date === info.date ? ` · resume ${Math.round(sn.stats.maxDesc)} m` : '';
-  $('dailyInfo').innerHTML = `${label} · ${worldName} ${info.ascent ? '▲' : '▼'} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · streak ${d.streak}` : ''}${resumeTxt}`;
+  $('dailyInfo').innerHTML = `${label} · ${worldName} ${dirMark} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · streak ${d.streak}` : ''}${resumeTxt}`;
   showScreen('scMenu');
 }
 let curWorld = 0;
+function worldStars(wi) { let got = 0; for (const k of WORLDS[wi].levels) got += (save.levels[k] || { stars: 0 }).stars; return got; }
+function worldOpen(wi) { return wi === 0 || worldStars(wi - 1) >= Math.ceil(WORLDS[wi - 1].levels.length * 3 * 0.8); }
 function goSelect() {
   mode = 'select'; hud.style.display = 'none'; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = '◀ MENU'; $('bBackMenu').onclick = null;
   WORLDS.forEach((w, wi) => {
-    let got = 0; for (const k of w.levels) got += (save.levels[k] || { stars: 0 }).stars;
-    const b = document.createElement('div'); b.className = 'btn';
-    b.innerHTML = `WORLD ${wi + 1} · ${w.name}<small>${w.sub} · ${w.levels.length} levels</small><small>★ ${got} / ${w.levels.length * 3}</small>`;
-    b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goWorld(wi); });
+    const got = worldStars(wi), open = worldOpen(wi);
+    const b = document.createElement('div'); b.className = 'btn' + (open ? '' : ' dim');
+    b.innerHTML = open ? `WORLD ${wi + 1} · ${w.name}<small>${w.sub} · ${w.levels.length} levels</small><small>★ ${got} / ${w.levels.length * 3}</small>` : `🔒 WORLD ${wi + 1} · ${w.name}<small>${w.sub}</small><small>earn ${Math.ceil(WORLDS[wi - 1].levels.length * 3 * 0.8)} ★ in ${WORLDS[wi - 1].name} (${worldStars(wi - 1)} so far)</small>`;
+    b.addEventListener('click', e => { e.stopPropagation(); if (!fresh() && open) goWorld(wi); });
     list.appendChild(b);
   });
   showScreen('scSelect');
 }
 function goWorld(wi) {
-  mode = 'select'; curWorld = wi; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = '◀ WORLDS';
+  mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = '◀ WORLDS';
   const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `WORLD ${wi + 1} · ${w.name}`; list.appendChild(h);
   w.levels.forEach((k, li) => {
     const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
     const b = document.createElement('div'); b.className = 'btn';
-    b.innerHTML = `${wi + 1}-${li + 1} · ${lv.name}<small>${lv.ascent ? '▲ ascent' : lv.twin ? '⇊ twin descent' : '▼ descent'}${lv.hawks && lv.hawks.length ? ' · birds' : ''}</small><small>${'★'.repeat(stars) + '☆'.repeat(3 - stars)}</small>`;
+    b.innerHTML = `${wi + 1}-${li + 1} · ${lv.name}<small>${lv.horizontal ? '▶ run' : lv.ascent ? '▲ ascent' : lv.twin ? '⇊ twin descent' : '▼ descent'}${lv.hawks && lv.hawks.length ? ' · birds' : ''}</small><small>${'★'.repeat(stars) + '☆'.repeat(3 - stars)}</small>`;
     b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startLevel(idx); });
     list.appendChild(b);
   });
   showScreen('scSelect');
 }
-function preferredFy(y) { return y - (L ? L.dir : 1) * (0.5 - CONFIG.goatScreenFraction) * 2 * halfH; }
+function preferredFy(y) { if (L && L.horizontal) return y - 0.08 * halfH; return y - (L ? L.dir : 1) * (0.5 - CONFIG.goatScreenFraction) * 2 * halfH; }
+function preferredFx(x) { return x + (0.5 - CONFIG.goatScreenFraction) * 2 * halfH * camera.aspect; }
 function startLevel(idx, defOverride) {
+  { const w = !defOverride && WORLDS.find(w => w.levels.includes(LEVELS[idx].key)); if (w && w.character && !(save.charSeen && save.charSeen[w.character])) { save.charSeen = save.charSeen || {}; save.charSeen[w.character] = true; save.character = w.character; persist(); G.newCharToast = CHARACTERS[w.character].name; } }
+  { const d = defOverride || LEVELS[idx]; if (d.character && !(save.charSeen && save.charSeen[d.character])) { save.charSeen = save.charSeen || {}; save.charSeen[d.character] = true; persist(); } }
   buildLevel(idx, defOverride); clearParticles(); styleTween = null;
-  for (const g of goats) scene.remove(g.root); goats.length = 0;
+  for (const g of goats) { scene.remove(g.root); if (g.chaseBird) scene.remove(g.chaseBird); } goats.length = 0;
   for (const st of L.starts) { const cs = currentSkin(); const g = new Goat(cs.sk, 1, cs.ch); g.spawn(st, st.x); goats.push(g); }
   followers.length = 0; G.kidsSaved = 0;
   for (const g of herd) scene.remove(g.root); herd.length = 0;
-  for (const h of (L.def.herd || [])) { const sf = L.surfaces.find(s => s.id === h.surface);
+  for (const h of (currentSkin().ch === 'goat' ? (L.def.herd || []) : [])) { const sf = L.surfaces.find(s => s.id === h.surface);
     for (let i = 0; i < h.n; i++) { const cs = currentSkin(); const lst = CHARACTERS[cs.ch].list; const g = new Goat(lst[i % lst.length].id, 1, cs.ch); g.spawn(sf, h.x + h.dir * i * 1.5 + (i % 2) * 0.4); g.facing = -h.dir; g.A.face = -h.dir; g.herdDir = h.dir; g.herdDelay = 0.5 + i * 0.12; g.root.position.z = -0.5 - (i % 2) * 0.5; g.herdZ = g.root.position.z; g.isHerd = true; herd.push(g); } }
   G.twin = L.twin;
-  Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, camFx: 0, camFy: preferredFy(L.start.y), dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, collected: 0, result: null });
+  Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, camFx: L.horizontal ? preferredFx(L.start.x) : 0, camFy: preferredFy(L.start.y), dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, collected: 0, result: null });
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
-  $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = STYLE.pickupName; $('hDescLbl').textContent = L.ascent ? 'ASCENT' : 'DESCENT';
+  $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = STYLE.pickupName; $('hDescLbl').textContent = L.horizontal ? 'DISTANCE' : L.ascent ? 'ASCENT' : 'DESCENT';
   G.hints = { seen: {}, key: null, shownAt: 0, hiddenKey: null, idleT: 0, lastJumps: 0 }; hint.style.opacity = 0;
+  if (G.newCharToast) { hint.innerHTML = `New character unlocked: <b>${G.newCharToast}</b><br>You play as it here — switch any time in CHARACTERS`; hint.style.opacity = 1; G.hints.shownAt = performance.now() / 1000; G.hints.key = 'newchar'; G.newCharToast = null; }
   if (L.def.resume) applyResume(L.def.resume); else if (L.endless || L.def.daily) clearRun(L.def.key);
   if (L.endless) endlessTick();
   $('hSalt').parentElement.style.visibility = (L.crystals.length || L.endless || L.kids.length) ? 'visible' : 'hidden'; if (L.endless) $('hSalt').textContent = '◆ 0';
@@ -1390,14 +1473,14 @@ function finishLevel(win, reason) {
     const kidGain = Math.max(0, G.kidsSaved - (prev.kids || 0)) * CONFIG.kidSalt;
     const gained = Math.max(0, G.collected - prev.crystals) + kidGain; save.totalSaltCrystals += gained;
     save.levels[def.key] = { crystals: Math.max(prev.crystals, G.collected), time: Math.min(prev.time, G.time), stars: Math.max(prev.stars, stars), kids: Math.max(prev.kids || 0, G.kidsSaved) }; persist();
-    $('rTitle').textContent = L.ascent ? 'SUMMIT REACHED' : 'DESCENT COMPLETE';
+    $('rTitle').textContent = L.horizontal ? 'MADE IT ACROSS' : L.ascent ? 'SUMMIT REACHED' : 'DESCENT COMPLETE';
     $('rSub').innerHTML = `Time ${fmtTime(G.time)}<br>${hasC ? `${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}${gained ? ` &nbsp;(+${gained})` : ''}<br>` : ''}Jumps ${G.jumps} · Edge saves ${saves}${hasK ? `<br>Kids rescued ${G.kidsSaved} / ${L.kids.length}` : ''}`;
     $('rStars').innerHTML = `<div class="${st[0] ? 'on' : 'off'}">${st[0] ? '★' : '☆'} COMPLETE</div><div class="${st[1] ? 'on' : 'off'}">${st[1] ? '★' : '☆'} ${hasC ? def.stars.crystals + '+ ' + STYLE.pickupName : hasK ? 'ALL KIDS RESCUED' : 'NO EDGE SAVES'}</div><div class="${st[2] ? 'on' : 'off'}">${st[2] ? '★' : '☆'} UNDER ${fmtTime(def.stars.time)}</div><div>${stars} / 3</div>`;
-    $('bNext').style.display = (idx + 1 < LEVELS.length) ? 'block' : 'none';
+    $('bNext').style.display = (idx + 1 < LEVELS.length && worldOpen(WORLDS.findIndex(w => w.levels.includes(LEVELS[idx + 1].key)))) ? 'block' : 'none';
   } else {
     $('rTitle').textContent = G.twin ? 'ONE GOAT FELL' : 'YOU FELL';
     $('rTitle').textContent = reason === 'hawk' ? 'THE HAWK GOT YOU' : reason === 'tired' ? 'TOO FAR' : reason === 'spikes' ? 'SPIKED' : reason === 'rock' ? 'ROCKFALL' : reason === 'kid' ? 'A KID FELL' : $('rTitle').textContent;
-    $('rSub').innerHTML = (reason === 'camera' ? 'The mountain stopped waiting for you.<br>' : reason === 'tired' ? 'That drop was too long. The goat is exhausted and cannot go on.<br>' : reason === 'spikes' ? 'Those spikes were not a landing spot.<br>' : reason === 'rock' ? 'A boulder came down the chute.<br>' : reason === 'kid' ? 'The little one did not make that jump.<br>' : '') + `${L.ascent ? 'Ascent' : 'Descent'} ${Math.round(G.maxDesc)} m` + (L.crystals.length ? ` · ${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}` : '');
+    $('rSub').innerHTML = (reason === 'camera' ? 'The mountain stopped waiting for you.<br>' : reason === 'tired' ? 'That drop was too long. The goat is exhausted and cannot go on.<br>' : reason === 'spikes' ? 'Those spikes were not a landing spot.<br>' : reason === 'rock' ? 'A boulder came down the chute.<br>' : reason === 'kid' ? 'The little one did not make that jump.<br>' : '') + `${L.horizontal ? 'Distance' : L.ascent ? 'Ascent' : 'Descent'} ${Math.round(G.maxDesc)} m` + (L.crystals.length ? ` · ${STYLE.pickupName} ◆ ${G.collected} / ${L.crystals.length}` : '');
     $('rStars').innerHTML = ''; $('bNext').style.display = 'none';
   }
   const canCont = !win && goats.every(g => g.lastSafe) && save.totalSaltCrystals >= CONFIG.continueCost;
@@ -1580,7 +1663,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && mod
 function rowOf(s) { const f = []; if (s.spikes) f.push(s.spikes.x1 <= s.x1 + 1e-6 ? 'L' : 'R'); if (s.crumble) f.push('crumble'); if (s.ice) f.push('ice'); const r = [s.id, s.x, s.y, s.w, s.type]; if (f.length) r.push(f.join(' ')); return r; }
 function snapshotRun() {
   if (!L || !(L.endless || L.def.daily) || mode === 'result') return; const g = goats[0]; if (!g || !g.lastSafe || !L.surfaces.includes(g.lastSafe.s)) return;
-  const d = L.def, def = { key: d.key, name: d.name, style: L.endless ? BIOME_CYCLE[L.gen.biome] : d.style, endless: !!d.endless, ascent: !!d.ascent, daily: !!d.daily, date: d.date, mods: d.mods, stars: d.stars, zones: d.zones || [], blockers: [], herd: d.herd || [],
+  const d = L.def, def = { key: d.key, name: d.name, style: L.endless ? BIOME_CYCLE[L.gen.biome % BIOME_CYCLE.length] : d.style, endless: !!d.endless, ascent: !!d.ascent, daily: !!d.daily, biome: d.biome, character: d.character, forceChar: d.forceChar, horizontal: !!d.horizontal, date: d.date, mods: d.mods, stars: d.stars, zones: d.zones || [], blockers: [], herd: d.herd || [],
     surfaces: L.surfaces.map(rowOf), crystals: L.crystals.map(c => [c.x, c.y]), hawks: L.hawks.map(h => ({ x1: h.x1, x2: h.x2, y: h.y, speed: h.speed })), rocks: L.rocks.map(r => ({ x: r.x, y: r.y, len: r.len, period: r.period, offset: r.offset || 0 })), winds: L.winds.map(w => ({ y1: w.y1, y2: w.y2, force: w.force })),
     kids: L.kids.map(k => ({ surface: L.surfaces.includes(k.surface) ? k.surface.id : g.lastSafe.s.id, x: k.goat.pos.x })) };
   const snap = { def, taken: L.crystals.map(c => c.taken), rescued: L.kids.map(k => k.rescued), gen: L.endless ? Object.assign({}, L.gen) : null, goat: { surface: g.lastSafe.s.id, x: g.lastSafe.x },
@@ -1588,7 +1671,7 @@ function snapshotRun() {
   save.runs = save.runs || {}; save.runs[d.key] = snap; persist();
 }
 function clearRun(key) { if (save.runs && save.runs[key]) { delete save.runs[key]; persist(); } }
-function resumeRun(key) { const snap = save.runs && save.runs[key]; if (!snap) return false; const def = JSON.parse(JSON.stringify(snap.def)); def.resume = snap; startLevel(0, def); return true; }
+function resumeRun(key) { const snap = save.runs && save.runs[key]; if (!snap) return false; const def = JSON.parse(JSON.stringify(snap.def)); def.resume = snap; if (def.endless) { const ub = unlockedBiomes(); BIOME_CYCLE = def.biome ? [def.biome] : BIOME_CYCLE_ALL.filter(b => ub.has(b)); } startLevel(0, def); return true; }
 function applyResume(snap) {
   const g = goats[0]; const sf = L.surfaces.find(s => s.id === snap.goat.surface) || L.start; g.spawn(sf, snap.goat.x); g.saves = snap.stats.saves || 0; g.lastSafe = { s: sf, x: snap.goat.x };
   L.crystals.forEach((c, i) => { if (snap.taken[i]) { c.taken = true; c.mesh.visible = false; } });
@@ -1600,7 +1683,9 @@ function applyResume(snap) {
 }
 function goEndless() { mode = 'select'; hud.style.display = 'none'; const b = save.endless || {}; $('bestDown').textContent = `best ${b.endlessDown || 0} m`; $('bestUp').textContent = `best ${b.endlessUp || 0} m`;
   const R = $('endResume'); R.innerHTML = '';
-  for (const key of ['endlessDown', 'endlessUp']) { const sn = save.runs && save.runs[key]; if (!sn) continue; const btn = document.createElement('div'); btn.className = 'btn'; btn.innerHTML = `RESUME ${key === 'endlessUp' ? 'ASCENT' : 'DESCENT'}<small>${Math.round(sn.stats.maxDesc)} m · ${fmtTime(sn.stats.time)}</small>`; btn.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) resumeRun(key); }); R.appendChild(btn); }
+  for (const [ch, biome, label] of [['kong', 'city', 'ENDLESS SKYSCRAPER · KONG'], ['cat', 'panel', 'ENDLESS PANELKI · CAT']]) { if (!(save.charSeen && save.charSeen[ch])) continue;
+    const b2 = document.createElement('div'); b2.className = 'btn'; const bk = 'endless_' + biome; b2.innerHTML = `${label}<small>best ${(save.endless || {})[bk] || 0} m</small>`; b2.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startLevel(0, endlessDef(false, biome, ch)); }); R.appendChild(b2); }
+  for (const key of ['endlessDown', 'endlessUp', 'endless_city', 'endless_panel']) { const sn = save.runs && save.runs[key]; if (!sn) continue; const btn = document.createElement('div'); btn.className = 'btn'; btn.innerHTML = `RESUME ${key === 'endlessUp' ? 'ASCENT' : key === 'endless_city' ? 'SKYSCRAPER' : key === 'endless_panel' ? 'PANELKI' : 'DESCENT'}<small>${Math.round(sn.stats.maxDesc)} m · ${fmtTime(sn.stats.time)}</small>`; btn.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) resumeRun(key); }); R.appendChild(btn); }
   showScreen('scEndless'); }
 // preview thumbnails: each character/skin rendered once into a small offscreen canvas
 const previewCache = {};
@@ -1608,18 +1693,21 @@ function skinPreview(ch, sk) {
   const key = ch + ':' + sk; if (previewCache[key]) return previewCache[key];
   const pr = skinPreview.r || (skinPreview.r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })); pr.setSize(160, 160); pr.setPixelRatio(1); pr.outputColorSpace = THREE.SRGBColorSpace;
   const ps = new THREE.Scene(); ps.add(new THREE.HemisphereLight(0xdde8ff, 0x8a6a48, 1.4)); const dl = new THREE.DirectionalLight(0xfff0d8, 2.4); dl.position.set(3, 5, 4); ps.add(dl);
-  const g = new Goat(sk, 1, ch); scene.remove(g.root); ps.add(g.root); g.root.rotation.y = 0.55; g.root.position.set(-0.1, -0.85, 0);
-  const pc = new THREE.PerspectiveCamera(32, 1, 0.1, 20); pc.position.set(0.3, 0.6, 4.6); pc.lookAt(0, 0.05, 0);
-  g.animate(0.016, null); pr.render(ps, pc); const url = pr.domElement.toDataURL('image/png'); ps.remove(g.root); previewCache[key] = url; return url;
+  const g = new Goat(sk, 1, ch); scene.remove(g.root); ps.add(g.root); g.animate(0.016, null); g.root.rotation.y = 0.55; g.root.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(g.root); const c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()); const R = Math.max(sz.x, sz.y, sz.z);
+  const pc = new THREE.PerspectiveCamera(30, 1, 0.1, 50); pc.position.set(c.x + R * 0.35, c.y + R * 0.25, c.z + R * 2.1); pc.lookAt(c);
+  pr.render(ps, pc); const url = pr.domElement.toDataURL('image/png'); ps.remove(g.root); previewCache[key] = url; return url;
 }
 function goIbex() {
   mode = 'ibex'; hud.style.display = 'none'; $('ibexSalt').textContent = '◆ ' + save.totalSaltCrystals;
   const list = $('skinList'); list.innerHTML = '';
   for (const [ch, C] of Object.entries(CHARACTERS)) {
+    if (C.hidden) continue; const locked = C.world && !(save.charSeen && save.charSeen[ch]);
     const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '10px 0 2px'; h.textContent = C.name + (save.character === ch ? ' · PLAYING' : ''); list.appendChild(h);
     for (const it of C.list) {
       const uid = ch === 'goat' ? it.id : ch + ':' + it.id; const un = !!save.unlocked[uid], sel = save.character === ch && save.skins[ch] === it.id, can = save.totalSaltCrystals >= it.cost;
       const b = document.createElement('div'); b.className = 'btn' + (!un && !can ? ' dim' : ''); b.style.display = 'flex'; b.style.alignItems = 'center'; b.style.gap = '12px'; b.style.textAlign = 'left';
+      if (locked) { b.className = 'btn dim'; b.innerHTML = `<div style="width:64px;height:64px;border-radius:8px;background:rgba(255,248,238,.12);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:32px">?</div><div>???<small>Reach the ${C.world} world</small></div>`; list.appendChild(b); continue; }
       b.innerHTML = `<img src="${skinPreview(ch, it.id)}" style="width:64px;height:64px;border-radius:8px;background:rgba(255,248,238,.12);flex:0 0 auto"><div>${it.name}<small>${un ? (sel ? 'SELECTED' : 'EQUIP') : `${it.cost} ◆${can ? ' — UNLOCK' : ''}`}</small></div>`;
       b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return;
         if (!un) { if (!can) return; save.totalSaltCrystals -= it.cost; save.unlocked[uid] = true; }
@@ -1629,7 +1717,7 @@ function goIbex() {
   }
   showScreen('scIbex');
 }
-$('bRetry').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx, L.endless ? endlessDef(L.ascent) : L.def.daily ? dailyDef() : L.def.custom ? finalizeDef(save.custom[G.customId]) : undefined); });
+$('bRetry').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx, L.endless ? endlessDef(L.ascent, L.def.biome, L.def.character) : L.def.daily ? dailyDef() : L.def.custom ? finalizeDef(save.custom[G.customId]) : undefined); });
 $('bContinue').addEventListener('click', e => { e.stopPropagation(); continueRun(); });
 function continueRun() {
   if (mode !== 'result' || G.result.win || !goats.every(g => g.lastSafe) || save.totalSaltCrystals < CONFIG.continueCost) return;
@@ -1672,7 +1760,7 @@ function release() {
 addEventListener('pointerup', release); addEventListener('pointercancel', release);
 addEventListener('keydown', e => {
   if (e.key === 'd' || e.key === 'D') { debugG.visible = !debugG.visible; dbg.style.display = debugG.visible ? 'block' : 'none'; dpref.style.display = ddanger.style.display = debugG.visible ? 'block' : 'none'; }
-  if ((e.key === 'r' || e.key === 'R') && L && (mode === 'play' || mode === 'result')) startLevel(L.idx, L.endless ? endlessDef(L.ascent) : L.def.daily ? dailyDef() : undefined);
+  if ((e.key === 'r' || e.key === 'R') && L && (mode === 'play' || mode === 'result')) startLevel(L.idx, L.endless ? endlessDef(L.ascent, L.def.biome, L.def.character) : L.def.daily ? dailyDef() : undefined);
   if (e.key === 'Escape') { if (mode === 'play') pauseGame(); else if (mode === 'pause') resumeGame(); }
   if (e.key === 'ArrowLeft') G.keyInput = -1; if (e.key === 'ArrowRight') G.keyInput = 1;
 });
@@ -1687,6 +1775,7 @@ function doJump(aim) {
 // ============================================================
 let last = performance.now(), fps = 60; const _v3 = new THREE.Vector3();
 function screenFraction(x, y) { _v3.set(x, y + 0.7, 0).project(camera); return (1 - _v3.y) / 2; }
+function screenFractionX(x, y) { _v3.set(x, y + 0.7, 0).project(camera); return (_v3.x + 1) / 2; }
 
 function update(dt) {
   if (mode !== 'play' && mode !== 'result') return;
@@ -1726,7 +1815,10 @@ function update(dt) {
     if (goats.some(g => g.state === ST.FALL)) finishLevel(false, G.failReason || 'fall');
     else if (goats.some(g => g.state === ST.TIRED)) finishLevel(false, 'tired');
     else if (goats.every(g => g.state === ST.WIN)) {
-      for (const g of goats) { const h = (L.def.herd || []).find(h => h.surface === g.onSurface.id); g.herdDir = h ? h.dir : -1; g.herdDelay = 0.8; g.setState(ST.HERD); }
+      for (const g of goats) { const h = (L.def.herd || []).find(h => h.surface === g.onSurface.id); g.herdDir = h ? h.dir : -1; g.herdDelay = 0.8;
+        if (g.character === 'kong') { g.finale = 'chest'; const ban = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.07, 5, 8, Math.PI * 0.9), new THREE.MeshLambertMaterial({ color: 0xffe36a, flatShading: true })); ban.position.set(0.1, -1.15, 0); ban.rotation.z = -0.4; g.legs[0].add(ban); g.setState(ST.HERD); }
+        else if (g.character === 'cat') { g.finale = 'chase'; const b = makeHawk(); b.position.set(g.pos.x + g.herdDir * 2.5, g.pos.y + 1.2, 0.2); b.rotation.y = g.herdDir > 0 ? 0 : Math.PI; b.scale.setScalar(0.6); scene.add(b); g.chaseBird = b; g.herdDelay = 0.3; g.setState(ST.HERD); }
+        else g.setState(ST.HERD); }
       for (const g of herd) g.setState(ST.HERD);
       for (const f of followers) { f.replay = null; f.queue = []; f.onSurface = goats[0].onSurface; f.pos.set(goats[0].pos.x - goats[0].herdDir * 1.2, f.onSurface.y); f.herdDir = goats[0].herdDir; f.herdDelay = 1.0; f.setState(ST.HERD); }
       finishLevel(true);
@@ -1734,7 +1826,7 @@ function update(dt) {
   }
   let minY = Infinity, maxY = -Infinity, minX = Infinity, maxX = -Infinity;
   for (const g of goats) { minY = Math.min(minY, g.pos.y); maxY = Math.max(maxY, g.pos.y); minX = Math.min(minX, g.pos.x); maxX = Math.max(maxX, g.pos.x); }
-  G.maxDesc = Math.max(G.maxDesc, L.ascent ? maxY - L.start.y : L.start.y - maxY);
+  G.maxDesc = Math.max(G.maxDesc, L.horizontal ? maxX - L.start.x : L.ascent ? maxY - L.start.y : L.start.y - maxY);
 
   // ---- camera ----
   const wanted = G.twin ? Math.max(baseHalf, ((maxX - minX) / 2 + CONFIG.twinCameraPadding + 1.5) / camera.aspect) : baseHalf;
@@ -1747,25 +1839,32 @@ function update(dt) {
     G.camFy = clamp(G.camFy, preferredFy(L.bottom) - 1, preferredFy(L.top) + 1);
   }
   else {
+    if (L.horizontal) { G.camFy = damp(G.camFy, target, 4, dt); G.camFy = clamp(G.camFy, preferredFy(L.bottom) - 1, preferredFy(L.top) + 1); }
+    else {
     const forward = L.dir > 0 ? target < G.camFy : target > G.camFy;   // is the goat ahead of the camera in the level's direction?
     G.camFy = damp(G.camFy, target, forward ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt);
     G.camFy -= L.dir * idle * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * dt;
-    G.camFy = clamp(G.camFy, preferredFy(L.bottom) - 1, preferredFy(L.top) + 1);
+    G.camFy = clamp(G.camFy, preferredFy(L.bottom) - 1, preferredFy(L.top) + 1); }
   }
-  if (!(ended && G.result.win)) G.camFx = damp(G.camFx, clamp((minX + maxX) / 2 * 0.6, -4, 5), CONFIG.cameraXFollow, dt);
+  if (L.horizontal) {
+    const tx = preferredFx(maxX); const halfW = halfH * camera.aspect;
+    if (ended) G.camFx = damp(G.camFx, tx, 4, dt);
+    else { G.camFx = damp(G.camFx, tx, tx > G.camFx ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt); G.camFx += idle * (halfW / halfH) * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * dt; }
+    G.camFx = clamp(G.camFx, preferredFx(L.start.x) - 1, preferredFx(L.right - 6) + 1);
+  } else if (!(ended && G.result.win)) G.camFx = damp(G.camFx, clamp((minX + maxX) / 2 * 0.6, -4, 5), CONFIG.cameraXFollow, dt);
   camera.position.set(G.camFx + camDist * 0.24, G.camFy + camDist * 0.07, camDist); camera.lookAt(G.camFx, G.camFy, 0);
   sun.position.set(G.camFx + 26, G.camFy + 42, 34); sun.target.position.set(G.camFx, G.camFy - 6, 0);
 
   // ---- camera pressure / failure (highest goat is the one in danger) ----
   let sf = 1, warn = 0;
-  for (const g of goats) sf = Math.min(sf, L.ascent ? 1 - screenFraction(g.pos.x, g.pos.y - 0.4) : screenFraction(g.pos.x, g.pos.y));
+  for (const g of goats) sf = Math.min(sf, L.horizontal ? screenFractionX(g.pos.x, g.pos.y) : L.ascent ? 1 - screenFraction(g.pos.x, g.pos.y - 0.4) : screenFraction(g.pos.x, g.pos.y));
   if (playing) {
     if (sf < CONFIG.cameraDangerFraction) { G.dangerT += dt; if (G.dangerT > CONFIG.cameraFailureGrace) { for (const g of goats) if (g.state !== ST.JUMP) g.fall(); finishLevel(false, 'camera'); } }
     else G.dangerT = Math.max(0, G.dangerT - dt * 2);
     warn = clamp((CONFIG.cameraWarnFraction - sf) / (CONFIG.cameraWarnFraction - CONFIG.cameraDangerFraction), 0, 1);
     warn = Math.max(warn, clamp(G.dangerT / CONFIG.cameraFailureGrace, 0, 1) * 1.2);
   }
-  topwarn.style.opacity = L.ascent ? 0 : warn; botwarn.style.opacity = L.ascent ? warn : 0; vig.style.opacity = warn * 0.6;
+  topwarn.style.opacity = (L.ascent || L.horizontal) ? 0 : warn; botwarn.style.opacity = L.ascent ? warn : 0; leftwarn.style.opacity = L.horizontal ? warn : 0; vig.style.opacity = warn * 0.6;
   let windAmt = 0; for (const g of goats) if (g.state === ST.JUMP || g.state === ST.FALL) windAmt = Math.max(windAmt, clamp((-g.vel.y - 9) / 12, 0, 1));
   wind.style.opacity = windAmt * 0.8;
 
