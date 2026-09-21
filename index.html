@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v22 -->
+<!-- build v23 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -61,7 +61,14 @@
 <div class="hud" id="hud" style="display:none">
   <div><div class="lbl" id="hDescLbl">DESCENT</div><div class="val" id="hDesc">0 m</div></div>
   <div class="mid"><div class="lbl" id="hSaltLbl">SALT</div><div class="val" id="hSalt">◆ 0 / 0</div><div class="lbl" id="hKids" style="display:none"></div></div>
-  <div class="right"><div class="lbl">TIME</div><div class="val" id="hTime">00:00</div></div>
+  <div class="right"><div class="lbl">TIME</div><div class="val" id="hTime">00:00</div><div id="hPause" style="pointer-events:auto;cursor:pointer;font-size:20px;line-height:1;margin-top:6px;opacity:.85">❚❚</div></div>
+</div>
+<div class="screen" id="scPause">
+  <h1>PAUSED</h1>
+  <div class="sub" id="pauseSub"></div>
+  <div class="btn" id="bResume">RESUME</div>
+  <div class="btn" id="bPauseRestart">RESTART</div>
+  <div class="btn" id="bPauseExit">EXIT</div>
 </div>
 <div id="hint" style="opacity:0">Drag toward your jump<br>Release to leap</div>
 
@@ -84,6 +91,7 @@
   <div class="back" id="bBackMenu3">◀ MENU</div>
   <h1>ENDLESS</h1>
   <div class="sub">Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.</div>
+  <div id="endResume"></div>
   <div class="btn" id="bEndDown">ENDLESS DESCENT<small id="bestDown">best 0 m</small></div>
   <div class="btn" id="bEndUp">ENDLESS ASCENT<small id="bestUp">best 0 m</small></div>
 </div>
@@ -1204,7 +1212,8 @@ function goMenu() {
   const info = dailyInfo(); const d = save.daily || {}; const stars = d.date === info.date ? (d.stars || 0) : 0;
   const worldName = (WORLDS.find(w => LEVELS.some(l => l.key === w.levels[0] && l.style === info.style)) || WORLDS[0]).name;
   const dt = new Date(info.date + 'T00:00:00Z'); const label = dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).toUpperCase();
-  $('dailyInfo').innerHTML = `${label} · ${worldName} ${info.ascent ? '▲' : '▼'} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · streak ${d.streak}` : ''}`;
+  const sn = save.runs && save.runs.daily; const resumeTxt = sn && sn.def.date === info.date ? ` · resume ${Math.round(sn.stats.maxDesc)} m` : '';
+  $('dailyInfo').innerHTML = `${label} · ${worldName} ${info.ascent ? '▲' : '▼'} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · streak ${d.streak}` : ''}${resumeTxt}`;
   showScreen('scMenu');
 }
 let curWorld = 0;
@@ -1245,12 +1254,15 @@ function startLevel(idx, defOverride) {
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
   $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = STYLE.pickupName; $('hDescLbl').textContent = L.ascent ? 'ASCENT' : 'DESCENT';
   G.hints = { seen: {}, key: null, shownAt: 0, hiddenKey: null, idleT: 0, lastJumps: 0 }; hint.style.opacity = 0;
+  if (L.def.resume) applyResume(L.def.resume); else if (L.endless || L.def.daily) clearRun(L.def.key);
   if (L.endless) endlessTick();
   $('hSalt').parentElement.style.visibility = (L.crystals.length || L.endless || L.kids.length) ? 'visible' : 'hidden'; if (L.endless) $('hSalt').textContent = '◆ 0';
-  $('hSalt').style.display = (L.crystals.length || L.endless) ? 'block' : 'none'; $('hKids').style.display = L.kids.length ? 'block' : 'none'; $('hKids').textContent = `KIDS 0 / ${L.kids.length}`;
+  $('hSalt').style.display = (L.crystals.length || L.endless) ? 'block' : 'none'; $('hKids').style.display = L.kids.length ? 'block' : 'none'; $('hKids').textContent = `KIDS ${G.kidsSaved || 0} / ${L.kids.length}`;
+  if (L.def.resume) $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`;
 
 }
 function finishLevel(win, reason) {
+  if (L.endless || L.def.daily) clearRun(L.def.key);
   mode = 'result'; G.endT = 0; hint.style.opacity = 0; $('bLevels').textContent = L.def.custom ? 'EDITOR' : 'LEVELS';
   const idx = L.idx, def = L.def; const saves = goats.reduce((a, g) => a + g.saves, 0);
   if (L.def.daily) {
@@ -1463,11 +1475,49 @@ function updateEditor(dt) {
   const t = performance.now() / 1000; for (const c of L.crystals) c.mesh.rotation.y = t * 1.2 + c.phase; for (const h of L.hawks) { h.t += dt; const f = Math.sin(h.t * 9); for (const w of h.mesh.wings) w.rotation.x = w.userData.side * f * 0.55; }
   for (const k of L.kids) { k.goat.update(dt, 0); k.goat.animate(dt, null); }
 }
-$('bDaily').addEventListener('click', e => { e.stopPropagation(); initAudio(); startLevel(0, dailyDef()); });
+$('bDaily').addEventListener('click', e => { e.stopPropagation(); initAudio(); const sn = save.runs && save.runs.daily; if (sn && sn.def.date === dailyDate()) resumeRun('daily'); else { clearRun('daily'); startLevel(0, dailyDef()); } });
 $('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
 $('bEndDown').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
 $('bEndUp').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
-function goEndless() { mode = 'select'; hud.style.display = 'none'; const b = save.endless || {}; $('bestDown').textContent = `best ${b.endlessDown || 0} m`; $('bestUp').textContent = `best ${b.endlessUp || 0} m`; showScreen('scEndless'); }
+function pauseGame() {
+  if (mode !== 'play') return; mode = 'pause'; G.drag = null; G.aiming = false; G.aim = null; snapshotRun();
+  $('pauseSub').innerHTML = `${L.def.name}<br>${L.ascent ? 'Ascent' : 'Descent'} ${Math.round(G.maxDesc)} m · ${fmtTime(G.time)}`;
+  showScreen('scPause');
+}
+function resumeGame() { if (mode !== 'pause') return; mode = 'play'; showScreen(null); last = performance.now(); }
+$('hPause').addEventListener('click', e => { e.stopPropagation(); pauseGame(); });
+$('bResume').addEventListener('click', e => { e.stopPropagation(); resumeGame(); });
+$('bPauseRestart').addEventListener('click', e => { e.stopPropagation(); mode = 'play'; $('bRetry').click(); });
+$('bPauseExit').addEventListener('click', e => { e.stopPropagation(); snapshotRun(); mode = 'menu';
+  if (L.def.custom) openEditor(G.customId); else if (L.def.daily) goMenu(); else if (L.endless) goEndless(); else goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key))); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && mode === 'play') pauseGame(); });
+
+// ---------- run snapshots (endless & daily): resume from the last safe ledge ----------
+function rowOf(s) { const f = []; if (s.spikes) f.push(s.spikes.x1 <= s.x1 + 1e-6 ? 'L' : 'R'); if (s.crumble) f.push('crumble'); if (s.ice) f.push('ice'); const r = [s.id, s.x, s.y, s.w, s.type]; if (f.length) r.push(f.join(' ')); return r; }
+function snapshotRun() {
+  if (!L || !(L.endless || L.def.daily) || mode === 'result') return; const g = goats[0]; if (!g || !g.lastSafe || !L.surfaces.includes(g.lastSafe.s)) return;
+  const d = L.def, def = { key: d.key, name: d.name, style: L.endless ? BIOME_CYCLE[L.gen.biome] : d.style, endless: !!d.endless, ascent: !!d.ascent, daily: !!d.daily, date: d.date, mods: d.mods, stars: d.stars, zones: d.zones || [], blockers: [], herd: d.herd || [],
+    surfaces: L.surfaces.map(rowOf), crystals: L.crystals.map(c => [c.x, c.y]), hawks: L.hawks.map(h => ({ x1: h.x1, x2: h.x2, y: h.y, speed: h.speed })), rocks: L.rocks.map(r => ({ x: r.x, y: r.y, len: r.len, period: r.period, offset: r.offset || 0 })), winds: L.winds.map(w => ({ y1: w.y1, y2: w.y2, force: w.force })),
+    kids: L.kids.map(k => ({ surface: L.surfaces.includes(k.surface) ? k.surface.id : g.lastSafe.s.id, x: k.goat.pos.x })) };
+  const snap = { def, taken: L.crystals.map(c => c.taken), rescued: L.kids.map(k => k.rescued), gen: L.endless ? Object.assign({}, L.gen) : null, goat: { surface: g.lastSafe.s.id, x: g.lastSafe.x },
+    stats: { time: G.time, jumps: G.jumps, collected: G.collected, maxDesc: G.maxDesc, kidsSaved: G.kidsSaved, saves: g.saves }, savedAt: Date.now() };
+  save.runs = save.runs || {}; save.runs[d.key] = snap; persist();
+}
+function clearRun(key) { if (save.runs && save.runs[key]) { delete save.runs[key]; persist(); } }
+function resumeRun(key) { const snap = save.runs && save.runs[key]; if (!snap) return false; const def = JSON.parse(JSON.stringify(snap.def)); def.resume = snap; startLevel(0, def); return true; }
+function applyResume(snap) {
+  const g = goats[0]; const sf = L.surfaces.find(s => s.id === snap.goat.surface) || L.start; g.spawn(sf, snap.goat.x); g.saves = snap.stats.saves || 0; g.lastSafe = { s: sf, x: snap.goat.x };
+  L.crystals.forEach((c, i) => { if (snap.taken[i]) { c.taken = true; c.mesh.visible = false; } });
+  L.kids.forEach((k, i) => { if (snap.rescued[i]) { k.rescued = true; const f = k.goat; f.replay = null; f.queue = []; f.joinJumps = snap.stats.jumps; f.spawn(sf, clamp(snap.goat.x - 1, sf.x1 + 0.3, sf.x2 - 0.3)); followers.push(f); } });
+  if (snap.gen) { L.gen = Object.assign(L.gen, snap.gen); L.bottom = Math.min(...L.surfaces.map(s => s.y)); L.top = Math.max(...L.surfaces.map(s => s.y)); }
+  Object.assign(G, { time: snap.stats.time, jumps: snap.stats.jumps, collected: snap.stats.collected, maxDesc: snap.stats.maxDesc, kidsSaved: snap.stats.kidsSaved || 0, started: true, camFy: preferredFy(g.pos.y) });
+  $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`; if (L.kids.length) $('hKids').textContent = `KIDS ${G.kidsSaved} / ${L.kids.length}`;
+  G.lastSnapSurface = sf;
+}
+function goEndless() { mode = 'select'; hud.style.display = 'none'; const b = save.endless || {}; $('bestDown').textContent = `best ${b.endlessDown || 0} m`; $('bestUp').textContent = `best ${b.endlessUp || 0} m`;
+  const R = $('endResume'); R.innerHTML = '';
+  for (const key of ['endlessDown', 'endlessUp']) { const sn = save.runs && save.runs[key]; if (!sn) continue; const btn = document.createElement('div'); btn.className = 'btn'; btn.innerHTML = `RESUME ${key === 'endlessUp' ? 'ASCENT' : 'DESCENT'}<small>${Math.round(sn.stats.maxDesc)} m · ${fmtTime(sn.stats.time)}</small>`; btn.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) resumeRun(key); }); R.appendChild(btn); }
+  showScreen('scEndless'); }
 function goIbex() {
   mode = 'ibex'; hud.style.display = 'none'; $('ibexSalt').textContent = '◆ ' + save.totalSaltCrystals;
   const list = $('skinList'); list.innerHTML = '';
@@ -1530,7 +1580,7 @@ addEventListener('pointerup', release); addEventListener('pointercancel', releas
 addEventListener('keydown', e => {
   if (e.key === 'd' || e.key === 'D') { debugG.visible = !debugG.visible; dbg.style.display = debugG.visible ? 'block' : 'none'; dpref.style.display = ddanger.style.display = debugG.visible ? 'block' : 'none'; }
   if ((e.key === 'r' || e.key === 'R') && L && (mode === 'play' || mode === 'result')) startLevel(L.idx, L.endless ? endlessDef(L.ascent) : L.def.daily ? dailyDef() : undefined);
-  if (e.key === 'Escape' && mode === 'play') goWorld(WORLDS.findIndex(w => w.levels.includes(L.def.key)));
+  if (e.key === 'Escape') { if (mode === 'play') pauseGame(); else if (mode === 'pause') resumeGame(); }
   if (e.key === 'ArrowLeft') G.keyInput = -1; if (e.key === 'ArrowRight') G.keyInput = 1;
 });
 addEventListener('keyup', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') G.keyInput = 0; });
@@ -1645,6 +1695,7 @@ function update(dt) {
   // ---- result screen reveal ----
   if (ended) { G.endT += dt; if (G.endT > G.result.delay && !$('scResult').classList.contains('show')) showScreen('scResult'); }
 
+  if (playing && (L.endless || L.def.daily)) { const ls = goats[0].lastSafe; if (ls && ls.s !== G.lastSnapSurface) { G.lastSnapSurface = ls.s; snapshotRun(); } }
   updateHints(dt, playing);
   // ---- HUD ----
   $('hDesc').textContent = Math.round(G.maxDesc) + ' m'; $('hTime').textContent = fmtTime(G.time);
