@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v71 -->
+<!-- build v72 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -448,7 +448,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v71', date: '2026-09-22' };
+const BUILD = { version: 'v72', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -772,21 +772,31 @@ function puzzleOf(def) { def.puzzle = true; def.stars = { crystals: def.stars.cr
 function secretOf(def) { def.secret = true; def.herd = []; return def; }
 // left-to-right run generator (deterministic): gaps grow, heights wander, finish far right
 // climbs: a ledge must never hang over a lower one closely enough to cap the jump off it — slide it sideways out of the way
+// no route ledge may hang low over another route ledge: that caps the jump off the lower one and reads as a fake shelf
 function unstackClimb(S, crystals, updrafts, blockers = []) {
-  const E = (x, w) => [x - w / 2, x + w / 2];
-  const capped = (ax, aw, ay, bx, bw, by) => { const dy = ay - by; if (dy <= 0.5 || dy >= 6.5) return false; const [a1, a2] = E(ax, aw), [b1, b2] = E(bx, bw); if (a2 + 0.6 <= b1 || a1 - 0.6 >= b2) return false; return Math.max(0, a1 - 0.6 - b1) + Math.max(0, b2 - (a2 + 0.6)) < 1.8; };
-  const fits = (a, nx) => { if (Math.abs(nx) > 8.5) return false; for (const c of S) { if (c === a || c[0] === 'finish') continue; const [a1, a2] = E(nx, a[3]), [c1, c2] = E(c[1], c[3]); const gapX = Math.max(c1 - a2, a1 - c2);
-      if (Math.abs(c[2] - a[2]) < 3.4 && gapX < 1.2) return false; if (capped(nx, a[3], a[2], c[1], c[3], c[2]) || capped(c[1], c[3], c[2], nx, a[3], a[2])) return false; }
-    const idx = S.indexOf(a); for (const nb of [S[idx - 1], S[idx + 1]]) { if (!nb || nb[0] === 'finish' || !/^u|^start/.test(nb[0]) || !/^u/.test(a[0])) continue; const [n1, n2] = E(nb[1], nb[3]), [a1, a2] = E(nx, a[3]); const g = Math.max(n1 - a2, a1 - n2); const [o1, o2] = E(a[1], a[3]); const og = Math.max(n1 - o2, o1 - n2); if (g > Math.max(4.2, og + 0.3) || g < Math.min(1.1, og)) return false; }
-    for (const bl of blockers) { const [a1, a2] = E(nx, a[3]); if (a2 + 0.8 > bl.x1 && a1 - 0.8 < bl.x2 && a[2] > bl.top - bl.h - 3 && a[2] < bl.top + 1.5) return false; } return true; };
-  for (const a of S) { if (a[0] === 'start' || a[0] === 'finish' || (updrafts || []).some(u => Math.abs(u.x - a[1]) < 3.2 && a[2] >= u.y1 && a[2] <= u.y2 + 2)) continue;
-    if (!S.some(b => b !== a && b[0] !== 'finish' && capped(a[1], a[3], a[2], b[1], b[3], b[2]))) continue;
-    let best = null; for (let d = 0.4; d <= 2.8 && best === null; d += 0.4) for (const sg of [1, -1]) { const nx = +(a[1] + sg * d).toFixed(1); if (fits(a, nx)) { best = nx; break; } }
-    if (best === null) { const b = S.find(b => b !== a && b[0] !== 'finish' && b[0] !== 'start' && capped(a[1], a[3], a[2], b[1], b[3], b[2]));
-      if (b) { for (let d = 0.4; d <= 2.8 && best === null; d += 0.4) for (const sg of [1, -1]) { const nx = +(b[1] + sg * d).toFixed(1); if (fits(b, nx)) { best = nx; break; } } if (best !== null) { const ox = b[1]; b[1] = best; for (const c of crystals) if (Math.abs(c[1] - (b[2] + 0.6)) < 0.4 && Math.abs(c[0] - ox) <= b[3] / 2) c[0] = +(c[0] + best - ox).toFixed(1); continue; } }
-      if (b) { const [a1, a2] = E(a[1], a[3]), [b1, b2] = E(b[1], b[3]); let n1, n2; if (a[1] >= b[1]) { n1 = b1 + 2.4; n2 = Math.max(a2, n1 + 1.4); } else { n2 = b2 - 2.4; n1 = Math.min(a1, n2 - 1.4); }
-        const ow = a[3], ox = a[1]; a[3] = +(n2 - n1).toFixed(1); const nx = +((n1 + n2) / 2).toFixed(1); if (fits(a, nx)) { a[1] = nx; if (a[3] < 1.7) a[4] = 'foothold'; for (const c of crystals) if (Math.abs(c[1] - (a[2] + 0.6)) < 0.4 && Math.abs(c[0] - ox) <= ow / 2) c[0] = nx; } else a[3] = ow; } continue; }
-    const ox = a[1]; a[1] = best; for (const c of crystals) if (Math.abs(c[1] - (a[2] + 0.6)) < 0.4 && Math.abs(c[0] - ox) <= a[3] / 2) c[0] = +(c[0] + best - ox).toFixed(1); }
+  const E = (x, w) => [x - w / 2, x + w / 2]; const ROUTE = r => /^(d|u|l)/.test(r[0]);
+  const hOf = r => (TYPE[r[4]] || TYPE.slab).h;
+  const capped = (a, ax, aw, b) => { if (!ROUTE(a) || !ROUTE(b)) return false; const clear = (a[2] - hOf(a)) - b[2]; if (clear <= 0.2 || clear > 4.2) return false;
+    const [a1, a2] = E(ax, aw), [b1, b2] = E(b[1], b[3]); if (a2 + 0.5 <= b1 || a1 - 0.5 >= b2) return false; return Math.max(0, a1 - 0.5 - b1) + Math.max(0, b2 - (a2 + 0.5)) < 1.8; };
+  const fits = (a, nx, nw = a[3]) => { if (nx - nw / 2 < -9 || nx + nw / 2 > 9) return false;
+    for (const c of S) { if (c === a || c[0] === 'finish') continue; const [a1, a2] = E(nx, nw), [c1, c2] = E(c[1], c[3]); const gapX = Math.max(c1 - a2, a1 - c2);
+      if (Math.abs(c[2] - a[2]) < 3.4 && gapX < 1.2) return false; if (capped(a, nx, nw, c) || capped(c, c[1], c[3], [a[0], nx, a[2], nw, a[4]])) return false; }
+    const idx = S.indexOf(a); for (const nb of [S[idx - 1], S[idx + 1]]) { if (!nb || nb[0] === 'finish' || !/^(u|d|l|start)/.test(nb[0]) || !ROUTE(a)) continue; const [n1, n2] = E(nb[1], nb[3]), [a1, a2] = E(nx, nw); const g = Math.max(n1 - a2, a1 - n2); const [o1, o2] = E(a[1], a[3]); const og = Math.max(n1 - o2, o1 - n2); if (g > Math.max(4.2, og + 0.3) || g < Math.min(1.1, og)) return false; }
+    for (const bl of blockers) { const [a1, a2] = E(nx, nw); if (a2 + 0.8 > bl.x1 && a1 - 0.8 < bl.x2 && a[2] > bl.top - bl.h - 3 && a[2] < bl.top + 1.5) return false; }
+    return true; };
+  const shift = (a, nx, nw) => { const ox = a[1], ow = a[3]; for (const c of crystals) if (Math.abs(c[1] - (a[2] + 0.6)) < 0.4 && Math.abs(c[0] - ox) <= ow / 2) c[0] = +(c[0] + nx - ox).toFixed(1); a[1] = nx; if (nw) { a[3] = nw; if (nw < 1.7) a[4] = 'foothold'; } };
+  for (let pass = 0; pass < 3; pass++) { let any = false;
+    for (const a of S) { if (!ROUTE(a) || (updrafts || []).some(u => Math.abs(u.x - a[1]) < 3.2 && a[2] >= u.y1 && a[2] <= u.y2 + 2)) continue;
+      const b = S.find(b => b !== a && ROUTE(b) && capped(a, a[1], a[3], b)); if (!b) continue; any = true;
+      let done = false;
+      for (let d = 0.4; d <= 4 && !done; d += 0.4) for (const sg of [1, -1]) { const nx = +(a[1] + sg * d).toFixed(1); if (fits(a, nx)) { shift(a, nx); done = true; break; } }
+      if (done) continue;
+      for (let d = 0.4; d <= 4 && !done; d += 0.4) for (const sg of [1, -1]) { const nx = +(b[1] + sg * d).toFixed(1); if (fits(b, nx)) { shift(b, nx); done = true; break; } }
+      if (done) continue;
+      const [a1, a2] = E(a[1], a[3]), [b1, b2] = E(b[1], b[3]); let n1, n2; if (a[1] >= b[1]) { n1 = b1 + 2.4; n2 = Math.max(a2, n1 + 1.4); } else { n2 = b2 - 2.4; n1 = Math.min(a1, n2 - 1.4); }
+      const nw = +(n2 - n1).toFixed(1), nx = +((n1 + n2) / 2).toFixed(1); if (fits(a, nx, nw)) shift(a, nx, nw);
+    }
+    if (!any) break; }
 }
 function makeRun(o) {
   const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = []; let x = 0, y = 0, w = 8;
@@ -821,7 +831,7 @@ function makeRun(o) {
 // ============================================================
 const MOTIFS = {
   link(c, r) { const gain = 4.5 + c.t * 3 + r() * 1.5; let side = c.side; if (r() < 0.25) side = -side;
-    const w = Math.max(1.4, +(4.2 - c.t * 2.4 + (r() - .5) * 1.2).toFixed(1)); const dx = Math.max(2.5 + r() * (2.5 + c.t * 3), c.w / 2 - w / 2 + 1.8); let x = c.x + side * dx; if (x > 8.5 || x < -8.5) { side = -side; x = c.x + side * dx; } x = clamp(x, -8.5, 8.5);
+    const w = Math.max(1.4, +(4.2 - c.t * 2.4 + (r() - .5) * 1.2).toFixed(1)); const dx = Math.max(2.5 + r() * (2.5 + c.t * 3), c.w / 2 - w / 2 + 2.6); let x = c.x + side * dx; if (x > 8.5 || x < -8.5) { side = -side; x = c.x + side * dx; } x = clamp(x, -8.5, 8.5);
     const y = +(c.y - gain).toFixed(1); return { rows: [[`d${c.i}`, +x.toFixed(1), y, w, typeOf(w, r)]], exit: { x: +x.toFixed(1), y, w, side }, crystalAt: c.i % 4 === 1 ? [+x.toFixed(1), y + 0.6] : null }; },
   // tempting broad ledge with nothing under it; a rock wall blocks the way on; the exit is a small foothold back UP beside it
   deadEnd(c, r) { const s = c.x >= 0 ? -1 : 1; // runs toward the far side so it fits; bait B, wall beyond it, foothold R on top of the wall, exit C behind the wall
@@ -876,6 +886,7 @@ function makeDescent(o) {
   // plain bird lanes on levels that asked for birds but got fewer slalom lanes
   for (let k = hawkLanes; k < (o.hawks || 0); k++) { const idx = Math.floor((k + 1) * surfaces.length / ((o.hawks || 0) + 1)); const a = surfaces[idx - 1], b = surfaces[idx]; if (a && b) hawks.push({ x1: -8 + r() * 2, x2: 6 + r() * 2, y: +((a[2] + b[2]) / 2 - 0.5).toFixed(1), speed: 4 + (idx / surfaces.length) * 3 }); }
   for (let k = rockChutes; k < (o.rocks || 0); k++) { const idx = Math.floor((k + 1) * surfaces.length / ((o.rocks || 0) + 1)); const a = surfaces[idx - 1], b = surfaces[idx]; if (a && b) rocks.push({ x: +((a[1] + b[1]) / 2).toFixed(1), y: +(a[2] + 0.5).toFixed(1), len: Math.abs(a[2] - b[2]) + 8, period: 3.2 + r() * 1.5, offset: r() * 3 }); }
+  unstackClimb(surfaces, crystals, [], blockers);
   const y = ctx.y - 9; surfaces.push(['finish', 0, +y.toFixed(1), 80, 'terrace']);
   return { key: o.key, name: o.name, style: o.style, winds, kids, blockers, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 50 + o.n * 5 }, surfaces, crystals, hawks, rocks, herd: [{ surface: 'finish', x: o.seed % 2 ? 8 : -8, dir: o.seed % 2 ? 1 : -1, n: 4 }] };
 }
@@ -887,7 +898,7 @@ function makeClimb(o) {
     // 4: dead-end bait — a side ledge with a rock ceiling, nothing reachable from it but the way back
     const kind = (i > 5 && i % 6 === 4) ? 3 : (i > 6 && i % 9 === 7) ? 4 : (i % 4 === 2 && i > 2) ? 1 : (i % 7 === 6) ? 2 : 0;
     const yPrev = y; const gain = kind === 3 ? 6.2 + r() * 0.6 : kind === 1 ? 1.4 + r() * 0.6 : kind === 2 ? 2.4 : 3.0 + r() * 0.6; y += gain; side = -side;
-    const tiny = kind === 0 && i % 5 === 3; const w = tiny ? 1.4 : kind === 2 ? 3.4 + r() * 0.8 : 1.8 + r() * 1.4;
+    const tiny = kind === 0 && i % 5 === 3; let w = tiny ? 1.4 : kind === 2 ? 3.4 + r() * 0.8 : 1.8 + r() * 1.4;
     const xPrev = x, dx = lastW / 2 + w / 2 + (kind === 1 ? 4.5 + r() * 1.5 : kind === 3 ? 3.0 : 1.8 + r() * 1.5); x = xPrev + side * dx; if (x > 8 || x < -8) { side = -side; x = clamp(xPrev + side * dx, -8, 8); }
     if (kind === 3) { const ux = +(xPrev + side * (lastW / 2 + 1.6)).toFixed(1); x = clamp(+(ux + side * (1.1 + w / 2)).toFixed(1), -8, 8); updrafts.push({ x: ux, y1: +(yPrev - 0.3).toFixed(1), y2: +(y + 1.0).toFixed(1), w: 2.2, lift: 12 }); }
     if (kind === 4) { // bait on the other side of the route, one step up, with a ceiling; a pickup makes it tempting
@@ -895,6 +906,11 @@ function makeClimb(o) {
     }
     if (i % 5 === 1 && i > 3 && kind !== 3) { const fx = clamp(xPrev - side * (lastW / 2 + 2.4 + r() * 1.5), -8, 8); const fy = y - 1.0;
       if (Math.abs(fx - xPrev) > lastW / 2 + 2.0 && Math.abs(fx - x) > w / 2 + 2.2) { surfaces.push(['v' + i, +fx.toFixed(1), +fy.toFixed(1), 1.6, 'narrow']); crystals.push([+fx.toFixed(1), +(fy + 0.6).toFixed(1)]); } }
+    { // never come to rest low over an earlier ledge: step out sideways first, then take the tier a little higher
+      const capsAny = () => surfaces.some(q => { if (!/^(u|d|l)/.test(q[0])) return false; const clear = (y - (TYPE[tiny ? 'foothold' : w > 3 ? 'broad' : w > 2.4 ? 'slab' : 'narrow'] || TYPE.slab).h) - q[2]; if (clear <= 0.2 || clear > 4.4) return false;
+        const a1 = x - w / 2, a2 = x + w / 2, b1 = q[1] - q[3] / 2, b2 = q[1] + q[3] / 2; if (a2 + 0.5 <= b1 || a1 - 0.5 >= b2) return false; return Math.max(0, a1 - 0.5 - b1) + Math.max(0, b2 - (a2 + 0.5)) < 1.8; });
+      let bumps = 0; for (let k = 0; k < 8 && capsAny(); k++) { const nx = x + side * 0.7; if (Math.abs(nx) + w / 2 <= 8.8 && Math.abs(nx - xPrev) - lastW / 2 - w / 2 <= 4.2) x = +nx.toFixed(1); else if (bumps < 2) { y = +(y + 0.3).toFixed(1); bumps++; } else if (w > 1.6) w = +(w - 0.4).toFixed(1); else break; }
+    }
     let wUse = w; const gap = Math.abs(x - xPrev) - lastW / 2 - wUse / 2; if (gap < 1.1) wUse = Math.max(1.3, wUse - (1.1 - gap) * 2); lastW = wUse;
     const spk = o.spikes && !tiny && w > 3.2 && i % 3 === 0 ? (side > 0 ? 'R' : 'L') : null;   // climbs have no forks, so zig-zag side == arrival side
     const row = ['u' + i, +x.toFixed(1), +y.toFixed(1), +wUse.toFixed(1), tiny ? 'foothold' : wUse > 3 ? 'broad' : wUse > 2.4 ? 'slab' : 'narrow']; if (spk && wUse > 3.2) row.push(spk);
@@ -923,11 +939,12 @@ function dailyInfo(date = dailyDate()) {
   return { date, seed: h, style, ascent, horizontal, character, n, mods, r };
 }
 // safety net for generated dailies: a ledge sitting low over another (so you can't jump off the lower one) re-rolls the day's seed
-function hasCapped(def) { const S = def.surfaces.filter(r => !/^(start|finish|sec|b\d|v\d)/.test(r[0]) && !r[6]);   // route ledges only: bait and fork ledges may sit anywhere
-  for (let i = 0; i < S.length; i++) for (let j = Math.max(0, i - 3); j < Math.min(S.length, i + 4); j++) { const a = S[i], b = S[j]; if (a === b) continue; const dy = a[2] - b[2]; if (dy <= 0.5 || dy >= (def.ascent ? 5.8 : 4.6)) continue; const a1 = a[1] - a[3] / 2, a2 = a[1] + a[3] / 2, b1 = b[1] - b[3] / 2, b2 = b[1] + b[3] / 2;
-    if (a2 + 0.6 <= b1 || a1 - 0.6 >= b2) continue; if (Math.max(0, a1 - 0.6 - b1) + Math.max(0, b2 - (a2 + 0.6)) < 1.8) return true; } return false; }
+function hasCapped(def) { const S = def.surfaces.filter(r => /^(d|u|l)/.test(r[0]) && !r[6]);   // route ledges only
+  for (const a of S) for (const b of S) { if (a === b) continue; const clear = (a[2] - (TYPE[a[4]] || TYPE.slab).h) - b[2]; if (clear <= 0.2 || clear > 4.2) continue;
+    const a1 = a[1] - a[3] / 2, a2 = a[1] + a[3] / 2, b1 = b[1] - b[3] / 2, b2 = b[1] + b[3] / 2; if (a2 + 0.5 <= b1 || a1 - 0.5 >= b2) continue;
+    if (Math.max(0, a1 - 0.5 - b1) + Math.max(0, b2 - (a2 + 0.5)) < 1.6) return true; } return false; }
 function dailyDef(info = dailyInfo(), tries = 0) {
-  if (tries < 6) { const d = dailyDefOnce(info); if (!hasCapped(d)) return d; return dailyDef({ ...info, seed: info.seed + 7919 }, tries + 1); }
+  if (tries < 12) { const d = dailyDefOnce(info); if (!hasCapped(d)) return d; return dailyDef({ ...info, seed: info.seed + 7919 }, tries + 1); }
   return dailyDefOnce(info);
 }
 function dailyDefOnce(info) {
@@ -2920,11 +2937,18 @@ function botSolve(def, opts = {}) {
   const reached = new Set([...seen.keys()].map(k => k.split('@')[0]));
   return { ok: !!found, states: seen.size, reached: reached.size, total: S.length, furthest: best.id, unreached: S.filter(o => !reached.has(o.id)).map(o => o.id) };
 }
+function headroomCheck(def) { // route ledges that sit low under something, so you cannot jump off them
+  const bad = []; const S = def.surfaces.filter(r => !r[6]); const H = r => (TYPE[r[4]] || TYPE.slab).h;
+  for (const r of S) { if (!/^(d|u|l)/.test(r[0])) continue; const b1 = r[1] - r[3] / 2, b2 = r[1] + r[3] / 2; let free = [[b1, b2]], low = 99;
+    for (const a of S) { if (a === r || !/^(d|u|l)/.test(a[0])) continue; const clear = (a[2] - H(a)) - r[2]; if (clear <= 0.2 || clear > 4.2) continue; const c1 = a[1] - a[3] / 2 - 0.5, c2 = a[1] + a[3] / 2 + 0.5; if (c2 <= b1 || c1 >= b2) continue; low = Math.min(low, clear);
+      const n = []; for (const [p, q] of free) { if (c2 <= p || c1 >= q) { n.push([p, q]); continue; } if (c1 > p) n.push([p, c1]); if (c2 < q) n.push([c2, q]); } free = n; }
+    if (low < 99 && Math.max(0, ...free.map(([p, q]) => q - p)) < 1.6) bad.push(r[0]); }
+  return bad; }
 function botCheckAll() { // chunked so the page stays responsive; results go to the same overlay as the layout self-test
   const out = $('selfTestOut'); out.style.display = 'block'; out.style.borderLeft = '6px solid #ffd76a'; out.onclick = null; const list = LEVELS.concat([0, 1, 2, 3, 4, 5, 6].map(i => { const d = new Date(Date.now() + i * 864e5).toISOString().slice(0, 10); const def = dailyDef(dailyInfo(d)); def.key = 'daily ' + d; return def; }));
   const lines = []; let i = 0, bad = 0; const t0 = performance.now();
   const step = () => { if (i >= list.length) { out.textContent = `${t('botTitle')} · ${list.length} · ${bad ? t('botBad', { k: bad }) : t('botOk')} · ${((performance.now() - t0) / 1000).toFixed(1)} s\n\n${lines.join('\n')}\n\n(${t('tapToClose')})`; out.style.borderLeft = `6px solid ${bad ? '#e5483a' : '#4ad07a'}`; out.onclick = () => out.style.display = 'none'; return; }
-    const l = list[i++]; const r = botSolve(l, { strict: true }); if (!r.ok) bad++; lines.push(`${r.ok ? '✓' : '✗'} ${l.key} · ${r.reached}/${r.total}${r.ok ? '' : ' · stuck at ' + r.furthest}`); out.textContent = `${t('botTitle')} · ${i} / ${list.length}…\n\n${lines.slice(-12).join('\n')}`; setTimeout(step, 0); };
+    const l = list[i++]; const r = botSolve(l, { strict: true }); const hr = headroomCheck(l); if (!r.ok || hr.length) bad++; lines.push(`${r.ok && !hr.length ? '✓' : '✗'} ${l.key} · ${r.reached}/${r.total}${r.ok ? '' : ' · stuck at ' + r.furthest}${hr.length ? ' · low ceiling: ' + hr.join(',') : ''}`); out.textContent = `${t('botTitle')} · ${i} / ${list.length}…\n\n${lines.slice(-12).join('\n')}`; setTimeout(step, 0); };
   step();
 }
 // ---- layout self-test: every top-level screen, EN + RU, reports tap targets, off-screen, clipped text, overlaps on the hub ----
