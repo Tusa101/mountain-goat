@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v61 -->
+<!-- build v63 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -74,6 +74,23 @@
   .modePill b, .modePill small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .modePill b { font-size:14px; } .modePill small { font-size:12px; opacity:.9; }
   .playBtn { height:70px; border-radius:18px; background:linear-gradient(#ffe07a,#f0a830); color:#3a2410; border:3px solid #fff4c8; box-shadow:0 6px 0 #a8661a; display:flex; align-items:center; justify-content:center; gap:10px; font-size:30px; font-weight:900; letter-spacing:.1em; cursor:pointer; box-sizing:border-box; }
   .playBtn.locked { background:linear-gradient(#a8a098,#7a726a); box-shadow:0 6px 0 #4a443e; font-size:16px; letter-spacing:.04em; color:#fff8ee; border-color:#d8d0c8; padding:0 12px; text-align:center; }
+  #scResult { justify-content:safe center; } #scPause { justify-content:flex-end; padding-bottom:calc(14vh + env(safe-area-inset-bottom)) !important; }
+  .actions { width:min(360px, 100%); display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .actions .btn { margin:0 auto; } .row2 { display:flex; gap:10px; width:min(360px,100%); margin:0 auto; } .row2 .btn { flex:1; min-width:0; margin:0; font-size:14px; letter-spacing:.05em; padding:12px 8px; }
+  .shareRow { margin-top:12px; } .btn.small { font-size:12px; padding:0 6px; min-height:48px; display:flex !important; align-items:center; justify-content:center; opacity:.9; }
+  .btn.small[style*="display: none"], .btn.small[style*="display:none"] { display:none !important; }
+  #scResult { padding-top:calc(58px + env(safe-area-inset-top)) !important; padding-bottom:12px !important; }
+  #scResult h1 { font-size:clamp(26px, 8.5vw, 44px); margin:0 0 6px; }
+  #scResult .actions { position:sticky; bottom:0; padding:12px 0 6px; background:linear-gradient(rgba(50,32,18,0), rgba(50,32,18,.96) 22%); z-index:2; }
+  #scResult .stars div { margin:2px 0; }
+  .btn.primary { background:linear-gradient(#ffe07a,#f0a830); color:#3a2410; border:3px solid #fff4c8; box-shadow:0 5px 0 #a8661a; font-size:22px; font-weight:900; padding:16px 18px; order:-2; }
+  .btn.reward { background:linear-gradient(#6ac86a,#3a8a3a); border-color:#d8ffd8; box-shadow:0 4px 0 #245a24; order:-1; }
+  .btn.danger { border-color:rgba(255,170,150,.8); color:#ffc8b8; } .btn.ghost { background:none; border-color:rgba(255,248,238,.35); font-size:14px; }
+  .pauseIcons { position:absolute; top:calc(10px + env(safe-area-inset-top)); right:10px; display:flex; gap:8px; }
+  .rSalt { position:fixed; top:calc(10px + env(safe-area-inset-top)); right:10px; z-index:3; }
+  .flyGem { position:fixed; z-index:40; width:22px; height:22px; color:#9fe0ff; pointer-events:none; transition:transform .7s cubic-bezier(.5,-.3,.7,1), opacity .7s; }
+  .heroTag { position:absolute; transform:translate(-50%,0); padding:4px 12px; border-radius:12px; background:rgba(40,26,14,.8); border:2px solid rgba(255,248,238,.35); font-size:12px; font-weight:800; letter-spacing:.05em; white-space:nowrap; cursor:pointer; display:none; }
+  .heroTag small { display:block; font-size:10px; font-weight:600; opacity:.8; letter-spacing:0; text-align:center; }
   .hubToast { position:absolute; left:50%; transform:translateX(-50%); top:calc(66px + env(safe-area-inset-top)); max-width:78vw; padding:10px 14px; border-radius:12px; background:rgba(20,12,6,.88); font-size:14px; text-align:center; opacity:0; transition:opacity .25s; pointer-events:none !important; }
   #tabBar { position:fixed; left:0; right:0; bottom:0; z-index:25; display:none; align-items:flex-end; gap:2px; padding:0 6px env(safe-area-inset-bottom); height:calc(72px + env(safe-area-inset-bottom)); box-sizing:border-box; background:linear-gradient(#2f64b0,#1d3f75); border-top:2px solid rgba(255,255,255,.4); }
   #tabBar.show { display:flex; }
@@ -81,6 +98,7 @@
   .tab > i:first-child { width:26px; height:26px; } .tab span { font-size:10.5px; font-weight:800; letter-spacing:.03em; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .tab.on { opacity:1; background:linear-gradient(#ffe07a,#e8a030); color:#3a2410; height:82px; box-shadow:0 -2px 0 rgba(255,255,255,.5) inset; }
   .tab .badge { top:6px; right:calc(50% - 26px); }
+  #fpsBox { position:fixed; left:6px; top:calc(62px + env(safe-area-inset-top)); z-index:55; display:none; padding:3px 6px; border-radius:6px; background:rgba(0,0,0,.6); font:11px/1.3 monospace; color:#b8ffb8; pointer-events:none; white-space:pre; }
   #selfTestOut { position:fixed; left:8px; right:8px; top:calc(8px + env(safe-area-inset-top)); z-index:60; display:none; max-height:70vh; overflow:auto; padding:12px; border-radius:12px; background:rgba(10,10,10,.92); font:12px/1.4 monospace; color:#e8ffe8; white-space:pre-wrap; }
   @media (orientation: landscape) and (max-height: 520px) {
     .tiles { top:calc(64px + env(safe-area-inset-top)); gap:8px; } .tile { min-height:66px; width:76px; padding:5px 3px; } .tile > i:first-child { width:24px; height:24px; }
@@ -115,11 +133,11 @@
 <div class="screen" id="scPause">
   <h1 data-i18n="paused">PAUSED</h1>
   <div class="sub" id="pauseSub"></div>
-  <div class="btn" id="bResume" data-i18n="resume">RESUME</div>
-  <div class="btn" id="bPauseRestart" data-i18n="restart">RESTART</div>
-  <div class="btn" id="bPauseMech" data-i18n="mechanics">MECHANICS</div>
-  <div class="btn" id="bPauseSettings" data-i18n="settings">SETTINGS</div>
-  <div class="btn" id="bPauseExit" data-i18n="exit">EXIT</div>
+  <div class="pauseIcons"><div class="hubIcon" id="bPauseMech" data-ico="book"></div><div class="hubIcon" id="bPauseSettings" data-ico="gear"></div></div>
+  <div class="actions">
+    <div class="btn primary" id="bResume" data-i18n="resume">RESUME</div>
+    <div class="row2"><div class="btn" id="bPauseRestart" data-i18n="restart">RESTART</div><div class="btn danger" id="bPauseExit" data-i18n="exit">EXIT</div></div>
+  </div>
 </div>
 <div id="hint" style="opacity:0">Drag toward your jump<br>Release to leap</div>
 
@@ -145,6 +163,7 @@
     <div class="modePill" id="bMode"><span data-i18n="change">CHANGE</span><span><b id="modeDim"></b><small id="modeLvl"></small></span></div>
     <div class="playBtn" id="bPlay"><span id="playTxt">PLAY</span></div>
   </div>
+  <div class="heroTag" id="heroTag"></div>
   <div class="hubToast" id="hubToast"></div>
 </div>
 <div class="screen" id="scChal">
@@ -270,17 +289,20 @@
   <div class="tab" data-tab="coll" id="tabColl"><i data-ico="book"></i><span data-i18n="tab_coll">COLLECTION</span><i class="badge" id="bdgColl"></i></div>
 </div>
 <div id="selfTestOut"></div>
+<div id="fpsBox"></div>
 <div class="screen" id="scResult">
   <h1 id="rTitle">DESCENT COMPLETE</h1>
   <div class="sub" id="rSub"></div>
   <div class="stars" id="rStars"></div>
-  <canvas id="runCard" width="320" height="120" style="width:min(320px,80vw);height:auto;border-radius:8px;background:rgba(0,0,0,.25);margin:0 auto 10px;display:none"></canvas>
-  <div class="btn" id="bSaveCard" data-i18n="saveImage" style="display:none">SAVE RUN CARD</div>
-  <div class="btn" id="bShareGhost" data-i18n="shareGhost" style="display:none">SHARE THIS RUN</div>
-  <div class="btn" id="bContinue"><span data-i18n="continueFrom">CONTINUE FROM LAST LEDGE</span><small id="contCost">◆ 3</small></div>
-  <div class="btn" id="bRetry" data-i18n="retry">RETRY</div>
-  <div class="btn" id="bNext" data-i18n="next">NEXT LEVEL</div>
-  <div class="btn" id="bLevels" data-i18n="levels">LEVELS</div>
+  <canvas id="runCard" width="320" height="120" style="width:auto;max-width:min(320px,80vw);max-height:20vh;height:auto;border-radius:8px;background:rgba(0,0,0,.25);margin:0 auto 6px;display:none"></canvas>
+  <div class="actions">
+    <div class="btn" id="bNext" data-i18n="next">NEXT LEVEL</div>
+    <div class="btn" id="bContinue"><span data-i18n="continueFrom">CONTINUE FROM LAST LEDGE</span><small id="contCost">◆ 3</small></div>
+    <div class="btn" id="bRetry" data-i18n="retry">RETRY</div>
+    <div class="btn" id="bLevels" data-i18n="levels">LEVELS</div>
+  </div>
+  <div class="row2 shareRow"><div class="btn small" id="bSaveCard" data-i18n="saveImage" style="display:none">SAVE RUN CARD</div><div class="btn small" id="bShareGhost" data-i18n="shareGhost" style="display:none">SHARE THIS RUN</div></div>
+  <div class="cur rSalt" id="rSalt"><i data-ico="diamond" class="curIco"></i><span id="rSaltN">0</span></div>
 </div>
 <div id="dbg"></div>
 <div id="errToast" style="position:fixed;left:8px;right:8px;bottom:calc(12px + env(safe-area-inset-bottom));background:rgba(140,20,20,.92);color:#fff;font:12px/1.4 Menlo,Consolas,monospace;padding:8px 10px;border-radius:6px;display:none;z-index:99;word-break:break-all"></div>
@@ -319,6 +341,7 @@ const I18N = {
     p_SALT: 'SALT', p_GARNET: 'GARNET', p_FOSSIL: 'FOSSIL', p_MOONSTONE: 'MOONSTONE', p_ICE: 'ICE', p_BANANAS: 'BANANAS', p_FISH: 'FISH', p_BONES: 'BONES',
     h_scent: 'Stand still — a dog can smell what is hidden<br>Follow the paw prints', m_scent: 'Scent', m_scent_d: 'Dogs only. Stand still for three seconds and a trail of paw prints points toward a hidden passage.', scentFound: '🐾 trail found',
     season: 'Season', s_auto: 'auto', s_winter: 'Winter', s_spring: 'Spring', s_summer: 'Summer', s_autumn: 'Autumn', seasonNow: 'season: {s}', seasonWinter_d: 'snow on the cliffs, icy ledges', seasonSpring_d: 'flowers, slower birds', seasonSummer_d: 'heat haze, stronger updrafts', seasonAutumn_d: 'leaves, gustier wind',
+    botCheck: 'Route bot: check all levels', botTitle: 'ROUTE BOT', botOk: 'all reachable', botBad: '{k} unreachable', fpsToggle: 'FPS counter',
     tab_home: 'HOME', tab_chars: 'HEROES', tab_map: 'MAP', tab_chal: 'MODES', tab_coll: 'JOURNAL', change: 'CHANGE', challenges: 'MODES', collection: 'JOURNAL', statsAch: 'STATS & ACHIEVEMENTS', secretsTitle: 'SECRETS', secretsN: 'found {a} / {b}', achN: '{a} / {b} achievements', mechN: '{a} / {b} met', customN: '{n} custom levels', tDaily: 'DAILY', tTower: 'TOWER', tSeason: 'season', tEndless: 'ENDLESS', tExp: 'EXPEDITION', tBuilder: 'BUILDER', leftH: '{h}h {m}m left', expBestShort: 'best {n}', playDone: 'all done — replay', playLockedDim: 'finish {n} mountain levels', backExit: 'Press back again to exit', selfTest: 'Layout self-test', selfTestOk: 'LAYOUT SELF-TEST · {n} screens · 0 problems', selfTestBad: 'LAYOUT SELF-TEST · {n} screens · {k} problems', tapToClose: 'tap to close', runsN: 'best {n} m', mutOnN: 'active: {l}', mutNone: 'none active',
     builder: 'LEVEL BUILDER', newLevel: 'NEW LEVEL', importJson: 'IMPORT JSON', ed_test: '▶ TEST', ed_save: 'SAVE', ed_share: 'SHARE', ed_export: 'EXPORT', ed_exit: 'EXIT', characters: 'CHARACTERS', noCustom: 'No custom levels yet', playingNow: 'PLAYING', bestM: 'best {n} m', climbed: 'Climbed', descended: 'Descended', newBestBang: 'NEW BEST!', saltGain: '+{n} salt', endlessCity: 'ENDLESS SKYSCRAPER · KONG', endlessPanel: 'ENDLESS PANELKI · CAT', descentLbl: 'DESCENT',
     wardrobe: 'WARDROBE', slot_head: 'Head', slot_neck: 'Neck', slot_trail: 'Trail', none: 'none', equipped: 'equipped', needAch: 'achievement: {a}', acc_cap: 'Cap', acc_beanie: 'Beanie', acc_bandana: 'Bandana', acc_shades: 'Shades', acc_wreath: 'Wreath', acc_garland: 'Garland horns', acc_scarfRed: 'Red scarf', acc_scarfBlue: 'Blue scarf', acc_collar: 'Collar', acc_bell: 'Bell', acc_towerScarf: 'Tower scarf', acc_expCollar: 'Explorer collar', acc_dust: 'Golden dust', acc_sparks: 'Sparks', acc_snow: 'Snowflakes', acc_leaves: 'Leaves', acc_paws: 'Paw prints', acc_stars: 'Stars', accNote: 'Cosmetic only — never the jump.',
@@ -361,6 +384,7 @@ const I18N = {
     p_SALT: 'СОЛЬ', p_GARNET: 'ГРАНАТЫ', p_FOSSIL: 'ОКАМЕНЕЛОСТИ', p_MOONSTONE: 'ЛУННЫЙ КАМЕНЬ', p_ICE: 'ЛЁД', p_BANANAS: 'БАНАНЫ', p_FISH: 'РЫБА', p_BONES: 'КОСТОЧКИ',
     h_scent: 'Постой смирно — собака чует спрятанное<br>Иди по следам лап', m_scent: 'Нюх', m_scent_d: 'Только для собак. Постой три секунды — цепочка следов укажет путь к скрытому проходу.', scentFound: '🐾 след найден',
     season: 'Сезон', s_auto: 'авто', s_winter: 'Зима', s_spring: 'Весна', s_summer: 'Лето', s_autumn: 'Осень', seasonNow: 'сезон: {s}', seasonWinter_d: 'снег на скалах, ледяные уступы', seasonSpring_d: 'цветы, птицы медленнее', seasonSummer_d: 'жаркая дымка, потоки сильнее', seasonAutumn_d: 'листья, ветер порывистее',
+    botCheck: 'Бот маршрутов: проверить уровни', botTitle: 'БОТ МАРШРУТОВ', botOk: 'все проходимы', botBad: 'непроходимых: {k}', fpsToggle: 'Счётчик FPS',
     tab_home: 'ДОМОЙ', tab_chars: 'ГЕРОИ', tab_map: 'КАРТА', tab_chal: 'РЕЖИМЫ', tab_coll: 'ЖУРНАЛ', change: 'СМЕНИТЬ', challenges: 'РЕЖИМЫ', collection: 'ЖУРНАЛ', statsAch: 'СТАТИСТИКА И ДОСТИЖЕНИЯ', secretsTitle: 'СЕКРЕТЫ', secretsN: 'найдено {a} / {b}', achN: 'достижений {a} / {b}', mechN: 'встречено {a} / {b}', customN: 'своих уровней: {n}', tDaily: 'ДЕНЬ', tTower: 'БАШНЯ', tSeason: 'сезон', tEndless: 'БЕЗ КОНЦА', tExp: 'ПОХОД', tBuilder: 'РЕДАКТОР', leftH: 'ещё {h}ч {m}м', expBestShort: 'лучш. {n}', playDone: 'всё пройдено — ещё раз', playLockedDim: 'пройди {n} уровней горы', backExit: 'Нажми «назад» ещё раз для выхода', selfTest: 'Self-test раскладки', selfTestOk: 'SELF-TEST РАСКЛАДКИ · экранов {n} · 0 проблем', selfTestBad: 'SELF-TEST РАСКЛАДКИ · экранов {n} · проблем {k}', tapToClose: 'тап — закрыть', runsN: 'рекорд {n} м', mutOnN: 'включены: {l}', mutNone: 'не включены',
     builder: 'РЕДАКТОР УРОВНЕЙ', newLevel: 'НОВЫЙ УРОВЕНЬ', importJson: 'ИМПОРТ JSON', ed_test: '▶ ТЕСТ', ed_save: 'СОХР.', ed_share: 'ССЫЛКА', ed_export: 'ЭКСПОРТ', ed_exit: 'ВЫХОД', characters: 'ПЕРСОНАЖИ', noCustom: 'Своих уровней пока нет', playingNow: 'ИГРАЕТ', bestM: 'рекорд {n} м', climbed: 'Подъём', descended: 'Спуск', newBestBang: 'НОВЫЙ РЕКОРД!', saltGain: '+{n} соли', endlessCity: 'БЕСКОНЕЧНЫЙ НЕБОСКРЁБ · КОНГ', endlessPanel: 'БЕСКОНЕЧНЫЕ ПАНЕЛЬКИ · КОТ', descentLbl: 'СПУСК',
     wardrobe: 'ГАРДЕРОБ', slot_head: 'Голова', slot_neck: 'Шея', slot_trail: 'След', none: 'нет', equipped: 'надето', needAch: 'достижение: {a}', acc_cap: 'Кепка', acc_beanie: 'Шапка', acc_bandana: 'Бандана', acc_shades: 'Очки', acc_wreath: 'Венок', acc_garland: 'Гирлянда на рогах', acc_scarfRed: 'Красный шарф', acc_scarfBlue: 'Синий шарф', acc_collar: 'Ошейник', acc_bell: 'Бубенчик', acc_towerScarf: 'Шарф башни', acc_expCollar: 'Ошейник исследователя', acc_dust: 'Золотая пыль', acc_sparks: 'Искры', acc_snow: 'Снежинки', acc_leaves: 'Листья', acc_paws: 'Следы лап', acc_stars: 'Звёзды', accNote: 'Только внешность — никогда не прыжок.',
@@ -739,7 +763,7 @@ const MOTIFS = {
   deadEnd(c, r) { const s = c.x >= 0 ? -1 : 1; // runs toward the far side so it fits; bait B, wall beyond it, foothold R on top of the wall, exit C behind the wall
     const B = { x: +(c.x + s * 3.5).toFixed(1), y: c.y - 5, w: 3.6 }; const R = { x: +(B.x + s * 3.7).toFixed(1), y: B.y + 2.6, w: 1.4 }; const C = { x: +(B.x + s * 5.2).toFixed(1), y: B.y - 6.5, w: 2.6 };
     const w1 = B.x + s * 2.3, w2 = B.x + s * 3.6; return { rows: [[`d${c.i}`, B.x, B.y, B.w, 'broad'], [`r${c.i}`, R.x, R.y, R.w, 'foothold'], [`d${c.i}b`, C.x, C.y, C.w, 'slab']],
-      blockers: [{ x1: +Math.min(w1, w2).toFixed(1), x2: +Math.max(w1, w2).toFixed(1), top: B.y + 0.6, h: 9 }], crystals: [[B.x, B.y + 0.6]], exit: { ...C, side: s } }; },
+      blockers: [{ x1: +Math.min(w1, w2).toFixed(1), x2: +Math.max(w1, w2).toFixed(1), top: B.y + 0.6, h: 5.4 }], crystals: [[B.x, B.y + 0.6]], exit: { ...C, side: s } }; },
   // four shrinking footholds
   ladder(c, r) { const rows = []; let x = c.x, y = c.y, s = c.side; for (let k = 0; k < 4; k++) { const dx = k === 0 ? c.w / 2 + 2.2 : 2.9 - k * 0.2; let nx = x + s * dx; if (nx > 8 || nx < -8) { s = -s; nx = clamp(x + s * dx, -8, 8); } x = nx; s = -s; y -= 3.8; rows.push([`l${c.i}_${k}`, +x.toFixed(1), +y.toFixed(1), 1.4 + (k === 3 ? 0.6 : 0), 'foothold']); }
     return { rows, crystals: [[+x.toFixed(1), +(y + 0.6).toFixed(1)]], exit: { x: +x.toFixed(1), y: +y.toFixed(1), w: 2, side: s } }; },
@@ -779,6 +803,7 @@ function makeDescent(o) {
     if (ctx.i >= 3 && ctx.i % 3 === 0) { const cand = pool.filter(m => !used.includes(m)); name = (cand.length ? cand : pool)[Math.floor(r() * (cand.length ? cand : pool).length)]; used.push(name); if (used.length > pool.length - 1) used = []; }
     if (o.kid && !kidDone && ctx.i >= Math.floor(o.n * 0.55) && name !== 'link') { name = 'kidNest'; kidDone = true; }
     if (name === 'birdSlalom' && hawkLanes >= (o.hawks || 0) + 1) name = 'link'; if (name === 'crevasse' && rockChutes >= (o.rocks || 0)) name = 'link';
+    if (name !== 'link' && Math.abs(ctx.x) > 4) ctx.side = -Math.sign(ctx.x);   // motifs run toward the middle so clamping never stacks ledges
     const m = MOTIFS[name](ctx, r);
     for (const row of m.rows) surfaces.push(row); if (m.crystalAt) crystals.push(m.crystalAt); for (const cr of (m.crystals || [])) crystals.push(cr);
     for (const h of (m.hawks || [])) { hawks.push(h); hawkLanes++; } for (const rk of (m.rocks || [])) { rocks.push(rk); rockChutes++; } for (const w of (m.winds || [])) winds.push(w); for (const b of (m.blockers || [])) blockers.push(b); for (const k of (m.kids || [])) kids.push(k);
@@ -1993,6 +2018,7 @@ function goSettings(from) {
   row(t('season'), [{ v: 'auto', l: t('s_auto') + ' (' + t('s_' + seasonNow()) + ')' }, { v: 'winter', l: t('s_winter') }, { v: 'spring', l: t('s_spring') }, { v: 'summer', l: t('s_summer') }, { v: 'autumn', l: t('s_autumn') }], S.season || 'auto', v => S.season = v);
   row(t('ghosts'), onoff, S.ghosts !== false, v => S.ghosts = v);
   row(t('devUnlock'), onoff, !!S.devUnlock, v => S.devUnlock = v);
+  if (S.devUnlock) { row(t('fpsToggle'), onoff, !!S.fps, v => S.fps = v); const bb = document.createElement('div'); bb.className = 'btn'; bb.textContent = t('botCheck'); bb.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) botCheckAll(); }); list.appendChild(bb); }
   if (S.devUnlock) { const st = document.createElement('div'); st.className = 'btn'; st.textContent = t('selfTest'); st.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) layoutSelfTest(); }); list.appendChild(st); }
   const rs = document.createElement('div'); rs.className = 'btn'; rs.style.borderColor = '#e07a6a'; rs.style.color = '#ffb3a6'; rs.style.marginTop = '18px'; rs.textContent = t('resetProgress'); rs.addEventListener('click', e => { e.stopPropagation(); if (confirm(t('resetConfirm'))) { localStorage.removeItem(SAVE_KEY); location.reload(); } }); list.appendChild(rs);
   $('bBackMenu5').textContent = from === 'pause' ? t('resume') : t('menu'); showScreen('scSettings');
@@ -2124,7 +2150,7 @@ const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0,
 let screenShownAt = 0;
 const TAB_OF = { scMenu: 'home', scIbex: 'chars', scWardrobe: 'chars', scSelect: 'map', scChal: 'chal', scEndless: 'chal', scTower: 'chal', scExp: 'chal', scMut: 'chal', scColl: 'coll', scStats: 'coll', scMech: 'coll', scBuilder: 'coll', scSettings: '' };
 function showScreen(id) {
-  for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now();
+  for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now(); if (id !== 'scMenu') $('heroTag').style.display = 'none';
   const tabbed = id in TAB_OF && mode !== 'pause' && mode !== 'play' && mode !== 'result'; $('tabBar').classList.toggle('show', tabbed); document.body.classList.toggle('tabs', tabbed);
   for (const tb of document.querySelectorAll('#tabBar .tab')) tb.classList.toggle('on', tb.dataset.tab === TAB_OF[id]);
   if (tabbed) { paintIcons(); refreshBadges(); }
@@ -2132,6 +2158,7 @@ function showScreen(id) {
 const fresh = () => performance.now() - screenShownAt < 300;
 function goMenu() {
   if (pendingReload) { pendingReload = false; location.reload(); return; }
+  forcedChar = null;
   AudioSys.ambient(null); AudioSys.music('menu');
   $('dimUI').style.display = 'none'; dio.bg = false; hud.style.display = 'none'; hint.style.opacity = 0;
   mode = 'menu'; buildDio(); if (dio.focus !== curDim) { dio.focus = curDim; dio.camZ = -curDim * 11 + 17; dio.lookZ = -curDim * 11; }
@@ -2159,6 +2186,21 @@ function refreshHub() {
   const pb = $('bPlay'); pb.classList.toggle('locked', !open); pb.innerHTML = open ? `<i data-ico="play" style="width:26px;height:26px"></i><span>${t('play')}</span>` : `<i data-ico="lock" style="width:22px;height:22px;flex:none"></i><span>${t('playLockedDim', { n: d.needMountain })}</span>`; paintIcons(pb);
   refreshBadges();
 }
+// the player's character stands on the focused cube; tap it (or its tag) for the wardrobe
+const HERO = { holder: null, goat: null, key: '', hopT: 1, cube: -1 };
+function heroChar() { const ch = CHARACTERS[save.character] ? save.character : 'goat'; return { ch, sk: (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id }; }
+function updateHubHero(dt) {
+  if (!dio.scene) return; const { ch, sk } = heroChar(); const key = ch + ':' + sk + ':' + JSON.stringify(currentAcc());
+  if (!HERO.holder) { HERO.holder = new THREE.Group(); HERO.holder.scale.setScalar(1.35); }
+  if (key !== HERO.key) { if (HERO.goat) HERO.holder.remove(HERO.goat.root); const g = new Goat(sk, 1, ch); scene.remove(g.root); HERO.holder.add(g.root); g.root.traverse(o => { if (o.isMesh) o.castShadow = true; }); HERO.goat = g; HERO.key = key; }
+  if (HERO.cube !== curDim) { const c = dio.cubes[curDim]; c.add(HERO.holder); HERO.cube = curDim; HERO.hopT = 0; HERO.holder.position.set(0.9, 0.25, 2.1); HERO.holder.rotation.y = -0.85; }
+  HERO.hopT = Math.min(1, HERO.hopT + dt * 2.2); const g = HERO.goat; g.pos.set(0, Math.sin(HERO.hopT * Math.PI) * 0.9); g.state = HERO.hopT < 1 ? ST.JUMP : ST.IDLE; g.vel.set(1, HERO.hopT < 0.5 ? 3 : -3); g.facing = 1; g.stateT = HERO.hopT < 1 ? 0.3 : (g.stateT || 0) + dt; g.animate(dt, null);
+  HERO.holder.visible = dimOpen(DIMS[curDim]);
+  const tag = $('heroTag'); if (!HERO.holder.visible || mode !== 'menu') { tag.style.display = 'none'; return; }
+  const v = new THREE.Vector3(); HERO.holder.getWorldPosition(v); v.project(dio.cam); const C = CHARACTERS[ch]; const item = C.list.find(i => i.id === sk);
+  tag.style.display = 'block'; tag.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; tag.style.top = ((1 - v.y) / 2 * innerHeight + 10) + 'px'; const html = `${C.name}<small>${item ? item.name : ''}</small>`; if (tag.innerHTML !== html) tag.innerHTML = html;
+}
+function heroHit(e) { if (!HERO.holder || !HERO.holder.visible) return false; const r = new THREE.Raycaster(); r.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), dio.cam); const box = new THREE.Box3().setFromObject(HERO.holder).expandByScalar(0.4); return r.ray.intersectsBox(box); }
 function refreshBadges() {
   const set = (id, v) => { const b = $(id); if (!b) return; b.textContent = v === true ? '!' : v || ''; b.classList.toggle('on', !!v); };
   const info = dailyInfo(), dd = save.daily || {}; const dailyNew = !(dd.date === info.date && (dd.stars || 0) > 0); const ts = towerState(); const towerNew = !ts.done && ts.cp === 0 && ts.best === 0;
@@ -2269,6 +2311,7 @@ function startLevel(idx, defOverride) {
   for (const h of (currentSkin().ch === 'goat' ? (L.def.herd || []) : [])) { const sf = L.surfaces.find(s => s.id === h.surface);
     for (let i = 0; i < h.n; i++) { const cs = currentSkin(); const lst = CHARACTERS[cs.ch].list; const g = new Goat(lst[i % lst.length].id, 1, cs.ch); g.spawn(sf, h.x + h.dir * i * 1.5 + (i % 2) * 0.4); g.facing = -h.dir; g.A.face = -h.dir; g.herdDir = h.dir; g.herdDelay = 0.5 + i * 0.12; g.root.position.z = -0.5 - (i % 2) * 0.5; g.herdZ = g.root.position.z; g.isHerd = true; herd.push(g); } }
   G.twin = L.twin;
+  G.saltAtStart = save.totalSaltCrystals;
   Object.assign(G, { ghostLabelShown: false, airUsed: false, maxIdle: 0, idleT: 0, iceLanded: false, movingLanded: false, slidOff: false, continued: false, failReason: null, aim: null, aiming: false, drag: null, airInput: 0, camFx: L.horizontal ? preferredFx(L.start.x) : 0, camFy: preferredFy(L.start.y), dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, collected: 0, result: null });
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
   $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = t('p_' + STYLE.pickupName); $('hDescLbl').textContent = t(L.horizontal ? 'distance' : L.ascent ? 'ascent' : 'descent');
@@ -2367,7 +2410,8 @@ $('bPlay').addEventListener('click', e => { e.stopPropagation(); if (fresh()) re
 $('bMode').addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!dimOpen(DIMS[curDim])) { hubToast(t('dimLocked', { n: DIMS[curDim].needMountain })); return; } goSelect(); });
 const hubDim = k => { const n = clamp(curDim + k, 0, DIMS.length - 1); if (n === curDim) return; curDim = n; dio.focus = n; refreshHub(); AudioSys.play('ui'); };
 $('dimPrevH').addEventListener('click', e => { e.stopPropagation(); hubDim(-1); }); $('dimNextH').addEventListener('click', e => { e.stopPropagation(); hubDim(1); });
-{ let sx = null, sy = 0; canvas.addEventListener('pointerdown', e => { if (mode === 'menu') { sx = e.clientX; sy = e.clientY; } }); canvas.addEventListener('pointerup', e => { if (mode !== 'menu' || sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) hubDim(dx < 0 ? 1 : -1); }); }
+{ let sx = null, sy = 0; canvas.addEventListener('pointerdown', e => { if (mode === 'menu') { sx = e.clientX; sy = e.clientY; } }); canvas.addEventListener('pointerup', e => { if (mode !== 'menu' || sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) hubDim(dx < 0 ? 1 : -1); else if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && heroHit(e)) goWardrobe(); }); }
+$('heroTag').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goWardrobe(); });
 for (const [tile, btn] of [['tDaily', 'bDaily'], ['tTower', 'bTower'], ['tEndless', 'bEndless'], ['tExp', 'bExp'], ['tBuilder', 'bBuilder']]) $(tile).addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; $(btn).click(); });
 $('tSeason').addEventListener('click', e => { e.stopPropagation(); const se = season(); hubToast(`<b>${t('s_' + se)}</b><br>${t('season' + se[0].toUpperCase() + se.slice(1) + '_d')}`); });
 $('tabHome').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
@@ -2616,6 +2660,7 @@ $('bBackTower').addEventListener('click', e => { e.stopPropagation(); goChal(); 
 $('bTowerGo').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startTower(towerState().cp > 0); });
 $('bTowerRestart').addEventListener('click', e => { e.stopPropagation(); if (!fresh() && towerState().cp > 0 && confirm(t('towerRestart') + '?')) startTower(false); });
 function pauseGame() {
+  paintIcons($('scPause'));
   AudioSys.music('pause'); if (actx && BUS) BUS.amb.gain.setTargetAtTime(0.08, actx.currentTime, 0.2);
   if (mode !== 'play') return; mode = 'pause'; G.drag = null; G.aiming = false; G.aim = null; snapshotRun(); hint.style.opacity = 0;
   $('pauseSub').innerHTML = `${L.def.nameKey ? t(L.def.nameKey) : L.def.name}<br>${Math.round(G.maxDesc)} m · ${fmtTime(G.time)}`;
@@ -2629,7 +2674,7 @@ $('bPauseExit').addEventListener('click', e => { e.stopPropagation(); snapshotRu
   if (L.def.tower) { const ts = towerState(); ts.best = Math.max(ts.best, G.maxDesc); persist(); goTower(); return; }
   if (L.def.custom) openEditor(G.customId); else if (L.def.daily) goMenu(); else if (L.endless) goEndless(); else { const wi = WORLDS.findIndex(w => w.levels.includes(L.def.key)); curDim = DIMS.indexOf(dimOf(wi)); goWorld(wi); } });
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.btn,.ebtn,.back,.tile,.tab,.hubIcon,.modePill,.playBtn')) AudioSys.play('ui'); }, true);
-let lastBackAt = 0;
+let lastBackAt = 0; const FPS = { n: 0, acc: 0 };
 function handleBack() { // returns false when the app should actually be left
   if (mode === 'play') { pauseGame(); return true; } if (mode === 'pause' && $('scPause').classList.contains('show')) { resumeGame(); return true; }
   if (mode === 'edit') { $('edExit').click(); return true; }
@@ -2688,13 +2733,70 @@ const ICONS = {
 };
 function icon(name) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`; }
 function paintIcons(root = document) { for (const el of root.querySelectorAll('[data-ico]')) { const n = el.dataset.ico; if (el.dataset.painted === n) continue; el.dataset.painted = n; const badge = el.querySelector('.badge'); el.insertAdjacentHTML('afterbegin', icon(n)); if (badge) el.appendChild(badge); } }
+// result screen: one primary action, the rest secondary; salt flies into the counter
+function styleResult(win) {
+  const vis = id => $(id).style.display !== 'none'; for (const id of ['bNext', 'bContinue', 'bRetry', 'bLevels']) $(id).classList.remove('primary', 'reward', 'ghost');
+  const primary = win ? (vis('bNext') ? 'bNext' : 'bLevels') : 'bRetry'; $(primary).classList.add('primary'); if (!win && vis('bContinue')) $('bContinue').classList.add('reward'); if (primary !== 'bLevels') $('bLevels').classList.add('ghost');
+  const total = save.totalSaltCrystals, gained = total - (G.saltAtStart ?? total); const n = $('rSaltN'); paintIcons($('scResult'));
+  if (gained <= 0) { n.textContent = total; return; } n.textContent = total - gained; const pill = $('rSalt').getBoundingClientRect(); const k = Math.min(8, gained);
+  for (let i = 0; i < k; i++) { const gem = document.createElement('i'); gem.className = 'flyGem'; gem.innerHTML = icon('diamond'); gem.style.left = (innerWidth / 2 - 11 + (Math.random() - .5) * 60) + 'px'; gem.style.top = (innerHeight * 0.42 + (Math.random() - .5) * 40) + 'px'; document.body.appendChild(gem);
+    setTimeout(() => { const r = gem.getBoundingClientRect(); gem.style.transform = `translate(${pill.left + 12 - r.left}px, ${pill.top + 6 - r.top}px) scale(.7)`; gem.style.opacity = .3; }, 120 + i * 70);
+    setTimeout(() => { gem.remove(); n.textContent = Math.round(total - gained + gained * (i + 1) / k); if (i === k - 1) AudioSys.play('pickup'); }, 850 + i * 70); }
+}
 function hubToast(msg) { const h = $('hubToast'); h.innerHTML = msg; h.style.opacity = 1; clearTimeout(hubToast.t); hubToast.t = setTimeout(() => h.style.opacity = 0, 2600); }
+// ---- dev: route-finding bot — can every level be finished with plain jumps? (no air control, hazards ignored) ----
+function botSolve(def, opts = {}) {
+  const C = CONFIG, g = def.mutGrav || C.gravity, boost = def.ascent ? C.ascentJumpBoost : 1, dt = 1 / 60;
+  const S = def.surfaces.map(r => { const w = r[3], h = (TYPE[r[4]] || TYPE.slab).h, f = (r[5] || '').split(' '); const x1 = r[1] - w / 2, x2 = r[1] + w / 2;
+    return { id: r[0], x: r[1], y: r[2], x1, x2, h, finish: r[0].startsWith('finish'), spikes: f.includes('L') ? [x1, r[1]] : f.includes('R') ? [r[1], x2] : null }; });
+  const B = (def.blockers || []).map(b => ({ x1: b.x1, x2: b.x2, top: b.top, bot: b.top - b.h }));
+  const W = def.winds || [], U = def.updrafts || [];
+  const wind = y => { for (const w of W) if (y <= w.y1 && y >= w.y2) return w.force; return 0; }, lift = (x, y) => { for (const u of U) if (y >= u.y1 && y <= u.y2 && Math.abs(x - u.x) <= u.w / 2) return u.lift; return 0; };
+  const rowsSkipped = (from, to, launchY) => { const ys = S.filter(o => o !== to && o !== from && o.y < launchY - 0.5 && o.y > to.y + 0.5).map(o => o.y).sort((a, b) => b - a); let n = 0, last = Infinity; for (const y of ys) { if (last - y > C.ledgeRowGap) n++; last = y; } return n; };
+  const aims = []; for (let a = -85; a <= 265; a += 5) for (let p = C.minJumpPower; p <= C.maxJumpPower + 1e-6; p += 0.5) { const r = a * Math.PI / 180; aims.push({ dx: Math.cos(r), dy: Math.sin(r), p }); }
+  function fly(s, px, aim) { // returns { s, x } where the jump ends, or null
+    let vx = aim.dx * aim.p * boost, vy = aim.dy * aim.p * boost; if (vy < C.minLaunchUp) vy = C.minLaunchUp;
+    let x = px, y = s.y; if (aim.dy < 0.35) { const xr = px + vx * (2 * vy / g); if (xr >= s.x1 && xr <= s.x2) x = aim.dx > 0.05 ? s.x2 : aim.dx < -0.05 ? s.x1 : (px - s.x1 <= s.x2 - px ? s.x1 : s.x2); }
+    const launchY = y; const near = S.filter(o => Math.abs(o.y - y) < 26 && o.x2 > x - 26 && o.x1 < x + 26);
+    for (let t = 0; t < 3; t += dt) {
+      const py = y; vy -= g * dt; vy += lift(x, y) * dt; vx += wind(y) * dt; x += vx * dt; y += vy * dt;
+      if (y < launchY - 40) return null;
+      for (const b of B) if (x + 0.4 > b.x1 && x - 0.4 < b.x2 && y + 1.1 > b.bot && y < b.top) return null;
+      for (const o of near) {
+        const tol = o === s ? 0 : C.landingTolerance;
+        if (vy < 0 && py >= o.y && y < o.y && x >= o.x1 - tol && x <= o.x2 + tol) { const lx = clamp(x, o.x1 + 0.3, o.x2 - 0.3);
+          if (o.spikes && lx + 0.3 > o.spikes[0] && lx - 0.3 < o.spikes[1]) return null; if (!def.horizontal && !o.finish && rowsSkipped(s, o, launchY) > C.maxLedgesSkipped) return null; return { s: o, x: lx }; }
+        if (o !== s && vy < 0 && -vy <= C.maxEdgeGrabFallSpeed && y < o.y - 0.05 && y > o.y - C.edgeGrabDepth && ((x < o.x1 && x > o.x1 - C.edgeGrabDistance - 0.5) || (x > o.x2 && x < o.x2 + C.edgeGrabDistance + 0.5))) {
+          if (!def.horizontal && !o.finish && rowsSkipped(s, o, launchY) > C.maxLedgesSkipped) return null; return { s: o, x: x < o.x1 ? o.x1 + 0.3 : o.x2 - 0.3 }; }
+        if (x + 0.45 > o.x1 && x - 0.45 < o.x2 && y + 1.1 > o.y - o.h && y < o.y - 0.15) return null; // hit the rock body
+      }
+    }
+    return null;
+  }
+  if (!opts.start && S.some(o => o.id === 'startA')) { const a = botSolve(def, { ...opts, start: 'startA', finish: 'finishA' }), b2 = botSolve(def, { ...opts, start: 'startB', finish: 'finishB' }); return { ok: a.ok && b2.ok, states: a.states + b2.states, reached: a.reached + b2.reached, total: a.total, furthest: a.ok ? b2.furthest : a.furthest, unreached: a.ok ? b2.unreached : a.unreached }; }
+  if (opts.finish) for (const o of S) o.finish = o.id === opts.finish;
+  const start = S.find(o => o.id === (opts.start || 'start')) || S[0]; const key = (s, x) => s.id + '@' + Math.round(x * 2);
+  const seen = new Map(), queue = [{ s: start, x: start.x, d: 0 }]; seen.set(key(start, start.x), null); let found = null, best = start;
+  const goalBetter = (a, b) => def.horizontal ? a.x > b.x : def.ascent ? a.y > b.y : a.y < b.y;
+  while (queue.length && !found) { const cur = queue.shift(); if (seen.size > (opts.maxStates || 1500)) break;
+    for (const aim of aims) { const r = fly(cur.s, cur.x, aim); if (!r) continue; const k = key(r.s, r.x); if (seen.has(k)) continue; seen.set(k, cur); if (goalBetter(r.s, best)) best = r.s;
+      if (r.s.finish) { found = r; break; } queue.push({ ...r, d: cur.d + 1 }); } }
+  const reached = new Set([...seen.keys()].map(k => k.split('@')[0]));
+  return { ok: !!found, states: seen.size, reached: reached.size, total: S.length, furthest: best.id, unreached: S.filter(o => !reached.has(o.id)).map(o => o.id) };
+}
+function botCheckAll() { // chunked so the page stays responsive; results go to the same overlay as the layout self-test
+  const out = $('selfTestOut'); out.style.display = 'block'; out.style.borderLeft = '6px solid #ffd76a'; out.onclick = null; const list = LEVELS.concat([0, 1, 2, 3, 4, 5, 6].map(i => { const d = new Date(Date.now() + i * 864e5).toISOString().slice(0, 10); const def = dailyDef(dailyInfo(d)); def.key = 'daily ' + d; return def; }));
+  const lines = []; let i = 0, bad = 0; const t0 = performance.now();
+  const step = () => { if (i >= list.length) { out.textContent = `${t('botTitle')} · ${list.length} · ${bad ? t('botBad', { k: bad }) : t('botOk')} · ${((performance.now() - t0) / 1000).toFixed(1)} s\n\n${lines.join('\n')}\n\n(${t('tapToClose')})`; out.style.borderLeft = `6px solid ${bad ? '#e5483a' : '#4ad07a'}`; out.onclick = () => out.style.display = 'none'; return; }
+    const l = list[i++]; const r = botSolve(l); if (!r.ok) bad++; lines.push(`${r.ok ? '✓' : '✗'} ${l.key} · ${r.reached}/${r.total}${r.ok ? '' : ' · stuck at ' + r.furthest}`); out.textContent = `${t('botTitle')} · ${i} / ${list.length}…\n\n${lines.slice(-12).join('\n')}`; setTimeout(step, 0); };
+  step();
+}
 // ---- layout self-test: every top-level screen, EN + RU, reports tap targets, off-screen, clipped text, overlaps on the hub ----
 function layoutSelfTest() {
-  const W = innerWidth, H = innerHeight, issues = []; let screens = 0; const keepLang = LANG, keepDim = curDim;
+  const W = Math.max(innerWidth, (window.visualViewport || {}).width || 0), H = Math.max(innerHeight, (window.visualViewport || {}).height || 0, document.documentElement.getBoundingClientRect().height), issues = []; let screens = 0; const keepLang = LANG, keepDim = curDim;
   const check = label => { screens++; const scr = document.querySelector('.screen.show'); const els = [...(scr ? scr.querySelectorAll('.btn,.back,.tile,.hubIcon,.modePill,.playBtn,.dimNav') : []), ...($('tabBar').classList.contains('show') ? $('tabBar').querySelectorAll('.tab') : [])].filter(e => e.getClientRects().length && getComputedStyle(e).display !== 'none' && getComputedStyle(e).visibility !== 'hidden');
     const nm = e => `${label} · ${e.id || e.className.split(' ')[0]} «${e.textContent.trim().replace(/\s+/g, ' ').slice(0, 16)}»`; const hubLike = scr && scr.id === 'scMenu';
-    for (const e of els) { const r = e.getBoundingClientRect(); if (r.width < 43.5 || r.height < 43.5) issues.push(`${nm(e)}: small ${Math.round(r.width)}×${Math.round(r.height)}`); if (r.left < -0.5 || r.right > W + 0.5) issues.push(`${nm(e)}: off-screen x`); if ((hubLike || e.classList.contains('tab') || e.classList.contains('back')) && (r.top < -0.5 || r.bottom > H + 0.5)) issues.push(`${nm(e)}: off-screen y`);
+    for (const e of els) { const r = e.getBoundingClientRect(); if (r.width < 43.5 || r.height < 43.5) issues.push(`${nm(e)}: small ${Math.round(r.width)}×${Math.round(r.height)}`); if (r.left < -1.5 || r.right > W + 1.5) issues.push(`${nm(e)}: off-screen x`); if ((hubLike || e.classList.contains('tab') || e.classList.contains('back')) && (r.top < -1.5 || r.bottom > H + 1.5)) issues.push(`${nm(e)}: off-screen y (${Math.round(r.top)}..${Math.round(r.bottom)} of ${Math.round(H)})`);
       for (const c of [e, ...e.querySelectorAll('b,small,span')]) { const cs = getComputedStyle(c); if ((cs.overflow === 'hidden' || cs.textOverflow === 'ellipsis') && !c.closest('.modePill') && (c.scrollWidth > c.clientWidth + 1 || (() => { const rg = document.createRange(); rg.selectNodeContents(c); return rg.getBoundingClientRect().width > c.getBoundingClientRect().width + 0.01; })())) issues.push(`${nm(e)}: text clipped «${c.textContent.trim().slice(0, 20)}»`); } }
     if (hubLike) { const all = [...els, ...scr.querySelectorAll('.cur')]; for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) { const a = all[i].getBoundingClientRect(), b = all[j].getBoundingClientRect(); const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top); if (ox > 2 && oy > 2 && !all[i].contains(all[j]) && !all[j].contains(all[i])) issues.push(`${nm(all[i])} overlaps ${all[j].id || all[j].className}`); } } };
   for (const lg of ['en', 'ru']) { LANG = lg; applyLang(); curDim = 0; goMenu(); check('hub ' + lg); curDim = 1; goMenu(); check('hub-city ' + lg); curDim = 0; goChal(); check('challenges ' + lg); goColl(); check('collection ' + lg); goIbex(); check('heroes ' + lg); goSelect(); check('map ' + lg); goSettings('menu'); check('settings ' + lg); }
@@ -2803,6 +2905,7 @@ function skinPreview(ch, sk) {
   pr.render(ps, pc); const url = pr.domElement.toDataURL('image/png'); ps.remove(g.root); previewCache[key] = url; return url;
 }
 function goWardrobe() {
+  wardFrom = mode === 'menu' ? 'hub' : mode === 'ibex' && $('scWardrobe').classList.contains('show') ? wardFrom : 'ibex';
   mode = 'ibex'; hud.style.display = 'none'; $('wardSalt').textContent = '◆ ' + save.totalSaltCrystals; save.acc = save.acc || {}; save.accOwned = save.accOwned || {}; const list = $('wardList'); list.innerHTML = '';
   for (const slot of ['head', 'neck', 'trail']) {
     const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '8px 0 2px'; h.textContent = t('slot_' + slot); list.appendChild(h);
@@ -2814,7 +2917,8 @@ function goWardrobe() {
   const cs = currentSkin(); $('wardPreview').src = skinPreview(cs.ch, cs.sk); showScreen('scWardrobe');
 }
 $('bWardrobe').addEventListener('click', e => { e.stopPropagation(); goWardrobe(); });
-$('bBackWardrobe').addEventListener('click', e => { e.stopPropagation(); goIbex(); });
+$('bBackWardrobe').addEventListener('click', e => { e.stopPropagation(); if (wardFrom === 'hub') goMenu(); else goIbex(); });
+let wardFrom = 'ibex';
 function goIbex() {
   save.charViewed = Object.assign({}, save.charSeen || {}); persist();
   mode = 'ibex'; hud.style.display = 'none'; $('ibexSalt').textContent = '◆ ' + save.totalSaltCrystals;
@@ -3035,7 +3139,7 @@ function update(dt) {
   ENV.floor.position.y = (L.endless && !L.ascent) ? Math.min(0, G.camFy - 45 - FLOOR_Y) : 0; ENV.sky.position.y = G.camFy - 20;
 
   // ---- result screen reveal ----
-  if (ended) { G.endT += dt; if (G.endT > G.result.delay && !$('scResult').classList.contains('show')) { showScreen('scResult'); hud.style.display = 'none'; drawRunCard(); checkAchievements();
+  if (ended) { G.endT += dt; if (G.endT > G.result.delay && !$('scResult').classList.contains('show')) { showScreen('scResult'); hud.style.display = 'none'; drawRunCard(); checkAchievements(); setTimeout(() => styleResult(G.result.win), 0);
     $('bShareGhost').style.display = G.lastRun && ghostKey(L.def) ? 'block' : 'none';
     if (L.def.expedition) { $('bNext').style.display = 'none'; $('bLevels').textContent = t('expedition'); $('bRetry').style.display = 'none';
       if (G.result.win) { $('bContinue').style.display = 'none'; EXP.salt += G.collected * (L.def.expBonus === 'salt' ? 2 : 1); EXP.step++; const st = stats(); st.expBest = Math.max(st.expBest || 0, EXP.step); if (EXP.step >= EXP.len) { EXP.on = false; st.exp++; const reward = { 5: 10, 7: 20, 9: 35 }[EXP.len] || 10; save.totalSaltCrystals += reward; if (EXP.len === 9) { save.accOwned = save.accOwned || {}; save.accOwned.expCollar = true; } persist(); $('rTitle').textContent = t('expWin'); $('rSub').innerHTML = t('expReward', { n: st.exp }).replace('+10', '+' + reward) + '<br>' + t('expSalt', { n: EXP.salt }); drawExpCard(); } else { persist(); $('rSub').innerHTML += `<br>${t('expStep', { k: EXP.step + 1, n: EXP.len })}`; } }
@@ -3070,7 +3174,8 @@ sun.position.set(26, G.camFy + 42, 34); sun.target.position.set(0, G.camFy - 6, 
 function loop(now) {
   const rawDt = Math.min(0.05, (now - last) / 1000); last = now; fps = lerp(fps, 1 / Math.max(rawDt, 1e-4), 0.05);
   if (G.slowT > 0) G.slowT -= rawDt; const dt = (mode === 'play' && G.slowT > 0) ? rawDt * 0.3 : rawDt;
-  if (mode === 'menu' && dio.scene) { dio.hub = true; updateDims(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
+  if (save.settings.fps && save.settings.devUnlock) { FPS.n++; FPS.acc += dt; if (FPS.acc >= 0.5) { const b = $('fpsBox'); b.style.display = 'block'; b.textContent = `${Math.round(FPS.n / FPS.acc)} fps\n${renderer.info.render.calls} calls · ${particles.length} fx`; FPS.n = 0; FPS.acc = 0; } } else if (FPS.acc !== -1) { FPS.acc = -1; $('fpsBox').style.display = 'none'; }
+  if (mode === 'menu' && dio.scene) { dio.hub = true; updateDims(dt); updateHubHero(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   dio.hub = false;
   if (mode === 'dims') { updateDims(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   if (mode === 'select' && dio.bg && dio.scene) { dio.t += dt; const c = dio.cubes[curDim]; c.rotation.y = Math.sin(dio.t * 0.3) * 0.1; const fz = -curDim * 11; dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix(); dio.cam.position.set(4, 7, fz + 13); dio.cam.lookAt(0, 1.2, fz); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
