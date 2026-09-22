@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v59 -->
+<!-- build v61 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,7 +26,7 @@
   #topwarn { position:fixed; left:0; right:0; top:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,.7), rgba(140,40,20,0)); }
   #wind { position:fixed; inset:0; pointer-events:none; opacity:0; background: repeating-linear-gradient(180deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0) 22px, rgba(255,255,255,.18) 23px, rgba(255,255,255,0) 26px); background-size:100% 260px; animation: windy .35s linear infinite; }
   @keyframes windy { from { background-position:0 0; } to { background-position:0 260px; } }
-  .screen { position:fixed; inset:0; z-index:20; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; overflow:hidden; }
+  .screen { position:fixed; inset:0; z-index:20; display:none; flex-direction:column; align-items:center; justify-content:safe center; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; touch-action:pan-y; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; overflow:hidden; }
   #mapView svg { display:block; } #mapView .node { cursor:pointer; } #mapView .node text { font-family:inherit; }
   .list { max-height:72vh; overflow-y:auto; overflow-x:hidden !important; scrollbar-width:thin; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
   .screen.show { display:flex; }
@@ -40,7 +40,54 @@
   .stars { font-size:15px; line-height:1.9; margin:6px 0 18px; text-align:left; display:inline-block; }
   .stars .on { color:#ffd76a; } .stars .off { opacity:.5; }
   .salt { font-size:14px; letter-spacing:.12em; opacity:.9; margin-top:14px; }
-  .back { position:fixed; left:16px; top:calc(14px + env(safe-area-inset-top)); font-size:14px; letter-spacing:.1em; cursor:pointer; opacity:.85; }
+  .back { position:fixed; left:12px; bottom:calc(12px + env(safe-area-inset-bottom)); min-height:48px; padding:0 18px; display:flex; align-items:center; border-radius:14px; background:rgba(40,26,14,.85); border:2px solid rgba(255,248,238,.4); font-size:14px; font-weight:700; letter-spacing:.08em; cursor:pointer; z-index:26; box-sizing:border-box; }
+  .screen { padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important; }
+  body.tabs .screen { padding-bottom:calc(160px + env(safe-area-inset-bottom)) !important; }
+  body.tabs .back { bottom:calc(84px + env(safe-area-inset-bottom)); }
+  body.tabs #scIbex .back, body.tabs #scChal .back, body.tabs #scColl .back { display:none; }
+  [data-ico] { display:inline-flex; } [data-ico] svg { width:100%; height:100%; }
+  #scMenu { background:none; padding:0 !important; overflow:visible; pointer-events:none; }
+  #scMenu.show { display:block; }
+  #scMenu > * { pointer-events:auto; }
+  .hubTop { position:absolute; left:10px; right:10px; top:calc(10px + env(safe-area-inset-top)); display:flex; align-items:center; gap:8px; }
+  .hubIcon { width:48px; height:48px; flex:none; border-radius:14px; background:rgba(40,26,14,.78); border:2px solid rgba(255,248,238,.4); box-sizing:border-box; padding:10px; position:relative; cursor:pointer; color:#fff8ee; }
+  .hubCur { flex:1; min-width:0; display:flex; justify-content:center; gap:8px; }
+  .cur { height:36px; padding:0 12px 0 8px; border-radius:18px; background:rgba(40,26,14,.78); border:2px solid rgba(255,248,238,.25); display:flex; align-items:center; gap:6px; font-weight:800; font-size:16px; white-space:nowrap; box-sizing:border-box; }
+  .curIco { width:20px; height:20px; color:#9fe0ff; } .curIco.star { color:#ffd76a; }
+  .tiles { position:absolute; top:calc(72px + env(safe-area-inset-top)); display:flex; flex-direction:column; gap:12px; }
+  .tiles.l { left:10px; } .tiles.r { right:10px; }
+  .tile { width:80px; min-height:80px; box-sizing:border-box; padding:7px 4px 6px; border-radius:16px; background:linear-gradient(#4a8ad8,#2a5aa0); border:2px solid rgba(255,255,255,.5); box-shadow:0 4px 0 rgba(0,0,0,.35); display:flex; flex-direction:column; align-items:center; gap:2px; position:relative; cursor:pointer; color:#fff; }
+  .tile.gold { background:linear-gradient(#f0b840,#c07818); } .tile.purple { background:linear-gradient(#8a64d0,#5a3a98); } .tile.green { background:linear-gradient(#5aa85a,#2f7a3a); }
+  .tile > i:first-child { width:30px; height:30px; }
+  .tile b { font-size:11px; line-height:1.1; letter-spacing:.02em; text-align:center; max-width:74px; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 2px rgba(0,0,0,.4); }
+  .tile small { font-size:10px; line-height:1.15; opacity:.92; text-align:center; max-width:74px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tile:active, .playBtn:active, .tab:active, .hubIcon:active, .modePill:active { transform:translateY(2px); }
+  .badge { position:absolute; top:-7px; right:-7px; min-width:22px; height:22px; border-radius:11px; background:#e5483a; color:#fff; font-size:12px; font-weight:800; font-style:normal; display:none; align-items:center; justify-content:center; padding:0 5px; border:2px solid #fff8ee; box-sizing:border-box; pointer-events:none; }
+  .badge.on { display:flex; }
+  .dimNav { position:absolute; top:40%; width:44px; height:64px; display:flex; align-items:center; justify-content:center; font-size:44px; line-height:1; cursor:pointer; color:#fff8ee; text-shadow:0 2px 6px rgba(0,0,0,.6); }
+  .dimNav.l { left:98px; } .dimNav.r { right:98px; } .dimNav.off { opacity:.25; }
+  .playGroup { position:absolute; left:50%; transform:translateX(-50%); bottom:calc(86px + env(safe-area-inset-bottom)); width:min(340px, calc(100vw - 40px)); display:flex; flex-direction:column; gap:8px; }
+  .dimDots { display:flex; justify-content:center; gap:8px; } .dimDots i { width:8px; height:8px; border-radius:4px; background:rgba(255,248,238,.4); } .dimDots i.on { background:#ffd76a; width:20px; }
+  .modePill { display:flex; min-height:52px; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.55); cursor:pointer; box-shadow:0 3px 0 rgba(0,0,0,.3); }
+  .modePill > span:first-child { background:#1f4a8a; padding:0 12px; display:flex; align-items:center; font-size:12px; font-weight:800; letter-spacing:.06em; white-space:nowrap; }
+  .modePill > span:last-child { flex:1; min-width:0; background:#3a78c8; padding:5px 10px; display:flex; flex-direction:column; justify-content:center; text-align:left; }
+  .modePill b, .modePill small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .modePill b { font-size:14px; } .modePill small { font-size:12px; opacity:.9; }
+  .playBtn { height:70px; border-radius:18px; background:linear-gradient(#ffe07a,#f0a830); color:#3a2410; border:3px solid #fff4c8; box-shadow:0 6px 0 #a8661a; display:flex; align-items:center; justify-content:center; gap:10px; font-size:30px; font-weight:900; letter-spacing:.1em; cursor:pointer; box-sizing:border-box; }
+  .playBtn.locked { background:linear-gradient(#a8a098,#7a726a); box-shadow:0 6px 0 #4a443e; font-size:16px; letter-spacing:.04em; color:#fff8ee; border-color:#d8d0c8; padding:0 12px; text-align:center; }
+  .hubToast { position:absolute; left:50%; transform:translateX(-50%); top:calc(66px + env(safe-area-inset-top)); max-width:78vw; padding:10px 14px; border-radius:12px; background:rgba(20,12,6,.88); font-size:14px; text-align:center; opacity:0; transition:opacity .25s; pointer-events:none !important; }
+  #tabBar { position:fixed; left:0; right:0; bottom:0; z-index:25; display:none; align-items:flex-end; gap:2px; padding:0 6px env(safe-area-inset-bottom); height:calc(72px + env(safe-area-inset-bottom)); box-sizing:border-box; background:linear-gradient(#2f64b0,#1d3f75); border-top:2px solid rgba(255,255,255,.4); }
+  #tabBar.show { display:flex; }
+  .tab { flex:1; min-width:0; height:70px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; position:relative; color:#fff8ee; opacity:.85; border-radius:14px 14px 0 0; }
+  .tab > i:first-child { width:26px; height:26px; } .tab span { font-size:10.5px; font-weight:800; letter-spacing:.03em; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tab.on { opacity:1; background:linear-gradient(#ffe07a,#e8a030); color:#3a2410; height:82px; box-shadow:0 -2px 0 rgba(255,255,255,.5) inset; }
+  .tab .badge { top:6px; right:calc(50% - 26px); }
+  #selfTestOut { position:fixed; left:8px; right:8px; top:calc(8px + env(safe-area-inset-top)); z-index:60; display:none; max-height:70vh; overflow:auto; padding:12px; border-radius:12px; background:rgba(10,10,10,.92); font:12px/1.4 monospace; color:#e8ffe8; white-space:pre-wrap; }
+  @media (orientation: landscape) and (max-height: 520px) {
+    .tiles { top:calc(64px + env(safe-area-inset-top)); gap:8px; } .tile { min-height:66px; width:76px; padding:5px 3px; } .tile > i:first-child { width:24px; height:24px; }
+    .playGroup { bottom:calc(80px + env(safe-area-inset-bottom)); } .dimDots { display:none; } .playBtn { height:56px; font-size:24px; } .modePill { min-height:44px; }
+    .dimNav.l { left:96px; } .dimNav.r { right:96px; } #tabBar { height:calc(64px + env(safe-area-inset-bottom)); } .tab { height:62px; } .tab.on { height:70px; }
+    body.tabs .back { bottom:calc(76px + env(safe-area-inset-bottom)); }
+  }
   #editor { position:fixed; inset:0; pointer-events:none; display:none; }
   #editor.show { display:block; }
   #edTop, #edTools { position:fixed; left:0; right:0; display:flex; gap:6px; padding:8px; box-sizing:border-box; pointer-events:auto; background:rgba(40,28,18,.72); }
@@ -77,19 +124,45 @@
 <div id="hint" style="opacity:0">Drag toward your jump<br>Release to leap</div>
 
 <div class="screen" id="scMenu">
-  <h1>MOUNTAIN GOAT</h1>
-  <div class="sub" data-i18n="tagline">A descent through the Negev cliffs</div>
-  <div class="btn" id="bPlay" data-i18n="play">PLAY</div>
+  <div class="hubTop">
+    <div class="hubIcon" id="bStats" data-ico="profile"><i class="badge" id="bdgProfile"></i></div>
+    <div class="hubCur"><div class="cur"><i data-ico="diamond" class="curIco"></i><span id="menuSalt">0</span></div><div class="cur"><i data-ico="star" class="curIco star"></i><span id="menuStars">0</span></div></div>
+    <div class="hubIcon" id="bSettings" data-ico="gear"></div>
+  </div>
+  <div class="tiles l">
+    <div class="tile gold" id="tDaily"><i data-ico="daily"></i><b data-i18n="tDaily">DAILY</b><small id="tDailySub"></small><i class="badge" id="bdgDaily"></i></div>
+    <div class="tile purple" id="tTower"><i data-ico="tower"></i><b data-i18n="tTower">TOWER</b><small id="tTowerSub"></small><i class="badge" id="bdgTower"></i></div>
+    <div class="tile green" id="tSeason"><i data-ico="leaf" id="tSeasonIco"></i><b id="tSeasonName">SEASON</b><small data-i18n="tSeason">season</small></div>
+  </div>
+  <div class="tiles r">
+    <div class="tile" id="tEndless"><i data-ico="endless"></i><b data-i18n="tEndless">ENDLESS</b><small id="tEndlessSub"></small></div>
+    <div class="tile" id="tExp"><i data-ico="compass"></i><b data-i18n="tExp">EXPEDITION</b><small id="tExpSub"></small></div>
+    <div class="tile" id="tBuilder"><i data-ico="hammer"></i><b data-i18n="tBuilder">BUILDER</b><small id="tBuilderSub"></small></div>
+  </div>
+  <div class="dimNav l" id="dimPrevH">‹</div><div class="dimNav r" id="dimNextH">›</div>
+  <div class="playGroup">
+    <div class="dimDots" id="dimDots"></div>
+    <div class="modePill" id="bMode"><span data-i18n="change">CHANGE</span><span><b id="modeDim"></b><small id="modeLvl"></small></span></div>
+    <div class="playBtn" id="bPlay"><span id="playTxt">PLAY</span></div>
+  </div>
+  <div class="hubToast" id="hubToast"></div>
+</div>
+<div class="screen" id="scChal">
+  <h1 data-i18n="challenges">CHALLENGES</h1>
   <div class="btn" id="bDaily"><span data-i18n="daily">DAILY CHALLENGE</span><small id="dailyInfo"></small></div>
-  <div class="btn" id="bEndless" data-i18n="endless">ENDLESS</div>
   <div class="btn" id="bTower"><span data-i18n="tower">WEEKLY TOWER</span><small id="towerInfo"></small></div>
-  <div class="btn" id="bExp" data-i18n="expedition">EXPEDITION</div>
-  <div class="sub" id="seasonInfo" style="font-size:12px;opacity:.7;margin:-4px 0 6px"></div>
-  <div class="btn" id="bStats" data-i18n="stats">STATS</div>
-  <div class="btn" id="bBuilder" data-i18n="builder">LEVEL BUILDER</div>
-  <div class="btn" id="bIbex" data-i18n="characters">CHARACTERS</div>
-  <div class="btn" id="bSettings" data-i18n="settings">SETTINGS</div>
-  <div class="salt" id="menuSalt">◆ 0</div>
+  <div class="btn" id="bExp"><span data-i18n="expedition">EXPEDITION</span><small id="expInfo"></small></div>
+  <div class="btn" id="bEndless"><span data-i18n="endless">ENDLESS</span><small id="endInfo"></small></div>
+  <div class="btn" id="bMutMenu"><span data-i18n="mutators">MUTATORS</span><small id="mutInfo"></small></div>
+  <div class="sub" id="seasonInfo" style="font-size:12px;opacity:.75;margin-top:8px"></div>
+</div>
+<div class="screen" id="scColl">
+  <h1 data-i18n="collection">COLLECTION</h1>
+  <div class="btn" id="bCollStats"><span data-i18n="statsAch">STATS & ACHIEVEMENTS</span><small id="collAch"></small></div>
+  <div class="btn" id="bCollMech"><span data-i18n="mechanics">MECHANICS</span><small id="collMech"></small></div>
+  <div class="btn" id="bBuilder"><span data-i18n="builder">LEVEL BUILDER</span><small id="collBuilder"></small></div>
+  <div class="btn" id="bCollSecrets" style="cursor:default"><span data-i18n="secretsTitle">SECRETS</span><small id="collSecrets"></small></div>
+</div>
 </div>
 <div id="dimUI" style="position:fixed;inset:0;pointer-events:none;display:none;z-index:15">
   <div class="back" id="bBackDims" data-i18n="menu" style="pointer-events:auto">◀ MENU</div>
@@ -189,6 +262,14 @@
   <div id="wardList" class="list" style="max-height:48vh"></div>
   <div class="sub" style="margin-top:8px;font-size:13px;opacity:.75" data-i18n="accNote"></div>
 </div>
+<div id="tabBar">
+  <div class="tab" data-tab="chars" id="bIbex"><i data-ico="goat"></i><span data-i18n="tab_chars">HEROES</span><i class="badge" id="bdgChars"></i></div>
+  <div class="tab" data-tab="map" id="tabMap"><i data-ico="map"></i><span data-i18n="tab_map">MAP</span><i class="badge" id="bdgMap"></i></div>
+  <div class="tab" data-tab="home" id="tabHome"><i data-ico="home"></i><span data-i18n="tab_home">HOME</span></div>
+  <div class="tab" data-tab="chal" id="tabChal"><i data-ico="trophy"></i><span data-i18n="tab_chal">CHALLENGES</span><i class="badge" id="bdgChal"></i></div>
+  <div class="tab" data-tab="coll" id="tabColl"><i data-ico="book"></i><span data-i18n="tab_coll">COLLECTION</span><i class="badge" id="bdgColl"></i></div>
+</div>
+<div id="selfTestOut"></div>
 <div class="screen" id="scResult">
   <h1 id="rTitle">DESCENT COMPLETE</h1>
   <div class="sub" id="rSub"></div>
@@ -238,6 +319,7 @@ const I18N = {
     p_SALT: 'SALT', p_GARNET: 'GARNET', p_FOSSIL: 'FOSSIL', p_MOONSTONE: 'MOONSTONE', p_ICE: 'ICE', p_BANANAS: 'BANANAS', p_FISH: 'FISH', p_BONES: 'BONES',
     h_scent: 'Stand still — a dog can smell what is hidden<br>Follow the paw prints', m_scent: 'Scent', m_scent_d: 'Dogs only. Stand still for three seconds and a trail of paw prints points toward a hidden passage.', scentFound: '🐾 trail found',
     season: 'Season', s_auto: 'auto', s_winter: 'Winter', s_spring: 'Spring', s_summer: 'Summer', s_autumn: 'Autumn', seasonNow: 'season: {s}', seasonWinter_d: 'snow on the cliffs, icy ledges', seasonSpring_d: 'flowers, slower birds', seasonSummer_d: 'heat haze, stronger updrafts', seasonAutumn_d: 'leaves, gustier wind',
+    tab_home: 'HOME', tab_chars: 'HEROES', tab_map: 'MAP', tab_chal: 'MODES', tab_coll: 'JOURNAL', change: 'CHANGE', challenges: 'MODES', collection: 'JOURNAL', statsAch: 'STATS & ACHIEVEMENTS', secretsTitle: 'SECRETS', secretsN: 'found {a} / {b}', achN: '{a} / {b} achievements', mechN: '{a} / {b} met', customN: '{n} custom levels', tDaily: 'DAILY', tTower: 'TOWER', tSeason: 'season', tEndless: 'ENDLESS', tExp: 'EXPEDITION', tBuilder: 'BUILDER', leftH: '{h}h {m}m left', expBestShort: 'best {n}', playDone: 'all done — replay', playLockedDim: 'finish {n} mountain levels', backExit: 'Press back again to exit', selfTest: 'Layout self-test', selfTestOk: 'LAYOUT SELF-TEST · {n} screens · 0 problems', selfTestBad: 'LAYOUT SELF-TEST · {n} screens · {k} problems', tapToClose: 'tap to close', runsN: 'best {n} m', mutOnN: 'active: {l}', mutNone: 'none active',
     builder: 'LEVEL BUILDER', newLevel: 'NEW LEVEL', importJson: 'IMPORT JSON', ed_test: '▶ TEST', ed_save: 'SAVE', ed_share: 'SHARE', ed_export: 'EXPORT', ed_exit: 'EXIT', characters: 'CHARACTERS', noCustom: 'No custom levels yet', playingNow: 'PLAYING', bestM: 'best {n} m', climbed: 'Climbed', descended: 'Descended', newBestBang: 'NEW BEST!', saltGain: '+{n} salt', endlessCity: 'ENDLESS SKYSCRAPER · KONG', endlessPanel: 'ENDLESS PANELKI · CAT', descentLbl: 'DESCENT',
     wardrobe: 'WARDROBE', slot_head: 'Head', slot_neck: 'Neck', slot_trail: 'Trail', none: 'none', equipped: 'equipped', needAch: 'achievement: {a}', acc_cap: 'Cap', acc_beanie: 'Beanie', acc_bandana: 'Bandana', acc_shades: 'Shades', acc_wreath: 'Wreath', acc_garland: 'Garland horns', acc_scarfRed: 'Red scarf', acc_scarfBlue: 'Blue scarf', acc_collar: 'Collar', acc_bell: 'Bell', acc_towerScarf: 'Tower scarf', acc_expCollar: 'Explorer collar', acc_dust: 'Golden dust', acc_sparks: 'Sparks', acc_snow: 'Snowflakes', acc_leaves: 'Leaves', acc_paws: 'Paw prints', acc_stars: 'Stars', accNote: 'Cosmetic only — never the jump.',
     ghosts: 'Ghosts', ghostBest: 'ghost: your best {t}', ghostFriend: 'ghost: a friend · {t}', shareGhost: 'SHARE THIS RUN', shareLevel: 'SHARE LINK', linkCopied: 'Link copied', linkGhostLoaded: 'Ghost loaded — race it!', linkLevelLoaded: 'Level from link: saved to your builder', linkOld: 'That challenge was another day — ghost skipped', ghostWeek: 'ghost: last week', ghostBestWeek: 'ghost: best this week',
@@ -279,6 +361,7 @@ const I18N = {
     p_SALT: 'СОЛЬ', p_GARNET: 'ГРАНАТЫ', p_FOSSIL: 'ОКАМЕНЕЛОСТИ', p_MOONSTONE: 'ЛУННЫЙ КАМЕНЬ', p_ICE: 'ЛЁД', p_BANANAS: 'БАНАНЫ', p_FISH: 'РЫБА', p_BONES: 'КОСТОЧКИ',
     h_scent: 'Постой смирно — собака чует спрятанное<br>Иди по следам лап', m_scent: 'Нюх', m_scent_d: 'Только для собак. Постой три секунды — цепочка следов укажет путь к скрытому проходу.', scentFound: '🐾 след найден',
     season: 'Сезон', s_auto: 'авто', s_winter: 'Зима', s_spring: 'Весна', s_summer: 'Лето', s_autumn: 'Осень', seasonNow: 'сезон: {s}', seasonWinter_d: 'снег на скалах, ледяные уступы', seasonSpring_d: 'цветы, птицы медленнее', seasonSummer_d: 'жаркая дымка, потоки сильнее', seasonAutumn_d: 'листья, ветер порывистее',
+    tab_home: 'ДОМОЙ', tab_chars: 'ГЕРОИ', tab_map: 'КАРТА', tab_chal: 'РЕЖИМЫ', tab_coll: 'ЖУРНАЛ', change: 'СМЕНИТЬ', challenges: 'РЕЖИМЫ', collection: 'ЖУРНАЛ', statsAch: 'СТАТИСТИКА И ДОСТИЖЕНИЯ', secretsTitle: 'СЕКРЕТЫ', secretsN: 'найдено {a} / {b}', achN: 'достижений {a} / {b}', mechN: 'встречено {a} / {b}', customN: 'своих уровней: {n}', tDaily: 'ДЕНЬ', tTower: 'БАШНЯ', tSeason: 'сезон', tEndless: 'БЕЗ КОНЦА', tExp: 'ПОХОД', tBuilder: 'РЕДАКТОР', leftH: 'ещё {h}ч {m}м', expBestShort: 'лучш. {n}', playDone: 'всё пройдено — ещё раз', playLockedDim: 'пройди {n} уровней горы', backExit: 'Нажми «назад» ещё раз для выхода', selfTest: 'Self-test раскладки', selfTestOk: 'SELF-TEST РАСКЛАДКИ · экранов {n} · 0 проблем', selfTestBad: 'SELF-TEST РАСКЛАДКИ · экранов {n} · проблем {k}', tapToClose: 'тап — закрыть', runsN: 'рекорд {n} м', mutOnN: 'включены: {l}', mutNone: 'не включены',
     builder: 'РЕДАКТОР УРОВНЕЙ', newLevel: 'НОВЫЙ УРОВЕНЬ', importJson: 'ИМПОРТ JSON', ed_test: '▶ ТЕСТ', ed_save: 'СОХР.', ed_share: 'ССЫЛКА', ed_export: 'ЭКСПОРТ', ed_exit: 'ВЫХОД', characters: 'ПЕРСОНАЖИ', noCustom: 'Своих уровней пока нет', playingNow: 'ИГРАЕТ', bestM: 'рекорд {n} м', climbed: 'Подъём', descended: 'Спуск', newBestBang: 'НОВЫЙ РЕКОРД!', saltGain: '+{n} соли', endlessCity: 'БЕСКОНЕЧНЫЙ НЕБОСКРЁБ · КОНГ', endlessPanel: 'БЕСКОНЕЧНЫЕ ПАНЕЛЬКИ · КОТ', descentLbl: 'СПУСК',
     wardrobe: 'ГАРДЕРОБ', slot_head: 'Голова', slot_neck: 'Шея', slot_trail: 'След', none: 'нет', equipped: 'надето', needAch: 'достижение: {a}', acc_cap: 'Кепка', acc_beanie: 'Шапка', acc_bandana: 'Бандана', acc_shades: 'Очки', acc_wreath: 'Венок', acc_garland: 'Гирлянда на рогах', acc_scarfRed: 'Красный шарф', acc_scarfBlue: 'Синий шарф', acc_collar: 'Ошейник', acc_bell: 'Бубенчик', acc_towerScarf: 'Шарф башни', acc_expCollar: 'Ошейник исследователя', acc_dust: 'Золотая пыль', acc_sparks: 'Искры', acc_snow: 'Снежинки', acc_leaves: 'Листья', acc_paws: 'Следы лап', acc_stars: 'Звёзды', accNote: 'Только внешность — никогда не прыжок.',
     ghosts: 'Призраки', ghostBest: 'призрак: твой лучший {t}', ghostFriend: 'призрак: друг · {t}', shareGhost: 'ПОДЕЛИТЬСЯ ЗАБЕГОМ', shareLevel: 'ССЫЛКА', linkCopied: 'Ссылка скопирована', linkGhostLoaded: 'Призрак загружен — обгони!', linkLevelLoaded: 'Уровень из ссылки сохранён в твой редактор', linkOld: 'Тот вызов был в другой день — призрак пропущен', ghostWeek: 'призрак: прошлая неделя', ghostBestWeek: 'призрак: лучший за неделю',
@@ -1910,6 +1993,7 @@ function goSettings(from) {
   row(t('season'), [{ v: 'auto', l: t('s_auto') + ' (' + t('s_' + seasonNow()) + ')' }, { v: 'winter', l: t('s_winter') }, { v: 'spring', l: t('s_spring') }, { v: 'summer', l: t('s_summer') }, { v: 'autumn', l: t('s_autumn') }], S.season || 'auto', v => S.season = v);
   row(t('ghosts'), onoff, S.ghosts !== false, v => S.ghosts = v);
   row(t('devUnlock'), onoff, !!S.devUnlock, v => S.devUnlock = v);
+  if (S.devUnlock) { const st = document.createElement('div'); st.className = 'btn'; st.textContent = t('selfTest'); st.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) layoutSelfTest(); }); list.appendChild(st); }
   const rs = document.createElement('div'); rs.className = 'btn'; rs.style.borderColor = '#e07a6a'; rs.style.color = '#ffb3a6'; rs.style.marginTop = '18px'; rs.textContent = t('resetProgress'); rs.addEventListener('click', e => { e.stopPropagation(); if (confirm(t('resetConfirm'))) { localStorage.removeItem(SAVE_KEY); location.reload(); } }); list.appendChild(rs);
   $('bBackMenu5').textContent = from === 'pause' ? t('resume') : t('menu'); showScreen('scSettings');
 }
@@ -1975,8 +2059,8 @@ function tickMechScene(dt) {
   const ctx = S.canvas.getContext('2d'); ctx.clearRect(0, 0, 320, 180); ctx.drawImage(pr.domElement, 0, 0);
 }
 document.getElementById('bPauseMech').addEventListener('click', e => { e.stopPropagation(); goMech('pause'); });
-document.getElementById('bBackMut').addEventListener('click', e => { e.stopPropagation(); if (mutFrom === 'endless') goEndless(); else if (mutFrom === 'world') goWorld(curWorld); else goMenu(); });
-document.getElementById('bBackMech').addEventListener('click', e => { e.stopPropagation(); mechScene = null; if (mechFrom === 'pause') showScreen('scPause'); else goMenu(); });
+document.getElementById('bBackMut').addEventListener('click', e => { e.stopPropagation(); if (mutFrom === 'endless') goEndless(); else if (mutFrom === 'world') goWorld(curWorld); else goChal(); });
+document.getElementById('bBackMech').addEventListener('click', e => { e.stopPropagation(); mechScene = null; if (mechFrom === 'pause') showScreen('scPause'); else goColl(); });
 document.getElementById('bPauseSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('pause'); });
 document.getElementById('bBackMenu5').addEventListener('click', e => { e.stopPropagation(); if (mode === 'pause') showScreen('scPause'); else goMenu(); });
 
@@ -2038,22 +2122,69 @@ const goats = [], herd = [], followers = [];
 const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0, dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, hintDone: false, collected: 0, result: null, twin: false };
 
 let screenShownAt = 0;
-function showScreen(id) { for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now(); }
+const TAB_OF = { scMenu: 'home', scIbex: 'chars', scWardrobe: 'chars', scSelect: 'map', scChal: 'chal', scEndless: 'chal', scTower: 'chal', scExp: 'chal', scMut: 'chal', scColl: 'coll', scStats: 'coll', scMech: 'coll', scBuilder: 'coll', scSettings: '' };
+function showScreen(id) {
+  for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now();
+  const tabbed = id in TAB_OF && mode !== 'pause' && mode !== 'play' && mode !== 'result'; $('tabBar').classList.toggle('show', tabbed); document.body.classList.toggle('tabs', tabbed);
+  for (const tb of document.querySelectorAll('#tabBar .tab')) tb.classList.toggle('on', tb.dataset.tab === TAB_OF[id]);
+  if (tabbed) { paintIcons(); refreshBadges(); }
+}
 const fresh = () => performance.now() - screenShownAt < 300;
 function goMenu() {
   if (pendingReload) { pendingReload = false; location.reload(); return; }
   AudioSys.ambient(null); AudioSys.music('menu');
-  $('dimUI').style.display = 'none'; dio.bg = false;
-  mode = 'menu'; hud.style.display = 'none'; hint.style.opacity = 0; $('menuSalt').textContent = '◆ ' + save.totalSaltCrystals;
+  $('dimUI').style.display = 'none'; dio.bg = false; hud.style.display = 'none'; hint.style.opacity = 0;
+  mode = 'menu'; buildDio(); if (dio.focus !== curDim) { dio.focus = curDim; dio.camZ = -curDim * 11 + 17; dio.lookZ = -curDim * 11; }
+  refreshChal(); refreshHub(); showScreen('scMenu');
+}
+function starTotal() { return Object.values(save.levels).reduce((a, l) => a + Math.min(5, l.stars || 0), 0); }
+function nextLevelIn(di) { // next unfinished level of the dimension; if all done, the last one played there
+  const d = DIMS[di]; const keys = d.worlds.flatMap(n => { const wi = WORLDS.findIndex(w => w.name === n); return wi >= 0 && worldOpen(wi) ? WORLDS[wi].levels : []; });
+  for (const k of keys) { const l = LEVELS.find(l => l.key === k); if (!l || (l.secret && !(save.secretFound || {})[k])) continue; if (!save.levels[k]) return { l, done: false }; }
+  const lp = keys.includes(save.lastPlayed) ? LEVELS.find(l => l.key === save.lastPlayed) : LEVELS.find(l => l.key === keys[0]); return { l: lp, done: true };
+}
+function refreshHub() {
+  paintIcons(); $('menuSalt').textContent = save.totalSaltCrystals; $('menuStars').textContent = starTotal();
+  const info = dailyInfo(), dd = save.daily || {}; const dstars = dd.date === info.date ? (dd.stars || 0) : 0; const now = new Date(); const left = (Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1) - now) / 60000;
+  $('tDailySub').textContent = dstars ? '★'.repeat(dstars) + '☆'.repeat(3 - dstars) : t('leftH', { h: Math.floor(left / 60), m: Math.floor(left % 60) });
+  const ts = towerState(); $('tTowerSub').textContent = ts.done ? '★ 5/5' : `${ts.cp}/5 · ${Math.round(ts.best)}m`;
+  const se = season(); $('tSeasonName').textContent = t('s_' + se).toUpperCase(); const si = $('tSeasonIco'); si.dataset.ico = se === 'autumn' ? 'leaf' : se; si.dataset.painted = ''; si.innerHTML = ''; paintIcons($('tSeason'));
+  $('tEndlessSub').textContent = t('runsN', { n: Math.max(0, ...Object.values(save.endless || {}).map(Number).filter(n => !isNaN(n))) });
+  $('tExpSub').textContent = t('expBestShort', { n: (stats().expBest || 0) + '/' + (EXP.len || 5) }); $('tBuilderSub').textContent = Object.keys(save.custom || {}).length + ' ⌂';
+  // dimension carousel + play
+  const d = DIMS[curDim], open = dimOpen(d); $('dimDots').innerHTML = DIMS.map((_, i) => `<i class="${i === curDim ? 'on' : ''}"></i>`).join('');
+  $('dimPrevH').classList.toggle('off', curDim === 0); $('dimNextH').classList.toggle('off', curDim === DIMS.length - 1);
+  const nx = nextLevelIn(curDim); const w = nx.l && WORLDS.find(w => w.levels.includes(nx.l.key));
+  $('modeDim').textContent = t(d.nameKey) + (w ? ' · ' + w.name : ''); $('modeLvl').textContent = open ? ((nx.l ? (nx.l.nameKey ? t(nx.l.nameKey) : nx.l.name) : '') + (nx.done ? ' · ' + t('playDone') : '')) : t('locked');
+  const pb = $('bPlay'); pb.classList.toggle('locked', !open); pb.innerHTML = open ? `<i data-ico="play" style="width:26px;height:26px"></i><span>${t('play')}</span>` : `<i data-ico="lock" style="width:22px;height:22px;flex:none"></i><span>${t('playLockedDim', { n: d.needMountain })}</span>`; paintIcons(pb);
+  refreshBadges();
+}
+function refreshBadges() {
+  const set = (id, v) => { const b = $(id); if (!b) return; b.textContent = v === true ? '!' : v || ''; b.classList.toggle('on', !!v); };
+  const info = dailyInfo(), dd = save.daily || {}; const dailyNew = !(dd.date === info.date && (dd.stars || 0) > 0); const ts = towerState(); const towerNew = !ts.done && ts.cp === 0 && ts.best === 0;
+  set('bdgDaily', dailyNew); set('bdgTower', towerNew); set('bdgChal', (dailyNew ? 1 : 0) + (towerNew ? 1 : 0));
+  const achNew = Object.keys(save.ach || {}).length - (save.achSeen || 0); set('bdgColl', achNew > 0 ? achNew : 0); set('bdgProfile', achNew > 0 ? achNew : 0);
+  const chNew = Object.keys(save.charSeen || {}).filter(c => !(save.charViewed || {})[c]).length; set('bdgChars', chNew);
+  const openW = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); const wNew = openW.filter(n => !(save.worldsSeen || []).includes(n)).length; set('bdgMap', save.worldsSeen ? wNew : 0);
+}
+function refreshChal() {
   const info = dailyInfo(); const d = save.daily || {}; const stars = d.date === info.date ? (d.stars || 0) : 0;
   const worldName = (WORLDS.find(w => LEVELS.some(l => l.key === w.levels[0] && l.style === info.style)) || WORLDS[0]).name;
-  const dt = new Date(info.date + 'T00:00:00Z'); const label = dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).toUpperCase();
+  const dt = new Date(info.date + 'T00:00:00Z'); const label = dt.toLocaleDateString(LANG === 'ru' ? 'ru-RU' : 'en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).toUpperCase();
   const dirMark = info.horizontal ? '▶' : info.ascent ? '▲' : '▼';
-  { const seasonEl = document.getElementById('seasonInfo'); if (seasonEl) seasonEl.textContent = t('seasonNow', { s: t('s_' + season()) }) + ' · ' + t('season' + season()[0].toUpperCase() + season().slice(1) + '_d'); }
-  { const ts = towerState(); $('towerInfo').textContent = `${t('towerWeek', { w: ts.week })} · ${ts.done ? t('towerDone', { t: fmtTime(ts.time) }) : t('towerHeight', { h: Math.round(ts.best), c: ts.cp })}`; }
-  const sn = save.runs && save.runs.daily; const resumeTxt = sn && sn.def.date === info.date ? ` · resume ${Math.round(sn.stats.maxDesc)} m` : '';
-  $('dailyInfo').innerHTML = `${label} · ${worldName} ${dirMark} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · streak ${d.streak}` : ''}${resumeTxt}`;
-  showScreen('scMenu');
+  const se = season(); $('seasonInfo').textContent = t('seasonNow', { s: t('s_' + se) }) + ' · ' + t('season' + se[0].toUpperCase() + se.slice(1) + '_d');
+  const ts = towerState(); $('towerInfo').textContent = `${t('towerWeek', { w: ts.week })} · ${ts.done ? t('towerDone', { t: fmtTime(ts.time) }) : t('towerHeight', { h: Math.round(ts.best), c: ts.cp })}`;
+  const sn = save.runs && save.runs.daily; const resumeTxt = sn && sn.def.date === info.date ? ` · ▶ ${Math.round(sn.stats.maxDesc)} m` : '';
+  $('dailyInfo').innerHTML = `${label} · ${worldName} ${dirMark} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · 🔥${d.streak}` : ''}${resumeTxt}`;
+  $('expInfo').textContent = t('expBest', { n: stats().expBest || 0 }); $('endInfo').textContent = t('runsN', { n: Math.max(0, ...Object.values(save.endless || {}).map(Number).filter(n => !isNaN(n))) });
+  $('mutInfo').textContent = (save.mutators || []).length ? t('mutOnN', { l: save.mutators.map(m => t('mut_' + m)).join(', ') }) : t('mutNone');
+}
+function goChal() { mode = 'select'; hud.style.display = 'none'; dio.bg = true; refreshChal(); showScreen('scChal'); }
+function goColl() {
+  mode = 'select'; hud.style.display = 'none'; dio.bg = true;
+  $('collAch').textContent = t('achN', { a: Object.keys(save.ach || {}).length, b: ACH.length }); $('collMech').textContent = t('mechN', { a: Object.keys(save.mechSeen || {}).length, b: MECHS.length });
+  $('collBuilder').textContent = t('customN', { n: Object.keys(save.custom || {}).length }); $('collSecrets').textContent = t('secretsN', { a: Object.keys(save.secretFound || {}).length, b: LEVELS.filter(l => l.secret).length });
+  showScreen('scColl');
 }
 let curWorld = 0, curDim = 0;
 function worldStars(wi) { let got = 0; for (const k of WORLDS[wi].levels) { const l = LEVELS.find(l => l.key === k); if (l && (l.tutorial || l.secret)) continue; got += Math.min(3, (save.levels[k] || { stars: 0 }).stars); } return got; }
@@ -2070,7 +2201,7 @@ function worldOpen(wi) { if (save.settings.devUnlock) return true; // first worl
   return worldStars(prev) >= Math.ceil(worldMax(prev) * 0.6) || worldLevelsDone(prev) >= worldCount(prev);
 }
 function goSelect() {
-  mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; const list = $('levelList'); list.innerHTML = ''; list.style.display = 'none'; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
+  mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; $('bBackMenu').style.display = 'none'; save.worldsSeen = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); persist(); const list = $('levelList'); list.innerHTML = ''; list.style.display = 'none'; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
   const d = DIMS[curDim]; const wis = d.worlds.map(n => WORLDS.findIndex(w => w.name === n)); const mv = $('mapView'); mv.style.display = 'block';
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const nodeInfo = wi => { const w = WORLDS[wi], open = worldOpen(wi), got = worldStars(wi), max = worldMax(wi), done = worldLevelsDone(wi) >= worldCount(wi); return { w, open, got, max, done }; };
@@ -2103,7 +2234,7 @@ function goSelect() {
   showScreen('scSelect');
 }
 function goWorld(wi) {
-  mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
+  $('bBackMenu').style.display = ''; mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
   const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `${t('world')} ${wi + 1} · ${w.name}`; list.appendChild(h);
   { const mb = document.createElement('div'); mb.className = 'btn'; mb.style.fontSize = '13px'; mb.innerHTML = `${t('mutators')}${(save.mutators || []).length ? ' · ' + save.mutators.map(m => t('mut_' + m)).join(', ') + ' · ×' + mutMult() : ''}`; mb.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goMutators('world'); }); list.appendChild(mb); }
   w.levels.forEach((k, li) => {
@@ -2120,6 +2251,7 @@ function goWorld(wi) {
 function preferredFy(y) { if (L && L.horizontal) return y - 0.08 * halfH; return y - (L ? L.dir : 1) * (0.5 - CONFIG.goatScreenFraction) * 2 * halfH; }
 function preferredFx(x) { return x + (0.5 - CONFIG.goatScreenFraction) * 2 * halfH * camera.aspect; }
 function startLevel(idx, defOverride) {
+  if (!defOverride && LEVELS[idx]) save.lastPlayed = LEVELS[idx].key;
   dio.bg = false; initAudio(); applyAudioSettings(); setTimeout(() => { AudioSys.ambient(styleKey()); AudioSys.music('play'); }, 50);
   const muts = defOverride && defOverride.expedition ? (defOverride.expMut ? [defOverride.expMut] : []) : (defOverride && (defOverride.daily || defOverride.custom || defOverride.tower)) || (!defOverride && LEVELS[idx].tutorial) ? [] : (save.mutators || []).slice();
   if (muts.includes('mirror')) defOverride = mirrorDef(defOverride || LEVELS[idx]);
@@ -2228,13 +2360,29 @@ function finishLevel(win, reason) {
   G.result = { win, delay: win ? 3.2 : reason === 'tired' ? 2.4 : 1.0 };
 }
 
-$('bPlay').addEventListener('click', e => { e.stopPropagation(); initAudio(); if (!save.levels.steps && !Object.keys(save.levels).length) startLevel(LEVELS.findIndex(l => l.key === 'steps')); else goDims(); });
-$('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBackMenu').textContent === t('worlds')) goSelect(); else goDims(); });
+$('bPlay').addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; initAudio(); const d = DIMS[curDim];
+  if (!dimOpen(d)) { hubToast(t('dimLocked', { n: d.needMountain })); return; }
+  if (!save.levels.steps && !Object.keys(save.levels).length) { startLevel(LEVELS.findIndex(l => l.key === 'steps')); return; }
+  const nx = nextLevelIn(curDim); if (nx.l) startLevel(LEVELS.indexOf(nx.l)); });
+$('bMode').addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!dimOpen(DIMS[curDim])) { hubToast(t('dimLocked', { n: DIMS[curDim].needMountain })); return; } goSelect(); });
+const hubDim = k => { const n = clamp(curDim + k, 0, DIMS.length - 1); if (n === curDim) return; curDim = n; dio.focus = n; refreshHub(); AudioSys.play('ui'); };
+$('dimPrevH').addEventListener('click', e => { e.stopPropagation(); hubDim(-1); }); $('dimNextH').addEventListener('click', e => { e.stopPropagation(); hubDim(1); });
+{ let sx = null, sy = 0; canvas.addEventListener('pointerdown', e => { if (mode === 'menu') { sx = e.clientX; sy = e.clientY; } }); canvas.addEventListener('pointerup', e => { if (mode !== 'menu' || sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) hubDim(dx < 0 ? 1 : -1); }); }
+for (const [tile, btn] of [['tDaily', 'bDaily'], ['tTower', 'bTower'], ['tEndless', 'bEndless'], ['tExp', 'bExp'], ['tBuilder', 'bBuilder']]) $(tile).addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; $(btn).click(); });
+$('tSeason').addEventListener('click', e => { e.stopPropagation(); const se = season(); hubToast(`<b>${t('s_' + se)}</b><br>${t('season' + se[0].toUpperCase() + se.slice(1) + '_d')}`); });
+$('tabHome').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('tabMap').addEventListener('click', e => { e.stopPropagation(); if (!dimOpen(DIMS[curDim])) curDim = 0; goSelect(); });
+$('tabChal').addEventListener('click', e => { e.stopPropagation(); goChal(); });
+$('tabColl').addEventListener('click', e => { e.stopPropagation(); goColl(); });
+$('bMutMenu').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goMutators('menu'); });
+$('bCollStats').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goStats(); });
+$('bCollMech').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goMech('menu'); });
+$('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBackMenu').textContent === t('worlds')) goSelect(); else goMenu(); });
 $('bBackMenu2').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
 $('bIbex').addEventListener('click', e => { e.stopPropagation(); goIbex(); });
 $('bEndless').addEventListener('click', e => { e.stopPropagation(); initAudio(); goEndless(); });
 $('bBuilder').addEventListener('click', e => { e.stopPropagation(); initAudio(); goBuilder(); });
-$('bBackMenu4').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('bBackMenu4').addEventListener('click', e => { e.stopPropagation(); goColl(); });
 $('bNewLevel').addEventListener('click', e => { e.stopPropagation(); const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: 'My mountain', def: newCustomDef() }; persist(); openEditor(id); });
 $('bImportLevel').addEventListener('click', e => { e.stopPropagation(); const txt = prompt('Paste level JSON'); if (!txt) return; try { const def = JSON.parse(txt); if (!def.surfaces) throw 0; const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: def.name || 'Imported', def }; persist(); goBuilder(); } catch (err) { alert('Not a valid level JSON'); } });
 function newCustomDef() { return { key: 'custom', name: 'My mountain', style: 'desert', ascent: false, custom: true, surfaces: [['start', 0, 0, 8, 'terrace']], crystals: [], kids: [], hawks: [], rocks: [], winds: [], updrafts: [], zones: [], blockers: [], herd: [], stars: { crystals: 0, time: 90 } }; }
@@ -2303,7 +2451,7 @@ function layoutDio(dt = 0) { // cubes sit one behind another along the depth axi
   dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix();
   const portrait = innerHeight > innerWidth; const fz = -dio.focus * 11; const dist = portrait ? 17 : 14;
   dio.camZ = damp(dio.camZ, fz + dist, 4, dt || 0.016); dio.lookZ = damp(dio.lookZ, fz, 4, dt || 0.016);
-  dio.cam.position.set(3.5, portrait ? 9 : 7.5, dio.camZ); dio.cam.lookAt(0, 0.8, dio.lookZ);
+  const hk = dio.hub ? (portrait ? 1.25 : 1.05) : 1; dio.cam.position.set(3.5 * hk, (portrait ? 9 : 7.5) * hk, dio.lookZ + (dio.camZ - dio.lookZ) * hk); dio.cam.lookAt(0, dio.hub ? (portrait ? -3.2 : -1.2) : 0.8, dio.lookZ);
 }
 function goDims() {
   mode = 'dims'; hud.style.display = 'none'; hint.style.opacity = 0; showScreen(null); buildDio(); dio.focus = Math.max(0, Math.min(DIMS.length - 1, curDim)); dio.camZ = -dio.focus * 11 + 16; dio.lookZ = -dio.focus * 11; layoutDio(); $('dimUI').style.display = 'block'; applyLang();
@@ -2459,12 +2607,12 @@ function updateEditor(dt) {
   for (const k of L.kids) { k.goat.update(dt, 0); k.goat.animate(dt, null); }
 }
 $('bDaily').addEventListener('click', e => { e.stopPropagation(); initAudio(); const sn = save.runs && save.runs.daily; if (sn && sn.def.date === dailyDate()) resumeRun('daily'); else { clearRun('daily'); startLevel(0, dailyDef()); } });
-$('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goChal(); });
 $('bEndDown').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
 $('bEndUp').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
 $('bMutEndless').addEventListener('click', e => { e.stopPropagation(); goMutators('endless'); });
 $('bTower').addEventListener('click', e => { e.stopPropagation(); initAudio(); goTower(); });
-$('bBackTower').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('bBackTower').addEventListener('click', e => { e.stopPropagation(); goChal(); });
 $('bTowerGo').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startTower(towerState().cp > 0); });
 $('bTowerRestart').addEventListener('click', e => { e.stopPropagation(); if (!fresh() && towerState().cp > 0 && confirm(t('towerRestart') + '?')) startTower(false); });
 function pauseGame() {
@@ -2480,7 +2628,17 @@ $('bPauseRestart').addEventListener('click', e => { e.stopPropagation(); mode = 
 $('bPauseExit').addEventListener('click', e => { e.stopPropagation(); snapshotRun(); mode = 'menu';
   if (L.def.tower) { const ts = towerState(); ts.best = Math.max(ts.best, G.maxDesc); persist(); goTower(); return; }
   if (L.def.custom) openEditor(G.customId); else if (L.def.daily) goMenu(); else if (L.endless) goEndless(); else { const wi = WORLDS.findIndex(w => w.levels.includes(L.def.key)); curDim = DIMS.indexOf(dimOf(wi)); goWorld(wi); } });
-document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.btn,.ebtn,.back')) AudioSys.play('ui'); }, true);
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.btn,.ebtn,.back,.tile,.tab,.hubIcon,.modePill,.playBtn')) AudioSys.play('ui'); }, true);
+let lastBackAt = 0;
+function handleBack() { // returns false when the app should actually be left
+  if (mode === 'play') { pauseGame(); return true; } if (mode === 'pause' && $('scPause').classList.contains('show')) { resumeGame(); return true; }
+  if (mode === 'edit') { $('edExit').click(); return true; }
+  const scr = document.querySelector('.screen.show'); if (!scr || scr.id === 'scLang') return true;
+  if (scr.id === 'scMenu') { if (performance.now() - lastBackAt < 2000) return false; lastBackAt = performance.now(); hubToast(t('backExit')); return true; }
+  if (scr.id === 'scResult') { $('bLevels').click(); return true; }
+  const back = [...scr.querySelectorAll('.back')].find(b => b.offsetParent !== null); if (back) { screenShownAt = 0; back.click(); } else goMenu(); return true;
+}
+history.pushState({ mg: 1 }, ''); window.addEventListener('popstate', () => { if (handleBack()) history.pushState({ mg: 1 }, ''); else history.back(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden && mode === 'play') pauseGame(); if (actx) { if (document.hidden) actx.suspend(); else actx.resume(); } });
 
 // ---------- run snapshots (endless & daily): resume from the last safe ledge ----------
@@ -2504,6 +2662,45 @@ function applyResume(snap) {
   Object.assign(G, { time: snap.stats.time, jumps: snap.stats.jumps, collected: snap.stats.collected, maxDesc: snap.stats.maxDesc, kidsSaved: snap.stats.kidsSaved || 0, started: true, camFy: preferredFy(g.pos.y) });
   $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`; if (L.kids.length) $('hKids').textContent = `${t('kids')} ${G.kidsSaved} / ${L.kids.length}`;
   G.lastSnapSurface = sf;
+}
+// ---- UI icon set (inline SVG, stroke = currentColor) ----
+const ICONS = {
+  home: '<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  goat: '<path d="M7 9C5 5 3 4 2 4M17 9c2-4 4-5 5-5"/><path d="M7 9h10l-1 7-4 4-4-4z"/><circle cx="10" cy="12" r=".8" fill="currentColor"/><circle cx="14" cy="12" r=".8" fill="currentColor"/>',
+  map: '<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
+  trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M9 20h6"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h4"/>',
+  profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+  gear: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  daily: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M12 14h2M8 17h2"/>',
+  tower: '<path d="M7 21V8l5-5 5 5v13z"/><path d="M5 21h14M10 21v-4h4v4M10 11h4"/>',
+  winter: '<path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9 4l3 2 3-2M9 20l3-2 3 2"/>',
+  spring: '<circle cx="12" cy="9" r="2.2"/><path d="M12 11.2V21M12 6.8C12 4 15 3 16 5s-1 4-4 4M12 6.8C12 4 9 3 8 5s1 4 4 4M12 16c2-2 5-2 6-1-1 2-4 3-6 1"/>',
+  summer: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>',
+  leaf: '<path d="M5 19C5 9 11 4 20 4c0 9-5 15-15 15z"/><path d="M5 19l9-9"/>',
+  endless: '<path d="M6 9a3 3 0 1 0 0 6c3 0 9-6 12-6a3 3 0 1 1 0 6c-3 0-9-6-12-6z"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+  hammer: '<path d="M13 3l8 8-3 3-8-8z"/><path d="M11.5 8.5L3 17l4 4 8.5-8.5"/>',
+  diamond: '<path d="M6 4h12l4 5-10 12L2 9z" fill="currentColor" fill-opacity=".25"/><path d="M2 9h20M9 4l3 17 3-17"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="currentColor"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  play: '<path d="M7 4l13 8-13 8z" fill="currentColor"/>',
+};
+function icon(name) { return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ''}</svg>`; }
+function paintIcons(root = document) { for (const el of root.querySelectorAll('[data-ico]')) { const n = el.dataset.ico; if (el.dataset.painted === n) continue; el.dataset.painted = n; const badge = el.querySelector('.badge'); el.insertAdjacentHTML('afterbegin', icon(n)); if (badge) el.appendChild(badge); } }
+function hubToast(msg) { const h = $('hubToast'); h.innerHTML = msg; h.style.opacity = 1; clearTimeout(hubToast.t); hubToast.t = setTimeout(() => h.style.opacity = 0, 2600); }
+// ---- layout self-test: every top-level screen, EN + RU, reports tap targets, off-screen, clipped text, overlaps on the hub ----
+function layoutSelfTest() {
+  const W = innerWidth, H = innerHeight, issues = []; let screens = 0; const keepLang = LANG, keepDim = curDim;
+  const check = label => { screens++; const scr = document.querySelector('.screen.show'); const els = [...(scr ? scr.querySelectorAll('.btn,.back,.tile,.hubIcon,.modePill,.playBtn,.dimNav') : []), ...($('tabBar').classList.contains('show') ? $('tabBar').querySelectorAll('.tab') : [])].filter(e => e.getClientRects().length && getComputedStyle(e).display !== 'none' && getComputedStyle(e).visibility !== 'hidden');
+    const nm = e => `${label} · ${e.id || e.className.split(' ')[0]} «${e.textContent.trim().replace(/\s+/g, ' ').slice(0, 16)}»`; const hubLike = scr && scr.id === 'scMenu';
+    for (const e of els) { const r = e.getBoundingClientRect(); if (r.width < 43.5 || r.height < 43.5) issues.push(`${nm(e)}: small ${Math.round(r.width)}×${Math.round(r.height)}`); if (r.left < -0.5 || r.right > W + 0.5) issues.push(`${nm(e)}: off-screen x`); if ((hubLike || e.classList.contains('tab') || e.classList.contains('back')) && (r.top < -0.5 || r.bottom > H + 0.5)) issues.push(`${nm(e)}: off-screen y`);
+      for (const c of [e, ...e.querySelectorAll('b,small,span')]) { const cs = getComputedStyle(c); if ((cs.overflow === 'hidden' || cs.textOverflow === 'ellipsis') && !c.closest('.modePill') && (c.scrollWidth > c.clientWidth + 1 || (() => { const rg = document.createRange(); rg.selectNodeContents(c); return rg.getBoundingClientRect().width > c.getBoundingClientRect().width + 0.01; })())) issues.push(`${nm(e)}: text clipped «${c.textContent.trim().slice(0, 20)}»`); } }
+    if (hubLike) { const all = [...els, ...scr.querySelectorAll('.cur')]; for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) { const a = all[i].getBoundingClientRect(), b = all[j].getBoundingClientRect(); const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top); if (ox > 2 && oy > 2 && !all[i].contains(all[j]) && !all[j].contains(all[i])) issues.push(`${nm(all[i])} overlaps ${all[j].id || all[j].className}`); } } };
+  for (const lg of ['en', 'ru']) { LANG = lg; applyLang(); curDim = 0; goMenu(); check('hub ' + lg); curDim = 1; goMenu(); check('hub-city ' + lg); curDim = 0; goChal(); check('challenges ' + lg); goColl(); check('collection ' + lg); goIbex(); check('heroes ' + lg); goSelect(); check('map ' + lg); goSettings('menu'); check('settings ' + lg); }
+  LANG = keepLang; applyLang(); curDim = keepDim; goMenu();
+  const out = $('selfTestOut'); out.textContent = `${issues.length ? t('selfTestBad', { n: screens, k: issues.length }) : t('selfTestOk', { n: screens })}\n${W}×${H} · dpr ${devicePixelRatio}\n\n${issues.join('\n')}\n\n(${t('tapToClose')})`; out.style.display = 'block'; out.style.borderLeft = `6px solid ${issues.length ? '#e5483a' : '#4ad07a'}`; out.onclick = () => out.style.display = 'none';
+  return issues;
 }
 // ---- ghosts: best runs per level / daily / tower, and ghosts carried by links ----
 function packRec(rec) { let px = 0, py = 0; const out = []; for (const p of rec) { out.push(Math.round((p[0] - px) * 50), Math.round((p[1] - py) * 50), p[2]); px = p[0]; py = p[1]; } return btoa(String.fromCharCode(...new Uint8Array(new Int16Array(out).buffer))).replace(/\+/g, '-').replace(/\//g, '_'); }
@@ -2538,6 +2735,7 @@ const ACH = [
 ];
 function checkAchievements() { const s = stats(); save.ach = save.ach || {}; let gained = 0; for (const [id, fn] of ACH) if (!save.ach[id] && fn(s)) { save.ach[id] = Date.now(); gained += 5; } if (gained) { save.totalSaltCrystals += gained; persist(); } return gained; }
 function goStats() {
+  save.achSeen = Object.keys(save.ach || {}).length; persist();
   mode = 'select'; hud.style.display = 'none'; const st = stats(); const list = $('statsList'); list.innerHTML = '';
   const row = (k, v) => { const d = document.createElement('div'); d.className = 'btn'; d.style.cursor = 'default'; d.innerHTML = `${t(k)}<small>${v}</small>`; list.appendChild(d); };
   row('st_jumps', st.jumps); row('st_saves', st.saves); row('st_meters', Math.round(st.meters)); row('st_time', fmtTime(st.time)); row('st_levels', st.levels); row('st_kids', st.kids); row('st_secrets', Object.keys(save.secretFound || {}).length); row('st_exp', st.exp); row('st_streak', (save.daily && save.daily.streak) || 0);
@@ -2546,7 +2744,7 @@ function goStats() {
   showScreen('scStats');
 }
 $('bStats').addEventListener('click', e => { e.stopPropagation(); goStats(); });
-$('bBackStats').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('bBackStats').addEventListener('click', e => { e.stopPropagation(); goColl(); });
 // ---- expedition: five random open levels, one life, a choice of two cards between stages ----
 const EXP = { on: false, step: 0, salt: 0, used: [], len: 5, lives: 0, log: [] };
 const EXP_BONUS = ['life', 'salt', 'sky', 'step'];
@@ -2564,7 +2762,7 @@ function goExp() {
   showScreen('scExp');
 }
 $('bExp').addEventListener('click', e => { e.stopPropagation(); initAudio(); goExp(); });
-$('bBackExp').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('bBackExp').addEventListener('click', e => { e.stopPropagation(); goChal(); });
 function drawExpCard() {
   const c = $('runCard'), ctx = c.getContext('2d'); const W = 320, H = 60 + EXP.log.length * 22; c.height = H; ctx.fillStyle = '#2a1e14'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 14px sans-serif'; ctx.fillText(t('expCardTitle', { n: EXP.step, s: EXP.salt }), 10, 24);
   ctx.font = '12px sans-serif'; EXP.log.forEach((e, i) => { ctx.fillStyle = i < EXP.step ? '#fff8ee' : '#ff9a8a'; ctx.fillText(`${i + 1}. ${e.name}${e.mut ? ' · ' + t('mut_' + e.mut) : ''}${e.bonus ? ' · ✦ ' + t('bonus_' + e.bonus) : ''}`, 10, 48 + i * 22); });
@@ -2618,6 +2816,7 @@ function goWardrobe() {
 $('bWardrobe').addEventListener('click', e => { e.stopPropagation(); goWardrobe(); });
 $('bBackWardrobe').addEventListener('click', e => { e.stopPropagation(); goIbex(); });
 function goIbex() {
+  save.charViewed = Object.assign({}, save.charSeen || {}); persist();
   mode = 'ibex'; hud.style.display = 'none'; $('ibexSalt').textContent = '◆ ' + save.totalSaltCrystals;
   const list = $('skinList'); list.innerHTML = '';
   for (const [ch, C] of Object.entries(CHARACTERS)) {
@@ -2861,8 +3060,8 @@ function update(dt) {
 // ============================================================
 //  Main loop
 // ============================================================
-applySettings(); buildLevel(0); goMenu();
-if (!save.settings.lang) { showScreen('scLang'); mode = 'select'; } else handleLink();
+applySettings(); buildLevel(0); paintIcons(); goMenu();
+if (!save.settings.lang) { showScreen('scLang'); mode = 'select'; } else if (location.hash === '#selftest') { history.replaceState(null, '', location.pathname); setTimeout(layoutSelfTest, 300); } else handleLink();
 window.addEventListener('pointerdown', () => { initAudio(); if (!AudioSys._mus && mode !== 'play') AudioSys.music('menu'); }, { once: true });
 for (const [id, l] of [['bLangEn', 'en'], ['bLangRu', 'ru']]) document.getElementById(id).addEventListener('click', e => { e.stopPropagation(); save.settings.lang = l; persist(); applySettings(); goMenu(); });
 { const m = new URLSearchParams(location.search).get('mode'); if (m === 'endless-down') startLevel(0, endlessDef(false)); else if (m === 'endless-up') startLevel(0, endlessDef(true)); }
@@ -2871,6 +3070,8 @@ sun.position.set(26, G.camFy + 42, 34); sun.target.position.set(0, G.camFy - 6, 
 function loop(now) {
   const rawDt = Math.min(0.05, (now - last) / 1000); last = now; fps = lerp(fps, 1 / Math.max(rawDt, 1e-4), 0.05);
   if (G.slowT > 0) G.slowT -= rawDt; const dt = (mode === 'play' && G.slowT > 0) ? rawDt * 0.3 : rawDt;
+  if (mode === 'menu' && dio.scene) { dio.hub = true; updateDims(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
+  dio.hub = false;
   if (mode === 'dims') { updateDims(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   if (mode === 'select' && dio.bg && dio.scene) { dio.t += dt; const c = dio.cubes[curDim]; c.rotation.y = Math.sin(dio.t * 0.3) * 0.1; const fz = -curDim * 11; dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix(); dio.cam.position.set(4, 7, fz + 13); dio.cam.lookAt(0, 1.2, fz); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   if (mode === 'edit') updateEditor(dt); else update(dt);
