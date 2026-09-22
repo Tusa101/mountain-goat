@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v69 -->
+<!-- build v71 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -448,7 +448,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v69', date: '2026-09-22' };
+const BUILD = { version: 'v71', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -764,29 +764,48 @@ function defineLevels() { LEVELS = [
   }
   // secret entrances: an off-route stone with a dark cave mouth in an existing level
   const cr = LEVELS.find(l => l.key === 'crystal'); cr.surfaces.push(['sec', 11, -34, 2, 'stone']); cr.secretEntry = { surface: 'sec', level: 'negevSecret' };
-  for (const [lvl, sec] of [['house1', 'houseSecret'], ['park1', 'parkSecret']]) { const lv = LEVELS.find(l => l.key === lvl); const a = lv.surfaces[5]; lv.surfaces.push(['sec', +(a[1] + 3).toFixed(1), +(a[2] + 3.4).toFixed(1), 2, 'stone']); lv.secretEntry = { surface: 'sec', level: sec }; lv.scent = true; }
+  for (const [lvl, sec] of [['house1', 'houseSecret'], ['park1', 'parkSecret']]) { const lv = LEVELS.find(l => l.key === lvl); const a = lv.surfaces[5], nb = lv.surfaces[6]; lv.surfaces.push(['sec', +((a[1] + a[3] / 2 + nb[1] - nb[3] / 2) / 2).toFixed(1), +(Math.max(a[2], nb[2]) + 3.6).toFixed(1), 1.6, 'stone']); lv.secretEntry = { surface: 'sec', level: sec }; lv.scent = true; }
   const cd = LEVELS.find(l => l.key === 'citydown'); const mid = cd.surfaces[Math.floor(cd.surfaces.length / 2)]; cd.surfaces.push(['sec', mid[1] > 0 ? -9 : 9, +(mid[2] - 3).toFixed(1), 2, 'stone']); cd.secretEntry = { surface: 'sec', level: 'citySecret' };
 }
 function tutorialOf(def, nameKey, keys) { def.tutorial = true; def.nameKey = nameKey; def.stars = { crystals: 0, time: 0 }; def.hawks = (def.hawks || []).slice(0, 1); def.rocks = []; def.kids = []; def.tutHints = {}; const ids = def.surfaces.map(r => r[0]); keys.forEach((k, i) => { const id = ids[Math.min(ids.length - 2, i * 2)]; if (id) def.tutHints[id] = k; }); return def; }
 function puzzleOf(def) { def.puzzle = true; def.stars = { crystals: def.stars.crystals, jumps: def.surfaces.length + 1, time: 0 }; return def; }
 function secretOf(def) { def.secret = true; def.herd = []; return def; }
 // left-to-right run generator (deterministic): gaps grow, heights wander, finish far right
+// climbs: a ledge must never hang over a lower one closely enough to cap the jump off it — slide it sideways out of the way
+function unstackClimb(S, crystals, updrafts, blockers = []) {
+  const E = (x, w) => [x - w / 2, x + w / 2];
+  const capped = (ax, aw, ay, bx, bw, by) => { const dy = ay - by; if (dy <= 0.5 || dy >= 6.5) return false; const [a1, a2] = E(ax, aw), [b1, b2] = E(bx, bw); if (a2 + 0.6 <= b1 || a1 - 0.6 >= b2) return false; return Math.max(0, a1 - 0.6 - b1) + Math.max(0, b2 - (a2 + 0.6)) < 1.8; };
+  const fits = (a, nx) => { if (Math.abs(nx) > 8.5) return false; for (const c of S) { if (c === a || c[0] === 'finish') continue; const [a1, a2] = E(nx, a[3]), [c1, c2] = E(c[1], c[3]); const gapX = Math.max(c1 - a2, a1 - c2);
+      if (Math.abs(c[2] - a[2]) < 3.4 && gapX < 1.2) return false; if (capped(nx, a[3], a[2], c[1], c[3], c[2]) || capped(c[1], c[3], c[2], nx, a[3], a[2])) return false; }
+    const idx = S.indexOf(a); for (const nb of [S[idx - 1], S[idx + 1]]) { if (!nb || nb[0] === 'finish' || !/^u|^start/.test(nb[0]) || !/^u/.test(a[0])) continue; const [n1, n2] = E(nb[1], nb[3]), [a1, a2] = E(nx, a[3]); const g = Math.max(n1 - a2, a1 - n2); const [o1, o2] = E(a[1], a[3]); const og = Math.max(n1 - o2, o1 - n2); if (g > Math.max(4.2, og + 0.3) || g < Math.min(1.1, og)) return false; }
+    for (const bl of blockers) { const [a1, a2] = E(nx, a[3]); if (a2 + 0.8 > bl.x1 && a1 - 0.8 < bl.x2 && a[2] > bl.top - bl.h - 3 && a[2] < bl.top + 1.5) return false; } return true; };
+  for (const a of S) { if (a[0] === 'start' || a[0] === 'finish' || (updrafts || []).some(u => Math.abs(u.x - a[1]) < 3.2 && a[2] >= u.y1 && a[2] <= u.y2 + 2)) continue;
+    if (!S.some(b => b !== a && b[0] !== 'finish' && capped(a[1], a[3], a[2], b[1], b[3], b[2]))) continue;
+    let best = null; for (let d = 0.4; d <= 2.8 && best === null; d += 0.4) for (const sg of [1, -1]) { const nx = +(a[1] + sg * d).toFixed(1); if (fits(a, nx)) { best = nx; break; } }
+    if (best === null) { const b = S.find(b => b !== a && b[0] !== 'finish' && b[0] !== 'start' && capped(a[1], a[3], a[2], b[1], b[3], b[2]));
+      if (b) { for (let d = 0.4; d <= 2.8 && best === null; d += 0.4) for (const sg of [1, -1]) { const nx = +(b[1] + sg * d).toFixed(1); if (fits(b, nx)) { best = nx; break; } } if (best !== null) { const ox = b[1]; b[1] = best; for (const c of crystals) if (Math.abs(c[1] - (b[2] + 0.6)) < 0.4 && Math.abs(c[0] - ox) <= b[3] / 2) c[0] = +(c[0] + best - ox).toFixed(1); continue; } }
+      if (b) { const [a1, a2] = E(a[1], a[3]), [b1, b2] = E(b[1], b[3]); let n1, n2; if (a[1] >= b[1]) { n1 = b1 + 2.4; n2 = Math.max(a2, n1 + 1.4); } else { n2 = b2 - 2.4; n1 = Math.min(a1, n2 - 1.4); }
+        const ow = a[3], ox = a[1]; a[3] = +(n2 - n1).toFixed(1); const nx = +((n1 + n2) / 2).toFixed(1); if (fits(a, nx)) { a[1] = nx; if (a[3] < 1.7) a[4] = 'foothold'; for (const c of crystals) if (Math.abs(c[1] - (a[2] + 0.6)) < 0.4 && Math.abs(c[0] - ox) <= ow / 2) c[0] = nx; } else a[3] = ow; } continue; }
+    const ox = a[1]; a[1] = best; for (const c of crystals) if (Math.abs(c[1] - (a[2] + 0.6)) < 0.4 && Math.abs(c[0] - ox) <= a[3] / 2) c[0] = +(c[0] + best - ox).toFixed(1); }
+}
 function makeRun(o) {
   const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = []; let x = 0, y = 0, w = 8;
   const hawkAt = []; for (let k = 0; k < (o.hawks || 0); k++) hawkAt.push(Math.floor((k + 1) * o.n / ((o.hawks || 0) + 1)));
   for (let i = 1; i <= o.n; i++) {
     const t = i / o.n; const prevX = x, prevW = w, prevY = y;
-    const nw = Math.max(1.4, +(3.8 - t * 2 + (r() - .5) * 1.2).toFixed(1)); const gap = 2.5 + r() * 2 + t * 2.5;
+    const nw = Math.max(1.4, +(3.8 - t * 2 + (r() - .5) * 1.2).toFixed(1));
     y = clamp(y + (r() - .5) * 5, -6, 6); if (y > prevY + 3.2) y = prevY + 3.2;
+    // the goat takes off from where it landed (the near part of the ledge), so budget the whole flight, not just the gap
+    const gap = Math.max(1.6, (2.2 + r() * 1.4 + t * 1.4) - Math.max(0, y - prevY) * 0.6 - (o.wind ? 0.8 : 0) - Math.max(0, prevW - 2.5) * 0.4);
     x = +(prevX + prevW / 2 + gap + nw / 2).toFixed(1); w = nw;
     const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : 'narrow';
-    const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 ? 'R' : null;
+    const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 ? 'L' : null; if (spk && w < 3.6) { w = 3.6; x = +(prevX + prevW / 2 + gap + w / 2).toFixed(1); }
     const row = ['r' + i, x, +y.toFixed(1), w, type]; if (spk) row.push(spk);
     if (o.soft && i > 1 && i % 3 === 0 && !spk) { row[5] = 'soft'; } else if (o.ice && i > 2 && i % 4 === 1 && !spk) { row[5] = 'ice'; }
-    if (o.seesaw && i > 2 && i % 3 === 0 && !spk) { row[3] = 4.5; row[4] = 'seesaw'; w = 4.5; }
+    if (o.seesaw && i > 2 && i % 3 === 0 && !spk) { row[3] = 4.5; row[4] = 'seesaw'; w = 4.5; x = +(prevX + prevW / 2 + gap + w / 2).toFixed(1); row[1] = x; }
     else if (o.move && i > 2 && i % 3 === 0 && !spk) { row[5] = row[5] || undefined; row[6] = (i % 2 ? { dx: 1.6 + r() * 0.8, dy: 0, period: 3 + r() * 1.5, phase: r() } : { dx: 0, dy: 1.2 + r() * 0.6, period: 3 + r(), phase: r() }); if (row.length === 7 && row[5] === undefined) row[5] = ''; }
     surfaces.push(row);
-    if (i % 3 === 1) crystals.push([+(spk ? x - w / 4 : x).toFixed(1), +(y + 0.6).toFixed(1)]); else if (i % 4 === 2) crystals.push([+((prevX + x) / 2).toFixed(1), +(Math.max(prevY, y) + 2.6).toFixed(1)]);
+    if (i % 3 === 1) crystals.push([+(spk ? x + w / 4 : x).toFixed(1), +(y + 0.6).toFixed(1)]); else if (i % 4 === 2) crystals.push([+((prevX + x) / 2).toFixed(1), +(Math.max(prevY, y) + 2.6).toFixed(1)]);
     if (hawkAt.includes(i)) hawks.push({ x1: +(prevX + 1).toFixed(1), x2: +(x - 1).toFixed(1), y: +(Math.max(prevY, y) + 2.2).toFixed(1), speed: 4 + t * 3 });
   }
   const fx = +(x + w / 2 + 3 + 10).toFixed(1); surfaces.push(['finish', fx, +y.toFixed(1), 20, 'terrace']);
@@ -802,7 +821,7 @@ function makeRun(o) {
 // ============================================================
 const MOTIFS = {
   link(c, r) { const gain = 4.5 + c.t * 3 + r() * 1.5; let side = c.side; if (r() < 0.25) side = -side;
-    const w = Math.max(1.4, +(4.2 - c.t * 2.4 + (r() - .5) * 1.2).toFixed(1)); const dx = 2.5 + r() * (2.5 + c.t * 3); let x = c.x + side * dx; if (x > 8 || x < -8) { side = -side; x = clamp(c.x + side * dx, -8, 8); }
+    const w = Math.max(1.4, +(4.2 - c.t * 2.4 + (r() - .5) * 1.2).toFixed(1)); const dx = Math.max(2.5 + r() * (2.5 + c.t * 3), c.w / 2 - w / 2 + 1.8); let x = c.x + side * dx; if (x > 8.5 || x < -8.5) { side = -side; x = c.x + side * dx; } x = clamp(x, -8.5, 8.5);
     const y = +(c.y - gain).toFixed(1); return { rows: [[`d${c.i}`, +x.toFixed(1), y, w, typeOf(w, r)]], exit: { x: +x.toFixed(1), y, w, side }, crystalAt: c.i % 4 === 1 ? [+x.toFixed(1), y + 0.6] : null }; },
   // tempting broad ledge with nothing under it; a rock wall blocks the way on; the exit is a small foothold back UP beside it
   deadEnd(c, r) { const s = c.x >= 0 ? -1 : 1; // runs toward the far side so it fits; bait B, wall beyond it, foothold R on top of the wall, exit C behind the wall
@@ -885,6 +904,7 @@ function makeClimb(o) {
   y += 2.6; const fs = side; surfaces.push(['finish', +(x + fs * (lastW / 2 + 22)).toFixed(1), +y.toFixed(1), 40, 'terrace']);   // the terrace continues the zig-zag beyond the last ledge, never back over the route
   const fx = surfaces[surfaces.length - 1][1];
   const winds = o.wind ? [{ y1: +(y * 0.6).toFixed(1), y2: +(y * 0.4).toFixed(1), force: (o.seed % 2 ? 1 : -1) * (2 + r() * 1.5) }] : [];
+  unstackClimb(surfaces, crystals, updrafts, blockers);
   if (o.rocks) for (let k = 0; k < o.rocks; k++) { const idx = Math.floor((k + 1) * surfaces.length / (o.rocks + 1)); const a = surfaces[idx]; if (a) rocks.push({ x: +(a[1] - (a[1] > 0 ? 1 : -1) * (a[3] / 2 + 2.6)).toFixed(1), y: +(a[2] + 9).toFixed(1), len: 13, period: 3.5 + r(), offset: r() * 2 }); }
   return { key: o.key, name: o.name, style: o.style, ascent: true, winds, updrafts, rocks, blockers, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, hawks: o.hawks || [], herd: [{ surface: 'finish', x: fx + fs * 6, dir: fs, n: 4 }] };
 }
@@ -902,7 +922,15 @@ function dailyInfo(date = dailyDate()) {
   if (style === 'alpine' && !ascent) mods.push('ice');
   return { date, seed: h, style, ascent, horizontal, character, n, mods, r };
 }
-function dailyDef(info = dailyInfo()) {
+// safety net for generated dailies: a ledge sitting low over another (so you can't jump off the lower one) re-rolls the day's seed
+function hasCapped(def) { const S = def.surfaces.filter(r => !/^(start|finish|sec|b\d|v\d)/.test(r[0]) && !r[6]);   // route ledges only: bait and fork ledges may sit anywhere
+  for (let i = 0; i < S.length; i++) for (let j = Math.max(0, i - 3); j < Math.min(S.length, i + 4); j++) { const a = S[i], b = S[j]; if (a === b) continue; const dy = a[2] - b[2]; if (dy <= 0.5 || dy >= (def.ascent ? 5.8 : 4.6)) continue; const a1 = a[1] - a[3] / 2, a2 = a[1] + a[3] / 2, b1 = b[1] - b[3] / 2, b2 = b[1] + b[3] / 2;
+    if (a2 + 0.6 <= b1 || a1 - 0.6 >= b2) continue; if (Math.max(0, a1 - 0.6 - b1) + Math.max(0, b2 - (a2 + 0.6)) < 1.8) return true; } return false; }
+function dailyDef(info = dailyInfo(), tries = 0) {
+  if (tries < 6) { const d = dailyDefOnce(info); if (!hasCapped(d)) return d; return dailyDef({ ...info, seed: info.seed + 7919 }, tries + 1); }
+  return dailyDefOnce(info);
+}
+function dailyDefOnce(info) {
   const { seed, style, ascent, horizontal, character, n, mods } = info; const has = m => mods.includes(m);
   const hawksN = has('birds') ? 2 + (seed % 2) : 0;
   let def;
@@ -1879,13 +1907,20 @@ function updateHazards(dt, playing) {
     s.group.position.x = Math.sin(s.crumbleT * 55) * 0.05 * k; s.group.position.y = Math.sin(s.crumbleT * 41) * 0.03 * k;
     if (Math.random() < 0.35 * k) spawnPebbles(s.x + (Math.random() - .5) * s.w, s.y - s.h - 0.4, 1, 0.8);
     if (s.crumbleT >= cT) { // it goes
-      L.surfaces.splice(i, 1); L.falling.push({ group: s.group, vy: 0, t: 0, spin: (Math.random() - .5) * 2 }); G.shake = Math.max(G.shake || 0, 0.3);
+      L.surfaces.splice(i, 1); G.shake = Math.max(G.shake || 0, 0.3); s.group.updateMatrixWorld(true);
+      const from = goats[0] && goats[0].pos.x < s.x ? s.x1 : s.x2;   // it gives way starting from the far side
+      for (const c of [...s.group.children]) { const wp = new THREE.Vector3(); c.getWorldPosition(wp); const piv = new THREE.Group(); piv.position.copy(wp); levelGroup.add(piv); piv.attach(c);
+        L.falling.push({ group: piv, vx: (Math.random() - .5) * 0.5, vy: -0.3 - Math.random() * 0.6, t: 0, delay: 0.05, spin: (Math.random() - .5) * 0.8, tip: (Math.random() - .5) * 0.5 }); }
+      levelGroup.remove(s.group);
+      const chunkMat = new THREE.MeshLambertMaterial({ color: new THREE.Color(STYLE.sides[0]), flatShading: true }); const n = Math.max(5, Math.round(s.w * 2.5));
+      for (let k = 0; k < n; k++) { const q = (k + Math.random() * 0.6) / n; const cx = lerp(s.x1, s.x2, q); const m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.18 + Math.random() * 0.3, 0), chunkMat); m.position.set(cx, s.y - 0.2 - Math.random() * 0.6, -0.4 + (Math.random() - .5) * 1.4); m.castShadow = true; levelGroup.add(m);
+        L.falling.push({ group: m, vx: (Math.random() - .5) * 0.8, vy: -Math.random() * 1.2, t: 0, delay: Math.abs(cx - from) / Math.max(1, s.w) * 0.25, spin: (Math.random() - .5) * 6, tip: (Math.random() - .5) * 6 }); }
       spawnDust(s.x, s.y, 10, 2); spawnPebbles(s.x, s.y, 8, 2); thud(0.9, 150, 0.2);
       for (const g of goats.concat(followers)) if (g.onSurface === s) { g.replay = null; g.dropOff((Math.random() - .5) * 0.6); }
       for (const k of L.kids) if (!k.rescued && k.surface === s) { k.goat.dropOff(0); }
     }
   }
-  for (let i = L.falling.length - 1; i >= 0; i--) { const f = L.falling[i]; f.t += dt; f.vy -= CONFIG.gravity * 0.8 * dt; f.group.position.y += f.vy * dt; f.group.rotation.z += f.spin * dt; if (f.t > 2.5) { levelGroup.remove(f.group); L.falling.splice(i, 1); } }
+  for (let i = L.falling.length - 1; i >= 0; i--) { const f = L.falling[i]; f.t += dt; if (f.t < (f.delay || 0)) continue; f.vy -= CONFIG.gravity * 0.8 * dt; f.group.position.x += (f.vx || 0) * dt; f.group.position.y += f.vy * dt; f.group.rotation.z += f.spin * dt; f.group.rotation.x += (f.tip || 0) * dt; if (f.t > 3) { levelGroup.remove(f.group); L.falling.splice(i, 1); } }
   // --- rockfall ---
   for (const r of L.rocks) {
     r.t += dt; const phase = ((r.t % r.period) + r.period) % r.period;
@@ -2864,12 +2899,12 @@ function botSolve(def, opts = {}) {
       if (y < launchY - 40) return null;
       for (const b of B) if (x + 0.4 > b.x1 && x - 0.4 < b.x2 && y + 1.1 > b.bot && y < b.top) return null;
       for (const o of near) {
-        const tol = o === s ? 0 : C.landingTolerance;
+        const tol = o === s ? 0 : (opts.strict ? 0.2 : C.landingTolerance);
         if (vy < 0 && py >= o.y && y < o.y && x >= o.x1 - tol && x <= o.x2 + tol) { const lx = clamp(x, o.x1 + 0.3, o.x2 - 0.3);
-          if (o.spikes && lx + 0.3 > o.spikes[0] && lx - 0.3 < o.spikes[1]) return null; if (!def.horizontal && !o.finish && rowsSkipped(s, o, launchY) > C.maxLedgesSkipped) return null; return { s: o, x: lx }; }
-        if (o !== s && vy < 0 && -vy <= C.maxEdgeGrabFallSpeed && y < o.y - 0.05 && y > o.y - C.edgeGrabDepth && ((x < o.x1 && x > o.x1 - C.edgeGrabDistance - 0.5) || (x > o.x2 && x < o.x2 + C.edgeGrabDistance + 0.5))) {
+          if (o.spikes && lx + (opts.strict ? 0.7 : 0.3) > o.spikes[0] && lx - (opts.strict ? 0.7 : 0.3) < o.spikes[1]) return null; if (!def.horizontal && !o.finish && rowsSkipped(s, o, launchY) > C.maxLedgesSkipped) return null; return { s: o, x: lx }; }
+        if (!opts.strict && o !== s && vy < 0 && -vy <= C.maxEdgeGrabFallSpeed && y < o.y - 0.05 && y > o.y - C.edgeGrabDepth && ((x < o.x1 && x > o.x1 - C.edgeGrabDistance - 0.5) || (x > o.x2 && x < o.x2 + C.edgeGrabDistance + 0.5))) {
           if (!def.horizontal && !o.finish && rowsSkipped(s, o, launchY) > C.maxLedgesSkipped) return null; return { s: o, x: x < o.x1 ? o.x1 + 0.3 : o.x2 - 0.3 }; }
-        if (x + 0.45 > o.x1 && x - 0.45 < o.x2 && y + 1.1 > o.y - o.h && y < o.y - 0.15) return null; // hit the rock body
+        if (x + (opts.strict ? 0.5 : 0.45) > o.x1 && x - (opts.strict ? 0.5 : 0.45) < o.x2 && y + (opts.strict ? 1.2 : 1.1) > o.y - o.h && y < o.y - 0.15) return null; // hit the rock body
       }
     }
     return null;
@@ -2889,7 +2924,7 @@ function botCheckAll() { // chunked so the page stays responsive; results go to 
   const out = $('selfTestOut'); out.style.display = 'block'; out.style.borderLeft = '6px solid #ffd76a'; out.onclick = null; const list = LEVELS.concat([0, 1, 2, 3, 4, 5, 6].map(i => { const d = new Date(Date.now() + i * 864e5).toISOString().slice(0, 10); const def = dailyDef(dailyInfo(d)); def.key = 'daily ' + d; return def; }));
   const lines = []; let i = 0, bad = 0; const t0 = performance.now();
   const step = () => { if (i >= list.length) { out.textContent = `${t('botTitle')} · ${list.length} · ${bad ? t('botBad', { k: bad }) : t('botOk')} · ${((performance.now() - t0) / 1000).toFixed(1)} s\n\n${lines.join('\n')}\n\n(${t('tapToClose')})`; out.style.borderLeft = `6px solid ${bad ? '#e5483a' : '#4ad07a'}`; out.onclick = () => out.style.display = 'none'; return; }
-    const l = list[i++]; const r = botSolve(l); if (!r.ok) bad++; lines.push(`${r.ok ? '✓' : '✗'} ${l.key} · ${r.reached}/${r.total}${r.ok ? '' : ' · stuck at ' + r.furthest}`); out.textContent = `${t('botTitle')} · ${i} / ${list.length}…\n\n${lines.slice(-12).join('\n')}`; setTimeout(step, 0); };
+    const l = list[i++]; const r = botSolve(l, { strict: true }); if (!r.ok) bad++; lines.push(`${r.ok ? '✓' : '✗'} ${l.key} · ${r.reached}/${r.total}${r.ok ? '' : ' · stuck at ' + r.furthest}`); out.textContent = `${t('botTitle')} · ${i} / ${list.length}…\n\n${lines.slice(-12).join('\n')}`; setTimeout(step, 0); };
   step();
 }
 // ---- layout self-test: every top-level screen, EN + RU, reports tap targets, off-screen, clipped text, overlaps on the hub ----
