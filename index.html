@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v75 -->
+<!-- build v76 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -464,7 +464,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v75', date: '2026-09-22' };
+const BUILD = { version: 'v76', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -3308,7 +3308,7 @@ function update(dt) {
     else {
     const forward = L.dir > 0 ? target < G.camFy : target > G.camFy;   // is the goat ahead of the camera in the level's direction?
     G.camFy = damp(G.camFy, target, forward ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt);
-    G.camFy -= L.dir * idle * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * dt;
+    if (G.started) G.camFy -= L.dir * idle * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * dt;   // the mountain only starts moving after your first drag
     G.camFy = clamp(G.camFy, preferredFy(L.bottom) - 1, preferredFy(L.top) + 1); }
   }
   if (L.horizontal) {
@@ -3324,7 +3324,7 @@ function update(dt) {
   // ---- camera pressure / failure (highest goat is the one in danger) ----
   let sf = 1, warn = 0;
   for (const g of goats) sf = Math.min(sf, L.horizontal ? screenFractionX(g.pos.x, g.pos.y) : L.ascent ? 1 - screenFraction(g.pos.x, g.pos.y - 0.4) : screenFraction(g.pos.x, g.pos.y));
-  if (playing) {
+  if (playing && G.started) {
     if (sf < CONFIG.cameraDangerFraction) { G.dangerT += dt; if (G.dangerT > CONFIG.cameraFailureGrace) { if (L.def.tutorial) { const g = goats[0]; if (g.lastSafe) { g.spawn(g.lastSafe.s, g.lastSafe.x); G.camFy = preferredFy(g.pos.y); } G.dangerT = 0; } else { for (const g of goats) if (g.state !== ST.JUMP) g.fall(); finishLevel(false, 'camera'); } } }
     else G.dangerT = Math.max(0, G.dangerT - dt * 2);
     warn = clamp((CONFIG.cameraWarnFraction - sf) / (CONFIG.cameraWarnFraction - CONFIG.cameraDangerFraction), 0, 1);
