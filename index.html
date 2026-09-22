@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v67 -->
+<!-- build v69 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,7 +26,8 @@
   #topwarn { position:fixed; left:0; right:0; top:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,.7), rgba(140,40,20,0)); }
   #wind { position:fixed; inset:0; pointer-events:none; opacity:0; background: repeating-linear-gradient(180deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0) 22px, rgba(255,255,255,.18) 23px, rgba(255,255,255,0) 26px); background-size:100% 260px; animation: windy .35s linear infinite; }
   @keyframes windy { from { background-position:0 0; } to { background-position:0 260px; } }
-  .screen { position:fixed; inset:0; z-index:20; display:none; flex-direction:column; align-items:center; justify-content:safe center; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; touch-action:pan-y; text-align:center; background:rgba(236,226,208,.22); padding:24px; box-sizing:border-box; overflow:hidden; }
+  .screen { position:fixed; inset:0; z-index:20; display:none; flex-direction:column; align-items:center; justify-content:safe center; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; touch-action:pan-y; text-align:center; background:rgba(236,226,208,.22); padding:24px; box-sizing:border-box; overflow-x:hidden; }
+  .screen > * { flex-shrink:0; }
   #mapView svg { display:block; } #mapView .node { cursor:pointer; } #mapView .node text { font-family:inherit; }
   .list { max-height:none; overflow-y:visible; overflow-x:hidden !important; scrollbar-width:none; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
   .screen.show { display:flex; }
@@ -96,7 +97,10 @@
   .pauseIcons { position:absolute; top:calc(10px + env(safe-area-inset-top)); right:10px; display:flex; gap:8px; }
   .rSalt { position:fixed; top:calc(10px + env(safe-area-inset-top)); right:10px; z-index:3; }
   .flyGem { position:fixed; z-index:40; width:22px; height:22px; color:#9fe0ff; pointer-events:none; transition:transform .7s cubic-bezier(.5,-.3,.7,1), opacity .7s; }
-  .heroStage { margin-top:calc(8px + env(safe-area-inset-top)); display:flex; flex-direction:column; align-items:center; }
+  #scIbex, #scWardrobe { padding-top:calc(66px + env(safe-area-inset-top)) !important; justify-content:flex-start; }
+  #scWardrobe h1 { font-size:clamp(24px, 8vw, 36px); }
+  .heroStage { margin-top:0; display:flex; flex-direction:column; align-items:center; }
+  #heroBig, #wardPreview { touch-action:pan-y; cursor:grab; }
   #heroBig { width:min(62vw, 260px); height:min(62vw, 260px); border-radius:24px; background:radial-gradient(circle at 50% 60%, rgba(255,248,238,.55), rgba(255,248,238,0) 70%); }
   .heroName { font-size:24px; font-weight:900; letter-spacing:.08em; text-shadow:0 2px 8px rgba(40,26,14,.7); } .heroSkin { font-size:13px; opacity:.9; text-shadow:0 1px 4px rgba(40,26,14,.9); }
   .charGrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)); gap:8px; width:min(420px,100%); }
@@ -295,7 +299,7 @@
 <div class="screen" id="scIbex">
   <div class="back" id="bBackMenu2">◀ MENU</div>
   <div class="cur rSalt"><i data-ico="diamond" class="curIco"></i><span id="ibexSalt">0</span></div>
-  <div class="heroStage"><img id="heroBig" alt=""><div class="heroName" id="heroName"></div><div class="heroSkin" id="heroSkin"></div></div>
+  <div class="heroStage"><canvas id="heroBig"></canvas><div class="heroName" id="heroName"></div><div class="heroSkin" id="heroSkin"></div></div>
   <div class="btn primary" id="bWardrobe" data-i18n="customize">CUSTOMIZE</div>
   <div class="lbl" style="margin:12px 0 6px" data-i18n="chooseHero">CHOOSE A HERO</div>
   <div id="skinList" class="charGrid"></div>
@@ -305,8 +309,8 @@
   <div class="back" id="bBackWardrobe">◀</div>
   <h1 data-i18n="customize">CUSTOMIZE</h1>
   <div class="cur rSalt"><i data-ico="diamond" class="curIco"></i><span id="wardSalt">0</span></div>
-  <img id="wardPreview" width="160" height="160" style="width:min(48vw,200px);height:min(48vw,200px);border-radius:20px;background:radial-gradient(circle at 50% 60%, rgba(255,248,238,.55), rgba(255,248,238,0) 70%);margin:0 auto 8px;display:block">
-  <div id="wardList" class="list" style="max-height:48vh"></div>
+  <canvas id="wardPreview" style="width:min(48vw,200px);height:min(48vw,200px);border-radius:20px;background:radial-gradient(circle at 50% 60%, rgba(255,248,238,.55), rgba(255,248,238,0) 70%);margin:0 auto 8px;display:block"></canvas>
+  <div id="wardList" class="list"></div>
   <div class="sub" style="margin-top:8px;font-size:13px;opacity:.75" data-i18n="accNote"></div>
 </div>
 <div id="tabBar">
@@ -387,7 +391,7 @@ const I18N = {
     mutators: 'MUTATORS', mutSub: 'Bend the rules. Salt is multiplied; goals and stars are not awarded while a mutator is on.', mut_lowGrav: 'Low gravity', mut_lowGrav_d: 'gravity ×0.75 — long floaty arcs', mut_fog: 'Fog', mut_fog_d: 'you see only the next ledge', mut_mirror: 'Mirror', mut_mirror_d: 'the whole level flipped left↔right', mut_rush: 'Rush', mut_rush_d: 'camera ×1.5, ◆ ×2', mut_heavy: 'Heavy', mut_heavy_d: 'jump power ×0.85', mut_echo: 'Echo', mut_echo_d: 'a ghost replays your previous run', mutOn: 'ON', mutOff: 'off', mutMult: 'salt ×{m}', mutActive: 'mutators: {list}', mutNoStars: 'no stars with mutators',
     g_pickups: 'collect every ◆', g_time: 'under {t}', g_jumps: '{n} jumps or fewer', g_noCatch: 'no edge catches', g_noAir: 'no air control', g_kids: 'rescue all kids', g_noIdle: 'never stand still for 3 s', g_noContinue: 'without CONTINUE', g_noIce: 'never land on ice', g_noMoving: 'never land on a moving ledge', g_noSlide: 'no sliding off a slope', goalsDone: 'all goals done', goalsNew: 'new goals', starOf: '★ {n} / 5',
     puzzle: 'puzzle', challenge: 'challenge', secret: 'secret', secretHidden: '???', secretHint: 'find the hidden entrance somewhere in this world', inJumps: 'IN {n} JUMPS', mod_noCatch: 'no edge catches', mod_fastCam: 'camera ×1.4', secretFound: 'A hidden passage! Entering…',
-    dimMountain: 'THE MOUNTAIN', dimCity: 'THE CITY', dimYard: 'THE YARD', dimMountainSub: 'ibex · cliffs from the Negev to the Alps', dimCitySub: 'Kong & the yard cat · skyscrapers and panelki', dimYardSub: 'dogs · backyard, house, park', dimLocked: 'finish {n} mountain levels to open', worldsDone: 'levels done: {a} / {b}', chooseDim: 'Choose a world',
+    dimMountain: 'THE MOUNTAIN', dimCity: 'THE CITY', dimYard: 'THE YARD', dimMountainSub: 'ibex · cliffs from the Negev to the Alps', dimCitySub: 'Kong & the yard cat · skyscrapers and panelki', dimYardSub: 'dogs · backyard, house, park', dimLocked: 'finish {n} levels in {d} ({have}/{n})', worldsDone: 'levels done: {a} / {b}', chooseDim: 'Choose a world',
     mechanics: 'MECHANICS', m_drag: 'The jump', m_drag_d: 'Drag anywhere toward the target; longer drag, stronger jump. Dots show most of the arc.', m_catch: 'Edge catch', m_catch_d: 'Miss a ledge by an arm\'s length and the goat grabs the edge and pulls up.', m_air: 'Air control', m_air_d: 'While flying, slide your finger sideways to steer a little — enough to save a jump, not to change it.',
     m_up: 'Jumping up', m_up_d: 'Dead end? Jump back up. Climbing is part of route planning.', m_camera: 'The camera', m_camera_d: 'The camera drifts down on its own. Think, but never for too long.', m_birds: 'Birds', m_birds_d: 'They patrol the gaps and strike only in the air. Let one pass, then jump.',
     m_spikes: 'Spikes', m_spikes_d: 'Half of the ledge is deadly. Land on the clear half.', m_ice: 'Ice', m_ice_d: 'You keep sliding after landing — even off the edge.', m_crumble: 'Crumbling ledges', m_crumble_d: 'Cracked rock holds for two seconds after you land, then falls.',
@@ -433,7 +437,7 @@ const I18N = {
     mutators: 'МУТАТОРЫ', mutSub: 'Меняй правила. Соль умножается; цели и звёзды с мутаторами не засчитываются.', mut_lowGrav: 'Низкая гравитация', mut_lowGrav_d: 'гравитация ×0.75 — длинные парящие дуги', mut_fog: 'Туман', mut_fog_d: 'видно только следующий уступ', mut_mirror: 'Зеркало', mut_mirror_d: 'весь уровень отражён влево↔вправо', mut_rush: 'Спешка', mut_rush_d: 'камера ×1.5, ◆ ×2', mut_heavy: 'Тяжесть', mut_heavy_d: 'сила прыжка ×0.85', mut_echo: 'Эхо', mut_echo_d: 'призрак повторяет твой прошлый прогон', mutOn: 'ВКЛ', mutOff: 'выкл', mutMult: 'соль ×{m}', mutActive: 'мутаторы: {list}', mutNoStars: 'звёзды с мутаторами не даются',
     g_pickups: 'собери все ◆', g_time: 'быстрее {t}', g_jumps: 'не больше {n} прыжков', g_noCatch: 'без зацепов', g_noAir: 'без подруливания', g_kids: 'спаси всех малышей', g_noIdle: 'не стоять дольше 3 с', g_noContinue: 'без CONTINUE', g_noIce: 'ни разу не сесть на лёд', g_noMoving: 'ни разу не сесть на движущуюся', g_noSlide: 'не съехать со склона', goalsDone: 'все цели выполнены', goalsNew: 'новые цели', starOf: '★ {n} / 5',
     puzzle: 'пазл', challenge: 'испытание', secret: 'секрет', secretHidden: '???', secretHint: 'найди скрытый вход где-то в этом мире', inJumps: 'ЗА {n} ПРЫЖКОВ', mod_noCatch: 'без зацепов', mod_fastCam: 'камера ×1.4', secretFound: 'Скрытый проход! Входим…',
-    dimMountain: 'ГОРА', dimCity: 'ГОРОД', dimYard: 'ДВОР', dimMountainSub: 'ибекс · скалы от Негева до Альп', dimCitySub: 'Конг и дворовый кот · небоскрёбы и панельки', dimYardSub: 'собаки · двор, дом, парк', dimLocked: 'пройди {n} уровней горы, чтобы открыть', worldsDone: 'пройдено уровней: {a} / {b}', chooseDim: 'Выбери мир',
+    dimMountain: 'ГОРА', dimCity: 'ГОРОД', dimYard: 'ДВОР', dimMountainSub: 'ибекс · скалы от Негева до Альп', dimCitySub: 'Конг и дворовый кот · небоскрёбы и панельки', dimYardSub: 'собаки · двор, дом, парк', dimLocked: 'пройди {n} уровней в «{d}» ({have}/{n})', worldsDone: 'пройдено уровней: {a} / {b}', chooseDim: 'Выбери мир',
     mechanics: 'МЕХАНИКИ', m_drag: 'Прыжок', m_drag_d: 'Тяни от любого места в сторону цели; длиннее драг — сильнее прыжок. Точки показывают большую часть дуги.', m_catch: 'Зацеп за край', m_catch_d: 'Промахнись на длину руки — козёл схватится за край и подтянется.', m_air: 'Управление в полёте', m_air_d: 'В полёте сдвинь палец вбок, чтобы чуть подрулить — спасти прыжок, но не поменять его.',
     m_up: 'Прыжок вверх', m_up_d: 'Тупик? Прыгай обратно вверх. Подъём — часть маршрута.', m_camera: 'Камера', m_camera_d: 'Камера сама ползёт вниз. Думай, но никогда слишком долго.', m_birds: 'Птицы', m_birds_d: 'Патрулируют пролёты и бьют только в воздухе. Пропусти и прыгай.',
     m_spikes: 'Шипы', m_spikes_d: 'Половина уступа смертельна. Садись на чистую половину.', m_ice: 'Лёд', m_ice_d: 'После посадки скользишь дальше — даже за край.', m_crumble: 'Осыпающиеся уступы', m_crumble_d: 'Треснувший камень держит две секунды после посадки, потом падает.',
@@ -444,7 +448,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v67', date: '2026-09-22' };
+const BUILD = { version: 'v69', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -929,8 +933,8 @@ function towerDef() {
 function towerState() { const wk = weekId(); save.tower = save.tower || {}; if (save.tower.week !== wk) { if (save.tower.week && save.ghosts && save.ghosts['tower:' + save.tower.week]) { save.ghosts['tower:last'] = save.ghosts['tower:' + save.tower.week]; delete save.ghosts['tower:' + save.tower.week]; } save.tower = { week: wk, cp: 0, best: 0, time: 0, done: false }; } return save.tower; }
 const DIMS = [
   { key: 'mountain', nameKey: 'dimMountain', subKey: 'dimMountainSub', worlds: ['NEGEV', 'RED CANYON', 'CHALK COAST', 'MOONLIT RIDGE', 'THE ALPS'] },
-  { key: 'city', nameKey: 'dimCity', subKey: 'dimCitySub', worlds: ['SKYSCRAPER', 'PANELKI'], needMountain: 8 },
-  { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET'], needMountain: 8 },
+  { key: 'city', nameKey: 'dimCity', subKey: 'dimCitySub', worlds: ['SKYSCRAPER', 'PANELKI'], need: { dim: 0, n: 8 } },
+  { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET'], need: { dim: 1, n: 5 } },
 ];
 const WORLDS = [
   { name: 'NEGEV', sub: 'desert cliffs', levels: ['steps', 'descent', 'crystal', 'twin', 'hawk', 'negevPuzzle', 'negevChal', 'negevSecret'] },
@@ -2233,7 +2237,7 @@ function refreshHub() {
   $('dimPrevH').classList.toggle('off', curDim === 0); $('dimNextH').classList.toggle('off', curDim === DIMS.length - 1);
   const nx = nextLevelIn(curDim); const w = nx.l && WORLDS.find(w => w.levels.includes(nx.l.key));
   $('modeDim').textContent = t(d.nameKey) + (w ? ' · ' + w.name : ''); $('modeLvl').textContent = open ? ((nx.l ? (nx.l.nameKey ? t(nx.l.nameKey) : nx.l.name) : '') + (nx.done ? ' · ' + t('playDone') : '')) : t('locked');
-  const pb = $('bPlay'); pb.classList.toggle('locked', !open); pb.innerHTML = open ? `<i data-ico="play" style="width:26px;height:26px"></i><span>${t('play')}</span>` : `<i data-ico="lock" style="width:22px;height:22px;flex:none"></i><span>${t('playLockedDim', { n: d.needMountain })}</span>`; paintIcons(pb);
+  const pb = $('bPlay'); pb.classList.toggle('locked', !open); pb.innerHTML = open ? `<i data-ico="play" style="width:26px;height:26px"></i><span>${t('play')}</span>` : `<i data-ico="lock" style="width:22px;height:22px;flex:none"></i><span>${dimLockText(d)}</span>`; paintIcons(pb);
   refreshBadges();
 }
 // the player's character stands on the focused cube; tap it (or its tag) for the wardrobe
@@ -2311,7 +2315,9 @@ function levelsDone(keys) { return keys.filter(k => { const l = LEVELS.find(l =>
 function worldLevelsDone(wi) { return levelsDone(WORLDS[wi].levels); }
 function worldCount(wi) { return WORLDS[wi].levels.filter(k => { const l = LEVELS.find(l => l.key === k); return l && !l.tutorial && !l.secret; }).length; }
 function dimOf(wi) { return DIMS.find(d => d.worlds.includes(WORLDS[wi].name)); }
-function dimOpen(d) { if (save.settings.devUnlock) return true; if (!d.needMountain) return true; const mk = DIMS[0].worlds.flatMap(n => (WORLDS.find(w => w.name === n) || { levels: [] }).levels); return levelsDone(mk) >= d.needMountain; }
+function dimKeys(i) { return DIMS[i].worlds.flatMap(n => (WORLDS.find(w => w.name === n) || { levels: [] }).levels); }
+function dimOpen(d) { if (save.settings.devUnlock) return true; if (!d.need) return true; return levelsDone(dimKeys(d.need.dim)) >= d.need.n; }
+function dimLockText(d) { const nd = DIMS[d.need.dim]; return t('dimLocked', { n: d.need.n, d: t(nd.nameKey), have: levelsDone(dimKeys(d.need.dim)) }); }
 function worldOpen(wi) { if (save.settings.devUnlock) return true; // first world of a dimension: the dimension must be open; otherwise 60% of the previous world's stars OR all its levels done
   const d = dimOf(wi); const pos = d.worlds.indexOf(WORLDS[wi].name);
   if (pos === 0) return dimOpen(d);
@@ -2481,14 +2487,15 @@ function finishLevel(win, reason) {
 }
 
 $('bPlay').addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; initAudio(); const d = DIMS[curDim];
-  if (!dimOpen(d)) { hubToast(t('dimLocked', { n: d.needMountain })); return; }
+  if (!dimOpen(d)) { hubToast(dimLockText(d)); return; }
   if (!save.levels.steps && !Object.keys(save.levels).length) { startLevel(LEVELS.findIndex(l => l.key === 'steps')); return; }
   const nx = nextLevelIn(curDim); if (nx.l) startLevel(LEVELS.indexOf(nx.l)); });
-$('bMode').addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!dimOpen(DIMS[curDim])) { hubToast(t('dimLocked', { n: DIMS[curDim].needMountain })); return; } goSelect(); });
+$('bMode').addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!dimOpen(DIMS[curDim])) { hubToast(dimLockText(DIMS[curDim])); return; } goSelect(); });
 const hubDim = k => { const n = clamp(curDim + k, 0, DIMS.length - 1); if (n === curDim) return; curDim = n; dio.focus = n; refreshHub(); AudioSys.play('ui'); };
 $('dimPrevH').addEventListener('click', e => { e.stopPropagation(); hubDim(-1); }); $('dimNextH').addEventListener('click', e => { e.stopPropagation(); hubDim(1); });
-{ let sx = null, sy = 0; canvas.addEventListener('pointerdown', e => { if (mode === 'menu') { sx = e.clientX; sy = e.clientY; } }); canvas.addEventListener('pointerup', e => { if (mode !== 'menu' || sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) hubDim(dx < 0 ? 1 : -1); else if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && heroHit(e)) goWardrobe(); }); }
-$('heroTag').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goWardrobe(); });
+{ let sx = null, sy = 0; canvas.addEventListener('pointerdown', e => { if (mode === 'menu') { sx = e.clientX; sy = e.clientY; } }); canvas.addEventListener('pointerup', e => { if (mode !== 'menu' || sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) hubDim(dx < 0 ? 1 : -1); else if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && (heroHit(e) || cubeHit(e))) $('bMode').click(); }); }
+function cubeHit(e) { const c = dio.cubes && dio.cubes[curDim]; if (!c) return false; const r = new THREE.Raycaster(); r.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), dio.cam); return r.intersectObject(c, true).some(h => !c.clouds.children.includes(h.object)); }
+$('heroTag').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) $('bMode').click(); });
 for (const [tile, btn] of [['tDaily', 'bDaily'], ['tTower', 'bTower'], ['tEndless', 'bEndless'], ['tExp', 'bExp'], ['tBuilder', 'bBuilder']]) $(tile).addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; $(btn).click(); });
 $('tSeason').addEventListener('click', e => { e.stopPropagation(); const se = season(); hubToast(`<b>${t('s_' + se)}</b><br>${t('season' + se[0].toUpperCase() + se.slice(1) + '_d')}`); });
 $('tabHome').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
@@ -2602,7 +2609,7 @@ function updateDims(dt) {
   });
   const d = DIMS[dio.focus], open = dimOpen(d), el = labels.children[0];
   const wk = d.worlds.flatMap(n => (WORLDS.find(w => w.name === n) || { levels: [] }).levels); const done = levelsDone(wk), total = wk.filter(k => { const l = LEVELS.find(l => l.key === k); return l && !l.tutorial; }).length;
-  el.innerHTML = `<div style="font-size:24px;font-weight:800;letter-spacing:.08em">${open ? '' : '🔒 '}${t(d.nameKey)}</div><div style="font-size:13px;opacity:.85;max-width:300px;margin:0 auto">${open ? t(d.subKey) + '<br>' + t('worldsDone', { a: done, b: total }) : t('dimLocked', { n: d.needMountain })}</div><div style="font-size:12px;opacity:.6;margin-top:6px">${dio.focus + 1} / ${DIMS.length}</div>`;
+  el.innerHTML = `<div style="font-size:24px;font-weight:800;letter-spacing:.08em">${open ? '' : '🔒 '}${t(d.nameKey)}</div><div style="font-size:13px;opacity:.85;max-width:300px;margin:0 auto">${open ? t(d.subKey) + '<br>' + t('worldsDone', { a: done, b: total }) : dimLockText(d)}</div><div style="font-size:12px;opacity:.6;margin-top:6px">${dio.focus + 1} / ${DIMS.length}</div>`;
   el.onclick = e => { e.stopPropagation(); if (open) { curDim = dio.focus; $('dimUI').style.display = 'none'; goSelect(); } };
   $('dimNext').style.opacity = dio.focus < DIMS.length - 1 ? 1 : 0.3; $('dimPrev').style.opacity = dio.focus > 0 ? 1 : 0.3;
 }
@@ -3012,16 +3019,39 @@ function goWardrobe() {
       b.innerHTML = `${t('acc_' + a.id)}<small>${own ? (eq ? t('equipped') : '') : a.ach ? t('needAch', { a: t('a_' + a.ach) }) : `${a.cost} ◆${can ? ' — ' + t('unlock') : ''}`}</small>`;
       b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!own) { if (a.ach || !can) return; save.totalSaltCrystals -= a.cost; save.accOwned[a.id] = true; } save.acc[slot] = a.id; persist(); goWardrobe(); }); list.appendChild(b); }
   }
-  { const ch = CHARACTERS[save.character] ? save.character : 'goat'; $('wardPreview').src = skinPreview(ch, (save.skins || {})[ch] || CHARACTERS[ch].list[0].id, 320); } showScreen('scWardrobe');
+  showScreen('scWardrobe');
 }
 $('bWardrobe').addEventListener('click', e => { e.stopPropagation(); goWardrobe(); });
 $('bBackWardrobe').addEventListener('click', e => { e.stopPropagation(); goOrigin('scWardrobe', goIbex); });
 
+// hero stages: a real 3D figure you can spin with a finger (drag sideways; vertical swipes still scroll the screen)
+const STAGES = {};
+function heroStage(id) {
+  let S = STAGES[id]; const cv = $(id); if (S) return S;
+  const r = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); r.setPixelRatio(Math.min(devicePixelRatio, 2)); r.outputColorSpace = THREE.SRGBColorSpace;
+  const sc = new THREE.Scene(); sc.add(new THREE.HemisphereLight(0xdde8ff, 0x8a6a48, 1.4)); const dl = new THREE.DirectionalLight(0xfff0d8, 2.4); dl.position.set(3, 5, 4); sc.add(dl);
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.5, 0.12, 24), new THREE.MeshLambertMaterial({ color: 0xb9895c, flatShading: true })); disc.position.y = -0.06; sc.add(disc);
+  const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 60); const pivot = new THREE.Group(); sc.add(pivot);
+  S = STAGES[id] = { r, sc, cam, pivot, key: '', yaw: 0.5, vel: 0, drag: null, idle: 0 };
+  cv.addEventListener('pointerdown', e => { S.drag = { x: e.clientX, y: e.clientY, t: performance.now(), locked: null }; S.idle = 0; });
+  cv.addEventListener('pointermove', e => { if (!S.drag) return; const dx = e.clientX - S.drag.x, dy = e.clientY - S.drag.y; if (S.drag.locked === null && Math.hypot(dx, dy) > 6) S.drag.locked = Math.abs(dx) > Math.abs(dy); if (!S.drag.locked) return; const now = performance.now(); S.yaw += dx * 0.012; S.vel = dx * 0.012 / Math.max(0.008, (now - S.drag.t) / 1000); S.drag.x = e.clientX; S.drag.y = e.clientY; S.drag.t = now; });
+  const end = () => { S.drag = null; }; cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end); cv.addEventListener('pointerleave', end);
+  return S;
+}
+function tickStage(id, dt) {
+  const cv = $(id); if (!cv || !cv.offsetParent) return; const S = heroStage(id); const ch = CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins || {})[ch] || CHARACTERS[ch].list[0].id; const key = ch + ':' + sk + ':' + JSON.stringify(currentAcc());
+  const w = cv.clientWidth, h = cv.clientHeight; if (cv.width !== Math.round(w * S.r.getPixelRatio())) { S.r.setSize(w, h, false); S.cam.aspect = w / h; S.cam.updateProjectionMatrix(); }
+  if (key !== S.key) { S.pivot.clear(); const g = new Goat(sk, 1, ch); scene.remove(g.root); g.animate(0.016, null); S.pivot.add(g.root); S.goat = g; S.key = key; g.root.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(g.root); const c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()); g.root.position.x -= c.x; g.root.position.z -= c.z; S.R = Math.max(sz.x, sz.y, sz.z); S.cy = sz.y / 2; }
+  const g = S.goat; g.pos.set(-g.root.position.x + g.root.position.x, 0); g.state = ST.IDLE; g.stateT = (g.stateT || 0) + dt; const px = g.root.position.x, pz = g.root.position.z; g.animate(dt, null); g.root.position.x = px; g.root.position.z = pz;
+  if (!S.drag) { S.yaw += S.vel * dt; S.vel *= Math.pow(0.04, dt); S.idle += dt; if (S.idle > 2.5 && Math.abs(S.vel) < 0.05) S.yaw += dt * 0.35; }
+  S.pivot.rotation.y = S.yaw; const R = S.R || 2; S.cam.position.set(0, S.cy + R * 0.35, R * 2.3); S.cam.lookAt(0, S.cy * 0.9, 0); S.r.render(S.sc, S.cam);
+}
 function goIbex() {
   save.charViewed = Object.assign({}, save.charSeen || {}); persist();
   mode = 'ibex'; hud.style.display = 'none'; paintIcons($('scIbex')); $('ibexSalt').textContent = save.totalSaltCrystals;
   const cur = CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins && save.skins[cur]) || CHARACTERS[cur].list[0].id;
-  $('heroBig').src = skinPreview(cur, sk, 320); $('heroName').textContent = CHARACTERS[cur].name; const it = CHARACTERS[cur].list.find(i => i.id === sk); $('heroSkin').textContent = it ? it.name : '';
+  $('heroName').textContent = CHARACTERS[cur].name; const it = CHARACTERS[cur].list.find(i => i.id === sk); $('heroSkin').textContent = it ? it.name : '';
   const list = $('skinList'); list.innerHTML = '';
   for (const [ch, C] of Object.entries(CHARACTERS)) {
     if (C.hidden) continue; const locked = C.world && !save.settings.devUnlock && !(save.charSeen && save.charSeen[ch]); const csk = (save.skins && save.skins[ch]) || C.list[0].id;
@@ -3272,6 +3302,7 @@ function loop(now) {
   dio.hub = false;
   if (mode === 'dims') { updateDims(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   if (mechScene && mode === 'mech') tickMechScene(dt);
+  if (mode === 'ibex') { tickStage('heroBig', dt); tickStage('wardPreview', dt); }
   if (dio.scene && mode === 'lang') { dio.t += dt; dioCluster(true); updateHubHero(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   if (dio.scene && !['play', 'pause', 'result', 'edit', 'menu', 'dims', 'lang'].includes(mode) && !$('scResult').classList.contains('show')) { dio.t += dt; const c = dio.cubes[curDim]; c.rotation.y = Math.sin(dio.t * 0.3) * 0.1; const fz = -curDim * 11; dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix(); dio.cam.position.set(4, 7, fz + 13); dio.cam.lookAt(0, 1.2, fz); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   if (mode === 'edit') updateEditor(dt); else update(dt);
