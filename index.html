@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v42 -->
+<!-- build v51 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -81,6 +81,9 @@
   <div class="btn" id="bPlay" data-i18n="play">PLAY</div>
   <div class="btn" id="bDaily"><span data-i18n="daily">DAILY CHALLENGE</span><small id="dailyInfo"></small></div>
   <div class="btn" id="bEndless" data-i18n="endless">ENDLESS</div>
+  <div class="btn" id="bTower"><span data-i18n="tower">WEEKLY TOWER</span><small id="towerInfo"></small></div>
+  <div class="btn" id="bExp" data-i18n="expedition">EXPEDITION</div>
+  <div class="btn" id="bStats" data-i18n="stats">STATS</div>
   <div class="btn" id="bBuilder" data-i18n="builder">LEVEL BUILDER</div>
   <div class="btn" id="bIbex" data-i18n="characters">CHARACTERS</div>
   <div class="btn" id="bSettings" data-i18n="settings">SETTINGS</div>
@@ -101,6 +104,7 @@
   <div class="back" id="bBackMenu3">◀ MENU</div>
   <h1>ENDLESS</h1>
   <div class="sub" data-i18n="endlessSub">Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.</div>
+  <div class="btn" id="bMutEndless" data-i18n="mutators">MUTATORS</div>
   <div id="endResume"></div>
   <div class="btn" id="bEndDown"><span data-i18n="endlessDown">ENDLESS DESCENT</span><small id="bestDown">best 0 m</small></div>
   <div class="btn" id="bEndUp"><span data-i18n="endlessUp">ENDLESS ASCENT</span><small id="bestUp">best 0 m</small></div>
@@ -123,6 +127,32 @@
   <div id="edTools"></div>
   <div id="edProps"></div>
   <div id="edMsg"></div>
+</div>
+<div class="screen" id="scExp">
+  <div class="back" id="bBackExp" data-i18n="menu">◀ MENU</div>
+  <h1 data-i18n="expedition">EXPEDITION</h1>
+  <div class="sub" id="expSub" style="max-width:340px"></div>
+  <div id="expList" class="list"></div>
+</div>
+<div class="screen" id="scStats">
+  <div class="back" id="bBackStats" data-i18n="menu">◀ MENU</div>
+  <h1 data-i18n="stats">STATS</h1>
+  <div id="statsList" class="list"></div>
+</div>
+<div class="screen" id="scTower">
+  <div class="back" id="bBackTower" data-i18n="menu">◀ MENU</div>
+  <h1 data-i18n="tower">WEEKLY TOWER</h1>
+  <div class="sub" data-i18n="towerSub" style="max-width:340px"></div>
+  <div class="salt" id="towerStat" style="margin:0 0 12px"></div>
+  <div class="btn" id="bTowerGo"></div>
+  <div class="btn dim" id="bTowerRestart" data-i18n="towerRestart"></div>
+</div>
+<div class="screen" id="scMut">
+  <div class="back" id="bBackMut">◀</div>
+  <h1 data-i18n="mutators">MUTATORS</h1>
+  <div class="sub" data-i18n="mutSub" style="max-width:340px"></div>
+  <div class="salt" id="mutMultTxt" style="margin:0 0 10px"></div>
+  <div id="mutList" class="list"></div>
 </div>
 <div class="screen" id="scMech">
   <div class="back" id="bBackMech">◀</div>
@@ -151,6 +181,8 @@
   <h1 id="rTitle">DESCENT COMPLETE</h1>
   <div class="sub" id="rSub"></div>
   <div class="stars" id="rStars"></div>
+  <canvas id="runCard" width="320" height="120" style="width:min(320px,80vw);height:auto;border-radius:8px;background:rgba(0,0,0,.25);margin:0 auto 10px;display:none"></canvas>
+  <div class="btn" id="bSaveCard" data-i18n="saveImage" style="display:none">SAVE RUN CARD</div>
   <div class="btn" id="bContinue"><span data-i18n="continueFrom">CONTINUE FROM LAST LEDGE</span><small id="contCost">◆ 3</small></div>
   <div class="btn" id="bRetry" data-i18n="retry">RETRY</div>
   <div class="btn" id="bNext" data-i18n="next">NEXT LEVEL</div>
@@ -178,18 +210,25 @@ const I18N = {
     camMsg: 'The mountain stopped waiting for you.', tiredMsg: 'That drop was too long. The goat is exhausted and cannot go on.', spikeMsg: 'Those spikes were not a landing spot.', rockMsg: 'A boulder came down the chute.', kidMsg: 'The little one did not make that jump.',
     tipCamera: 'Tip: the top of the screen is the deadline — jump before it reaches you.', tipTired: 'Tip: never drop past more than 3 rows of ledges in one jump.', tipSpikes: 'Tip: land on the clear half of a spiked ledge.', tipHawk: 'Tip: birds only strike in the air — let one pass, then jump.', tipRock: 'Tip: the dark shadow at a crevice means a boulder is about to drop.', tipKid: 'Tip: kids replay your exact jumps — a jump you barely made, they may not.', tipFall: 'Tip: an edge within an arm\'s reach still counts — aim for the ledge, not past it.',
     jumps: 'Jumps', saves: 'Edge saves', kidsRescued: 'Kids rescued', under: 'UNDER', allKids: 'ALL KIDS RESCUED', noSaves: 'NO EDGE SAVES', cleanRun: 'CLEAN RUN', today: 'today', streak: 'Streak', newBest: 'NEW BEST!', best: 'best', youHave: 'you have', salt: 'salt',
-    devUnlock: 'Unlock everything (dev)', p_SLIPPERS: 'SLIPPERS',
+    devUnlock: 'Unlock everything (dev)', p_SLIPPERS: 'SLIPPERS', p_BALLS: 'BALLS', p_STICKS: 'STICKS', 'p_ICE CREAM': 'ICE CREAM', h_soft: 'Snowdrift — a soft landing from any height<br>but powder edges give no grip', m_soft: 'Soft landings', m_soft_d: 'Snowdrifts and cushions absorb any fall — no exhaustion, no hard landing. But their edges crumble: no edge catches.', h_seesaw: 'A seesaw — land on one end, the other rises<br>Jump off the rising end for a boost', m_seesaw: 'Seesaw', m_seesaw_d: 'A plank on a pivot. Your weight tips it; jump off the end that is swinging up and it throws you higher.',
     soundOn: 'Sound', musicOn: 'Music', vibro: 'Vibration', leftHand: 'Left-handed', dragSens: 'Drag sensitivity', quality: 'Quality', lang: 'Language', resetProgress: 'RESET PROGRESS', resetConfirm: 'Erase all progress, salt and custom levels?', low: 'low', high: 'high', short: 'short', normal: 'normal', long: 'long', auto: 'auto',
     skinsNote: 'Skins change the coat only — never the jump.', selected: 'SELECTED', equip: 'EQUIP', unlock: 'UNLOCK', playing: 'PLAYING', reachWorld: 'Reach the {w} world',
     endlessSub: 'Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.', endlessDown: 'ENDLESS DESCENT', endlessUp: 'ENDLESS ASCENT', resumeRun: 'RESUME',
     h_drag: 'Drag toward your jump<br>Release to leap', h_twin: 'One drag moves both goats<br>Check both arcs before you release', h_ascent: 'Climb! The mountain drifts down<br>Jump up before it carries you away', h_run: 'Run right! The yard scrolls along<br>Keep jumping ahead of the edge',
     h_endless: 'How far can you go?<br>It gets harder every 100 m', h_daily: 'Daily challenge — same mountain for everyone today', h_birds: 'Birds strike goats in the air<br>Let it pass, then jump', h_spikes: 'Spikes — land on the clear half', h_ice: 'Ice — you keep sliding after landing',
     h_crumble: 'Cracked ledges crumble in a second<br>Don\'t linger on them', h_wind: 'Wind in that gap bends your arc<br>The dots show most of it', h_rocks: 'A crevice — when its shadow grows, a boulder drops', h_kids: 'A stranded kid — land beside it<br>It will follow your jumps', h_updraft: 'Steam rises from the fissure beside the ledge<br>Jump into it and ride up two ledges',
+    h_moving: 'That ledge moves — time your jump<br>Its speed carries into yours', m_moving: 'Moving ledges', m_moving_d: 'Trolleys on beams and cages on rails. They carry you along, and their speed adds to your jump.',
     h_newchar: 'New character unlocked: <b>{n}</b><br>You play as it here — switch any time in CHARACTERS',
     tut1: 'Drag from anywhere toward the ledge below<br>Release to jump', tut2: 'Longer drag — stronger jump<br>The dots show most of the arc', tut3: 'That ledge is small. If you just miss it,<br>the goat catches the edge and pulls up', tut3ok: 'Caught the edge — it counts!', tut4: 'In the air, slide your finger sideways<br>to steer a little', tut5: 'Dead end. Nothing below.<br>Jump back UP to the small ledge', tut6: 'The mountain does not wait — the camera drifts down.<br>Think, but not forever', tutFall: 'Fell — back on the ledge. Try again', tutDone: 'You know everything now. The Negev is below',
     firstSteps: 'FIRST STEPS', firstStepsSub: 'learn the jump · 2 min', tutResult: 'Salt unlocks coats. Continuing a failed run costs 3 ◆.',
     goal: 'Goal: {g}', goalCrystals: 'collect {n} of {m} ◆', goalTime: 'under {t}', goalKids: 'rescue all kids',
     p_SALT: 'SALT', p_GARNET: 'GARNET', p_FOSSIL: 'FOSSIL', p_MOONSTONE: 'MOONSTONE', p_ICE: 'ICE', p_BANANAS: 'BANANAS', p_FISH: 'FISH', p_BONES: 'BONES',
+    h_scent: 'Stand still — a dog can smell what is hidden<br>Follow the paw prints', m_scent: 'Scent', m_scent_d: 'Dogs only. Stand still for three seconds and a trail of paw prints points toward a hidden passage.', scentFound: '🐾 trail found',
+    expedition: 'EXPEDITION', expSub: 'Five random levels in one life. No CONTINUE. Between levels you choose the next card.', expStep: 'stage {k} / 5', expChoose: 'Choose the next stage', expOver: 'EXPEDITION OVER', expWin: 'EXPEDITION COMPLETE', expReward: '+10 ◆ · expeditions won: {n}', expSalt: 'salt so far: {n}', expStart: 'SET OUT', stats: 'STATS', st_jumps: 'Jumps', st_saves: 'Edge catches', st_meters: 'Metres travelled', st_time: 'Time played', st_levels: 'Levels completed', st_kids: 'Kids rescued', st_secrets: 'Secrets found', st_exp: 'Expeditions won', st_streak: 'Best daily streak', achievements: 'ACHIEVEMENTS', saveImage: 'SAVE RUN CARD', runCard: 'Run card',
+    a_catch1: 'First catch', a_catch1_d: 'grab an edge once', a_catch100: 'Hundred hands', a_catch100_d: '100 edge catches', a_km: 'Kilometre', a_km_d: '1 000 m travelled', a_km10: 'Ten kilometres', a_km10_d: '10 000 m travelled', a_lv10: 'Getting somewhere', a_lv10_d: '10 levels completed', a_lv30: 'Mountaineer', a_lv30_d: '30 levels completed', a_kids10: 'Shepherd', a_kids10_d: '10 kids rescued', a_secrets: 'Nosy', a_secrets_d: 'find 4 secret passages', a_five: 'Perfect ledge', a_five_d: '5 ★ on one level', a_tower: 'Tower top', a_tower_d: 'finish a weekly tower', a_endless: 'Far below', a_endless_d: '300 m in one endless run', a_chars: 'Menagerie', a_chars_d: 'unlock 8 characters', a_exp: 'Explorer', a_exp_d: 'win an expedition', a_streak: 'Regular', a_streak_d: '7-day daily streak',
+    tower: 'WEEKLY TOWER', towerSub: 'One 200 m climb per week, same for everyone. Five sections, checkpoints between them. Fall — resume from the last checkpoint.', towerWeek: 'week {w}', towerHeight: 'height {h} m · checkpoint {c} / 5', towerClimb: 'CLIMB', towerResume: 'RESUME FROM CHECKPOINT {c}', towerRestart: 'RESTART THE WEEK', towerDone: 'TOWER COMPLETE · {t}', towerCp: 'Checkpoint {c} / 5', towerBest: 'best this week: {h} m', towerTop: 'TOP OF THE TOWER',
+    mutators: 'MUTATORS', mutSub: 'Bend the rules. Salt is multiplied; goals and stars are not awarded while a mutator is on.', mut_lowGrav: 'Low gravity', mut_lowGrav_d: 'gravity ×0.75 — long floaty arcs', mut_fog: 'Fog', mut_fog_d: 'you see only the next ledge', mut_mirror: 'Mirror', mut_mirror_d: 'the whole level flipped left↔right', mut_rush: 'Rush', mut_rush_d: 'camera ×1.5, ◆ ×2', mut_heavy: 'Heavy', mut_heavy_d: 'jump power ×0.85', mut_echo: 'Echo', mut_echo_d: 'a ghost replays your previous run', mutOn: 'ON', mutOff: 'off', mutMult: 'salt ×{m}', mutActive: 'mutators: {list}', mutNoStars: 'no stars with mutators',
+    g_pickups: 'collect every ◆', g_time: 'under {t}', g_jumps: '{n} jumps or fewer', g_noCatch: 'no edge catches', g_noAir: 'no air control', g_kids: 'rescue all kids', g_noIdle: 'never stand still for 3 s', g_noContinue: 'without CONTINUE', g_noIce: 'never land on ice', g_noMoving: 'never land on a moving ledge', g_noSlide: 'no sliding off a slope', goalsDone: 'all goals done', goalsNew: 'new goals', starOf: '★ {n} / 5',
     puzzle: 'puzzle', challenge: 'challenge', secret: 'secret', secretHidden: '???', secretHint: 'find the hidden entrance somewhere in this world', inJumps: 'IN {n} JUMPS', mod_noCatch: 'no edge catches', mod_fastCam: 'camera ×1.4', secretFound: 'A hidden passage! Entering…',
     dimMountain: 'THE MOUNTAIN', dimCity: 'THE CITY', dimYard: 'THE YARD', dimMountainSub: 'ibex · cliffs from the Negev to the Alps', dimCitySub: 'Kong & the yard cat · skyscrapers and panelki', dimYardSub: 'dogs · backyard, house, park', dimLocked: 'finish {n} mountain levels to open', worldsDone: 'levels done: {a} / {b}', chooseDim: 'Choose a world',
     mechanics: 'MECHANICS', m_drag: 'The jump', m_drag_d: 'Drag anywhere toward the target; longer drag, stronger jump. Dots show most of the arc.', m_catch: 'Edge catch', m_catch_d: 'Miss a ledge by an arm\'s length and the goat grabs the edge and pulls up.', m_air: 'Air control', m_air_d: 'While flying, slide your finger sideways to steer a little — enough to save a jump, not to change it.',
@@ -207,18 +246,25 @@ const I18N = {
     camMsg: 'Гора перестала ждать.', tiredMsg: 'Слишком долгое падение. Козёл выбился из сил.', spikeMsg: 'Шипы — не место для посадки.', rockMsg: 'Валун прилетел из расщелины.', kidMsg: 'Малыш не осилил этот прыжок.',
     tipCamera: 'Совет: верх экрана — это дедлайн, прыгай раньше, чем он дойдёт до тебя.', tipTired: 'Совет: не пролетай больше 3 рядов уступов за прыжок.', tipSpikes: 'Совет: приземляйся на чистую половину площадки.', tipHawk: 'Совет: птицы бьют только в воздухе — пропусти и прыгай.', tipRock: 'Совет: тёмное пятно у расщелины — сейчас упадёт валун.', tipKid: 'Совет: малыши повторяют твой прыжок точь-в-точь — то, что ты еле взял, они могут не взять.', tipFall: 'Совет: край в пределах досягаемости всё ещё считается — целься в уступ, а не дальше.',
     jumps: 'Прыжков', saves: 'Зацепов', kidsRescued: 'Спасено малышей', under: 'БЫСТРЕЕ', allKids: 'ВСЕ МАЛЫШИ СПАСЕНЫ', noSaves: 'БЕЗ ЗАЦЕПОВ', cleanRun: 'ЧИСТЫЙ ЗАБЕГ', today: 'сегодня', streak: 'Серия', newBest: 'НОВЫЙ РЕКОРД!', best: 'рекорд', youHave: 'у тебя', salt: 'соли',
-    devUnlock: 'Открыть всё (dev)', p_SLIPPERS: 'ТАПКИ',
+    devUnlock: 'Открыть всё (dev)', p_SLIPPERS: 'ТАПКИ', p_BALLS: 'МЯЧИ', p_STICKS: 'ПАЛКИ', 'p_ICE CREAM': 'МОРОЖЕНОЕ', h_soft: 'Сугроб — мягкая посадка с любой высоты<br>но за рыхлый край не зацепиться', m_soft: 'Мягкая посадка', m_soft_d: 'Сугробы и подушки гасят любое падение — без усталости и жёсткой посадки. Но их края осыпаются: зацепа нет.', h_seesaw: 'Балансир — сядь на один край, второй поднимется<br>Прыгни с поднимающегося края — подбросит', m_seesaw: 'Балансир', m_seesaw_d: 'Доска на опоре. Твой вес её наклоняет; прыгни с края, который идёт вверх, — подбросит выше.',
     soundOn: 'Звук', musicOn: 'Музыка', vibro: 'Вибрация', leftHand: 'Левая рука', dragSens: 'Чувствительность драга', quality: 'Качество', lang: 'Язык', resetProgress: 'СБРОСИТЬ ПРОГРЕСС', resetConfirm: 'Стереть весь прогресс, соль и свои уровни?', low: 'низкое', high: 'высокое', short: 'короткий', normal: 'обычный', long: 'длинный', auto: 'авто',
     skinsNote: 'Скины меняют только шкуру — никогда прыжок.', selected: 'ВЫБРАНО', equip: 'НАДЕТЬ', unlock: 'ОТКРЫТЬ', playing: 'ИГРАЕШЬ', reachWorld: 'Дойди до мира {w}',
     endlessSub: 'Процедурная гора. Уступы сужаются, пролёты растут,<br>появляются шипы и птицы, биомы плывут от дня к ночи.', endlessDown: 'БЕСКОНЕЧНЫЙ СПУСК', endlessUp: 'БЕСКОНЕЧНЫЙ ПОДЪЁМ', resumeRun: 'ПРОДОЛЖИТЬ',
     h_drag: 'Тяни в сторону прыжка<br>Отпусти, чтобы прыгнуть', h_twin: 'Один жест двигает обоих<br>Проверь обе дуги перед отпусканием', h_ascent: 'Наверх! Гора уплывает вниз<br>Прыгай вверх, пока она тебя не унесла', h_run: 'Беги вправо! Двор прокручивается<br>Прыгай, опережая край',
     h_endless: 'Как далеко сможешь?<br>Каждые 100 м сложнее', h_daily: 'Ежедневный вызов — сегодня у всех одна гора', h_birds: 'Птицы бьют в воздухе<br>Пропусти и прыгай', h_spikes: 'Шипы — садись на чистую половину', h_ice: 'Лёд — после посадки скользишь дальше',
     h_crumble: 'Треснувшие уступы осыпаются за секунду<br>Не задерживайся', h_wind: 'Ветер в пролёте гнёт дугу<br>Точки показывают большую часть', h_rocks: 'Расщелина — когда тень растёт, падает валун', h_kids: 'Малыш застрял — приземлись рядом<br>Он повторит твои прыжки', h_updraft: 'Из трещины у уступа идёт пар<br>Прыгни в него и взлети на два уступа',
+    h_moving: 'Этот уступ движется — лови момент<br>Его скорость добавится к прыжку', m_moving: 'Движущиеся уступы', m_moving_d: 'Тележки на балках и клетки на рельсах. Несут тебя с собой, а их скорость прибавляется к прыжку.',
     h_newchar: 'Новый персонаж: <b>{n}</b><br>Здесь ты играешь за него — сменить можно в ПЕРСОНАЖАХ',
     tut1: 'Тяни от любого места в сторону уступа ниже<br>Отпусти — прыжок', tut2: 'Длиннее драг — сильнее прыжок<br>Точки показывают большую часть дуги', tut3: 'Уступ маленький. Если чуть промахнёшься,<br>козёл зацепится за край и подтянется', tut3ok: 'Зацепился — считается!', tut4: 'В полёте сдвинь палец вбок,<br>чтобы чуть подрулить', tut5: 'Тупик. Внизу ничего.<br>Прыгни обратно ВВЕРХ на маленький уступ', tut6: 'Гора не ждёт — камера ползёт вниз.<br>Думай, но не вечно', tutFall: 'Упал — снова на уступе. Попробуй ещё', tutDone: 'Теперь ты всё знаешь. Негев ниже',
     firstSteps: 'ПЕРВЫЕ ШАГИ', firstStepsSub: 'учимся прыгать · 2 мин', tutResult: 'Соль открывает окрасы. Продолжить проваленный забег стоит 3 ◆.',
     goal: 'Цель: {g}', goalCrystals: 'собери {n} из {m} ◆', goalTime: 'быстрее {t}', goalKids: 'спаси всех малышей',
     p_SALT: 'СОЛЬ', p_GARNET: 'ГРАНАТЫ', p_FOSSIL: 'ОКАМЕНЕЛОСТИ', p_MOONSTONE: 'ЛУННЫЙ КАМЕНЬ', p_ICE: 'ЛЁД', p_BANANAS: 'БАНАНЫ', p_FISH: 'РЫБА', p_BONES: 'КОСТОЧКИ',
+    h_scent: 'Постой смирно — собака чует спрятанное<br>Иди по следам лап', m_scent: 'Нюх', m_scent_d: 'Только для собак. Постой три секунды — цепочка следов укажет путь к скрытому проходу.', scentFound: '🐾 след найден',
+    expedition: 'ЭКСПЕДИЦИЯ', expSub: 'Пять случайных уровней на одну жизнь. Без CONTINUE. Между уровнями выбираешь следующую карту.', expStep: 'этап {k} / 5', expChoose: 'Выбери следующий этап', expOver: 'ЭКСПЕДИЦИЯ ОКОНЧЕНА', expWin: 'ЭКСПЕДИЦИЯ ПРОЙДЕНА', expReward: '+10 ◆ · экспедиций пройдено: {n}', expSalt: 'соли набрано: {n}', expStart: 'В ПУТЬ', stats: 'СТАТИСТИКА', st_jumps: 'Прыжков', st_saves: 'Зацепов', st_meters: 'Метров пройдено', st_time: 'Время в игре', st_levels: 'Уровней пройдено', st_kids: 'Малышей спасено', st_secrets: 'Секретов найдено', st_exp: 'Экспедиций пройдено', st_streak: 'Лучшая серия daily', achievements: 'ДОСТИЖЕНИЯ', saveImage: 'СОХРАНИТЬ КАРТОЧКУ', runCard: 'Карточка прогона',
+    a_catch1: 'Первый зацеп', a_catch1_d: 'зацепись за край', a_catch100: 'Сто рук', a_catch100_d: '100 зацепов', a_km: 'Километр', a_km_d: '1 000 м пути', a_km10: 'Десять километров', a_km10_d: '10 000 м пути', a_lv10: 'Пошло дело', a_lv10_d: '10 уровней', a_lv30: 'Альпинист', a_lv30_d: '30 уровней', a_kids10: 'Пастух', a_kids10_d: '10 спасённых малышей', a_secrets: 'Любопытный', a_secrets_d: 'найди 4 секрета', a_five: 'Идеальный уступ', a_five_d: '5 ★ на одном уровне', a_tower: 'Вершина башни', a_tower_d: 'пройди недельную башню', a_endless: 'Глубоко внизу', a_endless_d: '300 м за один endless', a_chars: 'Зверинец', a_chars_d: 'открой 8 персонажей', a_exp: 'Исследователь', a_exp_d: 'пройди экспедицию', a_streak: 'Постоянный', a_streak_d: 'серия daily 7 дней',
+    tower: 'НЕДЕЛЬНАЯ БАШНЯ', towerSub: 'Один подъём на 200 м в неделю, у всех одинаковый. Пять секций, между ними контрольные точки. Упал — продолжай с последней.', towerWeek: 'неделя {w}', towerHeight: 'высота {h} м · точка {c} / 5', towerClimb: 'ПОДНИМАТЬСЯ', towerResume: 'ПРОДОЛЖИТЬ С ТОЧКИ {c}', towerRestart: 'НАЧАТЬ НЕДЕЛЮ ЗАНОВО', towerDone: 'БАШНЯ ПРОЙДЕНА · {t}', towerCp: 'Контрольная точка {c} / 5', towerBest: 'лучшее за неделю: {h} м', towerTop: 'ВЕРШИНА БАШНИ',
+    mutators: 'МУТАТОРЫ', mutSub: 'Меняй правила. Соль умножается; цели и звёзды с мутаторами не засчитываются.', mut_lowGrav: 'Низкая гравитация', mut_lowGrav_d: 'гравитация ×0.75 — длинные парящие дуги', mut_fog: 'Туман', mut_fog_d: 'видно только следующий уступ', mut_mirror: 'Зеркало', mut_mirror_d: 'весь уровень отражён влево↔вправо', mut_rush: 'Спешка', mut_rush_d: 'камера ×1.5, ◆ ×2', mut_heavy: 'Тяжесть', mut_heavy_d: 'сила прыжка ×0.85', mut_echo: 'Эхо', mut_echo_d: 'призрак повторяет твой прошлый прогон', mutOn: 'ВКЛ', mutOff: 'выкл', mutMult: 'соль ×{m}', mutActive: 'мутаторы: {list}', mutNoStars: 'звёзды с мутаторами не даются',
+    g_pickups: 'собери все ◆', g_time: 'быстрее {t}', g_jumps: 'не больше {n} прыжков', g_noCatch: 'без зацепов', g_noAir: 'без подруливания', g_kids: 'спаси всех малышей', g_noIdle: 'не стоять дольше 3 с', g_noContinue: 'без CONTINUE', g_noIce: 'ни разу не сесть на лёд', g_noMoving: 'ни разу не сесть на движущуюся', g_noSlide: 'не съехать со склона', goalsDone: 'все цели выполнены', goalsNew: 'новые цели', starOf: '★ {n} / 5',
     puzzle: 'пазл', challenge: 'испытание', secret: 'секрет', secretHidden: '???', secretHint: 'найди скрытый вход где-то в этом мире', inJumps: 'ЗА {n} ПРЫЖКОВ', mod_noCatch: 'без зацепов', mod_fastCam: 'камера ×1.4', secretFound: 'Скрытый проход! Входим…',
     dimMountain: 'ГОРА', dimCity: 'ГОРОД', dimYard: 'ДВОР', dimMountainSub: 'ибекс · скалы от Негева до Альп', dimCitySub: 'Конг и дворовый кот · небоскрёбы и панельки', dimYardSub: 'собаки · двор, дом, парк', dimLocked: 'пройди {n} уровней горы, чтобы открыть', worldsDone: 'пройдено уровней: {a} / {b}', chooseDim: 'Выбери мир',
     mechanics: 'МЕХАНИКИ', m_drag: 'Прыжок', m_drag_d: 'Тяни от любого места в сторону цели; длиннее драг — сильнее прыжок. Точки показывают большую часть дуги.', m_catch: 'Зацеп за край', m_catch_d: 'Промахнись на длину руки — козёл схватится за край и подтянется.', m_air: 'Управление в полёте', m_air_d: 'В полёте сдвинь палец вбок, чтобы чуть подрулить — спасти прыжок, но не поменять его.',
@@ -303,6 +349,18 @@ const STYLES = {
     bands: [0xb98a5a, 0xa87b4e, 0xc4956a, 0x9f7248, 0xb58656], tops: [0xd2a878, 0xcaa070, 0xd8b080], sides: [0xa6784c, 0xb08252, 0x9c7046, 0xaa7c4e],
     dark: 0x6e4e30, plateau: 0x7fa74e, mesa: 0x5f8a3e, canyon: [0x6a9444, 0x6f9a48], bush: 0x4f7a34, blocker: 0x8a6a48, spike: 0x7a7a7a, crystal: [0xfff8e8, 0xc8b898],
     bird: 'wasp', veg: 'flowers', pickup: 'bone', pickupName: 'BONES' },
+  winter: { sky: [0x8fb0d8, 0xf0f3f7], haze: 0xe8edf3, sun: 0xfff6ea, sunI: 2.6, hemi: [0xdce8f8, 0x7a8290], hemiI: 1.1, flat: true, snow: true,
+    bands: [0xb8bcc4, 0xc6cad2, 0xaab0b8, 0xd0d4dc, 0xa0a6ae], tops: [0xf2f6fa, 0xecf1f6, 0xf6f9fc], sides: [0x8a6a4a, 0x927250, 0x816244, 0x8d6d4c],
+    dark: 0x5a5e66, plateau: 0xeef3f7, mesa: 0xc4cfda, canyon: [0xb8bcc4, 0xc6cad2], bush: 0x2e5a3c, blocker: 0x6f7680, spike: 0xd8ecfa, crystal: [0xfff0f4, 0xff8aa8],
+    bird: 'pigeon', veg: 'lamp', pickup: 'icecream', pickupName: 'ICE CREAM' },
+  lot: { sky: [0x9fb4c8, 0xe6e2da], haze: 0xdcd8d0, sun: 0xffefd8, sunI: 2.5, hemi: [0xd8dce4, 0x6e665c], hemiI: 1.0, flat: true,
+    bands: [0x8c8478, 0x9a9286, 0x7e766a, 0xa39b8e, 0x726a5e], tops: [0xd08a4a, 0xc98146, 0xd6944f], sides: [0x8a6a4a, 0x927250, 0x816244, 0x8d6d4c],
+    dark: 0x4e463e, plateau: 0x9c9488, mesa: 0x8a8278, canyon: [0x8c8478, 0x9a9286], bush: 0x6a7a3c, blocker: 0x5a524a, spike: 0x7a4a3a, crystal: [0xb08a5a, 0x5a3a1a],
+    bird: 'crow', veg: 'barrel', pickup: 'stick', pickupName: 'STICKS' },
+  park: { sky: [0x7fb8e8, 0xeaf1e2], haze: 0xe0e9d6, sun: 0xfff4dc, sunI: 2.7, hemi: [0xd8e8f8, 0x5a8a48], hemiI: 1.05, flat: true,
+    bands: [0x5f8a3e, 0x6a9646, 0x557d36, 0x729e4c, 0x4e7532], tops: [0xc9a373, 0xd2ab7a, 0xc09a6a], sides: [0x8f6a44, 0x9a744c, 0x86623e, 0x93704a],
+    dark: 0x5a4028, plateau: 0x7fa74e, mesa: 0x4f7a34, canyon: [0x5f8a3e, 0x6a9646], bush: 0x3f6a2c, blocker: 0x7a6a58, spike: 0x6a6a6a, crystal: [0xd8ff4a, 0x6a8a10],
+    bird: 'pigeon', veg: 'tree', pickup: 'ball', pickupName: 'BALLS' },
   house: { sky: [0xe9e2d4, 0xf3ede2], haze: 0xefe8dc, sun: 0xfff1d6, sunI: 2.4, hemi: [0xf4ecdc, 0x9a8a72], hemiI: 1.15, flat: true,
     bands: [0xd9c9b2, 0xe3d5c0, 0xcdbda6, 0xe8dcc9, 0xd2c2ab], tops: [0xc98a5c, 0xd49664, 0xbf8054], sides: [0x9a6a44, 0xa2724a, 0x8f613c, 0x9e6e47],
     dark: 0x6b4a30, plateau: 0xb9895c, mesa: 0xa88d72, canyon: [0xd5c6ae, 0xdacbb3], bush: 0x4e7c3a, blocker: 0x7a5a3c, spike: 0xb8bcc4, crystal: [0xe07a8a, 0x8a3a4a],
@@ -316,7 +374,7 @@ let STYLE = STYLES.desert;
 const TYPE = { // every ledge has the same depth so the goat always stands on rock, whatever the width
   terrace:  { h: 2.6, d: 5.5, jitter: 0.22 }, broad: { h: 2.0, d: 4.6, jitter: 0.25 }, slab: { h: 1.5, d: 4.6, jitter: 0.22 },
   narrow:   { h: 1.5, d: 4.6, jitter: 0.28 }, sloped: { h: 1.7, d: 4.6, jitter: 0.22, tilt: 0.11 },
-  stone:    { h: 1.3, d: 4.6, jitter: 0.38 }, foothold: { h: 1.2, d: 4.6, jitter: 0.32 },
+  stone:    { h: 1.3, d: 4.6, jitter: 0.38 }, foothold: { h: 1.2, d: 4.6, jitter: 0.32 }, seesaw: { h: 0.45, d: 4.0, jitter: 0.02 },
 };
 const LEDGE_FRONT_Z = 1.0;
 let LEVELS = [];
@@ -483,6 +541,15 @@ function defineLevels() { LEVELS = [
   makeRun({ key: 'house1', name: 'SOFA TO SHELF', style: 'house', seed: 71, n: 14, character: 'corgi' }),
   makeRun({ key: 'house2', name: 'LAUNDRY DAY', style: 'house', seed: 72, n: 16, hawks: 2, wind: true, character: 'corgi' }),
   makeRun({ key: 'house3', name: 'KITCHEN RUN', style: 'house', seed: 73, n: 18, hawks: 1, spikes: true, kid: true, character: 'corgi' }),
+  makeRun({ key: 'park1', name: 'THE SWINGS', style: 'park', seed: 81, n: 14, move: true, character: 'collie' }),
+  makeRun({ key: 'park2', name: 'DUCK POND', style: 'park', seed: 82, n: 16, move: true, hawks: 2, character: 'collie' }),
+  makeRun({ key: 'park3', name: 'THE CAROUSEL', style: 'park', seed: 83, n: 18, move: true, hawks: 1, kid: true, character: 'collie' }),
+  makeRun({ key: 'lot1', name: 'PLANK WALK', style: 'lot', seed: 91, n: 14, seesaw: true, character: 'basset' }),
+  makeRun({ key: 'lot2', name: 'CROW\'S NEST', style: 'lot', seed: 92, n: 16, seesaw: true, hawks: 2, character: 'basset' }),
+  makeRun({ key: 'lot3', name: 'REBAR ALLEY', style: 'lot', seed: 93, n: 18, seesaw: true, spikes: true, kid: true, character: 'basset' }),
+  makeRun({ key: 'winter1', name: 'SNOW STREET', style: 'winter', seed: 96, n: 14, soft: true, character: 'husky' }),
+  makeRun({ key: 'winter2', name: 'GARLAND WIND', style: 'winter', seed: 97, n: 16, soft: true, ice: true, wind: true, hawks: 1, character: 'husky' }),
+  makeRun({ key: 'winter3', name: 'CAR ROOFS', style: 'winter', seed: 98, n: 18, soft: true, ice: true, move: true, hawks: 1, kid: true, character: 'husky' }),
   // puzzles: short, one non-obvious route, third star for finishing in few jumps
   puzzleOf(makeDescent({ key: 'negevPuzzle', name: 'THE NARROW WAY', style: 'desert', seed: 101, n: 12 })),
   puzzleOf(makeDescent({ key: 'redPuzzle', name: 'THORN GARDEN', style: 'red', seed: 111, n: 13, spikes: true })),
@@ -492,6 +559,8 @@ function defineLevels() { LEVELS = [
   // secrets: hidden until their entrance is found
   secretOf(makeDescent({ key: 'negevSecret', name: 'THE SALT CAVE', style: 'desert', seed: 109, n: 14 })),
   secretOf(makeDescent({ key: 'citySecret', name: 'THE VENTS', style: 'city', seed: 149, n: 14, wind: true })),
+  secretOf(makeRun({ key: 'houseSecret', name: 'THE ATTIC', style: 'house', seed: 179, n: 12, move: true, character: 'corgi' })),
+  secretOf(makeRun({ key: 'parkSecret', name: 'UNDER THE BRIDGE', style: 'park', seed: 189, n: 12, hawks: 1, character: 'collie' })),
 ];
   // challenges: an existing level with a modifier
   for (const [key, base, mod] of [['negevChal', 'crystal', 'fastCam'], ['redChal', 'red', 'noCatch'], ['chalkChal', 'chalk', 'fastCam'], ['nightChal', 'nightrun', 'noCatch'], ['alpsChal', 'alpine', 'noCatch']]) {
@@ -499,6 +568,7 @@ function defineLevels() { LEVELS = [
   }
   // secret entrances: an off-route stone with a dark cave mouth in an existing level
   const cr = LEVELS.find(l => l.key === 'crystal'); cr.surfaces.push(['sec', 11, -34, 2, 'stone']); cr.secretEntry = { surface: 'sec', level: 'negevSecret' };
+  for (const [lvl, sec] of [['house1', 'houseSecret'], ['park1', 'parkSecret']]) { const lv = LEVELS.find(l => l.key === lvl); const a = lv.surfaces[5]; lv.surfaces.push(['sec', +(a[1] + 3).toFixed(1), +(a[2] + 3.4).toFixed(1), 2, 'stone']); lv.secretEntry = { surface: 'sec', level: sec }; lv.scent = true; }
   const cd = LEVELS.find(l => l.key === 'citydown'); const mid = cd.surfaces[Math.floor(cd.surfaces.length / 2)]; cd.surfaces.push(['sec', mid[1] > 0 ? -9 : 9, +(mid[2] - 3).toFixed(1), 2, 'stone']); cd.secretEntry = { surface: 'sec', level: 'citySecret' };
 }
 function puzzleOf(def) { def.puzzle = true; def.stars = { crystals: def.stars.crystals, jumps: def.surfaces.length + 1, time: 0 }; return def; }
@@ -514,7 +584,11 @@ function makeRun(o) {
     x = +(prevX + prevW / 2 + gap + nw / 2).toFixed(1); w = nw;
     const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : 'narrow';
     const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 ? 'R' : null;
-    const row = ['r' + i, x, +y.toFixed(1), w, type]; if (spk) row.push(spk); surfaces.push(row);
+    const row = ['r' + i, x, +y.toFixed(1), w, type]; if (spk) row.push(spk);
+    if (o.soft && i > 1 && i % 3 === 0 && !spk) { row[5] = 'soft'; } else if (o.ice && i > 2 && i % 4 === 1 && !spk) { row[5] = 'ice'; }
+    if (o.seesaw && i > 2 && i % 3 === 0 && !spk) { row[3] = 4.5; row[4] = 'seesaw'; w = 4.5; }
+    else if (o.move && i > 2 && i % 3 === 0 && !spk) { row[5] = row[5] || undefined; row[6] = (i % 2 ? { dx: 1.6 + r() * 0.8, dy: 0, period: 3 + r() * 1.5, phase: r() } : { dx: 0, dy: 1.2 + r() * 0.6, period: 3 + r(), phase: r() }); if (row.length === 7 && row[5] === undefined) row[5] = ''; }
+    surfaces.push(row);
     if (i % 3 === 1) crystals.push([+(spk ? x - w / 4 : x).toFixed(1), +(y + 0.6).toFixed(1)]); else if (i % 4 === 2) crystals.push([+((prevX + x) / 2).toFixed(1), +(Math.max(prevY, y) + 2.6).toFixed(1)]);
     if (hawkAt.includes(i)) hawks.push({ x1: +(prevX + 1).toFixed(1), x2: +(x - 1).toFixed(1), y: +(Math.max(prevY, y) + 2.2).toFixed(1), speed: 4 + t * 3 });
   }
@@ -646,10 +720,23 @@ function dailyDef(info = dailyInfo()) {
   def.daily = true; def.date = info.date; def.mods = mods; def.character = character; def.forceChar = character; return def;
 }
 const DAILY_REWARD = [3, 3, 4];
+// ---- weekly tower: deterministic 5-section climb, biome per section, hazards escalate, checkpoints between sections ----
+function weekId() { const d = new Date(); const day = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - day + 3); const y0 = new Date(Date.UTC(d.getUTCFullYear(), 0, 4)); return d.getUTCFullYear() + '-W' + String(1 + Math.round(((d - y0) / 864e5 - 3 + ((y0.getUTCDay() + 6) % 7)) / 7)).padStart(2, '0'); }
+function towerDef() {
+  const wk = weekId(); let h = 7; for (const c of wk) h = (h * 31 + c.charCodeAt(0)) >>> 0; const r = mulberry(h);
+  const sect = 40; const hawks = []; for (let k = 1; k < 5; k++) for (let j = 0; j < k; j++) hawks.push({ x1: -8 + r() * 2, x2: 6 + r() * 2, y: +(k * sect + 6 + j * 12).toFixed(1), speed: 4 + k * 0.8 });
+  const def = makeClimb({ key: 'tower', name: 'WEEKLY TOWER', style: 'desert', seed: h, n: 66, spikes: true, rocks: 3, hawks, wind: true });
+  const ub = unlockedBiomes(); const bio = ['desert', 'red', 'chalk', 'night', 'alpine'].filter(b => ub.has(b)); while (bio.length < 5) bio.push(bio[bio.length - 1] || 'desert');
+  def.zones = bio.map((st, i) => ({ y: i * sect, style: st })); def.style = bio[0];
+  // checkpoints: the ledge nearest each section boundary becomes a wide rest ledge
+  def.checkpoints = []; for (let k = 1; k <= 4; k++) { let best = null, bd = 99; for (const row of def.surfaces) { if (row[0] === 'start' || row[0] === 'finish') continue; const d = Math.abs(row[2] - k * sect); if (d < bd) { bd = d; best = row; } } if (best) { best[0] = 'cp' + k; best[3] = Math.max(best[3], 3.6); best[4] = 'broad'; best[5] = undefined; best.length = 5; def.checkpoints.push(best[0]); } }
+  def.surfaces = def.surfaces.filter(row => !(row[0].startsWith('b') && row.length > 5 && false)); def.tower = true; def.week = wk; def.stars = { crystals: Math.floor(def.crystals.length * 0.6), time: 600 }; def.firstOf = []; def.softened = true; return def;
+}
+function towerState() { const wk = weekId(); save.tower = save.tower || {}; if (save.tower.week !== wk) save.tower = { week: wk, cp: 0, best: 0, time: 0, done: false }; return save.tower; }
 const DIMS = [
   { key: 'mountain', nameKey: 'dimMountain', subKey: 'dimMountainSub', worlds: ['NEGEV', 'RED CANYON', 'CHALK COAST', 'MOONLIT RIDGE', 'THE ALPS'] },
   { key: 'city', nameKey: 'dimCity', subKey: 'dimCitySub', worlds: ['SKYSCRAPER', 'PANELKI'], needMountain: 8 },
-  { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE'], needMountain: 8 },
+  { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET'], needMountain: 8 },
 ];
 const WORLDS = [
   { name: 'NEGEV', sub: 'desert cliffs', levels: ['steps', 'descent', 'crystal', 'twin', 'hawk', 'negevPuzzle', 'negevChal', 'negevSecret'] },
@@ -660,14 +747,17 @@ const WORLDS = [
   { name: 'SKYSCRAPER', sub: 'balconies and cornices', character: 'kong', levels: ['citydown', 'cityrun', 'cityup', 'citySecret'] },
   { name: 'PANELKI', sub: 'soviet housing blocks', character: 'cat', levels: ['paneldown', 'panelrun', 'panelup'] },
   { name: 'DACHSHUND YARD', sub: 'a long dog, a long fence', character: 'dog', levels: ['yard1', 'yard2', 'yard3'] },
-  { name: 'THE HOUSE', sub: 'corgi · sofa, shelves, a toy drone', character: 'corgi', levels: ['house1', 'house2', 'house3'] },
+  { name: 'THE HOUSE', sub: 'corgi · sofa, shelves, a toy drone', character: 'corgi', levels: ['house1', 'house2', 'house3', 'houseSecret'] },
+  { name: 'THE PARK', sub: 'border collie · swings, ducks, benches', character: 'collie', levels: ['park1', 'park2', 'park3', 'parkSecret'] },
+  { name: 'THE LOT', sub: 'basset · planks, barrels, crows', character: 'basset', levels: ['lot1', 'lot2', 'lot3'] },
+  { name: 'WINTER STREET', sub: 'husky · snowdrifts, car roofs, garlands', character: 'husky', levels: ['winter1', 'winter2', 'winter3'] },
 ];
 // flatten LEVELS into world order so NEXT LEVEL walks through a world, then the next
 function orderLevels() { const byKey = Object.fromEntries(LEVELS.map(l => [l.key, l])); LEVELS = []; for (const w of WORLDS) for (const k of w.levels) LEVELS.push(byKey[k]); markFirstEncounters(); }
 // which level introduces each mechanic (by world order) — those levels get a gentler first version of it
 function levelMechanics(l) {
   const m = new Set(); const flag = f => l.surfaces.some(r => r[5] && r[5].split(' ').includes(f));
-  if (flag('L') || flag('R')) m.add('spikes'); if (flag('ice')) m.add('ice'); if (flag('crumble')) m.add('crumble');
+  if (l.surfaces.some(r => r[6])) m.add('moving'); if (l.surfaces.some(r => r[4] === 'seesaw')) m.add('seesaw'); if (flag('soft')) m.add('soft'); if (flag('L') || flag('R')) m.add('spikes'); if (flag('ice')) m.add('ice'); if (flag('crumble')) m.add('crumble');
   if (l.hawks && l.hawks.length) m.add('birds'); if (l.rocks && l.rocks.length) m.add('rocks'); if (l.winds && l.winds.length) m.add('wind'); if (l.updrafts && l.updrafts.length) m.add('updraft'); if (l.kids && l.kids.length) m.add('kids'); if (l.twin) m.add('twin');
   return m;
 }
@@ -836,6 +926,9 @@ function makeCrystal() {
   } else if (kind === 'garnet') { const m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.34, 0), crystalMat); m.position.y = 0.3; m.castShadow = true; g.add(m); }
   else if (kind === 'fossil') { const m = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.11, 5, 9), crystalMat); m.position.y = 0.32; m.rotation.y = 0.4; m.castShadow = true; g.add(m);
     const c = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.06, 4, 6), crystalMat); c.position.set(0.02, 0.32, 0.0); g.add(c); }
+  else if (kind === 'icecream') { const cone = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.42, 6), new THREE.MeshLambertMaterial({ color: 0xd9a066, flatShading: true })); cone.position.y = 0.18; cone.rotation.x = Math.PI; g.add(cone); const scoop = new THREE.Mesh(new THREE.IcosahedronGeometry(0.19, 1), crystalMat); scoop.position.y = 0.48; scoop.castShadow = true; g.add(scoop); }
+  else if (kind === 'stick') { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.8, 5), crystalMat); m.rotation.z = 1.2; m.position.y = 0.3; m.castShadow = true; g.add(m); }
+  else if (kind === 'ball') { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28, 1), crystalMat); m.position.y = 0.3; m.castShadow = true; g.add(m); }
   else if (kind === 'slipper') { const m = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.16, 0.3), crystalMat); m.position.y = 0.2; m.castShadow = true; g.add(m); const toe = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.32), crystalMat); toe.position.set(0.16, 0.3, 0); g.add(toe); }
   else if (kind === 'bone') { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 6), crystalMat); m.rotation.z = Math.PI / 2; m.position.y = 0.3; g.add(m); for (const dx of [-0.25, 0.25]) for (const dy of [-0.08, 0.08]) { const k = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 5), crystalMat); k.position.set(dx, 0.3 + dy, 0); g.add(k); } }
   else if (kind === 'banana') { const m = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.09, 5, 8, Math.PI * 0.9), crystalMat); m.position.y = 0.3; m.rotation.z = -0.5; m.castShadow = true; g.add(m); }
@@ -871,6 +964,15 @@ function makeVegetation(r) {
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 0.5, 5), new THREE.MeshLambertMaterial({ color: 0x4a3526, flatShading: true })); trunk.position.y = 0.25; g.add(trunk);
     const hgt = 1.2 + r() * 0.8; for (let i = 0; i < 3; i++) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.45 - i * 0.11, hgt * 0.45, 6), leaf); c.position.y = 0.45 + i * hgt * 0.26; c.castShadow = true; g.add(c); }
     if (STYLE.snow) { const cap = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.2, 6), new THREE.MeshLambertMaterial({ color: 0xf4f7fa, flatShading: true })); cap.position.y = 0.45 + 2 * hgt * 0.26 + hgt * 0.16; g.add(cap); }
+  } else if (STYLE.veg === 'lamp') {
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 1.8, 5), new THREE.MeshLambertMaterial({ color: 0x3a3e46, flatShading: true })); post.position.y = 0.9; g.add(post);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.16, 0.3), new THREE.MeshBasicMaterial({ color: 0xffe9a8 })); head.position.y = 1.85; g.add(head);
+  } else if (STYLE.veg === 'barrel') {
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.7, 8), new THREE.MeshLambertMaterial({ color: [0x3a5a9a, 0xb8442e, 0x8a8a8a][Math.floor(r() * 3)], flatShading: true })); b.position.y = 0.35; b.castShadow = true; g.add(b);
+    for (const y of [0.15, 0.55]) { const ring = new THREE.Mesh(new THREE.TorusGeometry(0.29, 0.025, 4, 10), new THREE.MeshLambertMaterial({ color: 0x555555 })); ring.rotation.x = Math.PI / 2; ring.position.y = y; g.add(ring); }
+  } else if (STYLE.veg === 'tree') {
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 0.7, 5), new THREE.MeshLambertMaterial({ color: 0x5a4028, flatShading: true })); trunk.position.y = 0.35; g.add(trunk);
+    const crown = new THREE.Mesh(new THREE.IcosahedronGeometry(0.5 + r() * 0.2, 0), leaf); crown.position.y = 1.0; crown.castShadow = true; g.add(crown);
   } else if (STYLE.veg === 'plant') {
     const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.16, 0.34, 6), new THREE.MeshLambertMaterial({ color: 0xb5623a, flatShading: true })); pot.position.y = 0.17; g.add(pot);
     for (let i = 0; i < 4; i++) { const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.6, 4), leaf); leaf.position.set((r() - .5) * 0.2, 0.55, (r() - .5) * 0.2); leaf.rotation.z = (r() - .5) * 0.9; leaf.rotation.x = (r() - .5) * 0.6; g.add(leaf); }
@@ -895,11 +997,11 @@ function L_isStart(idx, id) { const d = LEVELS[idx]; return d.starts ? d.starts.
 function makeSurface(r, i, seed) {
   const t = TYPE[r[4]]; const tilt = t.tilt ? t.tilt * ((i % 2) ? 1 : -1) : 0;
   const s = { id: r[0], x: r[1], y: r[2], w: r[3], type: r[4], x1: r[1] - r[3] / 2, x2: r[1] + r[3] / 2, h: t.h, d: t.d, jitter: t.jitter, tilt, idx: i, finish: r[0].startsWith('finish'),
-    spikes: null, crumble: false, ice: false, group: new THREE.Group() };
+    spikes: null, crumble: false, ice: false, group: new THREE.Group(), move: r[6] || null, x0: r[1], y0: r[2], vx: 0, vy: 0, seesaw: r[4] === 'seesaw', tiltVel: 0 };
   // 6th element: space-separated flags — 'L' / 'R' spikes on that half, 'crumble', 'ice'
   for (const f of String(r[5] || '').split(' ').filter(Boolean)) {
     if (f === 'L') s.spikes = { x1: s.x1, x2: s.x }; else if (f === 'R') s.spikes = { x1: s.x, x2: s.x2 };
-    else if (f === 'crumble') s.crumble = true; else if (f === 'ice') s.ice = true;
+    else if (f === 'crumble') s.crumble = true; else if (f === 'ice') s.ice = true; else if (f === 'soft') s.soft = true;
   }
   if (r.softSpikes && s.spikes) { const mid = s.x; s.spikes = s.spikes.x1 < mid ? { x1: s.x1, x2: s.x1 + s.w * 0.4 } : { x1: s.x2 - s.w * 0.4, x2: s.x2 }; }
   s.iceStop = !!r.iceStop; s.crumbleSlow = !!r.crumbleSlow;
@@ -908,12 +1010,20 @@ function makeSurface(r, i, seed) {
   if (s.ice) mats[2] = new THREE.MeshPhongMaterial({ color: 0xd8eefc, emissive: 0x6aa9d8, emissiveIntensity: 0.15, shininess: 90, specular: 0xffffff, flatShading: true });
   if (s.crumble) { mats[0].color.offsetHSL(0, 0.05, -0.12); mats[2].color.offsetHSL(0, 0, -0.1); }
   const m = new THREE.Mesh(makeRock(s.w + 0.3, s.h + 0.6, s.d, seed, STYLE.flat ? 0.02 : s.jitter, { undercut: !STYLE.flat, solid: true }), mats);
-  m.position.set(s.x, s.y - (s.h + 0.6) / 2, LEDGE_FRONT_Z - s.d / 2); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m);
+  m.position.set(s.x, s.y - (s.h + 0.6) / 2, LEDGE_FRONT_Z - s.d / 2); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m); s.mesh = m;
+  if (s.seesaw) { const piv = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 1.0, 1.6, 3), new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true })); piv.position.set(s.x, s.y - 1.4, LEDGE_FRONT_Z - s.d / 2); piv.rotation.y = Math.PI / 2; piv.castShadow = true; g.add(piv); }
   if (STYLE.flat && !s.finish && s.w < 20) { // balcony railing along the back edge
     const rail = new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true }); const bar = new THREE.Mesh(new THREE.BoxGeometry(s.w + 0.2, 0.05, 0.05), rail); bar.position.set(s.x, s.y + 0.95, -1.2); g.add(bar);
     for (let k = 0; k <= Math.round(s.w / 0.6); k++) { const post = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.95, 0.05), rail); post.position.set(s.x - s.w / 2 + k * (s.w / Math.max(1, Math.round(s.w / 0.6))), s.y + 0.48, -1.2); g.add(post); }
   }
+  if (s.soft) { const snow = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshLambertMaterial({ color: 0xf6f9fc, flatShading: true })); snow.scale.set(s.w / 2 + 0.2, 0.45, 1.6); snow.position.set(s.x, s.y + 0.05, -0.4); snow.receiveShadow = true; g.add(snow); }
   if (s.iceStop) { const stop = new THREE.Mesh(makeRock(0.5, 0.7, 1.2, seed + 9, 0.2, { solid: true }), rockMaterials(seed + 9)); stop.position.set(s.x2 - 0.3, s.y + 0.35, -0.3); s.stopX = s.x2 - 0.65; g.add(stop); const stop2 = stop.clone(); stop2.position.x = s.x1 + 0.3; s.stopX1 = s.x1 + 0.65; g.add(stop2); }
+  if (s.move) { // hanging trolley on a beam (horizontal) or a cage on a rail (vertical)
+    const metal = new THREE.MeshLambertMaterial({ color: 0x4a4e55, flatShading: true }); const rope = new THREE.MeshLambertMaterial({ color: 0x2e2a26 });
+    const top = s.y0 + 6.5; for (const dx of [-s.w / 2 + 0.3, s.w / 2 - 0.3]) { const rp = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, top - s.y - 0.2, 4), rope); rp.position.set(s.x + dx, (top + s.y - 0.2) / 2 + 0.2, -0.9); g.add(rp); }
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(s.move.dx ? Math.abs(s.move.dx) * 2 + s.w + 1 : 0.5, s.move.dy ? 0.3 : 0.3, 0.3), metal); beam.position.set(s.x0, s.move.dy ? top + Math.abs(s.move.dy) : top, -0.9); levelGroup.add(beam);
+    if (s.move.dy) { const rail = new THREE.Mesh(new THREE.BoxGeometry(0.14, Math.abs(s.move.dy) * 2 + 6.5 + 1, 0.14), metal); rail.position.set(s.x0 - s.w / 2 - 0.4, s.y0 + 3.2, -0.9); levelGroup.add(rail); }
+  }
   if (r.secretMouth) { const mouth = new THREE.Mesh(new THREE.CircleGeometry(0.9, 10), new THREE.MeshBasicMaterial({ color: 0x0a0604 })); mouth.position.set(s.x, s.y + 1.1, -1.0); g.add(mouth); const q = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.05, 10), new THREE.MeshBasicMaterial({ color: 0xffd76a, transparent: true, opacity: 0.6 })); q.position.set(s.x, s.y + 1.1, -0.95); g.add(q); }
   if (s.crumble) { // cracks across the top
     const crackMat = new THREE.MeshLambertMaterial({ color: 0x2a1c14 }); const rr = mulberry(seed + 11);
@@ -953,6 +1063,11 @@ function fixLane(h, rects) {
     if (!moved) break;
   }
 }
+// horizontal levels run far along x: stretch the backdrop wall along the route and drop the canyon side walls
+function layoutEnv(def, surfaces) {
+  const horizontal = !!def.horizontal; const xs = surfaces.map(s => s.x); const mid = horizontal ? (Math.min(...xs) + Math.max(...xs)) / 2 : 2;
+  ENV.wall.scale.x = horizontal ? 6 : 1; ENV.wall.position.x = mid; for (const c of ENV.canyon) c.visible = !horizontal; ENV.floor.scale.x = horizontal ? 4 : 1; ENV.floor.position.x = horizontal ? mid : 0; ENV.windows.position.x = horizontal ? mid : 0;
+}
 function styleAt(def, y) { // biome markers: the zone the goat has passed in the level's direction
   const zones = def.zones || []; if (!zones.length) return STYLES[def.style] || STYLES.desert;
   let best = null; for (const z of zones) { if (def.ascent ? z.y <= y : z.y >= y) { if (!best || (def.ascent ? z.y > best.y : z.y < best.y)) best = z; } }
@@ -979,7 +1094,8 @@ function buildLevel(idx, defOverride) {
   const rocks = (def.rocks || []).map((r, i) => ({ ...r, t: -(r.offset || 0), warn: null, boulder: null, chute: makeChute(r.x, r.y, 900 + i + idx * 17) }));
   const winds = (def.winds || []).map(w => ({ ...w }));
   const updrafts = (def.updrafts || []).map((u, i) => ({ ...u, mesh: makeVent(u, 700 + i) }));
-  const kids = (def.kids || []).map(k => { const sf = surfaces.find(s => s.id === k.surface); const cs = currentSkin(); const g = cs.ch === 'kong' ? new Goat('classic', 1, 'human') : new Goat(cs.sk, (cs.ch === 'dog' || cs.ch === 'corgi') ? 0.55 : 0.6, cs.ch); g.spawn(sf, k.x ?? sf.x); g.root.position.z = -0.4; g.herdZ = -0.4; g.isKid = true; return { surface: sf, goat: g, rescued: false }; });
+  const kids = (def.kids || []).map(k => { const sf = surfaces.find(s => s.id === k.surface); const cs = currentSkin(); const g = cs.ch === 'kong' ? new Goat('classic', 1, 'human') : new Goat(cs.sk, ['dog', 'corgi', 'collie', 'basset', 'husky'].includes(cs.ch) ? 0.55 : 0.6, cs.ch); g.spawn(sf, k.x ?? sf.x); g.root.position.z = -0.4; g.herdZ = -0.4; g.isKid = true; return { surface: sf, goat: g, rescued: false }; });
+  layoutEnv(def, surfaces);
   L = { idx, def, surfaces, blockers, crystals, hawks, rocks, winds, updrafts, kids, falling: [], windDust: [], liftDust: [], starts, start: starts[0], bottom, top, twin: !!def.twin, ascent: !!def.ascent, horizontal: !!def.horizontal, dir: def.ascent ? -1 : 1, endless: !!def.endless,
         left: Math.min(...surfaces.map(s => s.x1)), right: Math.max(...surfaces.map(s => s.x2)),
         gen: { lastX: 0, lastY: 0, lastW: 8, n: 0, sinceHawk: 0, sincePickup: 0, biome: 0, seed: 1000 } };
@@ -1105,13 +1221,19 @@ const CHARACTERS = {
 };
 const DOG_SKINS = { red: { body: 0xb5622a, belly: 0xd28a52, dark: 0x5a2e14, horn: 0 }, blacktan: { body: 0x1e1a18, belly: 0xb0703a, dark: 0x120f0e, horn: 0 }, dapple: { body: 0x8a8a8a, belly: 0xd8d8d8, dark: 0x3a3a3a, horn: 0 } };
 const CORGI_SKINS = { redwhite: { body: 0xd98a4a, belly: 0xf6efe4, dark: 0x8a5228, horn: 0 }, tricolor: { body: 0x2a2320, belly: 0xf2ebe0, dark: 0xb5622a, horn: 0 }, sable: { body: 0x9a6a3a, belly: 0xe8dcc8, dark: 0x3a2a1a, horn: 0 } };
+const COLLIE_SKINS = { blackwhite: { body: 0x232326, belly: 0xf4f1ea, dark: 0x111114, horn: 0 }, merle: { body: 0x8a8f96, belly: 0xf1f1ee, dark: 0x3a3d44, horn: 0 }, redwhite: { body: 0x9a5a34, belly: 0xf1ebe0, dark: 0x4a2a18, horn: 0 } };
+const BASSET_SKINS = { tricolor: { body: 0xe8dcc8, belly: 0xf4efe6, dark: 0x2a2320, horn: 0 }, lemon: { body: 0xf0e2c8, belly: 0xfaf6ee, dark: 0xd4a860, horn: 0 }, redwhite: { body: 0xe4d6c2, belly: 0xf6f1ea, dark: 0xa85a2a, horn: 0 } };
+const HUSKY_SKINS = { grey: { body: 0x7a7e86, belly: 0xf4f4f2, dark: 0x2a2c32, horn: 0 }, black: { body: 0x1f2024, belly: 0xf0f0ee, dark: 0x0e0e12, horn: 0 }, red: { body: 0xa8653a, belly: 0xf4efe8, dark: 0x5a3018, horn: 0 } };
+CHARACTERS.husky = { name: 'HUSKY', world: 'WINTER STREET', skins: HUSKY_SKINS, list: [{ id: 'grey', name: 'GREY & WHITE', cost: 0 }, { id: 'black', name: 'BLACK & WHITE', cost: 14 }, { id: 'red', name: 'RED & WHITE', cost: 18 }] };
+CHARACTERS.basset = { name: 'BASSET', world: 'THE LOT', skins: BASSET_SKINS, list: [{ id: 'tricolor', name: 'TRICOLOR', cost: 0 }, { id: 'lemon', name: 'LEMON', cost: 14 }, { id: 'redwhite', name: 'RED & WHITE', cost: 18 }] };
+CHARACTERS.collie = { name: 'BORDER COLLIE', world: 'THE PARK', skins: COLLIE_SKINS, list: [{ id: 'blackwhite', name: 'BLACK & WHITE', cost: 0 }, { id: 'merle', name: 'BLUE MERLE', cost: 14 }, { id: 'redwhite', name: 'RED & WHITE', cost: 18 }] };
 CHARACTERS.corgi = { name: 'CORGI', world: 'THE HOUSE', model: 'dog', variant: 'corgi', skins: CORGI_SKINS, list: [{ id: 'redwhite', name: 'RED & WHITE', cost: 0 }, { id: 'tricolor', name: 'TRICOLOR', cost: 14 }, { id: 'sable', name: 'SABLE', cost: 18 }] };
 CHARACTERS.dog = { name: 'DACHSHUND', world: 'DACHSHUND YARD', skins: DOG_SKINS, list: [{ id: 'red', name: 'RED DACHSHUND', cost: 0 }, { id: 'blacktan', name: 'BLACK & TAN', cost: 14 }, { id: 'dapple', name: 'DAPPLE', cost: 18 }] };
 const HUMAN_SKINS = { classic: { body: 0x3a5a8a, belly: 0xe8c8a8, dark: 0x2a2a30, horn: 0 } };
 CHARACTERS.human = { name: 'PERSON', hidden: true, skins: HUMAN_SKINS, list: [{ id: 'classic', name: 'PERSON', cost: 0 }] };
 let forcedChar = null;
 function currentSkin() { const ch = forcedChar && CHARACTERS[forcedChar] ? forcedChar : CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id; return { ch, sk }; }
-const HAWK_SKINS = { drone: { dark: 0xe8e8ee, light: 0x3a7ad8, beak: 0xff5040 }, wasp: { dark: 0x2a2418, light: 0xf0c020, beak: 0x222222 }, chopper: { dark: 0x2c3138, light: 0x6b7480, beak: 0xff3030 }, pigeon: { dark: 0x6f7480, light: 0xc9cbd3, beak: 0xe0b060 }, hawk: { dark: 0x4a3324, light: 0xa88664, beak: 0xd9b23c }, raven: { dark: 0x15131c, light: 0x2c2936, beak: 0x4a4a4a }, eagle: { dark: 0x5e3a1a, light: 0xeee6d6, beak: 0xe6c23c }, falcon: { dark: 0x596270, light: 0xd9d5cc, beak: 0xd6b23a } };
+const HAWK_SKINS = { crow: { dark: 0x15151a, light: 0x2a2a32, beak: 0x4a4a50 }, drone: { dark: 0xe8e8ee, light: 0x3a7ad8, beak: 0xff5040 }, wasp: { dark: 0x2a2418, light: 0xf0c020, beak: 0x222222 }, chopper: { dark: 0x2c3138, light: 0x6b7480, beak: 0xff3030 }, pigeon: { dark: 0x6f7480, light: 0xc9cbd3, beak: 0xe0b060 }, hawk: { dark: 0x4a3324, light: 0xa88664, beak: 0xd9b23c }, raven: { dark: 0x15131c, light: 0x2c2936, beak: 0x4a4a4a }, eagle: { dark: 0x5e3a1a, light: 0xeee6d6, beak: 0xe6c23c }, falcon: { dark: 0x596270, light: 0xd9d5cc, beak: 0xd6b23a } };
 
 class Goat {
   constructor(skin, scale = 1, character = 'goat') {
@@ -1128,6 +1250,9 @@ class Goat {
     if (this.character === 'human') return this.buildHuman(sk);
     if (this.character === 'dog') return this.buildDog(sk);
     if (this.character === 'corgi') return this.buildDog(sk, 'corgi');
+    if (this.character === 'collie') return this.buildDog(sk, 'collie');
+    if (this.character === 'basset') return this.buildDog(sk, 'basset');
+    if (this.character === 'husky') return this.buildDog(sk, 'husky');
     const M = { body: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), belly: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }),
       dark: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), cream: new THREE.MeshLambertMaterial({ color: 0xe9dcc3, flatShading: true }),
       hoof: new THREE.MeshLambertMaterial({ color: 0x2b211a, flatShading: true }), horn: new THREE.MeshLambertMaterial({ color: sk.horn, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0x120c08 }) };
@@ -1165,7 +1290,7 @@ class Goat {
     scene.add(goat);
   }
   buildDog(sk, variant) { // dachshund: very long body, short legs, floppy ears, tail up; corgi: shorter body, big upright ears, no tail
-    const corgi = variant === 'corgi'; const BL = corgi ? 1.25 : 1.8, HX = corgi ? 0.8 : 1.05;
+    const corgi = variant === 'corgi', collie = variant === 'collie' || variant === 'husky', basset = variant === 'basset', husky = variant === 'husky'; const BL = corgi ? 1.25 : collie ? 1.45 : basset ? 1.7 : 1.8, HX = corgi ? 0.8 : collie ? 0.95 : 1.05;
     const M = { fur: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), tan: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }), dark: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0x120c08 }) };
     const root = this.root = new THREE.Group(); const bodyG = this.bodyG = new THREE.Group(); root.add(bodyG); this.legs = [];
     const torso = new THREE.Mesh(new THREE.BoxGeometry(BL, corgi ? 0.5 : 0.44, corgi ? 0.46 : 0.4), M.fur); torso.position.set(0, 0.58, 0); bodyG.add(torso);
@@ -1174,10 +1299,12 @@ class Goat {
     const headG = this.headG = new THREE.Group(); headG.position.set(HX, 0.9, 0); bodyG.add(headG);
     headG.add(new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.3, 0.32), M.fur)); const muzzle = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.18, 0.2), M.tan); muzzle.position.set(0.32, -0.06, 0); headG.add(muzzle);
     const nose = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.09), M.eye); nose.position.set(0.53, -0.02, 0); headG.add(nose);
-    for (const sd of [-1, 1]) { const ear = corgi ? new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.3, 4), M.fur) : new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.34, 0.06), M.dark); if (corgi) { ear.position.set(-0.06, 0.26, sd * 0.13); ear.rotation.z = -0.15; } else { ear.position.set(-0.08, -0.1, sd * 0.19); ear.rotation.x = sd * 0.25; } headG.add(ear); const eye = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.05, 0.05), M.eye); eye.position.set(0.19, 0.06, sd * 0.11); headG.add(eye); }
-    const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.045, corgi ? 0.16 : 0.5, 5), M.dark); tail.position.set(-BL / 2 - 0.1, 0.85, 0); tail.rotation.z = 0.9; bodyG.add(tail); this.tailG = tail;
-    const makeLeg = (x, z, front) => { const g = new THREE.Group(); g.position.set(x, 0.42, z); bodyG.add(g); const up = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.24, 5), M.fur); up.position.y = -0.12; g.add(up); const low = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.18, 5), M.tan); low.position.y = -0.33; g.add(low); const paw = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 0.1), M.dark); paw.position.set(0.03, -0.42, 0); g.add(paw); g.userData.front = front; this.legs.push(g); };
-    const LX = BL / 2 - 0.2; makeLeg(LX, 0.14, true); makeLeg(LX, -0.14, true); makeLeg(-LX, 0.14, false); makeLeg(-LX, -0.14, false);
+    for (const sd of [-1, 1]) { const ear = (corgi || husky) ? new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.3, 4), M.fur) : new THREE.Mesh(new THREE.BoxGeometry(0.14, basset ? 0.6 : 0.34, 0.06), M.dark); if (corgi || husky) { ear.position.set(-0.06, 0.26, sd * 0.13); ear.rotation.z = -0.15; } else { ear.position.set(-0.08, basset ? -0.22 : -0.1, sd * 0.19); ear.rotation.x = sd * 0.25; } headG.add(ear); const eye = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.05, 0.05), M.eye); eye.position.set(0.19, 0.06, sd * 0.11); headG.add(eye); }
+    const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.025, collie ? 0.09 : 0.045, corgi ? 0.16 : collie ? 0.65 : 0.5, 5), collie ? M.fur : M.dark); tail.position.set(-BL / 2 - 0.1, collie ? 0.6 : 0.85, 0); tail.rotation.z = collie ? 1.6 : 0.9; bodyG.add(tail); this.tailG = tail;
+    if (collie) { const ruff = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.5, 0.5), M.tan); ruff.position.set(BL / 2 - 0.05, 0.72, 0); bodyG.add(ruff); }
+    if (husky) { tail.rotation.z = 2.6; tail.position.y += 0.15; const mask = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.22, 0.36), M.tan); mask.position.set(0.12, -0.02, 0); headG.add(mask); }
+    const makeLeg = (x, z, front) => { const g = new THREE.Group(); const LL = variant === 'collie' ? 0.62 : 0.42; g.position.set(x, LL, z); bodyG.add(g); const up = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, LL * 0.57, 5), M.fur); up.position.y = -LL * 0.29; g.add(up); const low = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, LL * 0.43, 5), M.tan); low.position.y = -LL * 0.79; g.add(low); const paw = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 0.1), M.dark); paw.position.set(0.03, -LL, 0); g.add(paw); g.userData.front = front; this.legs.push(g); };
+    const LX = BL / 2 - 0.2; const legLen = collie ? 0.62 : 0.42; if (collie) { torso.position.y += 0.2; belly.position.y += 0.2; chest.position.y += 0.2; headG.position.y += 0.2; tail.position.y += 0.2; } makeLeg(LX, 0.14, true); makeLeg(LX, -0.14, true); makeLeg(-LX, 0.14, false); makeLeg(-LX, -0.14, false);
     root.traverse(o => { if (o.isMesh) o.castShadow = true; }); root.scale.setScalar(this.scale); scene.add(root);
   }
   buildHuman(sk) { // a small person for Kong to rescue: arms are the "front legs", legs the hind ones
@@ -1244,7 +1371,7 @@ class Goat {
   }
   launch(aim) {
     this.launchY = this.pos.y; this.path = [this.pos.clone()]; this.pathEnd = null; this.snap = null; this.slideV = 0;
-    this.vel.copy(launchVelocity(aim)); this.corr = 0; this.originSurface = this.onSurface; this.onSurface = null; this.graceT = CONFIG.takeoffGrace; this.descendT = 0;
+    this.vel.copy(launchVelocity(aim, carryOf(this))); this.corr = 0; this.originSurface = this.onSurface; this.onSurface = null; this.graceT = CONFIG.takeoffGrace; this.descendT = 0;
     if (Math.abs(aim.dir.x) > 0.12) this.facing = Math.sign(aim.dir.x);
     spawnDust(this.pos.x, this.pos.y, 3, 0.8); this.setState(ST.JUMP);
   }
@@ -1255,7 +1382,7 @@ class Goat {
     if (v.y <= 0) for (const s of L.surfaces) { if (s === o && g) continue; const m = s === o ? 0 : tol; if (prev.y >= s.y - 1e-4 && p.y < s.y && p.x >= s.x1 - m && p.x <= s.x2 + m) return { type: 'land', s, speed: -v.y }; }
     if (v.y < 0 && -v.y <= CONFIG.maxEdgeGrabFallSpeed && L.def.mod !== 'noCatch') for (const s of L.surfaces) {
       if (s === o && g) continue; if (p.y > s.y - 0.05 || p.y < s.y - CONFIG.edgeGrabDepth) continue; const gd = CONFIG.edgeGrabDistance;
-      if (s === o) continue;   // never grab the ledge you just left — a missed hop falls on to whatever is below
+      if (s === o || s.soft) continue;   // never grab the ledge you just left; snow edges give way — a missed hop falls on to whatever is below
       if (p.x >= s.x1 - tol - gd && p.x <= s.x1 + 0.1) return { type: 'catch', s, edge: s.x1, side: 1 };
       if (p.x <= s.x2 + tol + gd && p.x >= s.x2 - 0.1) return { type: 'catch', s, edge: s.x2, side: -1 };
     }
@@ -1290,12 +1417,14 @@ class Goat {
     // how many rows of ledges did this jump drop past?
     const between = L.surfaces.filter(o => o !== s && o !== this.originSurface && o.y < this.launchY - 0.5 && o.y > s.y + 0.5).map(o => o.y).sort((a, b) => b - a);
     let rows = 0, lastY = Infinity; for (const y of between) { if (lastY - y > CONFIG.ledgeRowGap) rows++; lastY = y; }
-    if (rows > CONFIG.maxLedgesSkipped && !s.finish && !L.horizontal) {
+    if (rows > CONFIG.maxLedgesSkipped && !s.finish && !L.horizontal && !s.soft) {
       spawnDust(this.pos.x, this.pos.y, 14, 2); spawnPebbles(this.pos.x, this.pos.y - 0.2, 8, 1.8); thud(1, 160, 0.2);
       this.setState(ST.TIRED); return;
     }
     this.snap = { dx: this.pos.x - rawX, t: 0 };
     const central = Math.abs(this.pos.x - s.x) < s.w * 0.25;
+    if (!this.isKid) { if (s.ice) G.iceLanded = true; if (s.move) G.movingLanded = true; }
+    if (s.soft) { this.landKind = 'normal'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 12, 1.8, new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 })); thud(0.3, 140, 0.12); this.setState(ST.LAND); return; }
     if (s.ice && !s.finish) { this.landKind = 'ice'; this.slideV = vx * CONFIG.iceKeep; spawnDust(this.pos.x, this.pos.y, 5, 1.2); thud(0.5, 600, 0.06); this.setState(ST.LAND); return; }
     if (speed >= CONFIG.hardLandingSpeed) { if (!this.isKid) { G.shake = 0.35; vib(15); } this.landKind = 'hard'; this.slideV = this.facing * 1.6; spawnDust(this.pos.x, this.pos.y, 10, 1.6); spawnPebbles(this.pos.x, this.pos.y - 0.2, 6, 1.5); thud(0.9, 200, 0.14); }
     else if (central && speed < CONFIG.perfectLandingSpeed) { this.landKind = 'perfect'; this.slideV = 0; spawnDust(this.pos.x, this.pos.y, 4, 0.7); thud(0.5, 900, 0.05); thud(0.4, 300, 0.07); }
@@ -1310,7 +1439,7 @@ class Goat {
     spawnPebbles(edge, s.y - 0.1, 5, 1.2); spawnDust(edge, s.y, 3, 0.6); thud(0.7, 260, 0.1); if (!this.isKid) { G.slowT = 0.35; G.zoomPunch = 0.04; vib(40); } this.setState(ST.CATCH);
   }
   spiked(s, dir) { G.failReason = 'spikes'; spawnPebbles(this.pos.x, this.pos.y + 0.2, 6, 1.5); thud(0.9, 700, 0.1); this.vel.set(dir * 3, 6); this.corr = 0; this.state = ST.JUMP; this.fall(); }
-  dropOff(vx) { this.originSurface = this.onSurface; this.onSurface = null; this.graceT = 0.05; this.descendT = 0; this.launchY = this.pos.y; this.path = null; this.vel.set(vx, 0); this.corr = 0; this.snap = null; this.setState(ST.JUMP); }
+  dropOff(vx) { if (!this.isKid && this.onSurface && (this.onSurface.tilt || this.onSurface.seesaw)) G.slidOff = true; this.originSurface = this.onSurface; this.onSurface = null; this.graceT = 0.05; this.descendT = 0; this.launchY = this.pos.y; this.path = null; this.vel.set(vx, 0); this.corr = 0; this.snap = null; this.setState(ST.JUMP); }
   fall() { this.vel.x *= 0.5; this.corr = 0; if (this.state !== ST.JUMP) this.vel.set(this.facing * 0.5, 1.5); this.setState(ST.FALL); }
   update(dt, input) {
     this.stateT += dt; const s = this.state;
@@ -1328,7 +1457,7 @@ class Goat {
       const w = this.walk; w.t += dt; const k = clamp(w.t / w.dur, 0, 1); this.pos.x = lerp(w.from, w.to, k); this.pos.y = this.onSurface.y;
       if (k >= 1) { this.pos.x = w.to; this.launch(w.aim); }
     } else if (s === ST.HERD) {
-      if (this.finale === 'chest') { this.pos.y = this.onSurface.y; }
+      if (this.finale === 'chest' || this.finale === 'nap' || this.finale === 'howl') { this.pos.y = this.onSurface.y; if (this.finale === 'howl' && Math.random() < 0.15) spawnDust(this.pos.x + this.facing * 0.9, this.pos.y + 1.4, 1, 0.3, new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 })); }
       else { if (this.stateT > this.herdDelay) this.pos.x += this.herdDir * (this.finale === 'chase' ? 4.2 : 3.2) * dt; this.pos.y = this.onSurface.y; this.facing = this.herdDir; }
       if (this.chaseBird) { const b = this.chaseBird; b.position.x += this.herdDir * 4.6 * dt; b.position.y += 0.6 * dt; const f = Math.sin(this.stateT * 12); for (const w of b.wings) { w.rotation.x = w.userData.side * f * 0.6; w.outer.rotation.x = w.userData.side * f * 0.5; } }
     } else if (s === ST.LAND) {
@@ -1350,8 +1479,8 @@ class Goat {
     }
     if (s === ST.IDLE || s === ST.AIM || s === ST.TIRED) { this.acc = 0; if (this.onSurface) this.pos.y = this.onSurface.y; }
     if (s === ST.IDLE && this.onSurface && this.onSurface.tilt && !this.onSurface.finish) { // sloped shelf: creep toward the low edge
-      const sf = this.onSurface; this.pos.x -= Math.sign(sf.tilt) * CONFIG.slopeSlideSpeed * dt;
-      if (this.pos.x < sf.x1 - 0.15 || this.pos.x > sf.x2 + 0.15) { this.dropOff(-Math.sign(sf.tilt) * 0.6); return; }
+      const sf = this.onSurface; this.pos.x += (sf.seesaw ? 1 : -1) * Math.sign(sf.tilt) * CONFIG.slopeSlideSpeed * dt * (sf.seesaw ? 1.6 : 1);
+      if (this.pos.x < sf.x1 - 0.15 || this.pos.x > sf.x2 + 0.15) { this.dropOff((sf.seesaw ? 1 : -1) * Math.sign(sf.tilt) * 0.6); return; }
     }
     if (s === ST.IDLE && this.onSurface && !this.onSurface.crumble) this.lastSafe = { s: this.onSurface, x: this.pos.x };
   }
@@ -1361,6 +1490,8 @@ class Goat {
     if (s === ST.IDLE && !aim) { crouch = 0.03 + Math.sin(now * 2.2) * 0.03; headPitch = Math.sin(now * 0.9) * 0.12 - 0.15; }
     else if (s === ST.IDLE && aim) { crouch = 0.18 + aim.t * 0.62; headPitch = clamp(aim.dir.y * 0.8, -0.5, 0.7); }
     else if (s === ST.HERD && this.finale === 'chest') { pitch = 0.9; crouch = -0.1; headPitch = 0.4; legFwd = 0; }
+    else if (s === ST.HERD && this.finale === 'howl') { const k = clamp(t / 0.6, 0, 1); headPitch = 0.95 * k + Math.sin(now * 1.2) * 0.05; pitch = 0.15 * k; crouch = -0.05; }
+    else if (s === ST.HERD && this.finale === 'nap') { const k = clamp(t / 0.8, 0, 1); crouch = 1.3 * k + Math.sin(now * 1.4) * 0.05; headPitch = -0.7 * k; legFwd = 1.5 * k; }
     else if (s === ST.WALK || (s === ST.HERD && t > this.herdDelay)) { crouch = 0.12 + Math.abs(Math.sin(now * 22)) * 0.08; headPitch = -0.35; }
     else if (s === ST.HERD) { crouch = 0.03 + Math.sin(now * 2.2 + this.pos.x) * 0.03; headPitch = 0.1; }
     else if (s === ST.JUMP) { if (t < 0.1) crouch = -0.25; else tuck = clamp((t - 0.1) / 0.15, 0, 1); pitch = Math.atan2(this.vel.y, Math.abs(this.vel.x + this.corr) + 2) * 0.55; headPitch = pitch * 0.4 - 0.1; if (this.vel.y < -4) tuck = 0.5; }
@@ -1375,7 +1506,7 @@ class Goat {
     A.crouch += (crouch - A.crouch) * k; A.tuck += (tuck - A.tuck) * k; A.pitch += (pitch - A.pitch) * k; A.headPitch += (headPitch - A.headPitch) * k; A.face += (this.facing - A.face) * (1 - Math.exp(-10 * dt));
     const slope = (s === ST.IDLE || s === ST.LAND || s === ST.WIN || s === ST.HERD || s === ST.TIRED) && this.onSurface ? this.onSurface.tilt : 0;
     A.roll += ((roll || slope) - A.roll) * k; if (s === ST.FALL || s === ST.DEAD) A.roll = roll;
-    if (slope && this.onSurface) py += (px - this.onSurface.x) * Math.tan(slope);
+    if (slope && this.onSurface) py += (px - this.onSurface.x) * Math.tan(this.onSurface.seesaw ? -slope : slope);
     this.root.position.set(px, py, this.herdZ || 0); this.root.rotation.y = lerp(Math.PI - 0.35, 0.35, (A.face + 1) / 2);
     if (this.tailG) this.tailG.rotation.y = Math.sin(now * 2.5 + this.pos.x) * 0.4;
     this.bodyG.position.y = -A.crouch * 0.28; this.bodyG.rotation.z = A.pitch + (s === ST.FALL || s === ST.DEAD ? A.roll : A.roll * (A.face > 0 ? 1 : -1)); this.headG.rotation.z = A.headPitch;
@@ -1388,7 +1519,8 @@ class Goat {
 //  Physics — shared by the real jump and the trajectory preview
 // ============================================================
 const FIXED = 1 / 120;
-function launchVelocity(aim) { const k = (L && L.ascent) ? CONFIG.ascentJumpBoost : 1; const v = new THREE.Vector2(aim.dir.x * aim.power * k, aim.dir.y * aim.power * k); if (v.y < CONFIG.minLaunchUp) v.y = CONFIG.minLaunchUp; return v; }
+function launchVelocity(aim, carry) { const k = ((L && L.ascent) ? CONFIG.ascentJumpBoost : 1) * ((G.muts || []).includes('heavy') ? 0.85 : 1); const v = new THREE.Vector2(aim.dir.x * aim.power * k, aim.dir.y * aim.power * k); if (v.y < CONFIG.minLaunchUp) v.y = CONFIG.minLaunchUp; if (carry) { v.x += carry.x; v.y += carry.y; } return v; }
+function carryOf(g) { const s = g && g.onSurface; if (s && s.seesaw) { const up = -s.tiltVel * (g.pos.x - s.x); return up > 0.5 ? { x: 0, y: Math.min(6, up * 1.6) } : null; } return s && s.move ? { x: s.vx * 0.9, y: Math.max(0, s.vy) * 0.6 } : null; }
 function windAt(y) { if (!L || !L.winds) return 0; for (const w of L.winds) if (y <= w.y1 && y >= w.y2) return w.force; return 0; }
 function liftAt(x, y) { if (!L || !L.updrafts) return 0; for (const u of L.updrafts) if (y >= u.y1 && y <= u.y2 && Math.abs(x - u.x) <= u.w / 2) return u.lift; return 0; }
 function integrate(pos, vel, corr, dt, windK = 1) { vel.y -= CONFIG.gravity * dt; vel.y += liftAt(pos.x, pos.y) * windK * dt; vel.x += windAt(pos.y) * windK * dt; pos.x += (vel.x + corr) * dt; pos.y += vel.y * dt; }
@@ -1402,8 +1534,8 @@ function launchStart(goat, aim) {
   const ex = aim.dir.x > 0.05 ? s.x2 : aim.dir.x < -0.05 ? s.x1 : (p.x - s.x1 <= s.x2 - p.x ? s.x1 : s.x2);
   return { x: ex, y: s.y, walk: Math.abs(ex - p.x) > 0.05 };
 }
-function previewTrajectory(from, aim) {
-  const pos = from.clone(), vel = launchVelocity(aim); const pts = [pos.clone()]; let t = 0;
+function previewTrajectory(from, aim, carry) {
+  const pos = from.clone(), vel = launchVelocity(aim, carry); const pts = [pos.clone()]; let t = 0;
   while (t < 2.4 && pos.y > from.y - 11) { integrate(pos, vel, 0, FIXED, CONFIG.windPreviewFactor); t += FIXED; pts.push(pos.clone()); }
   return pts;
 }
@@ -1437,7 +1569,7 @@ function spawnPebbles(x, y, n, spread = 1) {
 }
 function updateParticles(dt) {
   for (let i = particles.length - 1; i >= 0; i--) { const m = particles[i], u = m.userData; u.life += dt;
-    if (u.kind === 'dust') { u.vy -= 1.5 * dt; m.position.x += u.vx * dt; m.position.y += u.vy * dt; const t = u.life / u.ttl; m.scale.setScalar(u.s * (0.5 + t * 1.6)); m.material.opacity = 0.75 * (1 - t); }
+    if (u.kind === 'dust') { if (u.life < 0) { m.visible = false; continue; } m.visible = true; u.vy -= 1.5 * dt; m.position.x += u.vx * dt; m.position.y += u.vy * dt; const t = u.life / u.ttl; m.scale.setScalar(u.vx || u.vy ? u.s * (0.5 + t * 1.6) : 1); m.material.opacity = (u.vx || u.vy ? 0.75 : 0.55) * (1 - t); }
     else { u.vy -= CONFIG.gravity * dt; m.position.x += u.vx * dt; m.position.y += u.vy * dt; m.rotation.x += u.rx * dt; m.rotation.z += u.rz * dt; }
     if (u.life > u.ttl) { scene.remove(m); if (u.kind === 'dust') m.material.dispose(); particles.splice(i, 1); } }
 }
@@ -1586,15 +1718,17 @@ const HINT_TEXT_STATIC = {
   spikes: 'Spikes — land on the clear half', ice: 'Ice — you keep sliding after landing', crumble: 'Cracked ledges crumble in a second<br>Don\'t linger on them',
   wind: 'Wind in that gap bends your arc<br>The dots show most of it', updraft: 'Steam rises from the fissure beside the ledge<br>Jump into it and ride up two ledges', rocks: 'A crevice — when its shadow grows, a boulder drops', kids: 'A stranded kid — land beside it<br>It will follow your jumps',
 };
+function H_seen(k) { return G.hints && G.hints.seen[k]; }
 function activeHint() {
   const g = goats[0], y = g.pos.y, ahead = 15, back = 4; const inView = yy => L.horizontal ? Math.abs(yy - y) < 10 : L.ascent ? (yy > y - back && yy < y + ahead) : (yy < y + back && yy > y - ahead);
+  if (L.def.scent && G.jumps >= 2 && !(save.secretFound || {})[L.def.secretEntry.level] && !(H_seen('scent'))) return 'scent';
   if (G.jumps === 0) { if (L.twin) return 'twin'; if (L.horizontal) return 'run'; if (L.ascent) return 'ascent'; if (L.def.daily) return 'daily'; if (L.endless) return 'endless'; if (!save.seenDrag) return 'drag'; }
   for (const k of L.kids) if (!k.rescued && inView(k.surface.y)) return 'kids';
   if (L.hawks.some(h => inView(h.y))) return 'birds';
   if (L.rocks.some(r => inView(r.y) || inView(r.y - r.len / 2))) return 'rocks';
   if (L.winds.some(w => inView(w.y1) || inView(w.y2))) return 'wind';
   if ((L.updrafts || []).some(u => inView(u.y1) || inView(u.y2))) return 'updraft';
-  for (const s of L.surfaces) if (inView(s.y)) { if (s.spikes) return 'spikes'; if (s.crumble) return 'crumble'; if (s.ice) return 'ice'; }
+  for (const s of L.surfaces) if (inView(s.y)) { if (s.soft) return 'soft'; if (s.seesaw) return 'seesaw'; if (s.move) return 'moving'; if (s.spikes) return 'spikes'; if (s.crumble) return 'crumble'; if (s.ice) return 'ice'; }
   return null;
 }
 function updateHints(dt, playing) {
@@ -1612,7 +1746,7 @@ function updateHints(dt, playing) {
   H.idleT += dt;
   if (key && key !== H.key) {
     const fresh = !H.seen[key], idleAgain = H.idleT > 2.5;
-    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; save.mechSeen = save.mechSeen || {}; if (['birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'kids', 'twin'].includes(key) && !save.mechSeen[key]) { save.mechSeen[key] = true; persist(); } H.shownAt = now; hint.innerHTML = (key.startsWith('tut') ? t(key) : t('h_' + key)) + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
+    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; save.mechSeen = save.mechSeen || {}; if (['birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'scent', 'kids', 'twin'].includes(key) && !save.mechSeen[key]) { save.mechSeen[key] = true; persist(); } H.shownAt = now; hint.innerHTML = (key.startsWith('tut') ? t(key) : t('h_' + key)) + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
   }
   if (H.key && now - H.shownAt > 7 && H.idleT < 2.5) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; }
   if (!key && H.key) { hint.style.opacity = 0; H.key = null; }
@@ -1644,7 +1778,7 @@ function goSettings(from) {
 }
 document.getElementById('bSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('menu'); });
 // ---- mechanics reference: cards with a live mini-scene on the expanded card ----
-const MECHS = ['drag', 'catch', 'air', 'up', 'camera', 'birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'kids', 'twin'];
+const MECHS = ['drag', 'catch', 'air', 'up', 'camera', 'birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'scent', 'kids', 'twin'];
 let mechFrom = 'menu', mechOpen = null, mechScene = null;
 function goMech(from) {
   mechFrom = from; mode = from === 'pause' ? 'pause' : 'mech'; hud.style.display = 'none'; const list = document.getElementById('mechList'); list.innerHTML = ''; mechOpen = null; mechScene = null;
@@ -1679,6 +1813,10 @@ function buildMechScene(m, canvas) {
   else if (m === 'rocks') { rock(-1, -1.2, 5); const b = new THREE.Mesh(boulderGeo, boulderMat); ps.add(b); S.extra.b = b; goat.spawn({ y: -1.2, x1: -10, x2: 10, w: 20, x: 0 }, 1.5); }
   else if (m === 'wind') { rock(-3.2, 1, 2.2); rock(3, -1.4, 2.6); S.path = t => { const k = (t % 2.8) / 2.8; return { x: -3.2 + 6.2 * k + Math.sin(k * Math.PI) * 1.0, y: 1 - 2.4 * k + 1.6 * 4 * k * (1 - k), k }; }; }
   else if (m === 'updraft') { rock(-3.2, -1.5, 2.2); rock(3, 2.2, 2.4); S.path = t => { const k = (t % 3) / 3; return { x: -3.2 + 6.2 * Math.min(1, k * 1.15), y: -1.5 + 3.7 * Math.sin(k * Math.PI / 2) + 0.6 * Math.sin(k * Math.PI), k }; }; S.steam = true; }
+  else if (m === 'scent') { rock(-3, -1.2, 3); rock(3.2, 1.6, 2); S.extra.paws = []; for (let i = 1; i <= 6; i++) { const paw = new THREE.Mesh(new THREE.CircleGeometry(0.16, 8), new THREE.MeshBasicMaterial({ color: 0x3a2a1a, transparent: true, opacity: 0.5 })); paw.position.set(lerp(-3, 3.2, i / 6), lerp(-0.9, 1.9, i / 6) + Math.sin(i / 6 * Math.PI), 0.6); ps.add(paw); S.extra.paws.push(paw); } goat.spawn({ y: -1.2, x1: -10, x2: 10, w: 20, x: 0 }, -3); }
+  else if (m === 'soft') { rock(-3.2, 2.2, 2.2); const r2 = rock(2, -1.4, 4); const snow = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshLambertMaterial({ color: 0xf6f9fc, flatShading: true })); snow.scale.set(2.2, 0.45, 1.6); snow.position.set(2, -1.35, -0.4); ps.add(snow); S.path = arc({ x: -3.2, y: 2.2 }, { x: 2, y: -1.3 }, 1.2, 2.8); }
+  else if (m === 'seesaw') { rock(-3.4, 0.8, 2.2); S.extra.ss = rock(1.6, -1.2, 4.6); S.extra.ss.position.y = -1.2 - 0.9; S.path = t => { const k = (t % 3.2) / 3.2; return { x: -3.4 + 4.2 * Math.min(1, k * 1.3), y: 0.8 - 2 * Math.min(1, k * 1.3) + 1.6 * 4 * k * (1 - k), k }; }; }
+  else if (m === 'moving') { rock(-3.2, 0.8, 2.2); S.extra.mv = rock(2.4, -1.2, 2.6); S.path = t => { const k = (t % 3) / 3; const mx = 2.4 + Math.sin(t * 1.6) * 1.4; return { x: -3.2 + (mx + 3.2) * k, y: 0.8 - 2 * k + 1.5 * 4 * k * (1 - k), k }; }; }
   else if (m === 'kids') { rock(-3, 0.5, 2.6); rock(3, -1.2, 2.6); const kid = new Goat(currentSkin().sk, 0.6, currentSkin().ch); scene.remove(kid.root); ps.add(kid.root); kid.root.rotation.y = 0.35; S.extra.kid = kid; S.path = arc({ x: -3, y: 0.5 }, { x: 3, y: -1.2 }, 1.4, 3.2); }
   else if (m === 'twin') { rock(-4, 0.5, 2.4); rock(-3, -1.5, 1.6); rock(2, 0.5, 2.4); rock(4, -1.5, 2.6); const g2 = new Goat(currentSkin().sk, 1, currentSkin().ch); scene.remove(g2.root); ps.add(g2.root); g2.root.rotation.y = 0.35; S.extra.g2 = g2; S.path = arc({ x: -4, y: 0.5 }, { x: -3, y: -1.5 }, 1.4, 2.8); S.path2 = arc({ x: 2, y: 0.5 }, { x: 4, y: -1.5 }, 1.4, 2.8); }
   S.canvas = canvas; return S;
@@ -1691,15 +1829,67 @@ function tickMechScene(dt) {
   if (S.extra.kid) { const p = S.path(t - 0.6); place(S.extra.kid, p); }
   if (S.extra.hawk) { const h = S.extra.hawk; const k = (t % 3.4) / 3.4; const x = -3.5 + 7 * Math.abs(((k * 2) % 2) - 1); h.position.set(x, 0.9, 0.2); h.rotation.y = ((k * 2) % 2) < 1 ? 0 : Math.PI; const f = Math.sin(t * 9); for (const w of h.wings) w.rotation.x = w.userData.side * f * 0.55; }
   if (S.extra.b) { const b = S.extra.b; const k = (t % 2.5) / 2.5; b.position.set(-2.2, 5 - 7.5 * k * k, 0.3); b.rotation.x += 4 * dt; g.state = ST.IDLE; g.animate(dt, null); }
+  if (S.extra.paws) { S.extra.paws.forEach((p, i) => { p.material.opacity = 0.5 * (0.5 + 0.5 * Math.sin(t * 2 - i * 0.6)); }); g.state = ST.IDLE; g.animate(dt, null); }
+  if (S.extra.ss) S.extra.ss.rotation.z = -Math.sin(t * 2) * 0.25;
+  if (S.extra.mv) S.extra.mv.position.x = 2.4 + Math.sin(t * 1.6) * 1.4;
   if (S.extra.cr) { const k = (t % 3.6) / 3.6; S.extra.cr.position.y = -1.2 - 0.9 - (k > 0.85 ? (k - 0.85) * 12 : 0); S.extra.cr.position.x = 1.6 + (k > 0.6 && k < 0.85 ? Math.sin(t * 50) * 0.05 : 0); }
   if (S.camDrift) { S.pc.position.y = 1.2 - (t % 3) * 0.5; S.pc.lookAt(0, 0.8 - (t % 3) * 0.5, 0); }
   const pr = skinPreview.r || (skinPreview.r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })); pr.setSize(320, 180); pr.render(S.ps, S.pc);
   const ctx = S.canvas.getContext('2d'); ctx.clearRect(0, 0, 320, 180); ctx.drawImage(pr.domElement, 0, 0);
 }
 document.getElementById('bPauseMech').addEventListener('click', e => { e.stopPropagation(); goMech('pause'); });
+document.getElementById('bBackMut').addEventListener('click', e => { e.stopPropagation(); if (mutFrom === 'endless') goEndless(); else if (mutFrom === 'world') goWorld(curWorld); else goMenu(); });
 document.getElementById('bBackMech').addEventListener('click', e => { e.stopPropagation(); mechScene = null; if (mechFrom === 'pause') showScreen('scPause'); else goMenu(); });
 document.getElementById('bPauseSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('pause'); });
 document.getElementById('bBackMenu5').addEventListener('click', e => { e.stopPropagation(); if (mode === 'pause') showScreen('scPause'); else goMenu(); });
+
+// ============================================================
+//  Mutators — optional rule twists; multiply salt, never award goals/stars
+// ============================================================
+const MUTATORS = [{ id: 'lowGrav', cost: 0, mult: 1.0 }, { id: 'fog', cost: 0, mult: 1.5 }, { id: 'mirror', cost: 8, mult: 1.25 }, { id: 'rush', cost: 8, mult: 2 }, { id: 'heavy', cost: 8, mult: 1.5 }, { id: 'echo', cost: 8, mult: 1.0 }];
+const mutOn = id => (save.mutators || []).includes(id);
+function mutMult() { return +(save.mutators || []).reduce((m, id) => m * (MUTATORS.find(x => x.id === id) || { mult: 1 }).mult, 1).toFixed(2); }
+function goMutators(from) {
+  mutFrom = from; mode = 'select'; hud.style.display = 'none'; const list = $('mutList'); list.innerHTML = ''; save.mutUnlocked = save.mutUnlocked || {}; save.mutators = save.mutators || [];
+  for (const m of MUTATORS) { const un = m.cost === 0 || save.mutUnlocked[m.id], on = mutOn(m.id), can = save.totalSaltCrystals >= m.cost; const b = document.createElement('div'); b.className = 'btn' + (un ? (on ? ' on' : '') : (can ? '' : ' dim')); if (on) { b.style.background = 'rgba(255,215,106,.25)'; b.style.borderColor = '#ffd76a'; }
+    b.innerHTML = `${t('mut_' + m.id)} · ×${m.mult}<small>${t('mut_' + m.id + '_d')}</small><small>${un ? (on ? t('mutOn') : t('mutOff')) : `${m.cost} ◆${can ? ' — ' + t('unlock') : ''}`}</small>`;
+    b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!un) { if (!can) return; save.totalSaltCrystals -= m.cost; save.mutUnlocked[m.id] = true; } else { if (on) save.mutators = save.mutators.filter(x => x !== m.id); else if (save.mutators.length < 3) save.mutators.push(m.id); } persist(); goMutators(from); });
+    list.appendChild(b); }
+  $('mutMultTxt').textContent = t('mutMult', { m: mutMult() }) + ' · ◆ ' + save.totalSaltCrystals; showScreen('scMut');
+}
+let mutFrom = 'menu';
+// mirror: flip a level definition left↔right
+function mirrorDef(d) {
+  const m = JSON.parse(JSON.stringify(d)); m.surfaces = m.surfaces.map(r => { const row = r.slice(); row[1] = -row[1]; if (row[5]) row[5] = row[5].split(' ').map(f => f === 'L' ? 'R' : f === 'R' ? 'L' : f).join(' '); if (row[6] && row[6].dx) row[6] = { ...row[6], dx: -row[6].dx }; return row; });
+  m.crystals = m.crystals.map(([x, y]) => [-x, y]); m.hawks = (m.hawks || []).map(h => ({ ...h, x1: -h.x2, x2: -h.x1 })); m.rocks = (m.rocks || []).map(r => ({ ...r, x: -r.x })); m.updrafts = (m.updrafts || []).map(u => ({ ...u, x: -u.x })); m.kids = (m.kids || []).map(k => ({ ...k, x: -k.x })); m.blockers = (m.blockers || []).map(b => ({ ...b, x1: -b.x2, x2: -b.x1 })); m.herd = (m.herd || []).map(h => ({ ...h, x: -h.x, dir: -h.dir })); m.winds = (m.winds || []).map(w => ({ ...w, force: -w.force })); if (m.secretEntry) m.secretEntry = { ...m.secretEntry }; m.firstOf = []; m.softened = true; m.mirrored = true; return m;
+}
+
+// ============================================================
+//  Goals — the 2nd and 3rd star are objectives drawn from a pool; new ones after every completion, up to 5 ★ per level
+// ============================================================
+const GOALS = {
+  pickups: { ok: d => d.crystals.length > 0, check: () => G.collected === L.crystals.length, text: () => t('g_pickups') },
+  time: { ok: d => d.stars.time > 0 && !d.puzzle, check: d => G.time <= d.stars.time, text: d => t('g_time', { t: fmtTime(d.stars.time) }) },
+  jumps: { ok: d => true, check: d => G.jumps <= (d.stars.jumps || d.surfaces.length + 1), text: d => t('g_jumps', { n: d.stars.jumps || d.surfaces.length + 1 }) },
+  noCatch: { ok: d => !d.mod, check: () => goats.reduce((a, g) => a + g.saves, 0) === 0, text: () => t('g_noCatch') },
+  noAir: { ok: d => true, check: () => !G.airUsed, text: () => t('g_noAir') },
+  kids: { ok: d => (d.kids || []).length > 0, check: () => G.kidsSaved === L.kids.length, text: () => t('g_kids') },
+  noIdle: { ok: d => !d.tutorial, check: () => (G.maxIdle || 0) < 3, text: () => t('g_noIdle') },
+  noContinue: { ok: d => true, check: () => !G.continued, text: () => t('g_noContinue') },
+  noIce: { ok: d => d.surfaces.some(r => r[5] && r[5].includes('ice')), check: () => !G.iceLanded, text: () => t('g_noIce') },
+  noMoving: { ok: d => d.surfaces.some(r => r[6]), check: () => !G.movingLanded, text: () => t('g_noMoving') },
+  noSlide: { ok: d => d.surfaces.some(r => r[4] === 'sloped' || r[4] === 'seesaw'), check: () => !G.slidOff, text: () => t('g_noSlide') },
+};
+const GOAL_ORDER = ['pickups', 'time', 'jumps', 'kids', 'noCatch', 'noAir', 'noIdle', 'noIce', 'noMoving', 'noSlide', 'noContinue'];
+function goalState(def) { save.goals = save.goals || {}; return save.goals[def.key] = save.goals[def.key] || { done: [], current: null }; }
+function currentGoals(def) { // first run: the classic pair; afterwards the next two undone goals from the pool
+  if (def.tutorial || def.endless || def.daily || def.custom || def.tower || def.expedition) return [];
+  const gs = goalState(def); if (gs.current && gs.current.length) return gs.current.filter(k => GOALS[k] && GOALS[k].ok(def));
+  const pool = GOAL_ORDER.filter(k => GOALS[k].ok(def) && !gs.done.includes(k)); const first = gs.done.length === 0;
+  const pick = first ? [pool.includes('pickups') ? 'pickups' : pool.includes('kids') ? 'kids' : pool[0], pool.includes(def.puzzle ? 'jumps' : 'time') ? (def.puzzle ? 'jumps' : 'time') : pool[1]].filter(Boolean) : pool.slice(0, 2);
+  gs.current = [...new Set(pick)]; return gs.current;
+}
+function goalsText(def) { return currentGoals(def).map(k => GOALS[k].text(def)); }
 
 // ============================================================
 //  Game flow: menu → select → play → result
@@ -1721,12 +1911,13 @@ function goMenu() {
   const worldName = (WORLDS.find(w => LEVELS.some(l => l.key === w.levels[0] && l.style === info.style)) || WORLDS[0]).name;
   const dt = new Date(info.date + 'T00:00:00Z'); const label = dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' }).toUpperCase();
   const dirMark = info.horizontal ? '▶' : info.ascent ? '▲' : '▼';
+  { const ts = towerState(); $('towerInfo').textContent = `${t('towerWeek', { w: ts.week })} · ${ts.done ? t('towerDone', { t: fmtTime(ts.time) }) : t('towerHeight', { h: Math.round(ts.best), c: ts.cp })}`; }
   const sn = save.runs && save.runs.daily; const resumeTxt = sn && sn.def.date === info.date ? ` · resume ${Math.round(sn.stats.maxDesc)} m` : '';
   $('dailyInfo').innerHTML = `${label} · ${worldName} ${dirMark} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · streak ${d.streak}` : ''}${resumeTxt}`;
   showScreen('scMenu');
 }
 let curWorld = 0, curDim = 0;
-function worldStars(wi) { let got = 0; for (const k of WORLDS[wi].levels) { const l = LEVELS.find(l => l.key === k); if (l && (l.tutorial || l.secret)) continue; got += (save.levels[k] || { stars: 0 }).stars; } return got; }
+function worldStars(wi) { let got = 0; for (const k of WORLDS[wi].levels) { const l = LEVELS.find(l => l.key === k); if (l && (l.tutorial || l.secret)) continue; got += Math.min(3, (save.levels[k] || { stars: 0 }).stars); } return got; }
 function worldMax(wi) { return WORLDS[wi].levels.filter(k => { const l = LEVELS.find(l => l.key === k); return !(l && (l.tutorial || l.secret)); }).length * 3; }
 function levelsDone(keys) { return keys.filter(k => { const l = LEVELS.find(l => l.key === k); return l && !l.tutorial && !l.secret && save.levels[k]; }).length; }
 function worldLevelsDone(wi) { return levelsDone(WORLDS[wi].levels); }
@@ -1755,12 +1946,13 @@ function goSelect() {
 function goWorld(wi) {
   mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
   const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `${t('world')} ${wi + 1} · ${w.name}`; list.appendChild(h);
+  { const mb = document.createElement('div'); mb.className = 'btn'; mb.style.fontSize = '13px'; mb.innerHTML = `${t('mutators')}${(save.mutators || []).length ? ' · ' + save.mutators.map(m => t('mut_' + m)).join(', ') + ' · ×' + mutMult() : ''}`; mb.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goMutators('world'); }); list.appendChild(mb); }
   w.levels.forEach((k, li) => {
     const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
     const b = document.createElement('div'); b.className = 'btn';
     const found = !lv.secret || save.settings.devUnlock || (save.secretFound && save.secretFound[k]);
-    const nm = lv.secret && !found ? t('secretHidden') : lv.nameKey ? t(lv.nameKey) : lv.name; const ICO = { birds: '🐦', spikes: '▲', ice: '❄', crumble: '✶', rocks: '●', wind: '≋', updraft: '⇧', kids: '♥', twin: '⇊' }; const icons = [...levelMechanics(lv)].map(m => ICO[m]).join(' ');
-    b.innerHTML = lv.tutorial ? `${wi + 1}-${li} · ${nm}<small>${t('firstStepsSub')}</small><small>${stars ? '✓' : ''}</small>` : `${wi + 1}-${li + (WORLDS[wi].levels.some(k => (LEVELS.find(l => l.key === k) || {}).tutorial) ? 0 : 1)} · ${nm}<small>${lv.secret ? (found ? '✦ ' + t('secret') + ' · ' : t('secretHint')) : ''}${lv.puzzle ? '🧩 ' + t('puzzle') + ' · ' : ''}${lv.challenge ? '⚡ ' + t('mod_' + lv.mod) + ' · ' : ''}${(lv.secret && !found) ? '' : t(lv.horizontal ? 'run' : lv.ascent ? 'up' : lv.twin ? 'twin' : 'down')}${icons && found ? ' · ' + icons : ''}</small><small>${'★'.repeat(stars) + '☆'.repeat(3 - stars)}</small>`;
+    const nm = lv.secret && !found ? t('secretHidden') : lv.nameKey ? t(lv.nameKey) : lv.name; const ICO = { birds: '🐦', spikes: '▲', ice: '❄', crumble: '✶', rocks: '●', wind: '≋', updraft: '⇧', moving: '⇄', seesaw: '⚖', soft: '☁', kids: '♥', twin: '⇊' }; const icons = [...levelMechanics(lv)].map(m => ICO[m]).join(' ');
+    b.innerHTML = lv.tutorial ? `${wi + 1}-${li} · ${nm}<small>${t('firstStepsSub')}</small><small>${stars ? '✓' : ''}</small>` : `${wi + 1}-${li + (WORLDS[wi].levels.some(k => (LEVELS.find(l => l.key === k) || {}).tutorial) ? 0 : 1)} · ${nm}<small>${lv.secret ? (found ? '✦ ' + t('secret') + ' · ' : t('secretHint')) : ''}${lv.puzzle ? '🧩 ' + t('puzzle') + ' · ' : ''}${lv.challenge ? '⚡ ' + t('mod_' + lv.mod) + ' · ' : ''}${(lv.secret && !found) ? '' : t(lv.horizontal ? 'run' : lv.ascent ? 'up' : lv.twin ? 'twin' : 'down')}${icons && found ? ' · ' + icons : ''}</small><small>${'★'.repeat(Math.min(5, stars)) + '☆'.repeat(Math.max(0, 5 - stars))}</small>${stars ? `<small style="opacity:.7">${goalsText(lv).join(' · ')}</small>` : ''}`;
     if (lv.secret && !found) b.classList.add('dim'); else b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startLevel(idx); });
     list.appendChild(b);
   });
@@ -1770,33 +1962,41 @@ function preferredFy(y) { if (L && L.horizontal) return y - 0.08 * halfH; return
 function preferredFx(x) { return x + (0.5 - CONFIG.goatScreenFraction) * 2 * halfH * camera.aspect; }
 function startLevel(idx, defOverride) {
   dio.bg = false;
+  const muts = defOverride && defOverride.expedition ? (defOverride.expMut ? [defOverride.expMut] : []) : (defOverride && (defOverride.daily || defOverride.custom || defOverride.tower)) || (!defOverride && LEVELS[idx].tutorial) ? [] : (save.mutators || []).slice();
+  if (muts.includes('mirror')) defOverride = mirrorDef(defOverride || LEVELS[idx]);
+  CONFIG.gravity = muts.includes('lowGrav') ? 15 : 20;
   { const w = !defOverride && WORLDS.find(w => w.levels.includes(LEVELS[idx].key)); if (w && w.character && !(save.charSeen && save.charSeen[w.character])) { save.charSeen = save.charSeen || {}; save.charSeen[w.character] = true; save.character = w.character; persist(); G.newCharToast = CHARACTERS[w.character].name; } }
   { const d = defOverride || LEVELS[idx]; if (d.character && !(save.charSeen && save.charSeen[d.character])) { save.charSeen = save.charSeen || {}; save.charSeen[d.character] = true; persist(); } }
-  buildLevel(idx, defOverride); clearParticles(); styleTween = null;
-  for (const g of goats) { scene.remove(g.root); if (g.chaseBird) scene.remove(g.chaseBird); } goats.length = 0;
+  buildLevel(idx, defOverride); clearParticles(); styleTween = null; G.muts = muts; scene.fog.near = muts.includes('fog') ? 4 : 45; scene.fog.far = muts.includes('fog') ? 17 : 170; if (muts.includes('fog')) scene.fog.color.set(STYLE.haze);
+  if (muts.includes('echo') && G.echoPath && G.echoKey === (defOverride || LEVELS[idx]).key) { const cs = currentSkin(); const gh = new Goat(cs.sk, 1, cs.ch); gh.root.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.transparent = true; o.material.opacity = 0.35; o.castShadow = false; } }); G.ghost = { g: gh, path: G.echoPath, t: 0 }; } else G.ghost = null; G.echoRec = [];
+  for (const g of goats) { scene.remove(g.root); if (g.chaseBird) scene.remove(g.chaseBird); } goats.length = 0; if (G.ghost) { scene.remove(G.ghost.g.root); G.ghost = null; }
   for (const st of L.starts) { const cs = currentSkin(); const g = new Goat(cs.sk, 1, cs.ch); g.spawn(st, st.x); goats.push(g); }
   followers.length = 0; G.kidsSaved = 0;
   for (const g of herd) scene.remove(g.root); herd.length = 0;
   for (const h of (currentSkin().ch === 'goat' ? (L.def.herd || []) : [])) { const sf = L.surfaces.find(s => s.id === h.surface);
     for (let i = 0; i < h.n; i++) { const cs = currentSkin(); const lst = CHARACTERS[cs.ch].list; const g = new Goat(lst[i % lst.length].id, 1, cs.ch); g.spawn(sf, h.x + h.dir * i * 1.5 + (i % 2) * 0.4); g.facing = -h.dir; g.A.face = -h.dir; g.herdDir = h.dir; g.herdDelay = 0.5 + i * 0.12; g.root.position.z = -0.5 - (i % 2) * 0.5; g.herdZ = g.root.position.z; g.isHerd = true; herd.push(g); } }
   G.twin = L.twin;
-  Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, camFx: L.horizontal ? preferredFx(L.start.x) : 0, camFy: preferredFy(L.start.y), dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, collected: 0, result: null });
+  Object.assign(G, { airUsed: false, maxIdle: 0, idleT: 0, iceLanded: false, movingLanded: false, slidOff: false, continued: false, failReason: null, aim: null, aiming: false, drag: null, airInput: 0, camFx: L.horizontal ? preferredFx(L.start.x) : 0, camFy: preferredFy(L.start.y), dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, collected: 0, result: null });
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
   $('hSalt').textContent = `◆ 0 / ${L.crystals.length}`; $('hSaltLbl').textContent = t('p_' + STYLE.pickupName); $('hDescLbl').textContent = t(L.horizontal ? 'distance' : L.ascent ? 'ascent' : 'descent');
   G.hints = { seen: {}, key: null, shownAt: 0, hiddenKey: null, idleT: 0, lastJumps: 0 }; hint.style.opacity = 0;
   if (G.newCharToast) { hint.innerHTML = t('h_newchar', { n: G.newCharToast }); hint.style.opacity = 1; G.hints.shownAt = performance.now() / 1000; G.hints.key = 'newchar'; G.newCharToast = null; }
   if (L.def.resume) applyResume(L.def.resume); else if (L.endless || L.def.daily) clearRun(L.def.key);
+  if (L.def.tower && L.def.resumeCp > 0) { const cp = L.surfaces.find(s => s.id === 'cp' + L.def.resumeCp); if (cp) { goats[0].spawn(cp, cp.x); goats[0].lastSafe = { s: cp, x: cp.x }; G.camFy = preferredFy(cp.y); G.time = towerState().time; G.started = true; G.maxDesc = cp.y; } }
   if (L.endless) endlessTick();
   $('hSalt').parentElement.style.visibility = (L.crystals.length || L.endless || L.kids.length) ? 'visible' : 'hidden'; if (L.endless) $('hSalt').textContent = '◆ 0';
-  { const gl = []; if (L.crystals.length && L.def.stars.crystals) gl.push(t('goalCrystals', { n: L.def.stars.crystals, m: L.crystals.length })); else if (L.kids.length) gl.push(t('goalKids')); if (L.def.puzzle) gl.push(t('inJumps', { n: L.def.stars.jumps }).toLowerCase()); else if (L.def.stars.time && !L.endless) gl.push(t('goalTime', { t: fmtTime(L.def.stars.time) })); $('hGoal').textContent = gl.length && !L.def.tutorial ? t('goal', { g: gl.join(' · ') }) : ''; }
+  { const gl = goalsText(L.def); $('hGoal').textContent = (G.muts || []).length ? t('mutActive', { list: G.muts.map(m => t('mut_' + m)).join(', ') }) : gl.length ? t('goal', { g: gl.join(' · ') }) : ''; }
   $('hSalt').style.display = (L.crystals.length || L.endless) ? 'block' : 'none'; $('hKids').style.display = L.kids.length ? 'block' : 'none'; $('hKids').textContent = `${t('kids')} ${G.kidsSaved || 0} / ${L.kids.length}`;
   if (L.def.resume) $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`;
 
 }
 function finishLevel(win, reason) {
   if (!win) vib(80);
+  { const st = stats(); st.jumps += G.jumps; st.saves += goats.reduce((a, g) => a + g.saves, 0); st.meters += G.maxDesc; st.time += G.time; if (win && !L.def.tutorial) st.levels++; st.kids += G.kidsSaved || 0; }
+  if (G.echoRec && G.echoRec.length) { G.echoPath = G.echoRec; G.echoKey = L.def.key; }
+  if (G.ghost) { scene.remove(G.ghost.g.root); G.ghost = null; }
   if (L.endless || L.def.daily) clearRun(L.def.key);
-  mode = 'result'; G.endT = 0; hint.style.opacity = 0; $('bLevels').textContent = L.def.custom ? t('editor') : t('levels');
+  mode = 'result'; G.endT = 0; hint.style.opacity = 0; $('bLevels').textContent = L.def.custom ? t('editor') : t('levels'); $('bRetry').textContent = t('retry');
   const idx = L.idx, def = L.def; const saves = goats.reduce((a, g) => a + g.saves, 0);
   if (L.def.daily) {
     const info = L.def; const d = (save.daily && save.daily.date === info.date) ? save.daily : { date: info.date, stars: 0, done: [false, false, false], streak: (save.daily && save.daily.streak) || 0, lastDone: save.daily && save.daily.lastDone };
@@ -1815,6 +2015,13 @@ function finishLevel(win, reason) {
     $('bNext').style.display = 'none'; $('bContinue').style.display = 'none';
     G.result = { win, delay: win ? 3.2 : reason === 'tired' ? 2.4 : 1.0 }; return;
   }
+  if (L.def.tower) {
+    const ts = towerState(); ts.best = Math.max(ts.best, G.maxDesc); if (win) { ts.done = true; ts.cp = 5; ts.time = G.time; } persist();
+    $('rTitle').textContent = win ? t('towerTop') : reason === 'hawk' ? t('hawk') : reason === 'tired' ? t('tooFar') : reason === 'spikes' ? t('spiked') : reason === 'rock' ? t('rockfall') : t('fell');
+    $('rSub').innerHTML = `${t('towerWeek', { w: ts.week })}<br>${Math.round(G.maxDesc)} m · ${fmtTime(G.time)}<br>${t('towerBest', { h: Math.round(ts.best) })}`; $('rStars').innerHTML = win ? `<div class="on">★ ${t('complete')}</div>` : `<div style="opacity:.8;font-size:13px">${t('towerHeight', { h: Math.round(ts.best), c: ts.cp })}</div>`;
+    $('bNext').style.display = 'none'; $('bContinue').style.display = 'none'; $('bRetry').textContent = ts.cp > 0 && !win ? t('towerResume', { c: ts.cp }) : t('retry'); $('bLevels').textContent = t('tower');
+    G.result = { win, delay: win ? 3.2 : reason === 'tired' ? 2.4 : 1.0 }; return;
+  }
   if (L.def.custom) {
     const hasC = L.crystals.length > 0, hasK = L.kids.length > 0; const st = win ? [true, hasC ? G.collected >= def.stars.crystals : hasK ? G.kidsSaved === L.kids.length : true, G.time <= def.stars.time] : [false, false, false];
     $('rTitle').textContent = win ? (L.ascent ? 'SUMMIT REACHED' : 'DESCENT COMPLETE') : reason === 'hawk' ? 'THE HAWK GOT YOU' : reason === 'tired' ? 'TOO FAR' : reason === 'spikes' ? 'SPIKED' : reason === 'rock' ? 'ROCKFALL' : reason === 'kid' ? 'A KID FELL' : 'YOU FELL';
@@ -1825,7 +2032,7 @@ function finishLevel(win, reason) {
   }
   if (L.endless) {
     save.endless = save.endless || {}; const best = save.endless[def.key] || 0; const distm = Math.round(G.maxDesc); const newBest = distm > best;
-    if (newBest) save.endless[def.key] = distm; const gained = Math.min(5, G.collected); save.totalSaltCrystals += gained; persist();
+    if (newBest) save.endless[def.key] = distm; const gained = Math.round(Math.min(5, G.collected) * mutMult()); save.totalSaltCrystals += gained; persist();
     $('rTitle').textContent = reason === 'hawk' ? 'THE HAWK GOT YOU' : reason === 'tired' ? 'TOO FAR' : reason === 'spikes' ? 'SPIKED' : reason === 'rock' ? 'ROCKFALL' : 'YOU FELL';
     $('rSub').innerHTML = `${L.ascent ? 'Climbed' : 'Descended'} <b>${distm} m</b>${newBest ? ' — NEW BEST!' : ` · best ${best} m`}<br>${STYLE.pickupName} ◆ ${G.collected}${gained ? ` (+${gained} salt)` : ''} · Jumps ${G.jumps}`;
     $('rStars').innerHTML = ''; $('bNext').style.display = 'none';
@@ -1834,14 +2041,19 @@ function finishLevel(win, reason) {
     G.result = { win: false, delay: reason === 'tired' ? 2.4 : 1.0 }; return;
   }
   if (win) {
-    const hasC = L.crystals.length > 0, hasK = L.kids.length > 0; const st = [true, hasC ? G.collected >= def.stars.crystals : hasK ? G.kidsSaved === L.kids.length : saves === 0, def.puzzle ? G.jumps <= def.stars.jumps : G.time <= def.stars.time]; const stars = st.filter(Boolean).length;
+    const hasC = L.crystals.length > 0, hasK = L.kids.length > 0; const mutsOn = (G.muts || []).length > 0; const gs = goalState(def), cur = mutsOn ? [] : currentGoals(def); const passed = cur.filter(k => GOALS[k].check(def)); let goalGain = 0;
+    for (const k of passed) if (!gs.done.includes(k)) { gs.done.push(k); goalGain += 2; }
+    if (mutsOn) { save.mutDone = save.mutDone || {}; save.mutDone[def.key] = [...new Set([...(save.mutDone[def.key] || []), ...G.muts])]; }
+    const stars = mutsOn ? (save.levels[def.key] || { stars: 0 }).stars : Math.min(5, 1 + gs.done.length); const st = [true, ...cur.map(k => passed.includes(k))];
     const prev = save.levels[def.key] || { crystals: 0, time: Infinity, stars: 0 };
     const kidGain = Math.max(0, G.kidsSaved - (prev.kids || 0)) * CONFIG.kidSalt;
-    const gained = Math.max(0, G.collected - prev.crystals) + kidGain; save.totalSaltCrystals += gained;
+    const gained = mutsOn ? Math.round(G.collected * mutMult()) : Math.max(0, G.collected - prev.crystals) + kidGain + goalGain; save.totalSaltCrystals += gained;
     save.levels[def.key] = { crystals: Math.max(prev.crystals, G.collected), time: Math.min(prev.time, G.time), stars: Math.max(prev.stars, stars), kids: Math.max(prev.kids || 0, G.kidsSaved) }; persist();
     $('rTitle').textContent = t(L.horizontal ? 'across' : L.ascent ? 'summit' : 'descentDone');
     $('rSub').innerHTML = `${t('time')} ${fmtTime(G.time)}<br>${hasC ? `${t('p_' + STYLE.pickupName)} ◆ ${G.collected} / ${L.crystals.length}${gained ? ` &nbsp;(+${gained})` : ''}<br>` : ''}${t('jumps')} ${G.jumps} · ${t('saves')} ${saves}${hasK ? `<br>${t('kidsRescued')} ${G.kidsSaved} / ${L.kids.length}` : ''}`;
-    $('rStars').innerHTML = `<div class="${st[0] ? 'on' : 'off'}">${st[0] ? '★' : '☆'} ${t('complete')}</div><div class="${st[1] ? 'on' : 'off'}">${st[1] ? '★' : '☆'} ${hasC ? def.stars.crystals + '+ ◆' : hasK ? t('allKids') : t('noSaves')}</div><div class="${st[2] ? 'on' : 'off'}">${st[2] ? '★' : '☆'} ${def.puzzle ? t('inJumps', { n: def.stars.jumps }) : t('under') + ' ' + fmtTime(def.stars.time)}</div><div>${stars} / 3</div>`;
+    if (mutsOn) { $('rStars').innerHTML = `<div class="on">★ ${t('complete')}</div><div style="opacity:.8;font-size:13px">${t('mutActive', { list: G.muts.map(m => t('mut_' + m)).join(', ') })} · ${t('mutMult', { m: mutMult() })}<br>${t('mutNoStars')}</div>`; persist(); }
+    else { const pool = GOAL_ORDER.filter(k => GOALS[k].ok(def)); const left = pool.filter(k => !gs.done.includes(k)); gs.current = null; const next = left.length ? currentGoals(def) : []; persist();
+      $('rStars').innerHTML = `<div class="on">★ ${t('complete')}</div>` + cur.map(k => `<div class="${passed.includes(k) ? 'on' : 'off'}">${passed.includes(k) ? '★' : '☆'} ${GOALS[k].text(def)}</div>`).join('') + `<div>${t('starOf', { n: stars })}</div>` + (next.length ? `<div style="opacity:.75;font-size:13px;margin-top:6px">${t('goalsNew')}: ${next.map(k => GOALS[k].text(def)).join(' · ')}</div>` : `<div style="opacity:.75;font-size:13px;margin-top:6px">${t('goalsDone')}</div>`); }
     { const nx = LEVELS[idx + 1]; $('bNext').style.display = (nx && !nx.secret && !nx.challenge && !nx.puzzle && worldOpen(WORLDS.findIndex(w => w.levels.includes(nx.key)))) ? 'block' : 'none'; }
     if (def.tutorial) { $('rStars').innerHTML = `<div style="font-size:14px;opacity:.9;max-width:320px">${t('tutResult')}</div>`; $('rSub').innerHTML = `${t('jumps')} ${G.jumps} · ${t('saves')} ${saves}`; }
   } else {
@@ -1855,6 +2067,7 @@ function finishLevel(win, reason) {
   $('bContinue').style.display = win ? 'none' : 'block'; $('bContinue').classList.toggle('dim', !canCont); $('contCost').textContent = `◆ ${CONFIG.continueCost}  (you have ${save.totalSaltCrystals})`;
   G.result = { win, delay: win ? 3.2 : reason === 'tired' ? 2.4 : 1.0 };
 }
+
 $('bPlay').addEventListener('click', e => { e.stopPropagation(); initAudio(); if (!save.levels.steps && !Object.keys(save.levels).length) startLevel(LEVELS.findIndex(l => l.key === 'steps')); else goDims(); });
 $('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBackMenu').textContent === t('worlds')) goSelect(); else goDims(); });
 $('bBackMenu2').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
@@ -2088,6 +2301,11 @@ $('bDaily').addEventListener('click', e => { e.stopPropagation(); initAudio(); c
 $('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
 $('bEndDown').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
 $('bEndUp').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
+$('bMutEndless').addEventListener('click', e => { e.stopPropagation(); goMutators('endless'); });
+$('bTower').addEventListener('click', e => { e.stopPropagation(); initAudio(); goTower(); });
+$('bBackTower').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+$('bTowerGo').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startTower(towerState().cp > 0); });
+$('bTowerRestart').addEventListener('click', e => { e.stopPropagation(); if (!fresh() && towerState().cp > 0 && confirm(t('towerRestart') + '?')) startTower(false); });
 function pauseGame() {
   if (mode !== 'play') return; mode = 'pause'; G.drag = null; G.aiming = false; G.aim = null; snapshotRun(); hint.style.opacity = 0;
   $('pauseSub').innerHTML = `${L.def.nameKey ? t(L.def.nameKey) : L.def.name}<br>${Math.round(G.maxDesc)} m · ${fmtTime(G.time)}`;
@@ -2098,11 +2316,12 @@ $('hPause').addEventListener('click', e => { e.stopPropagation(); pauseGame(); }
 $('bResume').addEventListener('click', e => { e.stopPropagation(); resumeGame(); });
 $('bPauseRestart').addEventListener('click', e => { e.stopPropagation(); mode = 'play'; $('bRetry').click(); });
 $('bPauseExit').addEventListener('click', e => { e.stopPropagation(); snapshotRun(); mode = 'menu';
+  if (L.def.tower) { const ts = towerState(); ts.best = Math.max(ts.best, G.maxDesc); persist(); goTower(); return; }
   if (L.def.custom) openEditor(G.customId); else if (L.def.daily) goMenu(); else if (L.endless) goEndless(); else { const wi = WORLDS.findIndex(w => w.levels.includes(L.def.key)); curDim = DIMS.indexOf(dimOf(wi)); goWorld(wi); } });
 document.addEventListener('visibilitychange', () => { if (document.hidden && mode === 'play') pauseGame(); });
 
 // ---------- run snapshots (endless & daily): resume from the last safe ledge ----------
-function rowOf(s) { const f = []; if (s.spikes) f.push(s.spikes.x1 <= s.x1 + 1e-6 ? 'L' : 'R'); if (s.crumble) f.push('crumble'); if (s.ice) f.push('ice'); const r = [s.id, s.x, s.y, s.w, s.type]; if (f.length) r.push(f.join(' ')); return r; }
+function rowOf(s) { const f = []; if (s.spikes) f.push(s.spikes.x1 <= s.x1 + 1e-6 ? 'L' : 'R'); if (s.crumble) f.push('crumble'); if (s.ice) f.push('ice'); if (s.soft) f.push('soft'); const r = [s.id, s.x0, s.y0, s.w, s.type]; if (f.length || s.move) r.push(f.join(' ')); if (s.move) r.push(s.move); return r; }
 function snapshotRun() {
   if (!L || !(L.endless || L.def.daily) || mode === 'result') return; const g = goats[0]; if (!g || !g.lastSafe || !L.surfaces.includes(g.lastSafe.s)) return;
   const d = L.def, def = { key: d.key, name: d.name, style: L.endless ? BIOME_CYCLE[L.gen.biome % BIOME_CYCLE.length] : d.style, endless: !!d.endless, ascent: !!d.ascent, daily: !!d.daily, biome: d.biome, character: d.character, forceChar: d.forceChar, horizontal: !!d.horizontal, date: d.date, mods: d.mods, stars: d.stars, zones: d.zones || [], blockers: [], herd: d.herd || [],
@@ -2123,6 +2342,57 @@ function applyResume(snap) {
   $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`; if (L.kids.length) $('hKids').textContent = `${t('kids')} ${G.kidsSaved} / ${L.kids.length}`;
   G.lastSnapSurface = sf;
 }
+// ---- stats & achievements ----
+function stats() { save.stats = save.stats || { jumps: 0, saves: 0, meters: 0, time: 0, levels: 0, kids: 0, exp: 0 }; return save.stats; }
+const ACH = [
+  ['catch1', s => s.saves >= 1], ['catch100', s => s.saves >= 100], ['km', s => s.meters >= 1000], ['km10', s => s.meters >= 10000], ['lv10', s => s.levels >= 10], ['lv30', s => s.levels >= 30], ['kids10', s => s.kids >= 10],
+  ['secrets', () => Object.keys(save.secretFound || {}).length >= 4], ['five', () => Object.values(save.levels).some(l => l.stars >= 5)], ['tower', () => save.tower && save.tower.done], ['endless', () => Object.values(save.endless || {}).some(v => v >= 300)],
+  ['chars', () => Object.keys(save.charSeen || {}).length + 1 >= 8], ['exp', s => s.exp >= 1], ['streak', () => save.daily && (save.daily.streak || 0) >= 7],
+];
+function checkAchievements() { const s = stats(); save.ach = save.ach || {}; let gained = 0; for (const [id, fn] of ACH) if (!save.ach[id] && fn(s)) { save.ach[id] = Date.now(); gained += 5; } if (gained) { save.totalSaltCrystals += gained; persist(); } return gained; }
+function goStats() {
+  mode = 'select'; hud.style.display = 'none'; const st = stats(); const list = $('statsList'); list.innerHTML = '';
+  const row = (k, v) => { const d = document.createElement('div'); d.className = 'btn'; d.style.cursor = 'default'; d.innerHTML = `${t(k)}<small>${v}</small>`; list.appendChild(d); };
+  row('st_jumps', st.jumps); row('st_saves', st.saves); row('st_meters', Math.round(st.meters)); row('st_time', fmtTime(st.time)); row('st_levels', st.levels); row('st_kids', st.kids); row('st_secrets', Object.keys(save.secretFound || {}).length); row('st_exp', st.exp); row('st_streak', (save.daily && save.daily.streak) || 0);
+  const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '12px 0 4px'; h.textContent = t('achievements'); list.appendChild(h);
+  for (const [id] of ACH) { const d = document.createElement('div'); d.className = 'btn' + ((save.ach || {})[id] ? '' : ' dim'); d.style.cursor = 'default'; d.innerHTML = `${(save.ach || {})[id] ? '✓ ' : ''}${t('a_' + id)}<small>${t('a_' + id + '_d')} · +5 ◆</small>`; list.appendChild(d); }
+  showScreen('scStats');
+}
+$('bStats').addEventListener('click', e => { e.stopPropagation(); goStats(); });
+$('bBackStats').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+// ---- expedition: five random open levels, one life, a choice of two cards between stages ----
+const EXP = { on: false, step: 0, salt: 0, used: [] };
+function expPool() { return LEVELS.filter(l => !l.tutorial && !l.secret && !l.twin && !l.challenge && !l.puzzle && !EXP.used.includes(l.key) && worldOpen(WORLDS.findIndex(w => w.levels.includes(l.key)))); }
+function goExp() {
+  mode = 'select'; hud.style.display = 'none'; const list = $('expList'); list.innerHTML = '';
+  if (!EXP.on) { $('expSub').textContent = t('expSub'); const b = document.createElement('div'); b.className = 'btn'; b.textContent = t('expStart'); b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; EXP.on = true; EXP.step = 0; EXP.salt = 0; EXP.used = []; goExp(); }); list.appendChild(b); showScreen('scExp'); return; }
+  $('expSub').innerHTML = `${t('expStep', { k: EXP.step + 1 })} · ${t('expSalt', { n: EXP.salt })}<br>${t('expChoose')}`;
+  const pool = expPool(); const r = mulberry(Date.now() % 100000 + EXP.step * 7); const cards = []; while (cards.length < Math.min(2, pool.length)) { const l = pool[Math.floor(r() * pool.length)]; if (!cards.includes(l)) cards.push(l); }
+  const unl = MUTATORS.filter(m => m.cost === 0 || (save.mutUnlocked || {})[m.id]);
+  for (const l of cards) { const mut = r() < 0.5 && unl.length ? unl[Math.floor(r() * unl.length)].id : null; const b = document.createElement('div'); b.className = 'btn'; const w = WORLDS.find(w => w.levels.includes(l.key));
+    b.innerHTML = `${l.nameKey ? t(l.nameKey) : l.name}<small>${w ? w.name : ''} · ${t(l.horizontal ? 'run' : l.ascent ? 'up' : 'down')}${mut ? ' · ' + t('mut_' + mut) + ' ×' + MUTATORS.find(m => m.id === mut).mult : ''}</small>`;
+    b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; EXP.used.push(l.key); const d = JSON.parse(JSON.stringify(l)); d.expedition = true; d.expMut = mut; d.forceChar = l.character; d.firstOf = []; d.softened = true; startLevel(LEVELS.indexOf(l), d); });
+    list.appendChild(b); }
+  showScreen('scExp');
+}
+$('bExp').addEventListener('click', e => { e.stopPropagation(); initAudio(); goExp(); });
+$('bBackExp').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
+function drawRunCard() {
+  const c = $('runCard'), ctx = c.getContext('2d'); const path = G.echoRec || []; if (path.length < 2) { c.style.display = 'none'; $('bSaveCard').style.display = 'none'; return; }
+  const xs = path.map(p => p[0]).concat(L.surfaces.map(s => s.x1), L.surfaces.map(s => s.x2)), ys = path.map(p => p[1]).concat(L.surfaces.map(s => s.y)); const minX = Math.min(...xs) - 1, maxX = Math.max(...xs) + 1, minY = Math.min(...ys) - 1, maxY = Math.max(...ys) + 2;
+  const W = 320, H = L.horizontal ? 120 : 320; c.height = H; const sx = W / (maxX - minX), sy = H / (maxY - minY), k = Math.min(sx, sy); const ox = (W - (maxX - minX) * k) / 2, oy = (H - (maxY - minY) * k) / 2;
+  const X = x => ox + (x - minX) * k, Y = y => H - oy - (y - minY) * k; ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#' + new THREE.Color(STYLE.haze).getHexString(); ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#' + new THREE.Color(STYLE.sides[0]).getHexString(); for (const s of L.surfaces) ctx.fillRect(X(s.x1), Y(s.y), Math.max(2, (s.x2 - s.x1) * k), Math.max(2, 0.8 * k));
+  ctx.strokeStyle = '#ffd76a'; ctx.lineWidth = 2; ctx.beginPath(); path.forEach((p, i) => i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.stroke();
+  ctx.fillStyle = '#fff8ee'; ctx.font = 'bold 12px sans-serif'; ctx.fillText(`${L.def.nameKey ? t(L.def.nameKey) : L.def.name} · ${fmtTime(G.time)} · ${G.jumps} ${t('jumps').toLowerCase()}`, 8, 16);
+  c.style.display = 'block'; $('bSaveCard').style.display = 'block';
+}
+$('bSaveCard').addEventListener('click', e => { e.stopPropagation(); const a = document.createElement('a'); a.download = 'mountain-goat-run.png'; a.href = $('runCard').toDataURL('image/png'); a.click(); });
+function goTower() {
+  mode = 'select'; hud.style.display = 'none'; const ts = towerState(); $('towerStat').innerHTML = `${t('towerWeek', { w: ts.week })}<br>${t('towerHeight', { h: Math.round(ts.best), c: ts.cp })}${ts.done ? `<br>${t('towerDone', { t: fmtTime(ts.time) })}` : ''}`;
+  $('bTowerGo').textContent = ts.cp > 0 && !ts.done ? t('towerResume', { c: ts.cp }) : t('towerClimb'); $('bTowerRestart').classList.toggle('dim', ts.cp === 0); showScreen('scTower');
+}
+function startTower(fromCp) { const def = towerDef(); const ts = towerState(); def.resumeCp = fromCp ? ts.cp : 0; if (!fromCp) { ts.cp = 0; ts.time = 0; persist(); } startLevel(0, def); }
 function goEndless() { mode = 'select'; hud.style.display = 'none'; const b = save.endless || {}; $('bestDown').textContent = `best ${b.endlessDown || 0} m`; $('bestUp').textContent = `best ${b.endlessUp || 0} m`;
   const R = $('endResume'); R.innerHTML = '';
   for (const [ch, biome, label] of [['kong', 'city', 'ENDLESS SKYSCRAPER · KONG'], ['cat', 'panel', 'ENDLESS PANELKI · CAT']]) { if (!(save.charSeen && save.charSeen[ch])) continue;
@@ -2159,11 +2429,11 @@ function goIbex() {
   }
   showScreen('scIbex');
 }
-$('bRetry').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx, L.endless ? endlessDef(L.ascent, L.def.biome, L.def.character) : L.def.daily ? dailyDef() : L.def.custom ? finalizeDef(save.custom[G.customId]) : undefined); });
+$('bRetry').addEventListener('click', e => { e.stopPropagation(); $('bRetry').textContent = t('retry'); if (L.def.tower) { startTower(towerState().cp > 0 && !towerState().done); return; } startLevel(L.idx, L.endless ? endlessDef(L.ascent, L.def.biome, L.def.character) : L.def.daily ? dailyDef() : L.def.custom ? finalizeDef(save.custom[G.customId]) : undefined); });
 $('bContinue').addEventListener('click', e => { e.stopPropagation(); continueRun(); });
 function continueRun() {
   if (mode !== 'result' || G.result.win || !goats.every(g => g.lastSafe) || save.totalSaltCrystals < CONFIG.continueCost) return;
-  save.totalSaltCrystals -= CONFIG.continueCost; persist();
+  save.totalSaltCrystals -= CONFIG.continueCost; persist(); G.continued = true;
   for (const g of goats) { const ls = g.lastSafe, saves = g.saves; g.spawn(ls.s, ls.x); g.saves = saves; g.lastSafe = ls; g.path = null; }
   for (const f of followers) { f.replay = null; f.queue = []; f.spawn(goats[0].onSurface, clamp(goats[0].pos.x - goats[0].facing * 0.9, goats[0].onSurface.x1 + 0.2, goats[0].onSurface.x2 - 0.2)); }
   clearParticles(); let top = -Infinity; for (const g of goats) top = Math.max(top, g.pos.y);
@@ -2171,7 +2441,7 @@ function continueRun() {
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
 }
 $('bNext').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx + 1); });
-$('bLevels').addEventListener('click', e => { e.stopPropagation(); if (L.def.custom) openEditor(G.customId); else if (L.endless || L.def.daily) { if (L.def.daily) goMenu(); else goEndless(); } else { const wi = WORLDS.findIndex(w => w.levels.includes(L.def.key)); curDim = DIMS.indexOf(dimOf(wi)); goWorld(wi); } });
+$('bLevels').addEventListener('click', e => { e.stopPropagation(); if (L.def.expedition) { goExp(); return; } if (L.def.tower) { goTower(); return; } if (L.def.custom) openEditor(G.customId); else if (L.endless || L.def.daily) { if (L.def.daily) goMenu(); else goEndless(); } else { const wi = WORLDS.findIndex(w => w.levels.includes(L.def.key)); curDim = DIMS.indexOf(dimOf(wi)); goWorld(wi); } });
 for (const s of document.querySelectorAll('.screen')) s.addEventListener('pointerdown', e => e.stopPropagation());
 
 // ============================================================
@@ -2223,7 +2493,22 @@ function update(dt) {
   if (mode !== 'play' && mode !== 'result') return;
   const playing = mode === 'play';
   if (G.started && playing) G.time += dt;
+  // seesaws: tilt toward whoever stands on them; a rising end throws you up
+  for (const s of L.surfaces) if (s.seesaw) {
+    let target = 0; for (const g of goats.concat(followers)) if (g.onSurface === s && [ST.IDLE, ST.LAND, ST.WALK, ST.AIM].includes(g.state)) target += clamp((g.pos.x - s.x) / (s.w / 2), -1, 1) * 0.3;
+    s.tiltVel += ((target - s.tilt) * 9 - s.tiltVel * 2.5) * dt; s.tilt += s.tiltVel * dt; s.mesh.rotation.z = -s.tilt;
+  }
+  // moving ledges: shift geometry, carry whoever stands on them
+  for (const s of L.surfaces) if (s.move) {
+    const ph = (G.time + (s.move.phase || 0)) * Math.PI * 2 / (s.move.period || 4); const nx = s.x0 + (s.move.dx || 0) * Math.sin(ph), ny = s.y0 + (s.move.dy || 0) * Math.sin(ph);
+    s.vx = playing ? (nx - s.x) / Math.max(dt, 1e-4) : 0; s.vy = playing ? (ny - s.y) / Math.max(dt, 1e-4) : 0; const ddx = nx - s.x, ddy = ny - s.y;
+    s.x = nx; s.y = ny; s.x1 = nx - s.w / 2; s.x2 = nx + s.w / 2; if (s.spikes) { s.spikes.x1 += ddx; s.spikes.x2 += ddx; } s.group.position.x = nx - s.x0; s.group.position.y = ny - s.y0;
+    for (const g of goats.concat(followers)) if (g.onSurface === s && [ST.IDLE, ST.LAND, ST.WALK, ST.AIM, ST.HERD, ST.TIRED].includes(g.state)) { g.pos.x += ddx; if (g.lastSafe && g.lastSafe.s === s) g.lastSafe.x += ddx; }
+    for (const k of L.kids) if (!k.rescued && k.surface === s) k.goat.pos.x += ddx;
+    for (const c of L.crystals) if (c.surface === s && !c.taken) { c.x += ddx; c.y += ddy; c.mesh.position.x = c.x; }
+  }
   const input = G.drag && !G.aiming ? G.airInput : G.keyInput;
+  if (playing) { if (input && goats.some(g => g.state === ST.JUMP)) G.airUsed = true; const idleNow = goats.every(g => g.state === ST.IDLE) && !G.aiming; G.idleT = idleNow ? (G.idleT || 0) + dt : 0; G.maxIdle = Math.max(G.maxIdle || 0, G.idleT); }
   for (const g of goats) g.update(dt, input);
   for (const g of herd) { g.update(dt, 0); g.animate(dt, null); }
   for (const k of L.kids) if (!k.rescued) { k.goat.update(dt, 0); k.goat.animate(dt, null); }
@@ -2251,9 +2536,16 @@ function update(dt) {
       const r = CONFIG.hawkHitRadius; if (h.x + r > g.pos.x - CONFIG.goatHalfWidth && h.x - r < g.pos.x + CONFIG.goatHalfWidth && h.y + r > g.pos.y + 0.1 && h.y - r < g.pos.y + CONFIG.goatBodyHeight) {
         G.failReason = 'hawk'; g.vel.set(h.dir * 4, 2); g.corr = 0; g.state = ST.JUMP; g.fall(); spawnDust(g.pos.x, g.pos.y + 0.8, 8, 1.5); thud(0.8, 500, 0.12); } }
   }
+  if (playing && L.def.scent && L.def.secretEntry && !(save.secretFound || {})[L.def.secretEntry.level] && ['dog', 'corgi', 'collie', 'basset', 'husky'].includes(goats[0].character)) {
+    const g = goats[0]; G.stillT = (g.state === ST.IDLE && !G.aiming) ? (G.stillT || 0) + dt : 0;
+    if (G.stillT > 3 && !G.scentShown) { G.scentShown = true; const ent = L.surfaces.find(s => s.id === L.def.secretEntry.surface); if (ent) { const n = 9; for (let i = 1; i <= n; i++) { const k = i / n; const paw = new THREE.Mesh(new THREE.CircleGeometry(0.16, 8), new THREE.MeshBasicMaterial({ color: 0x3a2a1a, transparent: true, opacity: 0.55 })); paw.position.set(lerp(g.pos.x, ent.x, k), lerp(g.pos.y + 0.3, ent.y + 0.3, k) + Math.sin(k * Math.PI) * 1.2, 0.6); paw.userData = { kind: 'dust', vx: 0, vy: 0, life: -i * 0.15, ttl: 4.5, s: 1 }; scene.add(paw); particles.push(paw); } }
+      hint.innerHTML = t('scentFound'); hint.style.opacity = 1; setTimeout(() => { if (mode === 'play') hint.style.opacity = 0; }, 2500); }
+    if (g.state !== ST.IDLE) G.scentShown = false;
+  }
   if (playing && L.def.secretEntry && goats[0].onSurface && goats[0].onSurface.id === L.def.secretEntry.surface && goats[0].stable) {
     const sk = L.def.secretEntry.level; save.secretFound = save.secretFound || {}; save.secretFound[sk] = true; persist(); chime(); hint.innerHTML = t('secretFound'); hint.style.opacity = 1; mode = 'result'; G.result = { win: false, delay: 99 }; setTimeout(() => startLevel(LEVELS.findIndex(l => l.key === sk)), 900); return;
   }
+  if (playing && L.def.tower && goats[0].onSurface && goats[0].onSurface.id.startsWith('cp') && goats[0].stable) { const n = +goats[0].onSurface.id.slice(2); const ts = towerState(); if (n > ts.cp) { ts.cp = n; ts.time = G.time; ts.best = Math.max(ts.best, G.maxDesc); persist(); chime(); hint.innerHTML = t('towerCp', { c: n }); hint.style.opacity = 1; G.hints.shownAt = performance.now() / 1000; G.hints.key = 'newchar'; } }
   // win / fail
   if (playing && L.def.tutorial && goats[0].state === ST.FALL && goats[0].lastSafe) { // the tutorial never kills: back on the ledge, try again
     const g = goats[0]; g.spawn(g.lastSafe.s, g.lastSafe.x); G.camFy = preferredFy(g.pos.y); G.dangerT = 0; G.tutFallT = 2.5; hint.innerHTML = t('tutFall'); hint.style.opacity = 1;
@@ -2265,6 +2557,8 @@ function update(dt) {
     else if (goats.every(g => g.state === ST.WIN)) {
       for (const g of goats) { const h = (L.def.herd || []).find(h => h.surface === g.onSurface.id); g.herdDir = h ? h.dir : -1; g.herdDelay = 0.8;
         if (g.character === 'kong') { g.finale = 'chest'; const ban = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.07, 5, 8, Math.PI * 0.9), new THREE.MeshLambertMaterial({ color: 0xffe36a, flatShading: true })); ban.position.set(0.1, -1.15, 0); ban.rotation.z = -0.4; g.legs[0].add(ban); g.setState(ST.HERD); }
+        else if (g.character === 'basset') { g.finale = 'nap'; g.setState(ST.HERD); }
+        else if (g.character === 'husky') { g.finale = 'howl'; g.setState(ST.HERD); }
         else if (g.character === 'cat') { g.finale = 'chase'; const b = makeHawk(); b.position.set(g.pos.x + g.herdDir * 2.5, g.pos.y + 1.2, 0.2); b.rotation.y = g.herdDir > 0 ? 0 : Math.PI; b.scale.setScalar(0.6); scene.add(b); g.chaseBird = b; g.herdDelay = 0.3; g.setState(ST.HERD); }
         else g.setState(ST.HERD); }
       for (const g of herd) g.setState(ST.HERD);
@@ -2281,7 +2575,7 @@ function update(dt) {
   if (G.aiming) wanted *= 1.05; if (G.zoomPunch) { wanted *= 1 - G.zoomPunch; G.zoomPunch = damp(G.zoomPunch, 0, 4, dt); if (G.zoomPunch < 0.002) G.zoomPunch = 0; }
   setHalfH(damp(halfH, wanted, 3, dt));
   const target = preferredFy(maxY);
-  const idle = CONFIG.cameraIdleSpeed * (halfH / CONFIG.baseHalfHeight) * (G.twin ? CONFIG.twinCameraPressureMultiplier : 1) * (L.def.tutorial ? 0.5 : 1) * (L.def.mod === 'fastCam' ? 1.4 : 1);
+  const idle = CONFIG.cameraIdleSpeed * (halfH / CONFIG.baseHalfHeight) * (G.twin ? CONFIG.twinCameraPressureMultiplier : 1) * (L.def.tutorial ? 0.5 : 1) * (L.def.mod === 'fastCam' ? 1.4 : 1) * ((G.muts || []).includes('rush') ? 1.5 : 1);
   const ended = mode === 'result';
   if (ended) { // follow the fall, but never below the bottom terrace (no endless chase into the void)
     G.camFy = damp(G.camFy, target, G.result.win ? 3 : 6, dt);
@@ -2324,7 +2618,7 @@ function update(dt) {
     const arrow = arrows[gi], dots = dotSets[gi]; arrow.visible = !!showAim;
     if (showAim) {
       arrow.position.set(g.pos.x, g.pos.y + 0.7, 0.6); arrow.setDirection(new THREE.Vector3(G.aim.dir.x, G.aim.dir.y, 0)); arrow.setLength(1.2 + G.aim.t * 2.4, 0.45, 0.3);
-      const ls = launchStart(g, G.aim); const pts = previewTrajectory(new THREE.Vector2(ls.x, ls.y), G.aim); const n = CONFIG.trajectoryPoints, frac = debugG.visible ? 1 : CONFIG.trajectoryPreviewFraction;
+      const ls = launchStart(g, G.aim); const pts = previewTrajectory(new THREE.Vector2(ls.x, ls.y), G.aim, carryOf(g)); const n = CONFIG.trajectoryPoints, frac = debugG.visible ? 1 : CONFIG.trajectoryPreviewFraction;
       for (let i = 0; i < dots.length; i++) { const d = dots[i]; if (i < n) { const k = Math.floor((i + 1) / n * frac * (pts.length - 1)); d.visible = true; d.position.set(pts[k].x, pts[k].y + 0.35, 0.5); d.scale.setScalar(1 - i / n * 0.5); d.material.opacity = 0.9 - i / n * 0.5; } else d.visible = false; }
       if (debugG.visible && gi === 0) { debugTraj.geometry.dispose(); debugTraj.geometry = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p.x, p.y + 0.35, 0.6))); debugTraj.visible = true; }
     } else { for (const d of dots) d.visible = false; if (gi === 0) debugTraj.visible = false; }
@@ -2335,9 +2629,11 @@ function update(dt) {
   ENV.floor.position.y = (L.endless && !L.ascent) ? Math.min(0, G.camFy - 45 - FLOOR_Y) : 0; ENV.sky.position.y = G.camFy - 20;
 
   // ---- result screen reveal ----
-  if (ended) { G.endT += dt; if (G.endT > G.result.delay && !$('scResult').classList.contains('show')) { showScreen('scResult'); hud.style.display = 'none'; } }
+  if (ended) { G.endT += dt; if (G.endT > G.result.delay && !$('scResult').classList.contains('show')) { showScreen('scResult'); hud.style.display = 'none'; drawRunCard(); checkAchievements();
+    if (L.def.expedition) { $('bContinue').style.display = 'none'; $('bNext').style.display = 'none'; $('bLevels').textContent = t('expedition'); if (G.result.win) { EXP.salt += G.collected; EXP.step++; if (EXP.step >= 5) { EXP.on = false; const st = stats(); st.exp++; save.totalSaltCrystals += 10; persist(); $('rTitle').textContent = t('expWin'); $('rSub').innerHTML = t('expReward', { n: st.exp }) + '<br>' + t('expSalt', { n: EXP.salt }); } else { $('rSub').innerHTML += `<br>${t('expStep', { k: EXP.step + 1 })}`; } } else { EXP.on = false; $('rTitle').textContent = t('expOver'); $('rSub').innerHTML += `<br>${t('expStep', { k: EXP.step + 1 })} · ${t('expSalt', { n: EXP.salt })}`; } $('bRetry').style.display = 'none'; } else $('bRetry').style.display = 'block'; } }
 
   if (playing && (L.endless || L.def.daily)) { const ls = goats[0].lastSafe; if (ls && ls.s !== G.lastSnapSurface) { G.lastSnapSurface = ls.s; snapshotRun(); } }
+  if (playing) { G.echoRec.push([goats[0].pos.x, goats[0].pos.y, goats[0].state === ST.JUMP ? 1 : 0]); if (G.ghost) { const gp = G.ghost; gp.t += dt; const i = Math.min(gp.path.length - 1, Math.floor(gp.t * 60)); const p = gp.path[i]; gp.g.pos.set(p[0], p[1]); gp.g.state = p[2] ? ST.JUMP : ST.IDLE; gp.g.vel.set(1, 0); gp.g.animate(dt, null); } }
   updateHints(dt, playing);
   // ---- HUD ----
   $('hDesc').textContent = Math.round(G.maxDesc) + ' m'; $('hTime').textContent = fmtTime(G.time);
