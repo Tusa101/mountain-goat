@@ -1,6 +1,6 @@
 // Network-first for the app itself (so every deploy shows up on the next launch),
 // cache-first only for the Three.js CDN module. Cached copies are used when offline.
-const CACHE = 'mountain-goat-v63';
+const CACHE = 'mountain-goat-v65';
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./index.html', './manifest.json']).catch(() => {}))); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
@@ -10,6 +10,7 @@ self.addEventListener('fetch', e => {
     return;
   }
   if (!url.startsWith(self.location.origin)) return;
+  if (url.includes('?v=')) return; // version checks go straight to the network and are never cached
   e.respondWith(fetch(e.request, { cache: 'no-store' }).then(res => {
     if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
     return res;

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v63 -->
+<!-- build v65 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,16 +26,21 @@
   #topwarn { position:fixed; left:0; right:0; top:0; height:18%; pointer-events:none; opacity:0; background: linear-gradient(rgba(140,40,20,.7), rgba(140,40,20,0)); }
   #wind { position:fixed; inset:0; pointer-events:none; opacity:0; background: repeating-linear-gradient(180deg, rgba(255,255,255,0) 0px, rgba(255,255,255,0) 22px, rgba(255,255,255,.18) 23px, rgba(255,255,255,0) 26px); background-size:100% 260px; animation: windy .35s linear infinite; }
   @keyframes windy { from { background-position:0 0; } to { background-position:0 260px; } }
-  .screen { position:fixed; inset:0; z-index:20; display:none; flex-direction:column; align-items:center; justify-content:safe center; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; touch-action:pan-y; text-align:center; background:rgba(50,32,18,.62); padding:24px; box-sizing:border-box; overflow:hidden; }
+  .screen { position:fixed; inset:0; z-index:20; display:none; flex-direction:column; align-items:center; justify-content:safe center; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; touch-action:pan-y; text-align:center; background:rgba(236,226,208,.22); padding:24px; box-sizing:border-box; overflow:hidden; }
   #mapView svg { display:block; } #mapView .node { cursor:pointer; } #mapView .node text { font-family:inherit; }
-  .list { max-height:72vh; overflow-y:auto; overflow-x:hidden !important; scrollbar-width:thin; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
+  .list { max-height:none; overflow-y:visible; overflow-x:hidden !important; scrollbar-width:none; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
   .screen.show { display:flex; }
   .screen h1 { font-size:40px; margin:0 0 4px; letter-spacing:.06em; font-weight:800; }
   .screen h2 { font-size:22px; margin:0 0 18px; letter-spacing:.04em; font-weight:700; opacity:.95; }
   .screen .sub { font-size:16px; opacity:.9; line-height:1.7; margin-bottom:18px; }
   .btn { display:block; box-sizing:border-box; width:min(360px, 100%); margin:8px auto; padding:14px 18px; border:2px solid rgba(255,248,238,.7); border-radius:10px; font-size:17px; font-weight:700; letter-spacing:.1em; background:rgba(255,248,238,.08); cursor:pointer; }
   .btn:active { background:rgba(255,248,238,.25); }
-  .btn.dim { opacity:.4; }
+  .btn.dim { opacity:.55; }
+  .btn { background:rgba(46,30,16,.82); border-color:rgba(255,248,238,.55); box-shadow:0 3px 0 rgba(0,0,0,.25); }
+  #scResult, #scPause { background:rgba(50,32,18,.66); }
+  .screen h1 { text-shadow:0 2px 10px rgba(40,26,14,.6), 0 1px 2px rgba(40,26,14,.8); }
+  .screen .sub, .screen .lbl, .screen .salt, #mapView .lbl { text-shadow:0 1px 5px rgba(40,26,14,.85), 0 0 2px rgba(40,26,14,.9); }
+  .screen, #mapView, .list { scrollbar-width:none; } .screen::-webkit-scrollbar, #mapView::-webkit-scrollbar, .list::-webkit-scrollbar { display:none; }
   .btn small { display:block; font-size:12px; font-weight:400; letter-spacing:.14em; opacity:.85; margin-top:4px; }
   .stars { font-size:15px; line-height:1.9; margin:6px 0 18px; text-align:left; display:inline-block; }
   .stars .on { color:#ffd76a; } .stars .off { opacity:.5; }
@@ -64,8 +69,9 @@
   .tile:active, .playBtn:active, .tab:active, .hubIcon:active, .modePill:active { transform:translateY(2px); }
   .badge { position:absolute; top:-7px; right:-7px; min-width:22px; height:22px; border-radius:11px; background:#e5483a; color:#fff; font-size:12px; font-weight:800; font-style:normal; display:none; align-items:center; justify-content:center; padding:0 5px; border:2px solid #fff8ee; box-sizing:border-box; pointer-events:none; }
   .badge.on { display:flex; }
-  .dimNav { position:absolute; top:40%; width:44px; height:64px; display:flex; align-items:center; justify-content:center; font-size:44px; line-height:1; cursor:pointer; color:#fff8ee; text-shadow:0 2px 6px rgba(0,0,0,.6); }
-  .dimNav.l { left:98px; } .dimNav.r { right:98px; } .dimNav.off { opacity:.25; }
+  .dimRow { display:flex; align-items:center; justify-content:center; gap:14px; }
+  .dimNav { width:48px; height:44px; border-radius:12px; background:rgba(40,26,14,.7); display:flex; align-items:center; justify-content:center; font-size:44px; line-height:1; cursor:pointer; color:#fff8ee; text-shadow:0 2px 6px rgba(0,0,0,.6); }
+  .dimNav.off { opacity:.3; }
   .playGroup { position:absolute; left:50%; transform:translateX(-50%); bottom:calc(86px + env(safe-area-inset-bottom)); width:min(340px, calc(100vw - 40px)); display:flex; flex-direction:column; gap:8px; }
   .dimDots { display:flex; justify-content:center; gap:8px; } .dimDots i { width:8px; height:8px; border-radius:4px; background:rgba(255,248,238,.4); } .dimDots i.on { background:#ffd76a; width:20px; }
   .modePill { display:flex; min-height:52px; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.55); cursor:pointer; box-shadow:0 3px 0 rgba(0,0,0,.3); }
@@ -83,13 +89,23 @@
   #scResult h1 { font-size:clamp(26px, 8.5vw, 44px); margin:0 0 6px; }
   #scResult .actions { position:sticky; bottom:0; padding:12px 0 6px; background:linear-gradient(rgba(50,32,18,0), rgba(50,32,18,.96) 22%); z-index:2; }
   #scResult .stars div { margin:2px 0; }
-  .btn.primary { background:linear-gradient(#ffe07a,#f0a830); color:#3a2410; border:3px solid #fff4c8; box-shadow:0 5px 0 #a8661a; font-size:22px; font-weight:900; padding:16px 18px; order:-2; }
-  .btn.reward { background:linear-gradient(#6ac86a,#3a8a3a); border-color:#d8ffd8; box-shadow:0 4px 0 #245a24; order:-1; }
+  .btn.primary { background:linear-gradient(#ffe07a,#f0a830); color:#3a2410; border:3px solid #fff4c8; box-shadow:0 5px 0 #a8661a; font-size:22px; font-weight:900; padding:16px 18px; }
+  .btn.reward { background:linear-gradient(#6ac86a,#3a8a3a); border-color:#d8ffd8; box-shadow:0 4px 0 #245a24; }
+  .actions .btn.primary { order:-2; } .actions .btn.reward { order:-1; }
   .btn.danger { border-color:rgba(255,170,150,.8); color:#ffc8b8; } .btn.ghost { background:none; border-color:rgba(255,248,238,.35); font-size:14px; }
   .pauseIcons { position:absolute; top:calc(10px + env(safe-area-inset-top)); right:10px; display:flex; gap:8px; }
   .rSalt { position:fixed; top:calc(10px + env(safe-area-inset-top)); right:10px; z-index:3; }
   .flyGem { position:fixed; z-index:40; width:22px; height:22px; color:#9fe0ff; pointer-events:none; transition:transform .7s cubic-bezier(.5,-.3,.7,1), opacity .7s; }
-  .heroTag { position:absolute; transform:translate(-50%,0); padding:4px 12px; border-radius:12px; background:rgba(40,26,14,.8); border:2px solid rgba(255,248,238,.35); font-size:12px; font-weight:800; letter-spacing:.05em; white-space:nowrap; cursor:pointer; display:none; }
+  .heroStage { margin-top:calc(8px + env(safe-area-inset-top)); display:flex; flex-direction:column; align-items:center; }
+  #heroBig { width:min(62vw, 260px); height:min(62vw, 260px); border-radius:24px; background:radial-gradient(circle at 50% 60%, rgba(255,248,238,.55), rgba(255,248,238,0) 70%); }
+  .heroName { font-size:24px; font-weight:900; letter-spacing:.08em; text-shadow:0 2px 8px rgba(40,26,14,.7); } .heroSkin { font-size:13px; opacity:.9; text-shadow:0 1px 4px rgba(40,26,14,.9); }
+  .charGrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)); gap:8px; width:min(420px,100%); }
+  .charCard { border-radius:16px; background:rgba(46,30,16,.82); border:2px solid rgba(255,248,238,.45); box-shadow:0 3px 0 rgba(0,0,0,.25); padding:6px 4px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; min-height:120px; box-sizing:border-box; }
+  .charCard img { width:78px; height:78px; border-radius:12px; background:rgba(255,248,238,.12); }
+  .charCard b { font-size:11px; letter-spacing:.04em; } .charCard small { font-size:10px; opacity:.8; }
+  .charCard.on { border-color:#ffd76a; background:linear-gradient(rgba(120,80,30,.9), rgba(70,44,20,.9)); box-shadow:0 0 0 2px #ffd76a inset, 0 3px 0 rgba(0,0,0,.25); } .charCard.locked { opacity:.55; }
+  .charCard .q { width:78px; height:78px; border-radius:12px; background:rgba(255,248,238,.12); display:flex; align-items:center; justify-content:center; font-size:34px; }
+  .heroTag { position:absolute; transform:translate(-50%,0); padding:3px 10px; border-radius:10px; font-size:10px !important; background:rgba(40,26,14,.8); border:2px solid rgba(255,248,238,.35); font-size:12px; font-weight:800; letter-spacing:.05em; white-space:nowrap; cursor:pointer; display:none; }
   .heroTag small { display:block; font-size:10px; font-weight:600; opacity:.8; letter-spacing:0; text-align:center; }
   .hubToast { position:absolute; left:50%; transform:translateX(-50%); top:calc(66px + env(safe-area-inset-top)); max-width:78vw; padding:10px 14px; border-radius:12px; background:rgba(20,12,6,.88); font-size:14px; text-align:center; opacity:0; transition:opacity .25s; pointer-events:none !important; }
   #tabBar { position:fixed; left:0; right:0; bottom:0; z-index:25; display:none; align-items:flex-end; gap:2px; padding:0 6px env(safe-area-inset-bottom); height:calc(72px + env(safe-area-inset-bottom)); box-sizing:border-box; background:linear-gradient(#2f64b0,#1d3f75); border-top:2px solid rgba(255,255,255,.4); }
@@ -99,11 +115,13 @@
   .tab.on { opacity:1; background:linear-gradient(#ffe07a,#e8a030); color:#3a2410; height:82px; box-shadow:0 -2px 0 rgba(255,255,255,.5) inset; }
   .tab .badge { top:6px; right:calc(50% - 26px); }
   #fpsBox { position:fixed; left:6px; top:calc(62px + env(safe-area-inset-top)); z-index:55; display:none; padding:3px 6px; border-radius:6px; background:rgba(0,0,0,.6); font:11px/1.3 monospace; color:#b8ffb8; pointer-events:none; white-space:pre; }
+  #updBanner { position:fixed; left:10px; right:10px; top:calc(10px + env(safe-area-inset-top)); z-index:58; display:none; align-items:center; gap:10px; padding:8px 8px 8px 14px; border-radius:14px; background:rgba(30,20,10,.92); border:2px solid #ffd76a; font-size:14px; font-weight:700; }
+  #updBanner.show { display:flex; } #updBanner span { flex:1; } #updBanner .btn { width:auto; margin:0; font-size:15px; padding:10px 16px; }
   #selfTestOut { position:fixed; left:8px; right:8px; top:calc(8px + env(safe-area-inset-top)); z-index:60; display:none; max-height:70vh; overflow:auto; padding:12px; border-radius:12px; background:rgba(10,10,10,.92); font:12px/1.4 monospace; color:#e8ffe8; white-space:pre-wrap; }
   @media (orientation: landscape) and (max-height: 520px) {
     .tiles { top:calc(64px + env(safe-area-inset-top)); gap:8px; } .tile { min-height:66px; width:76px; padding:5px 3px; } .tile > i:first-child { width:24px; height:24px; }
-    .playGroup { bottom:calc(80px + env(safe-area-inset-bottom)); } .dimDots { display:none; } .playBtn { height:56px; font-size:24px; } .modePill { min-height:44px; }
-    .dimNav.l { left:96px; } .dimNav.r { right:96px; } #tabBar { height:calc(64px + env(safe-area-inset-bottom)); } .tab { height:62px; } .tab.on { height:70px; }
+    .playGroup { bottom:calc(80px + env(safe-area-inset-bottom)); gap:6px; } .playBtn { height:56px; font-size:24px; } .modePill { min-height:44px; }
+    #tabBar { height:calc(64px + env(safe-area-inset-bottom)); } .tab { height:62px; } .tab.on { height:70px; }
     body.tabs .back { bottom:calc(76px + env(safe-area-inset-bottom)); }
   }
   #editor { position:fixed; inset:0; pointer-events:none; display:none; }
@@ -157,9 +175,8 @@
     <div class="tile" id="tExp"><i data-ico="compass"></i><b data-i18n="tExp">EXPEDITION</b><small id="tExpSub"></small></div>
     <div class="tile" id="tBuilder"><i data-ico="hammer"></i><b data-i18n="tBuilder">BUILDER</b><small id="tBuilderSub"></small></div>
   </div>
-  <div class="dimNav l" id="dimPrevH">‹</div><div class="dimNav r" id="dimNextH">›</div>
   <div class="playGroup">
-    <div class="dimDots" id="dimDots"></div>
+    <div class="dimRow"><div class="dimNav" id="dimPrevH">‹</div><div class="dimDots" id="dimDots"></div><div class="dimNav" id="dimNextH">›</div></div>
     <div class="modePill" id="bMode"><span data-i18n="change">CHANGE</span><span><b id="modeDim"></b><small id="modeLvl"></small></span></div>
     <div class="playBtn" id="bPlay"><span id="playTxt">PLAY</span></div>
   </div>
@@ -175,12 +192,21 @@
   <div class="btn" id="bMutMenu"><span data-i18n="mutators">MUTATORS</span><small id="mutInfo"></small></div>
   <div class="sub" id="seasonInfo" style="font-size:12px;opacity:.75;margin-top:8px"></div>
 </div>
+<div class="screen" id="scAbout">
+  <div class="back" id="bBackAbout">◀</div>
+  <h1 data-i18n="about">ABOUT</h1>
+  <div class="sub" id="aboutText" style="max-width:360px;line-height:1.5"></div>
+  <div class="btn" id="aboutVersion" style="cursor:default"></div>
+  <div class="btn" id="bCopyLog"><span data-i18n="copyLog">COPY ERROR LOG</span><small id="logCount"></small></div>
+  <div class="sub" id="aboutNotes" style="max-width:360px;font-size:13px;text-align:left;line-height:1.5;opacity:.9"></div>
+</div>
 <div class="screen" id="scColl">
   <h1 data-i18n="collection">COLLECTION</h1>
   <div class="btn" id="bCollStats"><span data-i18n="statsAch">STATS & ACHIEVEMENTS</span><small id="collAch"></small></div>
   <div class="btn" id="bCollMech"><span data-i18n="mechanics">MECHANICS</span><small id="collMech"></small></div>
   <div class="btn" id="bBuilder"><span data-i18n="builder">LEVEL BUILDER</span><small id="collBuilder"></small></div>
   <div class="btn" id="bCollSecrets" style="cursor:default"><span data-i18n="secretsTitle">SECRETS</span><small id="collSecrets"></small></div>
+  <div class="btn" id="bAbout"><span data-i18n="about">ABOUT</span><small id="aboutVer"></small></div>
 </div>
 </div>
 <div id="dimUI" style="position:fixed;inset:0;pointer-events:none;display:none;z-index:15">
@@ -191,8 +217,8 @@
 </div>
 <div class="screen" id="scSelect">
   <div class="back" id="bBackMenu" data-i18n="menu">◀ MENU</div>
-  <h1>MOUNTAIN GOAT</h1>
-  <div id="mapView" style="display:none;width:100%;max-width:420px;max-height:74vh;overflow:auto;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch"></div>
+  <h1 id="selTitle">MOUNTAIN GOAT</h1>
+  <div id="mapView" style="display:none;width:100%;max-width:520px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch"></div>
   <div id="levelList" class="list"></div>
 </div>
 <div class="screen" id="scEndless">
@@ -254,7 +280,7 @@
   <h1 data-i18n="mechanics">MECHANICS</h1>
   <div id="mechList" class="list"></div>
 </div>
-<div class="screen" id="scLang" style="z-index:30">
+<div class="screen" id="scLang" style="z-index:30;background:none;justify-content:flex-end;padding-bottom:calc(8vh + env(safe-area-inset-bottom)) !important">
   <h1>MOUNTAIN GOAT</h1>
   <div class="sub">Choose your language<br>Выберите язык</div>
   <div class="btn" id="bLangEn">English</div>
@@ -267,17 +293,18 @@
 </div>
 <div class="screen" id="scIbex">
   <div class="back" id="bBackMenu2">◀ MENU</div>
-  <h1 data-i18n="characters">CHARACTERS</h1>
-  <div class="salt" id="ibexSalt" style="margin:0 0 10px">◆ 0</div>
-  <div class="btn" id="bWardrobe" data-i18n="wardrobe">WARDROBE</div>
-  <div id="skinList" class="list"></div>
+  <div class="cur rSalt"><i data-ico="diamond" class="curIco"></i><span id="ibexSalt">0</span></div>
+  <div class="heroStage"><img id="heroBig" alt=""><div class="heroName" id="heroName"></div><div class="heroSkin" id="heroSkin"></div></div>
+  <div class="btn primary" id="bWardrobe" data-i18n="customize">CUSTOMIZE</div>
+  <div class="lbl" style="margin:12px 0 6px" data-i18n="chooseHero">CHOOSE A HERO</div>
+  <div id="skinList" class="charGrid"></div>
   <div class="sub" style="margin-top:10px;font-size:13px;opacity:.75" data-i18n="skinsNote">Skins change the coat only — never the jump.</div>
 </div>
 <div class="screen" id="scWardrobe">
   <div class="back" id="bBackWardrobe">◀</div>
-  <h1 data-i18n="wardrobe">WARDROBE</h1>
-  <div class="salt" id="wardSalt" style="margin:0 0 6px">◆ 0</div>
-  <img id="wardPreview" width="160" height="160" style="width:160px;height:160px;border-radius:12px;background:rgba(0,0,0,.25);margin:0 auto 8px;display:block">
+  <h1 data-i18n="customize">CUSTOMIZE</h1>
+  <div class="cur rSalt"><i data-ico="diamond" class="curIco"></i><span id="wardSalt">0</span></div>
+  <img id="wardPreview" width="160" height="160" style="width:min(48vw,200px);height:min(48vw,200px);border-radius:20px;background:radial-gradient(circle at 50% 60%, rgba(255,248,238,.55), rgba(255,248,238,0) 70%);margin:0 auto 8px;display:block">
   <div id="wardList" class="list" style="max-height:48vh"></div>
   <div class="sub" style="margin-top:8px;font-size:13px;opacity:.75" data-i18n="accNote"></div>
 </div>
@@ -289,6 +316,8 @@
   <div class="tab" data-tab="coll" id="tabColl"><i data-ico="book"></i><span data-i18n="tab_coll">COLLECTION</span><i class="badge" id="bdgColl"></i></div>
 </div>
 <div id="selfTestOut"></div>
+<input type="file" id="importFile" accept="application/json,.json" style="display:none">
+<div id="updBanner"><span data-i18n="updAvail">A new version is ready</span><div class="btn primary" id="bUpdate" data-i18n="updNow">UPDATE</div></div>
 <div id="fpsBox"></div>
 <div class="screen" id="scResult">
   <h1 id="rTitle">DESCENT COMPLETE</h1>
@@ -341,6 +370,8 @@ const I18N = {
     p_SALT: 'SALT', p_GARNET: 'GARNET', p_FOSSIL: 'FOSSIL', p_MOONSTONE: 'MOONSTONE', p_ICE: 'ICE', p_BANANAS: 'BANANAS', p_FISH: 'FISH', p_BONES: 'BONES',
     h_scent: 'Stand still — a dog can smell what is hidden<br>Follow the paw prints', m_scent: 'Scent', m_scent_d: 'Dogs only. Stand still for three seconds and a trail of paw prints points toward a hidden passage.', scentFound: '🐾 trail found',
     season: 'Season', s_auto: 'auto', s_winter: 'Winter', s_spring: 'Spring', s_summer: 'Summer', s_autumn: 'Autumn', seasonNow: 'season: {s}', seasonWinter_d: 'snow on the cliffs, icy ledges', seasonSpring_d: 'flowers, slower birds', seasonSummer_d: 'heat haze, stronger updrafts', seasonAutumn_d: 'leaves, gustier wind',
+    exportSave: 'Export save', importSave: 'Import save', importConfirm: 'Replace this progress with the file? ({n} levels, {c} ◆). The current progress is backed up.', importBad: 'That file is not a Mountain Goat save.', about: 'ABOUT', versionW: 'Version', copyLog: 'COPY ERROR LOG', logN: '{n} entries', logEmpty: 'no errors', whatsNew: 'What\'s new', devOn: 'Developer mode on', devOff: 'Developer mode off', updAvail: 'A new version is ready', updNow: 'UPDATE', aboutText: 'An ibex, a cat, a gorilla and five dogs find their way down, up and across.<br>Design: Alex (Tusa101). Built with Claude.<br>No accounts, no ads, no tracking — your progress lives on this device only.',
+    customize: 'CUSTOMIZE', chooseHero: 'CHOOSE A HERO', coats: 'COATS', reachWorld: 'reach {w}', selectedW: 'selected', equipW: 'equip',
     botCheck: 'Route bot: check all levels', botTitle: 'ROUTE BOT', botOk: 'all reachable', botBad: '{k} unreachable', fpsToggle: 'FPS counter',
     tab_home: 'HOME', tab_chars: 'HEROES', tab_map: 'MAP', tab_chal: 'MODES', tab_coll: 'JOURNAL', change: 'CHANGE', challenges: 'MODES', collection: 'JOURNAL', statsAch: 'STATS & ACHIEVEMENTS', secretsTitle: 'SECRETS', secretsN: 'found {a} / {b}', achN: '{a} / {b} achievements', mechN: '{a} / {b} met', customN: '{n} custom levels', tDaily: 'DAILY', tTower: 'TOWER', tSeason: 'season', tEndless: 'ENDLESS', tExp: 'EXPEDITION', tBuilder: 'BUILDER', leftH: '{h}h {m}m left', expBestShort: 'best {n}', playDone: 'all done — replay', playLockedDim: 'finish {n} mountain levels', backExit: 'Press back again to exit', selfTest: 'Layout self-test', selfTestOk: 'LAYOUT SELF-TEST · {n} screens · 0 problems', selfTestBad: 'LAYOUT SELF-TEST · {n} screens · {k} problems', tapToClose: 'tap to close', runsN: 'best {n} m', mutOnN: 'active: {l}', mutNone: 'none active',
     builder: 'LEVEL BUILDER', newLevel: 'NEW LEVEL', importJson: 'IMPORT JSON', ed_test: '▶ TEST', ed_save: 'SAVE', ed_share: 'SHARE', ed_export: 'EXPORT', ed_exit: 'EXIT', characters: 'CHARACTERS', noCustom: 'No custom levels yet', playingNow: 'PLAYING', bestM: 'best {n} m', climbed: 'Climbed', descended: 'Descended', newBestBang: 'NEW BEST!', saltGain: '+{n} salt', endlessCity: 'ENDLESS SKYSCRAPER · KONG', endlessPanel: 'ENDLESS PANELKI · CAT', descentLbl: 'DESCENT',
@@ -384,6 +415,8 @@ const I18N = {
     p_SALT: 'СОЛЬ', p_GARNET: 'ГРАНАТЫ', p_FOSSIL: 'ОКАМЕНЕЛОСТИ', p_MOONSTONE: 'ЛУННЫЙ КАМЕНЬ', p_ICE: 'ЛЁД', p_BANANAS: 'БАНАНЫ', p_FISH: 'РЫБА', p_BONES: 'КОСТОЧКИ',
     h_scent: 'Постой смирно — собака чует спрятанное<br>Иди по следам лап', m_scent: 'Нюх', m_scent_d: 'Только для собак. Постой три секунды — цепочка следов укажет путь к скрытому проходу.', scentFound: '🐾 след найден',
     season: 'Сезон', s_auto: 'авто', s_winter: 'Зима', s_spring: 'Весна', s_summer: 'Лето', s_autumn: 'Осень', seasonNow: 'сезон: {s}', seasonWinter_d: 'снег на скалах, ледяные уступы', seasonSpring_d: 'цветы, птицы медленнее', seasonSummer_d: 'жаркая дымка, потоки сильнее', seasonAutumn_d: 'листья, ветер порывистее',
+    exportSave: 'Экспорт сохранения', importSave: 'Импорт сохранения', importConfirm: 'Заменить прогресс данными из файла? ({n} уровней, {c} ◆). Текущий прогресс сохранится в резервной копии.', importBad: 'Это не сохранение Mountain Goat.', about: 'ОБ ИГРЕ', versionW: 'Версия', copyLog: 'СКОПИРОВАТЬ ЖУРНАЛ ОШИБОК', logN: 'записей: {n}', logEmpty: 'ошибок нет', whatsNew: 'Что нового', devOn: 'Режим разработчика включён', devOff: 'Режим разработчика выключен', updAvail: 'Готова новая версия', updNow: 'ОБНОВИТЬ', aboutText: 'Ибекс, кот, горилла и пять собак ищут путь вниз, вверх и вперёд.<br>Дизайн: Alex (Tusa101). Сделано с Claude.<br>Без аккаунтов, рекламы и слежки — прогресс хранится только на этом устройстве.',
+    customize: 'КАСТОМИЗАЦИЯ', chooseHero: 'ВЫБЕРИ ГЕРОЯ', coats: 'ОКРАСЫ', reachWorld: 'дойди до {w}', selectedW: 'выбран', equipW: 'надеть',
     botCheck: 'Бот маршрутов: проверить уровни', botTitle: 'БОТ МАРШРУТОВ', botOk: 'все проходимы', botBad: 'непроходимых: {k}', fpsToggle: 'Счётчик FPS',
     tab_home: 'ДОМОЙ', tab_chars: 'ГЕРОИ', tab_map: 'КАРТА', tab_chal: 'РЕЖИМЫ', tab_coll: 'ЖУРНАЛ', change: 'СМЕНИТЬ', challenges: 'РЕЖИМЫ', collection: 'ЖУРНАЛ', statsAch: 'СТАТИСТИКА И ДОСТИЖЕНИЯ', secretsTitle: 'СЕКРЕТЫ', secretsN: 'найдено {a} / {b}', achN: 'достижений {a} / {b}', mechN: 'встречено {a} / {b}', customN: 'своих уровней: {n}', tDaily: 'ДЕНЬ', tTower: 'БАШНЯ', tSeason: 'сезон', tEndless: 'БЕЗ КОНЦА', tExp: 'ПОХОД', tBuilder: 'РЕДАКТОР', leftH: 'ещё {h}ч {m}м', expBestShort: 'лучш. {n}', playDone: 'всё пройдено — ещё раз', playLockedDim: 'пройди {n} уровней горы', backExit: 'Нажми «назад» ещё раз для выхода', selfTest: 'Self-test раскладки', selfTestOk: 'SELF-TEST РАСКЛАДКИ · экранов {n} · 0 проблем', selfTestBad: 'SELF-TEST РАСКЛАДКИ · экранов {n} · проблем {k}', tapToClose: 'тап — закрыть', runsN: 'рекорд {n} м', mutOnN: 'включены: {l}', mutNone: 'не включены',
     builder: 'РЕДАКТОР УРОВНЕЙ', newLevel: 'НОВЫЙ УРОВЕНЬ', importJson: 'ИМПОРТ JSON', ed_test: '▶ ТЕСТ', ed_save: 'СОХР.', ed_share: 'ССЫЛКА', ed_export: 'ЭКСПОРТ', ed_exit: 'ВЫХОД', characters: 'ПЕРСОНАЖИ', noCustom: 'Своих уровней пока нет', playingNow: 'ИГРАЕТ', bestM: 'рекорд {n} м', climbed: 'Подъём', descended: 'Спуск', newBestBang: 'НОВЫЙ РЕКОРД!', saltGain: '+{n} соли', endlessCity: 'БЕСКОНЕЧНЫЙ НЕБОСКРЁБ · КОНГ', endlessPanel: 'БЕСКОНЕЧНЫЕ ПАНЕЛЬКИ · КОТ', descentLbl: 'СПУСК',
@@ -407,8 +440,12 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-window.addEventListener('error', e => { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = 'JS error: ' + e.message + ' @' + (e.lineno || '?'); });
-window.addEventListener('unhandledrejection', e => { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = 'Promise error: ' + (e.reason && e.reason.message || e.reason); });
+const BUILD = { version: 'v65', date: '2026-09-22' };
+function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
+  try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
+  if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
+window.addEventListener('error', e => reportError('JS error: ' + e.message + ' @' + (e.lineno || '?')));
+window.addEventListener('unhandledrejection', e => reportError('Promise error: ' + (e.reason && e.reason.message || e.reason)));
 
 // ============================================================
 //  CONFIG — everything that matters for game feel lives here
@@ -931,8 +968,12 @@ function softenFirstEncounters(def) {
 // ============================================================
 const SAVE_KEY = 'mountainGoatSave';
 let save = { settings: { sound: true, music: true, vibro: true, left: false, drag: 1, quality: 'high', lang: null }, totalSaltCrystals: 0, levels: {}, skin: 'classic', character: 'goat', skins: { goat: 'classic', kong: 'classic', cat: 'ginger' }, unlocked: { classic: true, 'kong:classic': true, 'cat:ginger': true } };
-try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s) save = Object.assign(save, s); } catch (e) {}
-save.settings = Object.assign({ sound: true, music: true, vibro: true, left: false, drag: 1, quality: 'high', lang: null }, save.settings || {}); if (save.settings.lang === 'auto') save.settings.lang = null;
+const SAVE_VERSION = 2;
+const MIGRATIONS = { 1: s => { s.settings = s.settings || {}; if (s.settings.devUnlock) s.settings.devMode = true; } };   // n: upgrades a v(n) save to v(n+1)
+try { const raw = localStorage.getItem(SAVE_KEY); const s = raw && JSON.parse(raw);
+  if (s) { const from = s.v || 1; if (from < SAVE_VERSION) { try { localStorage.setItem(SAVE_KEY + '.bak.v' + from, raw); } catch (e) {} for (let v = from; v < SAVE_VERSION; v++) if (MIGRATIONS[v]) MIGRATIONS[v](s); s.v = SAVE_VERSION; } save = Object.assign(save, s); } } catch (e) {}
+save.v = SAVE_VERSION;
+save.settings = Object.assign({ sound: true, music: true, vibro: true, left: false, drag: 1, quality: 'high', lang: null }, save.settings || {}); if (save.settings.lang === 'auto') save.settings.lang = null; if (!save.settings.devMode) { save.settings.devUnlock = false; save.settings.fps = false; }
 save.unlocked = Object.assign({ classic: true, 'kong:classic': true, 'cat:ginger': true }, save.unlocked || {}); save.skins = Object.assign({ goat: save.skin || 'classic', kong: 'classic', cat: 'ginger' }, save.skins || {}); if (!save.character) save.character = 'goat';
 { const oldOrder = ['descent', 'crystal', 'twin', 'hawk', 'red', 'chalk', 'night', 'alpine']; for (const k of Object.keys(save.levels)) if (/^\d+$/.test(k) && oldOrder[+k]) { save.levels[oldOrder[+k]] = save.levels[k]; delete save.levels[k]; } } if (save.darkUnlocked) save.unlocked.dark = true;
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
@@ -2017,9 +2058,11 @@ function goSettings(from) {
   row(t('lang'), [{ v: 'en', l: 'English' }, { v: 'ru', l: 'Русский' }], S.lang || 'en', v => S.lang = v);
   row(t('season'), [{ v: 'auto', l: t('s_auto') + ' (' + t('s_' + seasonNow()) + ')' }, { v: 'winter', l: t('s_winter') }, { v: 'spring', l: t('s_spring') }, { v: 'summer', l: t('s_summer') }, { v: 'autumn', l: t('s_autumn') }], S.season || 'auto', v => S.season = v);
   row(t('ghosts'), onoff, S.ghosts !== false, v => S.ghosts = v);
-  row(t('devUnlock'), onoff, !!S.devUnlock, v => S.devUnlock = v);
-  if (S.devUnlock) { row(t('fpsToggle'), onoff, !!S.fps, v => S.fps = v); const bb = document.createElement('div'); bb.className = 'btn'; bb.textContent = t('botCheck'); bb.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) botCheckAll(); }); list.appendChild(bb); }
-  if (S.devUnlock) { const st = document.createElement('div'); st.className = 'btn'; st.textContent = t('selfTest'); st.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) layoutSelfTest(); }); list.appendChild(st); }
+  if (S.devMode) row(t('devUnlock'), onoff, !!S.devUnlock, v => S.devUnlock = v);
+  if (S.devMode) { row(t('fpsToggle'), onoff, !!S.fps, v => S.fps = v); const bb = document.createElement('div'); bb.className = 'btn'; bb.textContent = t('botCheck'); bb.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) botCheckAll(); }); list.appendChild(bb); }
+  if (S.devMode) { const st = document.createElement('div'); st.className = 'btn'; st.textContent = t('selfTest'); st.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) layoutSelfTest(); }); list.appendChild(st); }
+  { const ex = document.createElement('div'); ex.className = 'btn'; ex.textContent = t('exportSave'); ex.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) exportSave(); }); list.appendChild(ex);
+    const im = document.createElement('div'); im.className = 'btn'; im.textContent = t('importSave'); im.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) $('importFile').click(); }); list.appendChild(im); }
   const rs = document.createElement('div'); rs.className = 'btn'; rs.style.borderColor = '#e07a6a'; rs.style.color = '#ffb3a6'; rs.style.marginTop = '18px'; rs.textContent = t('resetProgress'); rs.addEventListener('click', e => { e.stopPropagation(); if (confirm(t('resetConfirm'))) { localStorage.removeItem(SAVE_KEY); location.reload(); } }); list.appendChild(rs);
   $('bBackMenu5').textContent = from === 'pause' ? t('resume') : t('menu'); showScreen('scSettings');
 }
@@ -2085,7 +2128,7 @@ function tickMechScene(dt) {
   const ctx = S.canvas.getContext('2d'); ctx.clearRect(0, 0, 320, 180); ctx.drawImage(pr.domElement, 0, 0);
 }
 document.getElementById('bPauseMech').addEventListener('click', e => { e.stopPropagation(); goMech('pause'); });
-document.getElementById('bBackMut').addEventListener('click', e => { e.stopPropagation(); if (mutFrom === 'endless') goEndless(); else if (mutFrom === 'world') goWorld(curWorld); else goChal(); });
+document.getElementById('bBackMut').addEventListener('click', e => { e.stopPropagation(); if (mutFrom === 'endless') goEndless(); else if (mutFrom === 'world') goWorld(curWorld); else goOrigin('scMut', goChal); });
 document.getElementById('bBackMech').addEventListener('click', e => { e.stopPropagation(); mechScene = null; if (mechFrom === 'pause') showScreen('scPause'); else goColl(); });
 document.getElementById('bPauseSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('pause'); });
 document.getElementById('bBackMenu5').addEventListener('click', e => { e.stopPropagation(); if (mode === 'pause') showScreen('scPause'); else goMenu(); });
@@ -2148,8 +2191,11 @@ const goats = [], herd = [], followers = [];
 const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0, dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, hintDone: false, collected: 0, result: null, twin: false };
 
 let screenShownAt = 0;
-const TAB_OF = { scMenu: 'home', scIbex: 'chars', scWardrobe: 'chars', scSelect: 'map', scChal: 'chal', scEndless: 'chal', scTower: 'chal', scExp: 'chal', scMut: 'chal', scColl: 'coll', scStats: 'coll', scMech: 'coll', scBuilder: 'coll', scSettings: '' };
+const TAB_OF = { scAbout: 'coll', scMenu: 'home', scIbex: 'chars', scWardrobe: 'chars', scSelect: 'map', scChal: 'chal', scEndless: 'chal', scTower: 'chal', scExp: 'chal', scMut: 'chal', scColl: 'coll', scStats: 'coll', scMech: 'coll', scBuilder: 'coll', scSettings: '' };
+const ORIGIN = {};
+function goOrigin(id, fallback) { const o = ORIGIN[id]; if (o === 'scMenu') goMenu(); else if (o === 'scChal') goChal(); else if (o === 'scColl') goColl(); else if (o === 'scIbex') goIbex(); else fallback(); }
 function showScreen(id) {
+  { const prev = document.querySelector('.screen.show'); if (prev && id && prev.id !== id && ['scMenu', 'scChal', 'scColl', 'scIbex'].includes(prev.id)) ORIGIN[id] = prev.id; }
   for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now(); if (id !== 'scMenu') $('heroTag').style.display = 'none';
   const tabbed = id in TAB_OF && mode !== 'pause' && mode !== 'play' && mode !== 'result'; $('tabBar').classList.toggle('show', tabbed); document.body.classList.toggle('tabs', tabbed);
   for (const tb of document.querySelectorAll('#tabBar .tab')) tb.classList.toggle('on', tb.dataset.tab === TAB_OF[id]);
@@ -2158,7 +2204,7 @@ function showScreen(id) {
 const fresh = () => performance.now() - screenShownAt < 300;
 function goMenu() {
   if (pendingReload) { pendingReload = false; location.reload(); return; }
-  forcedChar = null;
+  forcedChar = null; if (dio.scene) dioCluster(false);
   AudioSys.ambient(null); AudioSys.music('menu');
   $('dimUI').style.display = 'none'; dio.bg = false; hud.style.display = 'none'; hint.style.opacity = 0;
   mode = 'menu'; buildDio(); if (dio.focus !== curDim) { dio.focus = curDim; dio.camZ = -curDim * 11 + 17; dio.lookZ = -curDim * 11; }
@@ -2191,14 +2237,14 @@ const HERO = { holder: null, goat: null, key: '', hopT: 1, cube: -1 };
 function heroChar() { const ch = CHARACTERS[save.character] ? save.character : 'goat'; return { ch, sk: (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id }; }
 function updateHubHero(dt) {
   if (!dio.scene) return; const { ch, sk } = heroChar(); const key = ch + ':' + sk + ':' + JSON.stringify(currentAcc());
-  if (!HERO.holder) { HERO.holder = new THREE.Group(); HERO.holder.scale.setScalar(1.35); }
+  if (!HERO.holder) { HERO.holder = new THREE.Group(); HERO.holder.scale.setScalar(1.0); }
   if (key !== HERO.key) { if (HERO.goat) HERO.holder.remove(HERO.goat.root); const g = new Goat(sk, 1, ch); scene.remove(g.root); HERO.holder.add(g.root); g.root.traverse(o => { if (o.isMesh) o.castShadow = true; }); HERO.goat = g; HERO.key = key; }
-  if (HERO.cube !== curDim) { const c = dio.cubes[curDim]; c.add(HERO.holder); HERO.cube = curDim; HERO.hopT = 0; HERO.holder.position.set(0.9, 0.25, 2.1); HERO.holder.rotation.y = -0.85; }
+  if (HERO.cube !== curDim) { const c = dio.cubes[curDim]; c.add(HERO.holder); HERO.cube = curDim; HERO.hopT = 0; HERO.holder.position.set(0.6, 0.25, 2.2); HERO.holder.rotation.y = -0.85; }
   HERO.hopT = Math.min(1, HERO.hopT + dt * 2.2); const g = HERO.goat; g.pos.set(0, Math.sin(HERO.hopT * Math.PI) * 0.9); g.state = HERO.hopT < 1 ? ST.JUMP : ST.IDLE; g.vel.set(1, HERO.hopT < 0.5 ? 3 : -3); g.facing = 1; g.stateT = HERO.hopT < 1 ? 0.3 : (g.stateT || 0) + dt; g.animate(dt, null);
   HERO.holder.visible = dimOpen(DIMS[curDim]);
   const tag = $('heroTag'); if (!HERO.holder.visible || mode !== 'menu') { tag.style.display = 'none'; return; }
   const v = new THREE.Vector3(); HERO.holder.getWorldPosition(v); v.project(dio.cam); const C = CHARACTERS[ch]; const item = C.list.find(i => i.id === sk);
-  tag.style.display = 'block'; tag.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; tag.style.top = ((1 - v.y) / 2 * innerHeight + 10) + 'px'; const html = `${C.name}<small>${item ? item.name : ''}</small>`; if (tag.innerHTML !== html) tag.innerHTML = html;
+  tag.style.display = 'block'; tag.style.left = ((v.x + 1) / 2 * innerWidth) + 'px'; tag.style.top = ((1 - v.y) / 2 * innerHeight + 6) + 'px'; const html = C.name; if (tag.innerHTML !== html) tag.innerHTML = html;
 }
 function heroHit(e) { if (!HERO.holder || !HERO.holder.visible) return false; const r = new THREE.Raycaster(); r.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), dio.cam); const box = new THREE.Box3().setFromObject(HERO.holder).expandByScalar(0.4); return r.ray.intersectsBox(box); }
 function refreshBadges() {
@@ -2221,11 +2267,37 @@ function refreshChal() {
   $('expInfo').textContent = t('expBest', { n: stats().expBest || 0 }); $('endInfo').textContent = t('runsN', { n: Math.max(0, ...Object.values(save.endless || {}).map(Number).filter(n => !isNaN(n))) });
   $('mutInfo').textContent = (save.mutators || []).length ? t('mutOnN', { l: save.mutators.map(m => t('mut_' + m)).join(', ') }) : t('mutNone');
 }
+const CHANGELOG = { en: ['Home hub with tiles, tab bar and one-tap PLAY', 'Heroes screen with a big figure and a separate customisation window', 'Seasons, accessories, expeditions of 5/7/9 stages, synthesized sound', 'Ghost runs and share links', 'Route bot checks that every level can be finished'], ru: ['Хаб «Домой»: плитки, таб-бар, «Играть» в один тап', 'Экран героев с крупной фигуркой и отдельной кастомизацией', 'Сезоны, аксессуары, походы на 5/7/9 этапов, синтезированный звук', 'Призраки забегов и ссылки-вызовы', 'Бот маршрутов проверяет проходимость каждого уровня'] };
+let verTaps = 0;
+function goAbout() {
+  mode = 'select'; hud.style.display = 'none'; const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]');
+  $('aboutText').innerHTML = t('aboutText'); $('aboutVersion').innerHTML = `${t('versionW')} ${BUILD.version}<small>${BUILD.date}${save.settings.devMode ? ' · dev' : ''}</small>`; $('logCount').textContent = log.length ? t('logN', { n: log.length }) : t('logEmpty');
+  $('aboutNotes').innerHTML = `<b>${t('whatsNew')}</b><br>` + CHANGELOG[LANG === 'ru' ? 'ru' : 'en'].map(x => '· ' + x).join('<br>'); showScreen('scAbout');
+}
+$('bAbout').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goAbout(); });
+$('bBackAbout').addEventListener('click', e => { e.stopPropagation(); goColl(); });
+$('aboutVersion').addEventListener('click', e => { e.stopPropagation(); if (++verTaps < 7) return; verTaps = 0; save.settings.devMode = !save.settings.devMode; if (!save.settings.devMode) { save.settings.devUnlock = false; save.settings.fps = false; } persist(); goAbout(); hubToastAny(t(save.settings.devMode ? 'devOn' : 'devOff')); });
+$('bCopyLog').addEventListener('click', e => { e.stopPropagation(); const log = localStorage.getItem('mountainGoatErrors') || '[]'; const txt = `Mountain Goat ${BUILD.version} · ${navigator.userAgent}\n${log}`; (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => hubToastAny(t('linkCopied'))).catch(() => prompt('', txt)); });
+function hubToastAny(msg) { const el = $('selfTestOut'); el.style.display = 'block'; el.style.borderLeft = '6px solid #ffd76a'; el.textContent = msg; el.onclick = () => el.style.display = 'none'; setTimeout(() => { if (el.textContent === msg) el.style.display = 'none'; }, 2200); }
+// ---- save export / import (for switching phones) ----
+function exportSave() {
+  const blob = new Blob([JSON.stringify(save, null, 1)], { type: 'application/json' }); const name = `mountain-goat-save-${new Date().toISOString().slice(0, 10)}.json`; const file = new File([blob], name, { type: 'application/json' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: 'Mountain Goat save' }).catch(() => {}); return; }
+  const a = document.createElement('a'); a.download = name; a.href = URL.createObjectURL(blob); a.click();
+}
+$('importFile').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return; const rd = new FileReader();
+  rd.onload = () => { try { const s = JSON.parse(rd.result); if (!s || typeof s !== 'object' || !s.levels || !s.settings) throw new Error('not a save'); if (!confirm(t('importConfirm', { n: Object.keys(s.levels).length, c: s.totalSaltCrystals || 0 }))) return;
+    try { localStorage.setItem(SAVE_KEY + '.bak.import', JSON.stringify(save)); } catch (x) {} localStorage.setItem(SAVE_KEY, JSON.stringify(s)); location.reload(); } catch (x) { alert(t('importBad')); } }; rd.readAsText(f); });
+// ---- new version check: compare the deployed build tag with ours, offer a reload ----
+async function checkForUpdate() { if (!location.protocol.startsWith('http')) return; try { const r = await fetch('index.html?v=' + Date.now(), { cache: 'no-store' }); const txt = await r.text(); const m = txt.match(/<!-- build (v\d+) -->/); if (m && m[1] !== BUILD.version && +m[1].slice(1) > +BUILD.version.slice(1)) { paintIcons(); $('updBanner').classList.add('show'); } } catch (e) {} }
+$('bUpdate').addEventListener('click', e => { e.stopPropagation(); if (mode === 'play') persistRunIfAny(); location.reload(); });
+function persistRunIfAny() { try { if (typeof snapshotRun === 'function' && L && (L.endless || L.def.daily)) snapshotRun(); } catch (e) {} persist(); }
+setTimeout(checkForUpdate, 8000); setInterval(checkForUpdate, 30 * 60 * 1000); document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdate(); });
 function goChal() { mode = 'select'; hud.style.display = 'none'; dio.bg = true; refreshChal(); showScreen('scChal'); }
 function goColl() {
   mode = 'select'; hud.style.display = 'none'; dio.bg = true;
   $('collAch').textContent = t('achN', { a: Object.keys(save.ach || {}).length, b: ACH.length }); $('collMech').textContent = t('mechN', { a: Object.keys(save.mechSeen || {}).length, b: MECHS.length });
-  $('collBuilder').textContent = t('customN', { n: Object.keys(save.custom || {}).length }); $('collSecrets').textContent = t('secretsN', { a: Object.keys(save.secretFound || {}).length, b: LEVELS.filter(l => l.secret).length });
+  $('aboutVer').textContent = BUILD.version; $('collBuilder').textContent = t('customN', { n: Object.keys(save.custom || {}).length }); $('collSecrets').textContent = t('secretsN', { a: Object.keys(save.secretFound || {}).length, b: LEVELS.filter(l => l.secret).length });
   showScreen('scColl');
 }
 let curWorld = 0, curDim = 0;
@@ -2243,6 +2315,7 @@ function worldOpen(wi) { if (save.settings.devUnlock) return true; // first worl
   return worldStars(prev) >= Math.ceil(worldMax(prev) * 0.6) || worldLevelsDone(prev) >= worldCount(prev);
 }
 function goSelect() {
+  $('selTitle').style.display = 'none';
   mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; $('bBackMenu').style.display = 'none'; save.worldsSeen = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); persist(); const list = $('levelList'); list.innerHTML = ''; list.style.display = 'none'; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
   const d = DIMS[curDim]; const wis = d.worlds.map(n => WORLDS.findIndex(w => w.name === n)); const mv = $('mapView'); mv.style.display = 'block';
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -2276,7 +2349,7 @@ function goSelect() {
   showScreen('scSelect');
 }
 function goWorld(wi) {
-  $('bBackMenu').style.display = ''; mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
+  $('selTitle').style.display = ''; $('bBackMenu').style.display = ''; mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
   const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `${t('world')} ${wi + 1} · ${w.name}`; list.appendChild(h);
   { const mb = document.createElement('div'); mb.className = 'btn'; mb.style.fontSize = '13px'; mb.innerHTML = `${t('mutators')}${(save.mutators || []).length ? ' · ' + save.mutators.map(m => t('mut_' + m)).join(', ') + ' · ×' + mutMult() : ''}`; mb.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goMutators('world'); }); list.appendChild(mb); }
   w.levels.forEach((k, li) => {
@@ -2426,7 +2499,7 @@ $('bBackMenu2').addEventListener('click', e => { e.stopPropagation(); goMenu(); 
 $('bIbex').addEventListener('click', e => { e.stopPropagation(); goIbex(); });
 $('bEndless').addEventListener('click', e => { e.stopPropagation(); initAudio(); goEndless(); });
 $('bBuilder').addEventListener('click', e => { e.stopPropagation(); initAudio(); goBuilder(); });
-$('bBackMenu4').addEventListener('click', e => { e.stopPropagation(); goColl(); });
+$('bBackMenu4').addEventListener('click', e => { e.stopPropagation(); goOrigin('scBuilder', goColl); });
 $('bNewLevel').addEventListener('click', e => { e.stopPropagation(); const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: 'My mountain', def: newCustomDef() }; persist(); openEditor(id); });
 $('bImportLevel').addEventListener('click', e => { e.stopPropagation(); const txt = prompt('Paste level JSON'); if (!txt) return; try { const def = JSON.parse(txt); if (!def.surfaces) throw 0; const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: def.name || 'Imported', def }; persist(); goBuilder(); } catch (err) { alert('Not a valid level JSON'); } });
 function newCustomDef() { return { key: 'custom', name: 'My mountain', style: 'desert', ascent: false, custom: true, surfaces: [['start', 0, 0, 8, 'terrace']], crystals: [], kids: [], hawks: [], rocks: [], winds: [], updrafts: [], zones: [], blockers: [], herd: [], stars: { crystals: 0, time: 90 } }; }
@@ -2491,6 +2564,12 @@ function buildDio() {
   dio.cubes = DIMS.map((d, i) => { const c = makeCube(d.key, 300 + i * 7); c.position.set(0, 0, -i * 11); sc.add(c); const cl = makeClouds(500 + i); c.add(cl); c.clouds = cl; c.mats = []; c.traverse(o => { if (o.isMesh && !cl.children.includes(o)) for (const m of (Array.isArray(o.material) ? o.material : [o.material])) if (!c.mats.includes(m)) { m.userData.orig = m.color.clone(); c.mats.push(m); } }); return c; });
   dio.scene = sc; dio.cam = new THREE.PerspectiveCamera(38, 1, 0.1, 200); dio.focus = 0; dio.camZ = 16; dio.lookZ = 0;
 }
+function dioCluster(on) {
+  if (!dio.scene) return; if (dio.clustered === on) { if (on) layoutCluster(); return; } dio.clustered = on;
+  dio.cubes.forEach((c, i) => { if (on) c.position.set([0, -7.5, 7.5][i], 0, [3, -5, -5][i]); else c.position.set(0, 0, -i * 11); c.rotation.y = 0; });
+  if (on) layoutCluster(); else { dio.scene.fog.near = 22; dio.scene.fog.far = 48; }
+}
+function layoutCluster() { dio.scene.fog.near = 40; dio.scene.fog.far = 95; const portrait = innerHeight > innerWidth; dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix(); const d = portrait ? 1.9 : 1; dio.cam.position.set(0, 13 * d, 18 * d + 4); dio.cam.lookAt(0, portrait ? -4 : 0, -1); dio.cubes.forEach((c, i) => c.position.y = Math.sin(dio.t * 1.1 + i * 2) * 0.1); }
 function layoutDio(dt = 0) { // cubes sit one behind another along the depth axis; the camera slides along it to the focused cube
   dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix();
   const portrait = innerHeight > innerWidth; const fz = -dio.focus * 11; const dist = portrait ? 17 : 14;
@@ -2651,12 +2730,12 @@ function updateEditor(dt) {
   for (const k of L.kids) { k.goat.update(dt, 0); k.goat.animate(dt, null); }
 }
 $('bDaily').addEventListener('click', e => { e.stopPropagation(); initAudio(); const sn = save.runs && save.runs.daily; if (sn && sn.def.date === dailyDate()) resumeRun('daily'); else { clearRun('daily'); startLevel(0, dailyDef()); } });
-$('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goChal(); });
+$('bBackMenu3').addEventListener('click', e => { e.stopPropagation(); goOrigin('scEndless', goChal); });
 $('bEndDown').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(false)); });
 $('bEndUp').addEventListener('click', e => { e.stopPropagation(); startLevel(0, endlessDef(true)); });
 $('bMutEndless').addEventListener('click', e => { e.stopPropagation(); goMutators('endless'); });
 $('bTower').addEventListener('click', e => { e.stopPropagation(); initAudio(); goTower(); });
-$('bBackTower').addEventListener('click', e => { e.stopPropagation(); goChal(); });
+$('bBackTower').addEventListener('click', e => { e.stopPropagation(); goOrigin('scTower', goChal); });
 $('bTowerGo').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startTower(towerState().cp > 0); });
 $('bTowerRestart').addEventListener('click', e => { e.stopPropagation(); if (!fresh() && towerState().cp > 0 && confirm(t('towerRestart') + '?')) startTower(false); });
 function pauseGame() {
@@ -2716,7 +2795,7 @@ const ICONS = {
   trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M9 20h6"/>',
   book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h4"/>',
   profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
-  gear: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
   daily: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M12 14h2M8 17h2"/>',
   tower: '<path d="M7 21V8l5-5 5 5v13z"/><path d="M5 21h14M10 21v-4h4v4M10 11h4"/>',
   winter: '<path d="M12 2v20M3.3 7l17.4 10M20.7 7L3.3 17M9 4l3 2 3-2M9 20l3-2 3 2"/>',
@@ -2846,7 +2925,7 @@ function goStats() {
   showScreen('scStats');
 }
 $('bStats').addEventListener('click', e => { e.stopPropagation(); goStats(); });
-$('bBackStats').addEventListener('click', e => { e.stopPropagation(); goColl(); });
+$('bBackStats').addEventListener('click', e => { e.stopPropagation(); goOrigin('scStats', goColl); });
 // ---- expedition: five random open levels, one life, a choice of two cards between stages ----
 const EXP = { on: false, step: 0, salt: 0, used: [], len: 5, lives: 0, log: [] };
 const EXP_BONUS = ['life', 'salt', 'sky', 'step'];
@@ -2864,7 +2943,7 @@ function goExp() {
   showScreen('scExp');
 }
 $('bExp').addEventListener('click', e => { e.stopPropagation(); initAudio(); goExp(); });
-$('bBackExp').addEventListener('click', e => { e.stopPropagation(); goChal(); });
+$('bBackExp').addEventListener('click', e => { e.stopPropagation(); goOrigin('scExp', goChal); });
 function drawExpCard() {
   const c = $('runCard'), ctx = c.getContext('2d'); const W = 320, H = 60 + EXP.log.length * 22; c.height = H; ctx.fillStyle = '#2a1e14'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 14px sans-serif'; ctx.fillText(t('expCardTitle', { n: EXP.step, s: EXP.salt }), 10, 24);
   ctx.font = '12px sans-serif'; EXP.log.forEach((e, i) => { ctx.fillStyle = i < EXP.step ? '#fff8ee' : '#ff9a8a'; ctx.fillText(`${i + 1}. ${e.name}${e.mut ? ' · ' + t('mut_' + e.mut) : ''}${e.bonus ? ' · ✦ ' + t('bonus_' + e.bonus) : ''}`, 10, 48 + i * 22); });
@@ -2895,9 +2974,9 @@ function goEndless() { mode = 'select'; hud.style.display = 'none'; const b = sa
   showScreen('scEndless'); }
 // preview thumbnails: each character/skin rendered once into a small offscreen canvas
 const previewCache = {};
-function skinPreview(ch, sk) {
-  const ac = currentAcc(); const key = ch + ':' + sk + ':' + (ac.head || '') + ':' + (ac.neck || ''); if (previewCache[key]) return previewCache[key];
-  const pr = skinPreview.r || (skinPreview.r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })); pr.setSize(160, 160); pr.setPixelRatio(1); pr.outputColorSpace = THREE.SRGBColorSpace;
+function skinPreview(ch, sk, size = 160) {
+  const ac = currentAcc(); const key = ch + ':' + sk + ':' + (ac.head || '') + ':' + (ac.neck || '') + ':' + size; if (previewCache[key]) return previewCache[key];
+  const pr = skinPreview.r || (skinPreview.r = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true })); pr.setSize(size, size); pr.setPixelRatio(1); pr.outputColorSpace = THREE.SRGBColorSpace;
   const ps = new THREE.Scene(); ps.add(new THREE.HemisphereLight(0xdde8ff, 0x8a6a48, 1.4)); const dl = new THREE.DirectionalLight(0xfff0d8, 2.4); dl.position.set(3, 5, 4); ps.add(dl);
   const g = new Goat(sk, 1, ch); scene.remove(g.root); ps.add(g.root); g.animate(0.016, null); g.root.rotation.y = 0.55; g.root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(g.root); const c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()); const R = Math.max(sz.x, sz.y, sz.z);
@@ -2905,8 +2984,12 @@ function skinPreview(ch, sk) {
   pr.render(ps, pc); const url = pr.domElement.toDataURL('image/png'); ps.remove(g.root); previewCache[key] = url; return url;
 }
 function goWardrobe() {
-  wardFrom = mode === 'menu' ? 'hub' : mode === 'ibex' && $('scWardrobe').classList.contains('show') ? wardFrom : 'ibex';
-  mode = 'ibex'; hud.style.display = 'none'; $('wardSalt').textContent = '◆ ' + save.totalSaltCrystals; save.acc = save.acc || {}; save.accOwned = save.accOwned || {}; const list = $('wardList'); list.innerHTML = '';
+  mode = 'ibex'; hud.style.display = 'none'; paintIcons($('scWardrobe')); $('wardSalt').textContent = save.totalSaltCrystals; save.acc = save.acc || {}; save.accOwned = save.accOwned || {}; const list = $('wardList'); list.innerHTML = '';
+  { const ch = CHARACTERS[save.character] ? save.character : 'goat', C = CHARACTERS[ch]; const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '4px 0 4px'; h.textContent = t('coats') + ' · ' + C.name; list.appendChild(h);
+    const grid = document.createElement('div'); grid.className = 'charGrid'; list.appendChild(grid);
+    for (const it of C.list) { const uid = ch === 'goat' ? it.id : ch + ':' + it.id; const un = it.cost === 0 || !!save.unlocked[uid], sel = ((save.skins || {})[ch] || C.list[0].id) === it.id, can = save.totalSaltCrystals >= it.cost;
+      const b = document.createElement('div'); b.className = 'charCard' + (sel ? ' on' : '') + (!un && !can ? ' locked' : ''); b.innerHTML = `<img src="${skinPreview(ch, it.id)}"><b>${it.name}</b><small>${un ? (sel ? t('selectedW') : t('equipW')) : `${it.cost} ◆`}</small>`;
+      b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!un) { if (!can) return; save.totalSaltCrystals -= it.cost; save.unlocked[uid] = true; } save.skins = save.skins || {}; save.skins[ch] = it.id; save.skin = save.skins.goat; persist(); screenShownAt = 0; goWardrobe(); }); grid.appendChild(b); } }
   for (const slot of ['head', 'neck', 'trail']) {
     const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '8px 0 2px'; h.textContent = t('slot_' + slot); list.appendChild(h);
     const none = document.createElement('div'); none.className = 'btn' + (save.acc[slot] ? '' : ' on'); none.style.fontSize = '13px'; none.textContent = t('none'); none.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; delete save.acc[slot]; persist(); goWardrobe(); }); list.appendChild(none);
@@ -2914,28 +2997,23 @@ function goWardrobe() {
       b.innerHTML = `${t('acc_' + a.id)}<small>${own ? (eq ? t('equipped') : '') : a.ach ? t('needAch', { a: t('a_' + a.ach) }) : `${a.cost} ◆${can ? ' — ' + t('unlock') : ''}`}</small>`;
       b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!own) { if (a.ach || !can) return; save.totalSaltCrystals -= a.cost; save.accOwned[a.id] = true; } save.acc[slot] = a.id; persist(); goWardrobe(); }); list.appendChild(b); }
   }
-  const cs = currentSkin(); $('wardPreview').src = skinPreview(cs.ch, cs.sk); showScreen('scWardrobe');
+  { const ch = CHARACTERS[save.character] ? save.character : 'goat'; $('wardPreview').src = skinPreview(ch, (save.skins || {})[ch] || CHARACTERS[ch].list[0].id, 320); } showScreen('scWardrobe');
 }
 $('bWardrobe').addEventListener('click', e => { e.stopPropagation(); goWardrobe(); });
-$('bBackWardrobe').addEventListener('click', e => { e.stopPropagation(); if (wardFrom === 'hub') goMenu(); else goIbex(); });
-let wardFrom = 'ibex';
+$('bBackWardrobe').addEventListener('click', e => { e.stopPropagation(); goOrigin('scWardrobe', goIbex); });
+
 function goIbex() {
   save.charViewed = Object.assign({}, save.charSeen || {}); persist();
-  mode = 'ibex'; hud.style.display = 'none'; $('ibexSalt').textContent = '◆ ' + save.totalSaltCrystals;
+  mode = 'ibex'; hud.style.display = 'none'; paintIcons($('scIbex')); $('ibexSalt').textContent = save.totalSaltCrystals;
+  const cur = CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins && save.skins[cur]) || CHARACTERS[cur].list[0].id;
+  $('heroBig').src = skinPreview(cur, sk, 320); $('heroName').textContent = CHARACTERS[cur].name; const it = CHARACTERS[cur].list.find(i => i.id === sk); $('heroSkin').textContent = it ? it.name : '';
   const list = $('skinList'); list.innerHTML = '';
   for (const [ch, C] of Object.entries(CHARACTERS)) {
-    if (C.hidden) continue; const locked = C.world && !save.settings.devUnlock && !(save.charSeen && save.charSeen[ch]);
-    const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '10px 0 2px'; h.textContent = C.name + (save.character === ch ? ' · ' + t('playingNow') : ''); list.appendChild(h);
-    for (const it of C.list) {
-      const uid = ch === 'goat' ? it.id : ch + ':' + it.id; const un = !!save.unlocked[uid], sel = save.character === ch && save.skins[ch] === it.id, can = save.totalSaltCrystals >= it.cost;
-      const b = document.createElement('div'); b.className = 'btn' + (!un && !can ? ' dim' : ''); b.style.display = 'flex'; b.style.alignItems = 'center'; b.style.gap = '12px'; b.style.textAlign = 'left';
-      if (locked) { b.className = 'btn dim'; b.innerHTML = `<div style="width:64px;height:64px;border-radius:8px;background:rgba(255,248,238,.12);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:32px">?</div><div>???<small>Reach the ${C.world} world</small></div>`; list.appendChild(b); continue; }
-      b.innerHTML = `<img src="${skinPreview(ch, it.id)}" style="width:64px;height:64px;border-radius:8px;background:rgba(255,248,238,.12);flex:0 0 auto"><div>${it.name}<small>${un ? (sel ? 'SELECTED' : 'EQUIP') : `${it.cost} ◆${can ? ' — UNLOCK' : ''}`}</small></div>`;
-      b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return;
-        if (!un) { if (!can) return; save.totalSaltCrystals -= it.cost; save.unlocked[uid] = true; }
-        save.character = ch; save.skins[ch] = it.id; save.skin = save.skins.goat; persist(); goIbex(); });
-      list.appendChild(b);
-    }
+    if (C.hidden) continue; const locked = C.world && !save.settings.devUnlock && !(save.charSeen && save.charSeen[ch]); const csk = (save.skins && save.skins[ch]) || C.list[0].id;
+    const b = document.createElement('div'); b.className = 'charCard' + (ch === cur ? ' on' : '') + (locked ? ' locked' : '');
+    b.innerHTML = locked ? `<div class="q">?</div><b>???</b><small>${t('reachWorld', { w: C.world })}</small>` : `<img src="${skinPreview(ch, csk)}"><b>${C.name}</b><small>${ch === cur ? t('selectedW') : ''}</small>`;
+    if (!locked) b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; save.character = ch; save.skins = save.skins || {}; if (!save.skins[ch]) save.skins[ch] = C.list[0].id; save.skin = save.skins.goat; persist(); screenShownAt = 0; goIbex(); });
+    list.appendChild(b);
   }
   showScreen('scIbex');
 }
@@ -3165,7 +3243,7 @@ function update(dt) {
 //  Main loop
 // ============================================================
 applySettings(); buildLevel(0); paintIcons(); goMenu();
-if (!save.settings.lang) { showScreen('scLang'); mode = 'select'; } else if (location.hash === '#selftest') { history.replaceState(null, '', location.pathname); setTimeout(layoutSelfTest, 300); } else handleLink();
+if (!save.settings.lang) { buildDio(); mode = 'lang'; showScreen('scLang'); } else if (location.hash === '#selftest') { history.replaceState(null, '', location.pathname); setTimeout(layoutSelfTest, 300); } else handleLink();
 window.addEventListener('pointerdown', () => { initAudio(); if (!AudioSys._mus && mode !== 'play') AudioSys.music('menu'); }, { once: true });
 for (const [id, l] of [['bLangEn', 'en'], ['bLangRu', 'ru']]) document.getElementById(id).addEventListener('click', e => { e.stopPropagation(); save.settings.lang = l; persist(); applySettings(); goMenu(); });
 { const m = new URLSearchParams(location.search).get('mode'); if (m === 'endless-down') startLevel(0, endlessDef(false)); else if (m === 'endless-up') startLevel(0, endlessDef(true)); }
@@ -3178,14 +3256,16 @@ function loop(now) {
   if (mode === 'menu' && dio.scene) { dio.hub = true; updateDims(dt); updateHubHero(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   dio.hub = false;
   if (mode === 'dims') { updateDims(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
-  if (mode === 'select' && dio.bg && dio.scene) { dio.t += dt; const c = dio.cubes[curDim]; c.rotation.y = Math.sin(dio.t * 0.3) * 0.1; const fz = -curDim * 11; dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix(); dio.cam.position.set(4, 7, fz + 13); dio.cam.lookAt(0, 1.2, fz); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
+  if (mechScene && mode === 'mech') tickMechScene(dt);
+  if (dio.scene && mode === 'lang') { dio.t += dt; dioCluster(true); updateHubHero(dt); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
+  if (dio.scene && !['play', 'pause', 'result', 'edit', 'menu', 'dims', 'lang'].includes(mode) && !$('scResult').classList.contains('show')) { dio.t += dt; const c = dio.cubes[curDim]; c.rotation.y = Math.sin(dio.t * 0.3) * 0.1; const fz = -curDim * 11; dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix(); dio.cam.position.set(4, 7, fz + 13); dio.cam.lookAt(0, 1.2, fz); renderer.render(dio.scene, dio.cam); requestAnimationFrame(loop); return; }
   if (mode === 'edit') updateEditor(dt); else update(dt);
   if (mechScene && (mode === 'mech' || mode === 'pause')) tickMechScene(dt);
   if (mode === 'menu' || mode === 'select' || mode === 'ibex' || mode === 'mech') { const t = now / 1000; for (const c of L.crystals) { c.mesh.rotation.y = t * 1.2 + c.phase; } for (const h of L.hawks) { h.t += dt; const f = Math.sin(h.t * 9); for (const w of h.mesh.wings) w.rotation.x = w.userData.side * f * 0.55; } }
   renderer.render(scene, camera); requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) { navigator.serviceWorker.register('sw.js').then(r => r.update()).catch(() => {}); let reloaded = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloaded) return; if (mode === 'menu' || mode === 'select' || mode === 'ibex') { reloaded = true; location.reload(); } else pendingReload = true; }); }
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) { navigator.serviceWorker.register('sw.js').then(r => r.update()).catch(() => {}); let reloaded = false; navigator.serviceWorker.addEventListener('controllerchange', () => { if (!reloaded) { reloaded = true; checkForUpdate(); } }); }
 </script>
 </body>
 </html>
