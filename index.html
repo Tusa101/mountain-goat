@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v72 -->
+<!-- build v75 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -122,6 +122,17 @@
   #updBanner { position:fixed; left:10px; right:10px; top:calc(10px + env(safe-area-inset-top)); z-index:58; display:none; align-items:center; gap:10px; padding:8px 8px 8px 14px; border-radius:14px; background:rgba(30,20,10,.92); border:2px solid #ffd76a; font-size:14px; font-weight:700; }
   #updBanner.show { display:flex; } #updBanner span { flex:1; } #updBanner .btn { width:auto; margin:0; font-size:15px; padding:10px 16px; }
   #peekBubble { position:fixed; z-index:31; display:none; transform:translate(-100%, -120%); max-width:46vw; padding:8px 12px; border-radius:14px 14px 4px 14px; background:#fff8ee; color:#3a2410; font-size:13px; font-weight:800; box-shadow:0 3px 10px rgba(40,26,14,.35); pointer-events:none; }
+  #modal { position:fixed; inset:0; z-index:70; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(20,12,6,.55); backdrop-filter:blur(3px); }
+  #modal.show { display:flex; }
+  .mBox { width:min(360px, 100%); max-height:86vh; overflow:auto; box-sizing:border-box; padding:18px 18px 14px; border-radius:20px; background:linear-gradient(#fff8ee, #f1e6d2); color:#3a2410; border:3px solid #ffd76a; box-shadow:0 10px 30px rgba(0,0,0,.45); text-align:center; animation:mIn .18s ease-out; }
+  @keyframes mIn { from { transform:translateY(14px) scale(.96); opacity:0; } to { transform:none; opacity:1; } }
+  .mIcon { width:44px; height:44px; margin:0 auto 6px; color:#c07818; } .mIcon.err { color:#c8402a; } .mIcon.ok { color:#3a8a3a; } .mIcon:empty { display:none; }
+  .mTitle { font-size:20px; font-weight:900; letter-spacing:.06em; margin:0 0 6px; } .mTitle:empty { display:none; }
+  .mText { font-size:15px; line-height:1.45; white-space:pre-wrap; word-break:break-word; }
+  #mInput { display:none; width:100%; box-sizing:border-box; margin-top:10px; padding:8px; border-radius:10px; border:2px solid rgba(58,36,16,.3); font:13px/1.35 monospace; background:#fff; color:#3a2410; resize:vertical; -webkit-user-select:text; user-select:text; }
+  #mInput.show { display:block; }
+  .mRow { display:flex; gap:10px; margin-top:14px; } .mRow .btn { flex:1; min-width:0; margin:0; font-size:14px; padding:12px 8px; }
+  .mRow .btn.primary { font-size:16px; padding:12px 8px; }
   #selfTestOut { position:fixed; left:8px; right:8px; top:calc(8px + env(safe-area-inset-top)); z-index:60; display:none; max-height:70vh; overflow:auto; padding:12px; border-radius:12px; background:rgba(10,10,10,.92); font:12px/1.4 monospace; color:#e8ffe8; white-space:pre-wrap; }
   @media (orientation: landscape) and (max-height: 520px) {
     .tiles { top:calc(64px + env(safe-area-inset-top)); gap:8px; } .tile { min-height:66px; width:76px; padding:5px 3px; } .tile > i:first-child { width:24px; height:24px; }
@@ -320,6 +331,7 @@
   <div class="tab" data-tab="chal" id="tabChal"><i data-ico="trophy"></i><span data-i18n="tab_chal">CHALLENGES</span><i class="badge" id="bdgChal"></i></div>
   <div class="tab" data-tab="coll" id="tabColl"><i data-ico="book"></i><span data-i18n="tab_coll">COLLECTION</span><i class="badge" id="bdgColl"></i></div>
 </div>
+<div id="modal"><div class="mBox"><div class="mIcon" id="mIcon"></div><div class="mTitle" id="mTitle"></div><div class="mText" id="mText"></div><textarea id="mInput" rows="4"></textarea><div class="mRow" id="mRow"></div></div></div>
 <div id="selfTestOut"></div>
 <div id="peekBubble"></div>
 <input type="file" id="importFile" accept="application/json,.json" style="display:none">
@@ -343,8 +355,10 @@
 <div id="errToast" style="position:fixed;left:8px;right:8px;bottom:calc(12px + env(safe-area-inset-bottom));background:rgba(140,20,20,.92);color:#fff;font:12px/1.4 Menlo,Consolas,monospace;padding:8px 10px;border-radius:6px;display:none;z-index:99;word-break:break-all"></div>
 <div class="dline" id="dpref"></div><div class="dline" id="ddanger"></div>
 
-<script type="importmap">
-{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+<script>
+// Three.js source: the bundled copy inside the Android app (served from localhost), the CDN everywhere else (web, previews)
+(function () { const local = location.hostname === 'localhost' || location.protocol === 'capacitor:' || location.protocol === 'file:';
+  const im = document.createElement('script'); im.type = 'importmap'; im.textContent = JSON.stringify({ imports: { three: local ? './lib/three.module.js' : 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js' } }); document.currentScript.after(im); })();
 </script>
 <script type="module">
 import * as THREE from 'three';
@@ -380,6 +394,7 @@ const I18N = {
     promoDogs: 'psst… there are dogs here too! 🐾',
     customize: 'CUSTOMIZE', chooseHero: 'CHOOSE A HERO', coats: 'COATS', reachWorld: 'reach {w}', selectedW: 'selected', equipW: 'equip',
     botCheck: 'Route bot: check all levels', botTitle: 'ROUTE BOT', botOk: 'all reachable', botBad: '{k} unreachable', fpsToggle: 'FPS counter',
+    ok: 'OK', cancel: 'CANCEL', oops: 'Hmm', lockedTitle: 'Locked', deleteQ: 'Delete «{n}»?', deleteBtn: 'DELETE', pasteJson: 'Paste the level JSON', copyJson: 'Level JSON', needFinish: 'Add a FINISH terrace first', copiedJson: 'Level JSON copied to clipboard', resetTitle: 'Reset progress', resetBtn: 'RESET', importTitle: 'Import save', importBtn: 'REPLACE', towerRestartQ: 'Start this week\'s tower from the ground?', linkTitle: 'Share link',
     tab_home: 'HOME', tab_chars: 'HEROES', tab_map: 'MAP', tab_chal: 'MODES', tab_coll: 'JOURNAL', change: 'CHANGE', challenges: 'MODES', collection: 'JOURNAL', statsAch: 'STATS & ACHIEVEMENTS', secretsTitle: 'SECRETS', secretsN: 'found {a} / {b}', achN: '{a} / {b} achievements', mechN: '{a} / {b} met', customN: '{n} custom levels', tDaily: 'DAILY', tTower: 'TOWER', tSeason: 'season', tEndless: 'ENDLESS', tExp: 'EXPEDITION', tBuilder: 'BUILDER', leftH: '{h}h {m}m left', expBestShort: 'best {n}', playDone: 'all done — replay', playLockedDim: 'finish {n} mountain levels', backExit: 'Press back again to exit', selfTest: 'Layout self-test', selfTestOk: 'LAYOUT SELF-TEST · {n} screens · 0 problems', selfTestBad: 'LAYOUT SELF-TEST · {n} screens · {k} problems', tapToClose: 'tap to close', runsN: 'best {n} m', mutOnN: 'active: {l}', mutNone: 'none active',
     builder: 'LEVEL BUILDER', newLevel: 'NEW LEVEL', importJson: 'IMPORT JSON', ed_test: '▶ TEST', ed_save: 'SAVE', ed_share: 'SHARE', ed_export: 'EXPORT', ed_exit: 'EXIT', characters: 'CHARACTERS', noCustom: 'No custom levels yet', playingNow: 'PLAYING', bestM: 'best {n} m', climbed: 'Climbed', descended: 'Descended', newBestBang: 'NEW BEST!', saltGain: '+{n} salt', endlessCity: 'ENDLESS SKYSCRAPER · KONG', endlessPanel: 'ENDLESS PANELKI · CAT', descentLbl: 'DESCENT',
     wardrobe: 'WARDROBE', slot_head: 'Head', slot_neck: 'Neck', slot_trail: 'Trail', none: 'none', equipped: 'equipped', needAch: 'achievement: {a}', acc_cap: 'Cap', acc_beanie: 'Beanie', acc_bandana: 'Bandana', acc_shades: 'Shades', acc_wreath: 'Wreath', acc_garland: 'Garland horns', acc_scarfRed: 'Red scarf', acc_scarfBlue: 'Blue scarf', acc_collar: 'Collar', acc_bell: 'Bell', acc_towerScarf: 'Tower scarf', acc_expCollar: 'Explorer collar', acc_dust: 'Golden dust', acc_sparks: 'Sparks', acc_snow: 'Snowflakes', acc_leaves: 'Leaves', acc_paws: 'Paw prints', acc_stars: 'Stars', accNote: 'Cosmetic only — never the jump.',
@@ -426,6 +441,7 @@ const I18N = {
     promoDogs: 'тсс… а ещё есть собачки!',
     customize: 'КАСТОМИЗАЦИЯ', chooseHero: 'ВЫБЕРИ ГЕРОЯ', coats: 'ОКРАСЫ', reachWorld: 'дойди до {w}', selectedW: 'выбран', equipW: 'надеть',
     botCheck: 'Бот маршрутов: проверить уровни', botTitle: 'БОТ МАРШРУТОВ', botOk: 'все проходимы', botBad: 'непроходимых: {k}', fpsToggle: 'Счётчик FPS',
+    ok: 'ОК', cancel: 'ОТМЕНА', oops: 'Хм', lockedTitle: 'Закрыто', deleteQ: 'Удалить «{n}»?', deleteBtn: 'УДАЛИТЬ', pasteJson: 'Вставь JSON уровня', copyJson: 'JSON уровня', needFinish: 'Сначала поставь террасу FINISH', copiedJson: 'JSON уровня скопирован', resetTitle: 'Сброс прогресса', resetBtn: 'СБРОСИТЬ', importTitle: 'Импорт сохранения', importBtn: 'ЗАМЕНИТЬ', towerRestartQ: 'Начать башню этой недели с земли?', linkTitle: 'Ссылка',
     tab_home: 'ДОМОЙ', tab_chars: 'ГЕРОИ', tab_map: 'КАРТА', tab_chal: 'РЕЖИМЫ', tab_coll: 'ЖУРНАЛ', change: 'СМЕНИТЬ', challenges: 'РЕЖИМЫ', collection: 'ЖУРНАЛ', statsAch: 'СТАТИСТИКА И ДОСТИЖЕНИЯ', secretsTitle: 'СЕКРЕТЫ', secretsN: 'найдено {a} / {b}', achN: 'достижений {a} / {b}', mechN: 'встречено {a} / {b}', customN: 'своих уровней: {n}', tDaily: 'ДЕНЬ', tTower: 'БАШНЯ', tSeason: 'сезон', tEndless: 'БЕЗ КОНЦА', tExp: 'ПОХОД', tBuilder: 'РЕДАКТОР', leftH: 'ещё {h}ч {m}м', expBestShort: 'лучш. {n}', playDone: 'всё пройдено — ещё раз', playLockedDim: 'пройди {n} уровней горы', backExit: 'Нажми «назад» ещё раз для выхода', selfTest: 'Self-test раскладки', selfTestOk: 'SELF-TEST РАСКЛАДКИ · экранов {n} · 0 проблем', selfTestBad: 'SELF-TEST РАСКЛАДКИ · экранов {n} · проблем {k}', tapToClose: 'тап — закрыть', runsN: 'рекорд {n} м', mutOnN: 'включены: {l}', mutNone: 'не включены',
     builder: 'РЕДАКТОР УРОВНЕЙ', newLevel: 'НОВЫЙ УРОВЕНЬ', importJson: 'ИМПОРТ JSON', ed_test: '▶ ТЕСТ', ed_save: 'СОХР.', ed_share: 'ССЫЛКА', ed_export: 'ЭКСПОРТ', ed_exit: 'ВЫХОД', characters: 'ПЕРСОНАЖИ', noCustom: 'Своих уровней пока нет', playingNow: 'ИГРАЕТ', bestM: 'рекорд {n} м', climbed: 'Подъём', descended: 'Спуск', newBestBang: 'НОВЫЙ РЕКОРД!', saltGain: '+{n} соли', endlessCity: 'БЕСКОНЕЧНЫЙ НЕБОСКРЁБ · КОНГ', endlessPanel: 'БЕСКОНЕЧНЫЕ ПАНЕЛЬКИ · КОТ', descentLbl: 'СПУСК',
     wardrobe: 'ГАРДЕРОБ', slot_head: 'Голова', slot_neck: 'Шея', slot_trail: 'След', none: 'нет', equipped: 'надето', needAch: 'достижение: {a}', acc_cap: 'Кепка', acc_beanie: 'Шапка', acc_bandana: 'Бандана', acc_shades: 'Очки', acc_wreath: 'Венок', acc_garland: 'Гирлянда на рогах', acc_scarfRed: 'Красный шарф', acc_scarfBlue: 'Синий шарф', acc_collar: 'Ошейник', acc_bell: 'Бубенчик', acc_towerScarf: 'Шарф башни', acc_expCollar: 'Ошейник исследователя', acc_dust: 'Золотая пыль', acc_sparks: 'Искры', acc_snow: 'Снежинки', acc_leaves: 'Листья', acc_paws: 'Следы лап', acc_stars: 'Звёзды', accNote: 'Только внешность — никогда не прыжок.',
@@ -448,7 +464,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v72', date: '2026-09-22' };
+const BUILD = { version: 'v75', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -2123,7 +2139,7 @@ function goSettings(from) {
   if (S.devMode) { const st = document.createElement('div'); st.className = 'btn'; st.textContent = t('selfTest'); st.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) layoutSelfTest(); }); list.appendChild(st); }
   { const ex = document.createElement('div'); ex.className = 'btn'; ex.textContent = t('exportSave'); ex.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) exportSave(); }); list.appendChild(ex);
     const im = document.createElement('div'); im.className = 'btn'; im.textContent = t('importSave'); im.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) $('importFile').click(); }); list.appendChild(im); }
-  const rs = document.createElement('div'); rs.className = 'btn'; rs.style.borderColor = '#e07a6a'; rs.style.color = '#ffb3a6'; rs.style.marginTop = '18px'; rs.textContent = t('resetProgress'); rs.addEventListener('click', e => { e.stopPropagation(); if (confirm(t('resetConfirm'))) { localStorage.removeItem(SAVE_KEY); location.reload(); } }); list.appendChild(rs);
+  const rs = document.createElement('div'); rs.className = 'btn'; rs.style.borderColor = '#e07a6a'; rs.style.color = '#ffb3a6'; rs.style.marginTop = '18px'; rs.textContent = t('resetProgress'); rs.addEventListener('click', e => { e.stopPropagation(); UI.confirm(t('resetConfirm'), { title: t('resetTitle'), yes: t('resetBtn'), danger: true }).then(ok => { if (ok) { localStorage.removeItem(SAVE_KEY); location.reload(); } }); }); list.appendChild(rs);
   $('bBackMenu5').textContent = from === 'pause' ? t('resume') : t('menu'); showScreen('scSettings');
 }
 document.getElementById('bSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('menu'); });
@@ -2337,7 +2353,7 @@ function goAbout() {
 $('bAbout').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goAbout(); });
 $('bBackAbout').addEventListener('click', e => { e.stopPropagation(); goColl(); });
 $('aboutVersion').addEventListener('click', e => { e.stopPropagation(); if (++verTaps < 7) return; verTaps = 0; save.settings.devMode = !save.settings.devMode; if (!save.settings.devMode) { save.settings.devUnlock = false; save.settings.fps = false; } persist(); goAbout(); hubToastAny(t(save.settings.devMode ? 'devOn' : 'devOff')); });
-$('bCopyLog').addEventListener('click', e => { e.stopPropagation(); const log = localStorage.getItem('mountainGoatErrors') || '[]'; const txt = `Mountain Goat ${BUILD.version} · ${navigator.userAgent}\n${log}`; (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => hubToastAny(t('linkCopied'))).catch(() => prompt('', txt)); });
+$('bCopyLog').addEventListener('click', e => { e.stopPropagation(); const log = localStorage.getItem('mountainGoatErrors') || '[]'; const txt = `Mountain Goat ${BUILD.version} · ${navigator.userAgent}\n${log}`; (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => hubToastAny(t('linkCopied'))).catch(() => UI.show(t('copyLog'), txt)); });
 function hubToastAny(msg) { const el = $('selfTestOut'); el.style.display = 'block'; el.style.borderLeft = '6px solid #ffd76a'; el.textContent = msg; el.onclick = () => el.style.display = 'none'; setTimeout(() => { if (el.textContent === msg) el.style.display = 'none'; }, 2200); }
 // ---- save export / import (for switching phones) ----
 function exportSave() {
@@ -2346,8 +2362,7 @@ function exportSave() {
   const a = document.createElement('a'); a.download = name; a.href = URL.createObjectURL(blob); a.click();
 }
 $('importFile').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return; const rd = new FileReader();
-  rd.onload = () => { try { const s = JSON.parse(rd.result); if (!s || typeof s !== 'object' || !s.levels || !s.settings) throw new Error('not a save'); if (!confirm(t('importConfirm', { n: Object.keys(s.levels).length, c: s.totalSaltCrystals || 0 }))) return;
-    try { localStorage.setItem(SAVE_KEY + '.bak.import', JSON.stringify(save)); } catch (x) {} localStorage.setItem(SAVE_KEY, JSON.stringify(s)); location.reload(); } catch (x) { alert(t('importBad')); } }; rd.readAsText(f); });
+  rd.onload = () => { try { const s = JSON.parse(rd.result); if (!s || typeof s !== 'object' || !s.levels || !s.settings) throw new Error('not a save'); UI.confirm(t('importConfirm', { n: Object.keys(s.levels).length, c: s.totalSaltCrystals || 0 }), { title: t('importTitle'), yes: t('importBtn'), danger: true }).then(ok => { if (!ok) return; try { localStorage.setItem(SAVE_KEY + '.bak.import', JSON.stringify(save)); } catch (x) {} localStorage.setItem(SAVE_KEY, JSON.stringify(s)); location.reload(); }); } catch (x) { UI.error(t('importBad')); } }; rd.readAsText(f); });
 // ---- new version check: compare the deployed build tag with ours, offer a reload ----
 async function checkForUpdate() { if (!location.protocol.startsWith('http')) return; try { const r = await fetch('index.html?v=' + Date.now(), { cache: 'no-store' }); const txt = await r.text(); const m = txt.match(/<!-- build (v\d+) -->/); if (m && m[1] !== BUILD.version && +m[1].slice(1) > +BUILD.version.slice(1)) { paintIcons(); $('updBanner').classList.add('show'); } } catch (e) {} }
 $('bUpdate').addEventListener('click', e => { e.stopPropagation(); if (mode === 'play') persistRunIfAny(); location.reload(); });
@@ -2407,7 +2422,7 @@ function goSelect() {
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
   }
   mv.innerHTML = `<div class="lbl" style="margin:0 0 6px;text-align:center">${t(d.nameKey)}</div><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%;height:auto">${svg}</svg>`;
-  for (const n of mv.querySelectorAll('.node')) n.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; const wi = +n.dataset.wi; if (worldOpen(wi)) goWorld(wi); else { const { w } = nodeInfo(wi); const pos = d.worlds.indexOf(w.name); if (pos > 0) { const prev = WORLDS.findIndex(x => x.name === d.worlds[pos - 1]); alert(t('earnStars', { n: Math.ceil(worldMax(prev) * 0.6), w: WORLDS[prev].name, g: worldStars(prev) }) + ' · ' + t('worldsDone', { a: worldLevelsDone(prev), b: worldCount(prev) })); } } });
+  for (const n of mv.querySelectorAll('.node')) n.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; const wi = +n.dataset.wi; if (worldOpen(wi)) goWorld(wi); else { const { w } = nodeInfo(wi); const pos = d.worlds.indexOf(w.name); if (pos > 0) { const prev = WORLDS.findIndex(x => x.name === d.worlds[pos - 1]); UI.alert(`<b>${w.name}</b><br>${t('earnStars', { n: Math.ceil(worldMax(prev) * 0.6), w: WORLDS[prev].name, g: worldStars(prev) })}<br>${t('worldsDone', { a: worldLevelsDone(prev), b: worldCount(prev) })}`, { kind: 'err', title: t('lockedTitle') }); } } });
   showScreen('scSelect');
 }
 function goWorld(wi) {
@@ -2564,7 +2579,7 @@ $('bEndless').addEventListener('click', e => { e.stopPropagation(); initAudio();
 $('bBuilder').addEventListener('click', e => { e.stopPropagation(); initAudio(); goBuilder(); });
 $('bBackMenu4').addEventListener('click', e => { e.stopPropagation(); goOrigin('scBuilder', goColl); });
 $('bNewLevel').addEventListener('click', e => { e.stopPropagation(); const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: 'My mountain', def: newCustomDef() }; persist(); openEditor(id); });
-$('bImportLevel').addEventListener('click', e => { e.stopPropagation(); const txt = prompt('Paste level JSON'); if (!txt) return; try { const def = JSON.parse(txt); if (!def.surfaces) throw 0; const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: def.name || 'Imported', def }; persist(); goBuilder(); } catch (err) { alert('Not a valid level JSON'); } });
+$('bImportLevel').addEventListener('click', e => { e.stopPropagation(); UI.prompt(t('pasteJson')).then(txt => { if (!txt) return; try { const def = JSON.parse(txt); if (!def.surfaces) throw 0; const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: def.name || 'Imported', def }; persist(); goBuilder(); } catch (err) { UI.error(t('importBad')); } }); });
 function newCustomDef() { return { key: 'custom', name: 'My mountain', style: 'desert', ascent: false, custom: true, surfaces: [['start', 0, 0, 8, 'terrace']], crystals: [], kids: [], hawks: [], rocks: [], winds: [], updrafts: [], zones: [], blockers: [], herd: [], stars: { crystals: 0, time: 90 } }; }
 function goBuilder() {
   mode = 'select'; hud.style.display = 'none'; const list = $('customList'); list.innerHTML = '';
@@ -2574,7 +2589,7 @@ function goBuilder() {
     const b = document.createElement('div'); b.className = 'btn';
     b.innerHTML = `${c.name}<small>${c.def.ascent ? '▲ ascent' : '▼ descent'} · ${c.def.surfaces.length - 1} ledges · ${c.def.crystals.length} pickups</small><small>PLAY · EDIT · DELETE</small>`;
     b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; const r = b.getBoundingClientRect(), f = (e.clientX - r.left) / r.width;
-      if (f < 0.34) playCustom(id); else if (f < 0.67) openEditor(id); else if (confirm(`Delete "${c.name}"?`)) { delete save.custom[id]; persist(); goBuilder(); } });
+      if (f < 0.34) playCustom(id); else if (f < 0.67) openEditor(id); else UI.confirm(t('deleteQ', { n: c.name }), { yes: t('deleteBtn'), danger: true }).then(ok => { if (ok) { delete save.custom[id]; persist(); goBuilder(); } }); });
     list.appendChild(b);
   }
   showScreen('scBuilder');
@@ -2583,7 +2598,7 @@ function finalizeDef(c) { const def = JSON.parse(JSON.stringify(c.def)); def.nam
   const n = def.surfaces.length; def.stars = { crystals: Math.ceil(def.crystals.length * 0.7), time: 40 + n * 5 };
   const fin = def.surfaces.find(r => r[0] === 'finish'); if (fin && !def.herd.length) def.herd = [{ surface: 'finish', x: fin[1] - 8, dir: -1, n: 4 }];
   return def; }
-function playCustom(id) { const c = save.custom[id]; if (!c.def.surfaces.some(r => r[0] === 'finish')) { alert('Add a FINISH terrace first'); return; } G.customId = id; startLevel(0, finalizeDef(c)); }
+function playCustom(id) { const c = save.custom[id]; if (!c.def.surfaces.some(r => r[0] === 'finish')) { UI.error(t('needFinish')); return; } G.customId = id; startLevel(0, finalizeDef(c)); }
 
 // ---- dimension select: three low-poly cube dioramas rendered live ----
 const dio = { scene: null, cam: null, cubes: [], t: 0 };
@@ -2688,7 +2703,7 @@ $('edSave').addEventListener('click', e => { e.stopPropagation(); saveEditor(); 
 $('edExit').addEventListener('click', e => { e.stopPropagation(); saveEditor(true); closeEditor(); });
 $('edTest').addEventListener('click', e => { e.stopPropagation(); saveEditor(true); if (!ED.def.surfaces.some(r => r[0] === 'finish')) { edMsg('Place a FINISH terrace first'); return; } $('editor').classList.remove('show'); edGroup.clear(); playCustom(ED.id); });
 $('edShare').addEventListener('click', e => { e.stopPropagation(); saveEditor(true); shareLink('lvl=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(Object.assign({ name: save.custom[ED.id].name }, ED.def))))))); });
-$('edExport').addEventListener('click', e => { e.stopPropagation(); saveEditor(true); const txt = JSON.stringify(Object.assign({ name: save.custom[ED.id].name }, ED.def)); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => edMsg('Level JSON copied to clipboard')).catch(() => prompt('Copy the level JSON:', txt)); });
+$('edExport').addEventListener('click', e => { e.stopPropagation(); saveEditor(true); const txt = JSON.stringify(Object.assign({ name: save.custom[ED.id].name }, ED.def)); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => edMsg(t('copiedJson'))).catch(() => UI.show(t('copyJson'), txt)); });
 $('edStyle').addEventListener('change', () => { ED.def.style = $('edStyle').value; rebuildEditor(); });
 $('edDir').addEventListener('change', () => { ED.def.ascent = $('edDir').value === 'up'; rebuildEditor(); });
 $('edZoomIn').addEventListener('click', e => { e.stopPropagation(); ED.zoom = Math.max(7, ED.zoom - 3); });
@@ -2811,7 +2826,7 @@ $('bMutEndless').addEventListener('click', e => { e.stopPropagation(); goMutator
 $('bTower').addEventListener('click', e => { e.stopPropagation(); initAudio(); goTower(); });
 $('bBackTower').addEventListener('click', e => { e.stopPropagation(); goOrigin('scTower', goChal); });
 $('bTowerGo').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startTower(towerState().cp > 0); });
-$('bTowerRestart').addEventListener('click', e => { e.stopPropagation(); if (!fresh() && towerState().cp > 0 && confirm(t('towerRestart') + '?')) startTower(false); });
+$('bTowerRestart').addEventListener('click', e => { e.stopPropagation(); if (!fresh() && towerState().cp > 0) UI.confirm(t('towerRestartQ'), { yes: t('towerRestart'), danger: true }).then(ok => { if (ok) startTower(false); }); });
 function pauseGame() {
   paintIcons($('scPause'));
   AudioSys.music('pause'); if (actx && BUS) BUS.amb.gain.setTargetAtTime(0.08, actx.currentTime, 0.2);
@@ -2829,6 +2844,7 @@ $('bPauseExit').addEventListener('click', e => { e.stopPropagation(); snapshotRu
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.btn,.ebtn,.back,.tile,.tab,.hubIcon,.modePill,.playBtn')) AudioSys.play('ui'); }, true);
 let lastBackAt = 0; const FPS = { n: 0, acc: 0 };
 function handleBack() { // returns false when the app should actually be left
+  if (UI.cur) { UI.cur.close(UI.cur.cancel); return true; }
   if (mode === 'play') { pauseGame(); return true; } if (mode === 'pause' && $('scPause').classList.contains('show')) { resumeGame(); return true; }
   if (mode === 'edit') { $('edExit').click(); return true; }
   const scr = document.querySelector('.screen.show'); if (!scr || scr.id === 'scLang') return true;
@@ -2896,6 +2912,20 @@ function styleResult(win) {
     setTimeout(() => { const r = gem.getBoundingClientRect(); gem.style.transform = `translate(${pill.left + 12 - r.left}px, ${pill.top + 6 - r.top}px) scale(.7)`; gem.style.opacity = .3; }, 120 + i * 70);
     setTimeout(() => { gem.remove(); n.textContent = Math.round(total - gained + gained * (i + 1) / k); if (i === k - 1) AudioSys.play('pickup'); }, 850 + i * 70); }
 }
+// ---- in-game dialogs (replace alert / confirm / prompt) ----
+const UI = {
+  _open(o) { return new Promise(res => { const m = $('modal'); $('mIcon').className = 'mIcon ' + (o.kind || ''); $('mIcon').innerHTML = o.kind === 'err' ? icon('lock') : o.kind === 'ok' ? icon('star') : o.kind === 'ask' ? icon('compass') : o.kind === 'copy' ? icon('book') : ''; $('mTitle').textContent = o.title || '';
+    $('mText').innerHTML = o.html || ''; const inp = $('mInput'); inp.classList.toggle('show', !!o.input); inp.value = o.value || ''; inp.readOnly = !!o.readOnly; const row = $('mRow'); row.innerHTML = '';
+    const close = v => { m.classList.remove('show'); UI.cur = null; res(v); };
+    for (const b of o.buttons) { const el = document.createElement('div'); el.className = 'btn' + (b.primary ? ' primary' : '') + (b.danger ? ' danger' : ''); el.textContent = b.label; el.addEventListener('click', e => { e.stopPropagation(); AudioSys.play('ui'); close(b.value === 'input' ? inp.value : b.value); }); row.appendChild(el); }
+    UI.cur = { close, cancel: o.cancel }; m.classList.add('show'); if (o.input && !o.readOnly) setTimeout(() => inp.focus(), 50); }); },
+  alert(html, opts = {}) { return UI._open({ html, kind: opts.kind || 'info', title: opts.title, buttons: [{ label: t('ok'), value: true, primary: true }], cancel: true }); },
+  info(html, title) { return UI.alert(html, { kind: 'info', title }); }, error(html, title) { return UI.alert(html, { kind: 'err', title: title || t('oops') }); }, success(html, title) { return UI.alert(html, { kind: 'ok', title }); },
+  confirm(html, opts = {}) { return UI._open({ html, kind: 'ask', title: opts.title, buttons: [{ label: opts.no || t('cancel'), value: false }, { label: opts.yes || t('ok'), value: true, primary: !opts.danger, danger: !!opts.danger }], cancel: false }); },
+  prompt(html, value = '', opts = {}) { return UI._open({ html, kind: 'ask', title: opts.title, input: true, value, buttons: [{ label: t('cancel'), value: null }, { label: opts.yes || t('ok'), value: 'input', primary: true }], cancel: null }); },
+  show(html, value, title) { return UI._open({ html, kind: 'copy', title, input: true, value, readOnly: true, buttons: [{ label: t('ok'), value: true, primary: true }], cancel: true }); },
+};
+$('modal').addEventListener('click', e => { if (e.target === $('modal') && UI.cur) UI.cur.close(UI.cur.cancel); });
 function hubToast(msg) { const h = $('hubToast'); h.innerHTML = msg; h.style.opacity = 1; clearTimeout(hubToast.t); hubToast.t = setTimeout(() => h.style.opacity = 0, 2600); }
 // ---- dev: route-finding bot — can every level be finished with plain jumps? (no air control, hazards ignored) ----
 function botSolve(def, opts = {}) {
@@ -2980,12 +3010,12 @@ function saveGhost(win) { // best by time on a win; for daily/tower, distance co
   if (better) { save.ghosts[key] = { win, time: G.time, dist: G.maxDesc, rec: packRec(G.echoRec), ch: cs.ch, sk: cs.sk, acc: { ...currentAcc() }, at: Date.now() }; for (const k of Object.keys(save.ghosts)) if (k.startsWith('daily:') && k !== 'daily:' + dailyDate()) delete save.ghosts[k]; persist(); }
   G.lastRun = { key, def, win, time: G.time, rec: packRec(G.echoRec), ch: cs.ch, sk: cs.sk, acc: { ...currentAcc() } };
 }
-function shareLink(hash) { const url = location.origin + location.pathname + '#' + hash; if (navigator.share) navigator.share({ url }).catch(() => {}); else (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => alert(t('linkCopied'))).catch(() => prompt('', url)); }
+function shareLink(hash) { const url = location.origin + location.pathname + '#' + hash; if (navigator.share) navigator.share({ url }).catch(() => {}); else (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => UI.success(t('linkCopied'))).catch(() => UI.show(t('linkTitle'), url)); }
 function handleLink() {
   const h = location.hash.slice(1); if (!h) return false; const q = Object.fromEntries(h.split('&').map(kv => kv.split('=').map(decodeURIComponent)));
   history.replaceState(null, '', location.pathname);
-  if (q.lvl) { try { const def = JSON.parse(decodeURIComponent(escape(atob(q.lvl)))); const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: (def.name || 'Shared') + ' ↗', def }; persist(); alert(t('linkLevelLoaded')); openEditor(id); return true; } catch (e) { return false; } }
-  if (q.ghost) { try { const g = JSON.parse(decodeURIComponent(escape(atob(q.ghost)))); if (g.key.startsWith('daily:')) { if (g.key !== 'daily:' + dailyDate()) { alert(t('linkOld')); return false; } G.linkGhost = g; startLevel(0, dailyDef()); return true; } const idx = LEVELS.findIndex(l => l.key === g.key); if (idx < 0) return false; G.linkGhost = g; startLevel(idx); alert(t('linkGhostLoaded')); return true; } catch (e) { return false; } }
+  if (q.lvl) { try { const def = JSON.parse(decodeURIComponent(escape(atob(q.lvl)))); const id = 'c' + Date.now().toString(36); save.custom = save.custom || {}; save.custom[id] = { name: (def.name || 'Shared') + ' ↗', def }; persist(); UI.success(t('linkLevelLoaded')); openEditor(id); return true; } catch (e) { return false; } }
+  if (q.ghost) { try { const g = JSON.parse(decodeURIComponent(escape(atob(q.ghost)))); if (g.key.startsWith('daily:')) { if (g.key !== 'daily:' + dailyDate()) { UI.info(t('linkOld')); return false; } G.linkGhost = g; startLevel(0, dailyDef()); return true; } const idx = LEVELS.findIndex(l => l.key === g.key); if (idx < 0) return false; G.linkGhost = g; startLevel(idx); hubToastAny(t('linkGhostLoaded')); return true; } catch (e) { return false; } }
   return false;
 }
 // ---- stats & achievements ----
