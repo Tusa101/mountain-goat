@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v76 -->
+<!-- build v77 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -394,6 +394,7 @@ const I18N = {
     promoDogs: 'psst… there are dogs here too! 🐾',
     customize: 'CUSTOMIZE', chooseHero: 'CHOOSE A HERO', coats: 'COATS', reachWorld: 'reach {w}', selectedW: 'selected', equipW: 'equip',
     botCheck: 'Route bot: check all levels', botTitle: 'ROUTE BOT', botOk: 'all reachable', botBad: '{k} unreachable', fpsToggle: 'FPS counter',
+    nextWorld: 'NEXT WORLD', worldDone: 'You have cleared everything in {w}!', worldDoneMissing: 'You have cleared everything in {w} — but you missed something along the way. Look again on the map.',
     ok: 'OK', cancel: 'CANCEL', oops: 'Hmm', lockedTitle: 'Locked', deleteQ: 'Delete «{n}»?', deleteBtn: 'DELETE', pasteJson: 'Paste the level JSON', copyJson: 'Level JSON', needFinish: 'Add a FINISH terrace first', copiedJson: 'Level JSON copied to clipboard', resetTitle: 'Reset progress', resetBtn: 'RESET', importTitle: 'Import save', importBtn: 'REPLACE', towerRestartQ: 'Start this week\'s tower from the ground?', linkTitle: 'Share link',
     tab_home: 'HOME', tab_chars: 'HEROES', tab_map: 'MAP', tab_chal: 'MODES', tab_coll: 'JOURNAL', change: 'CHANGE', challenges: 'MODES', collection: 'JOURNAL', statsAch: 'STATS & ACHIEVEMENTS', secretsTitle: 'SECRETS', secretsN: 'found {a} / {b}', achN: '{a} / {b} achievements', mechN: '{a} / {b} met', customN: '{n} custom levels', tDaily: 'DAILY', tTower: 'TOWER', tSeason: 'season', tEndless: 'ENDLESS', tExp: 'EXPEDITION', tBuilder: 'BUILDER', leftH: '{h}h {m}m left', expBestShort: 'best {n}', playDone: 'all done — replay', playLockedDim: 'finish {n} mountain levels', backExit: 'Press back again to exit', selfTest: 'Layout self-test', selfTestOk: 'LAYOUT SELF-TEST · {n} screens · 0 problems', selfTestBad: 'LAYOUT SELF-TEST · {n} screens · {k} problems', tapToClose: 'tap to close', runsN: 'best {n} m', mutOnN: 'active: {l}', mutNone: 'none active',
     builder: 'LEVEL BUILDER', newLevel: 'NEW LEVEL', importJson: 'IMPORT JSON', ed_test: '▶ TEST', ed_save: 'SAVE', ed_share: 'SHARE', ed_export: 'EXPORT', ed_exit: 'EXIT', characters: 'CHARACTERS', noCustom: 'No custom levels yet', playingNow: 'PLAYING', bestM: 'best {n} m', climbed: 'Climbed', descended: 'Descended', newBestBang: 'NEW BEST!', saltGain: '+{n} salt', endlessCity: 'ENDLESS SKYSCRAPER · KONG', endlessPanel: 'ENDLESS PANELKI · CAT', descentLbl: 'DESCENT',
@@ -441,6 +442,7 @@ const I18N = {
     promoDogs: 'тсс… а ещё есть собачки!',
     customize: 'КАСТОМИЗАЦИЯ', chooseHero: 'ВЫБЕРИ ГЕРОЯ', coats: 'ОКРАСЫ', reachWorld: 'дойди до {w}', selectedW: 'выбран', equipW: 'надеть',
     botCheck: 'Бот маршрутов: проверить уровни', botTitle: 'БОТ МАРШРУТОВ', botOk: 'все проходимы', botBad: 'непроходимых: {k}', fpsToggle: 'Счётчик FPS',
+    nextWorld: 'СЛЕДУЮЩИЙ МИР', worldDone: 'Ты прошёл всё в мире {w}!', worldDoneMissing: 'Ты прошёл всё в мире {w} — но что-то потерял по пути. Присмотрись к карте.',
     ok: 'ОК', cancel: 'ОТМЕНА', oops: 'Хм', lockedTitle: 'Закрыто', deleteQ: 'Удалить «{n}»?', deleteBtn: 'УДАЛИТЬ', pasteJson: 'Вставь JSON уровня', copyJson: 'JSON уровня', needFinish: 'Сначала поставь террасу FINISH', copiedJson: 'JSON уровня скопирован', resetTitle: 'Сброс прогресса', resetBtn: 'СБРОСИТЬ', importTitle: 'Импорт сохранения', importBtn: 'ЗАМЕНИТЬ', towerRestartQ: 'Начать башню этой недели с земли?', linkTitle: 'Ссылка',
     tab_home: 'ДОМОЙ', tab_chars: 'ГЕРОИ', tab_map: 'КАРТА', tab_chal: 'РЕЖИМЫ', tab_coll: 'ЖУРНАЛ', change: 'СМЕНИТЬ', challenges: 'РЕЖИМЫ', collection: 'ЖУРНАЛ', statsAch: 'СТАТИСТИКА И ДОСТИЖЕНИЯ', secretsTitle: 'СЕКРЕТЫ', secretsN: 'найдено {a} / {b}', achN: 'достижений {a} / {b}', mechN: 'встречено {a} / {b}', customN: 'своих уровней: {n}', tDaily: 'ДЕНЬ', tTower: 'БАШНЯ', tSeason: 'сезон', tEndless: 'БЕЗ КОНЦА', tExp: 'ПОХОД', tBuilder: 'РЕДАКТОР', leftH: 'ещё {h}ч {m}м', expBestShort: 'лучш. {n}', playDone: 'всё пройдено — ещё раз', playLockedDim: 'пройди {n} уровней горы', backExit: 'Нажми «назад» ещё раз для выхода', selfTest: 'Self-test раскладки', selfTestOk: 'SELF-TEST РАСКЛАДКИ · экранов {n} · 0 проблем', selfTestBad: 'SELF-TEST РАСКЛАДКИ · экранов {n} · проблем {k}', tapToClose: 'тап — закрыть', runsN: 'рекорд {n} м', mutOnN: 'включены: {l}', mutNone: 'не включены',
     builder: 'РЕДАКТОР УРОВНЕЙ', newLevel: 'НОВЫЙ УРОВЕНЬ', importJson: 'ИМПОРТ JSON', ed_test: '▶ ТЕСТ', ed_save: 'СОХР.', ed_share: 'ССЫЛКА', ed_export: 'ЭКСПОРТ', ed_exit: 'ВЫХОД', characters: 'ПЕРСОНАЖИ', noCustom: 'Своих уровней пока нет', playingNow: 'ИГРАЕТ', bestM: 'рекорд {n} м', climbed: 'Подъём', descended: 'Спуск', newBestBang: 'НОВЫЙ РЕКОРД!', saltGain: '+{n} соли', endlessCity: 'БЕСКОНЕЧНЫЙ НЕБОСКРЁБ · КОНГ', endlessPanel: 'БЕСКОНЕЧНЫЕ ПАНЕЛЬКИ · КОТ', descentLbl: 'СПУСК',
@@ -464,7 +466,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v76', date: '2026-09-22' };
+const BUILD = { version: 'v77', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -2476,6 +2478,13 @@ function startLevel(idx, defOverride) {
   if (L.def.resume) $('hSalt').textContent = L.endless ? `◆ ${G.collected}` : `◆ ${G.collected} / ${L.crystals.length}`;
 
 }
+// the level to offer after a win: the next visible one in this world, else the first level of the next open world in the same dimension
+function nextAfter(def) {
+  const wi = WORLDS.findIndex(w => w.levels.includes(def.key)); if (wi < 0) return null; const w = WORLDS[wi]; const keys = w.levels; const pos = keys.indexOf(def.key);
+  for (let i = pos + 1; i < keys.length; i++) { const l = LEVELS.find(l => l.key === keys[i]); if (!l) continue; if (l.secret && !(save.secretFound || {})[l.key]) continue; return { l }; }
+  const d = dimOf(wi); const dp = d.worlds.indexOf(w.name); for (let k = dp + 1; k < d.worlds.length; k++) { const nwi = WORLDS.findIndex(x => x.name === d.worlds[k]); if (nwi < 0 || !worldOpen(nwi)) continue; const l = LEVELS.find(l => l.key === WORLDS[nwi].levels[0]); if (l) return { l, world: WORLDS[nwi].name }; }
+  return null;
+}
 function finishLevel(win, reason) {
   if (!win) vib(80); if (win) AudioSys.play('win'); AudioSys.music(null);
   { const st = stats(); st.jumps += G.jumps; st.saves += goats.reduce((a, g) => a + g.saves, 0); st.meters += G.maxDesc; st.time += G.time; if (win && !L.def.tutorial) st.levels++; st.kids += G.kidsSaved || 0; }
@@ -2539,7 +2548,9 @@ function finishLevel(win, reason) {
     if (mutsOn) { $('rStars').innerHTML = `<div class="on">★ ${t('complete')}</div><div style="opacity:.8;font-size:13px">${t('mutActive', { list: G.muts.map(m => t('mut_' + m)).join(', ') })} · ${t('mutMult', { m: mutMult() })}<br>${t('mutNoStars')}</div>`; persist(); }
     else { const pool = GOAL_ORDER.filter(k => GOALS[k].ok(def)); const left = pool.filter(k => !gs.done.includes(k)); gs.current = null; const next = left.length ? currentGoals(def) : []; persist();
       $('rStars').innerHTML = `<div class="on">★ ${t('complete')}</div>` + cur.map(k => `<div class="${passed.includes(k) ? 'on' : 'off'}">${passed.includes(k) ? '★' : '☆'} ${GOALS[k].text(def)}</div>`).join('') + `<div>${t('starOf', { n: stars })}</div>` + (next.length ? `<div style="opacity:.75;font-size:13px;margin-top:6px">${t('goalsNew')}: ${next.map(k => GOALS[k].text(def)).join(' · ')}</div>` : `<div style="opacity:.75;font-size:13px;margin-top:6px">${t('goalsDone')}</div>`); }
-    { const nx = LEVELS[idx + 1]; $('bNext').style.display = (nx && !nx.secret && !nx.challenge && !nx.puzzle && worldOpen(WORLDS.findIndex(w => w.levels.includes(nx.key)))) ? 'block' : 'none'; }
+    { const nx = nextAfter(def); G.nextIdx = nx ? LEVELS.indexOf(nx.l) : -1; $('bNext').style.display = nx ? 'block' : 'none';
+      if (nx) $('bNext').innerHTML = nx.world ? `${t('nextWorld')}<small>${nx.world}</small>` : `${t('next')}<small>${nx.l.nameKey ? t(nx.l.nameKey) : nx.l.name}</small>`;
+      else { const w = WORLDS.find(w => w.levels.includes(def.key)); if (w && worldLevelsDone(WORLDS.indexOf(w)) >= worldCount(WORLDS.indexOf(w))) { const missing = w.levels.some(k => { const l = LEVELS.find(l => l.key === k); return l && l.secret && !(save.secretFound || {})[k]; }); $('rStars').innerHTML += `<div style="margin-top:8px;font-size:13px;opacity:.9">${missing ? t('worldDoneMissing', { w: w.name }) : t('worldDone', { w: w.name })}</div>`; } } }
     if (def.tutorial) { $('rStars').innerHTML = `<div style="font-size:14px;opacity:.9;max-width:320px">${t('tutResult')}</div>`; $('rSub').innerHTML = `${t('jumps')} ${G.jumps} · ${t('saves')} ${saves}`; }
   } else {
     $('rTitle').textContent = G.twin ? t('oneFell') : t('fell');
@@ -3162,7 +3173,7 @@ function continueRun() {
   Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, dangerT: 0, endT: 0, result: null, camFy: preferredFy(top) });
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
 }
-$('bNext').addEventListener('click', e => { e.stopPropagation(); startLevel(L.idx + 1); });
+$('bNext').addEventListener('click', e => { e.stopPropagation(); if (G.nextIdx >= 0) startLevel(G.nextIdx); });
 $('bLevels').addEventListener('click', e => { e.stopPropagation(); if (L.def.expedition) { goExp(); return; } if (L.def.tower) { goTower(); return; } if (L.def.custom) openEditor(G.customId); else if (L.endless || L.def.daily) { if (L.def.daily) goMenu(); else goEndless(); } else { const wi = WORLDS.findIndex(w => w.levels.includes(L.def.key)); curDim = DIMS.indexOf(dimOf(wi)); goWorld(wi); } });
 for (const s of document.querySelectorAll('.screen')) s.addEventListener('pointerdown', e => e.stopPropagation());
 
