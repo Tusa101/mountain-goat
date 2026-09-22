@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v65 -->
+<!-- build v67 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -117,6 +117,7 @@
   #fpsBox { position:fixed; left:6px; top:calc(62px + env(safe-area-inset-top)); z-index:55; display:none; padding:3px 6px; border-radius:6px; background:rgba(0,0,0,.6); font:11px/1.3 monospace; color:#b8ffb8; pointer-events:none; white-space:pre; }
   #updBanner { position:fixed; left:10px; right:10px; top:calc(10px + env(safe-area-inset-top)); z-index:58; display:none; align-items:center; gap:10px; padding:8px 8px 8px 14px; border-radius:14px; background:rgba(30,20,10,.92); border:2px solid #ffd76a; font-size:14px; font-weight:700; }
   #updBanner.show { display:flex; } #updBanner span { flex:1; } #updBanner .btn { width:auto; margin:0; font-size:15px; padding:10px 16px; }
+  #peekBubble { position:fixed; z-index:31; display:none; transform:translate(-100%, -120%); max-width:46vw; padding:8px 12px; border-radius:14px 14px 4px 14px; background:#fff8ee; color:#3a2410; font-size:13px; font-weight:800; box-shadow:0 3px 10px rgba(40,26,14,.35); pointer-events:none; }
   #selfTestOut { position:fixed; left:8px; right:8px; top:calc(8px + env(safe-area-inset-top)); z-index:60; display:none; max-height:70vh; overflow:auto; padding:12px; border-radius:12px; background:rgba(10,10,10,.92); font:12px/1.4 monospace; color:#e8ffe8; white-space:pre-wrap; }
   @media (orientation: landscape) and (max-height: 520px) {
     .tiles { top:calc(64px + env(safe-area-inset-top)); gap:8px; } .tile { min-height:66px; width:76px; padding:5px 3px; } .tile > i:first-child { width:24px; height:24px; }
@@ -316,6 +317,7 @@
   <div class="tab" data-tab="coll" id="tabColl"><i data-ico="book"></i><span data-i18n="tab_coll">COLLECTION</span><i class="badge" id="bdgColl"></i></div>
 </div>
 <div id="selfTestOut"></div>
+<div id="peekBubble"></div>
 <input type="file" id="importFile" accept="application/json,.json" style="display:none">
 <div id="updBanner"><span data-i18n="updAvail">A new version is ready</span><div class="btn primary" id="bUpdate" data-i18n="updNow">UPDATE</div></div>
 <div id="fpsBox"></div>
@@ -371,6 +373,7 @@ const I18N = {
     h_scent: 'Stand still — a dog can smell what is hidden<br>Follow the paw prints', m_scent: 'Scent', m_scent_d: 'Dogs only. Stand still for three seconds and a trail of paw prints points toward a hidden passage.', scentFound: '🐾 trail found',
     season: 'Season', s_auto: 'auto', s_winter: 'Winter', s_spring: 'Spring', s_summer: 'Summer', s_autumn: 'Autumn', seasonNow: 'season: {s}', seasonWinter_d: 'snow on the cliffs, icy ledges', seasonSpring_d: 'flowers, slower birds', seasonSummer_d: 'heat haze, stronger updrafts', seasonAutumn_d: 'leaves, gustier wind',
     exportSave: 'Export save', importSave: 'Import save', importConfirm: 'Replace this progress with the file? ({n} levels, {c} ◆). The current progress is backed up.', importBad: 'That file is not a Mountain Goat save.', about: 'ABOUT', versionW: 'Version', copyLog: 'COPY ERROR LOG', logN: '{n} entries', logEmpty: 'no errors', whatsNew: 'What\'s new', devOn: 'Developer mode on', devOff: 'Developer mode off', updAvail: 'A new version is ready', updNow: 'UPDATE', aboutText: 'An ibex, a cat, a gorilla and five dogs find their way down, up and across.<br>Design: Alex (Tusa101). Built with Claude.<br>No accounts, no ads, no tracking — your progress lives on this device only.',
+    promoDogs: 'psst… there are dogs here too! 🐾',
     customize: 'CUSTOMIZE', chooseHero: 'CHOOSE A HERO', coats: 'COATS', reachWorld: 'reach {w}', selectedW: 'selected', equipW: 'equip',
     botCheck: 'Route bot: check all levels', botTitle: 'ROUTE BOT', botOk: 'all reachable', botBad: '{k} unreachable', fpsToggle: 'FPS counter',
     tab_home: 'HOME', tab_chars: 'HEROES', tab_map: 'MAP', tab_chal: 'MODES', tab_coll: 'JOURNAL', change: 'CHANGE', challenges: 'MODES', collection: 'JOURNAL', statsAch: 'STATS & ACHIEVEMENTS', secretsTitle: 'SECRETS', secretsN: 'found {a} / {b}', achN: '{a} / {b} achievements', mechN: '{a} / {b} met', customN: '{n} custom levels', tDaily: 'DAILY', tTower: 'TOWER', tSeason: 'season', tEndless: 'ENDLESS', tExp: 'EXPEDITION', tBuilder: 'BUILDER', leftH: '{h}h {m}m left', expBestShort: 'best {n}', playDone: 'all done — replay', playLockedDim: 'finish {n} mountain levels', backExit: 'Press back again to exit', selfTest: 'Layout self-test', selfTestOk: 'LAYOUT SELF-TEST · {n} screens · 0 problems', selfTestBad: 'LAYOUT SELF-TEST · {n} screens · {k} problems', tapToClose: 'tap to close', runsN: 'best {n} m', mutOnN: 'active: {l}', mutNone: 'none active',
@@ -416,6 +419,7 @@ const I18N = {
     h_scent: 'Постой смирно — собака чует спрятанное<br>Иди по следам лап', m_scent: 'Нюх', m_scent_d: 'Только для собак. Постой три секунды — цепочка следов укажет путь к скрытому проходу.', scentFound: '🐾 след найден',
     season: 'Сезон', s_auto: 'авто', s_winter: 'Зима', s_spring: 'Весна', s_summer: 'Лето', s_autumn: 'Осень', seasonNow: 'сезон: {s}', seasonWinter_d: 'снег на скалах, ледяные уступы', seasonSpring_d: 'цветы, птицы медленнее', seasonSummer_d: 'жаркая дымка, потоки сильнее', seasonAutumn_d: 'листья, ветер порывистее',
     exportSave: 'Экспорт сохранения', importSave: 'Импорт сохранения', importConfirm: 'Заменить прогресс данными из файла? ({n} уровней, {c} ◆). Текущий прогресс сохранится в резервной копии.', importBad: 'Это не сохранение Mountain Goat.', about: 'ОБ ИГРЕ', versionW: 'Версия', copyLog: 'СКОПИРОВАТЬ ЖУРНАЛ ОШИБОК', logN: 'записей: {n}', logEmpty: 'ошибок нет', whatsNew: 'Что нового', devOn: 'Режим разработчика включён', devOff: 'Режим разработчика выключен', updAvail: 'Готова новая версия', updNow: 'ОБНОВИТЬ', aboutText: 'Ибекс, кот, горилла и пять собак ищут путь вниз, вверх и вперёд.<br>Дизайн: Alex (Tusa101). Сделано с Claude.<br>Без аккаунтов, рекламы и слежки — прогресс хранится только на этом устройстве.',
+    promoDogs: 'тсс… а ещё есть собачки!',
     customize: 'КАСТОМИЗАЦИЯ', chooseHero: 'ВЫБЕРИ ГЕРОЯ', coats: 'ОКРАСЫ', reachWorld: 'дойди до {w}', selectedW: 'выбран', equipW: 'надеть',
     botCheck: 'Бот маршрутов: проверить уровни', botTitle: 'БОТ МАРШРУТОВ', botOk: 'все проходимы', botBad: 'непроходимых: {k}', fpsToggle: 'Счётчик FPS',
     tab_home: 'ДОМОЙ', tab_chars: 'ГЕРОИ', tab_map: 'КАРТА', tab_chal: 'РЕЖИМЫ', tab_coll: 'ЖУРНАЛ', change: 'СМЕНИТЬ', challenges: 'РЕЖИМЫ', collection: 'ЖУРНАЛ', statsAch: 'СТАТИСТИКА И ДОСТИЖЕНИЯ', secretsTitle: 'СЕКРЕТЫ', secretsN: 'найдено {a} / {b}', achN: 'достижений {a} / {b}', mechN: 'встречено {a} / {b}', customN: 'своих уровней: {n}', tDaily: 'ДЕНЬ', tTower: 'БАШНЯ', tSeason: 'сезон', tEndless: 'БЕЗ КОНЦА', tExp: 'ПОХОД', tBuilder: 'РЕДАКТОР', leftH: 'ещё {h}ч {m}м', expBestShort: 'лучш. {n}', playDone: 'всё пройдено — ещё раз', playLockedDim: 'пройди {n} уровней горы', backExit: 'Нажми «назад» ещё раз для выхода', selfTest: 'Self-test раскладки', selfTestOk: 'SELF-TEST РАСКЛАДКИ · экранов {n} · 0 проблем', selfTestBad: 'SELF-TEST РАСКЛАДКИ · экранов {n} · проблем {k}', tapToClose: 'тап — закрыть', runsN: 'рекорд {n} м', mutOnN: 'включены: {l}', mutNone: 'не включены',
@@ -440,7 +444,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v65', date: '2026-09-22' };
+const BUILD = { version: 'v67', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -2564,12 +2568,23 @@ function buildDio() {
   dio.cubes = DIMS.map((d, i) => { const c = makeCube(d.key, 300 + i * 7); c.position.set(0, 0, -i * 11); sc.add(c); const cl = makeClouds(500 + i); c.add(cl); c.clouds = cl; c.mats = []; c.traverse(o => { if (o.isMesh && !cl.children.includes(o)) for (const m of (Array.isArray(o.material) ? o.material : [o.material])) if (!c.mats.includes(m)) { m.userData.orig = m.color.clone(); c.mats.push(m); } }); return c; });
   dio.scene = sc; dio.cam = new THREE.PerspectiveCamera(38, 1, 0.1, 200); dio.focus = 0; dio.camZ = 16; dio.lookZ = 0;
 }
+// start screen: only the mountain (no spoilers) — and a dachshund sneaking a peek from behind it
+const PEEK = { holder: null, dog: null, t: 0 };
 function dioCluster(on) {
   if (!dio.scene) return; if (dio.clustered === on) { if (on) layoutCluster(); return; } dio.clustered = on;
-  dio.cubes.forEach((c, i) => { if (on) c.position.set([0, -7.5, 7.5][i], 0, [3, -5, -5][i]); else c.position.set(0, 0, -i * 11); c.rotation.y = 0; });
-  if (on) layoutCluster(); else { dio.scene.fog.near = 22; dio.scene.fog.far = 48; }
+  dio.cubes.forEach((c, i) => { c.position.set(0, 0, on ? 0 : -i * 11); c.rotation.y = 0; c.visible = !on || i === 0; if (on) { c.clouds.visible = false; for (const m of c.mats) m.color.copy(m.userData.orig); } });
+  if (on) { if (!PEEK.holder) { PEEK.holder = new THREE.Group(); PEEK.holder.scale.setScalar(1.3); const d = new Goat(CHARACTERS.dog.list[0].id, 1, 'dog'); scene.remove(d.root); PEEK.holder.add(d.root); PEEK.dog = d; } dio.cubes[0].add(PEEK.holder); PEEK.t = 0; layoutCluster(); }
+  else { if (PEEK.holder && PEEK.holder.parent) PEEK.holder.parent.remove(PEEK.holder); $('peekBubble').style.display = 'none'; dio.scene.fog.near = 22; dio.scene.fog.far = 48; }
 }
-function layoutCluster() { dio.scene.fog.near = 40; dio.scene.fog.far = 95; const portrait = innerHeight > innerWidth; dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix(); const d = portrait ? 1.9 : 1; dio.cam.position.set(0, 13 * d, 18 * d + 4); dio.cam.lookAt(0, portrait ? -4 : 0, -1); dio.cubes.forEach((c, i) => c.position.y = Math.sin(dio.t * 1.1 + i * 2) * 0.1); }
+function layoutCluster() {
+  dio.scene.fog.near = 60; dio.scene.fog.far = 130; const portrait = innerHeight > innerWidth; dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix();
+  if (portrait) { dio.cam.position.set(0, 20, 30); dio.cam.lookAt(0, -6, 0); } else { dio.cam.position.set(0, 12, 21); dio.cam.lookAt(0, -1, 0); }
+  const c = dio.cubes[0]; c.position.y = Math.sin(dio.t * 1.1) * 0.1; for (const q of dio.cubes) q.clouds.visible = false;
+  // the peek: hidden 3 s, slides out, holds 3 s with a bubble, slides back
+  PEEK.t += 1 / 60; const k = PEEK.t % 7; const out = k < 3 ? 0 : k < 3.6 ? (k - 3) / 0.6 : k < 6.3 ? 1 : k < 6.9 ? 1 - (k - 6.3) / 0.6 : 0; const e = out * out * (3 - 2 * out);
+  PEEK.holder.position.set(1.6 + e * 1.1, -3.05, -3.4); const d = PEEK.dog; d.pos.set(0, 0); d.state = ST.IDLE; d.facing = 1; d.stateT = (d.stateT || 0) + 1 / 60; d.animate(1 / 60, null);
+  const bub = $('peekBubble'); if (e > 0.85) { const v = new THREE.Vector3(); PEEK.holder.localToWorld(v.set(1.1, 1.1, 0)); v.project(dio.cam); bub.style.display = 'block'; bub.style.left = Math.min(innerWidth - 12, (v.x + 1) / 2 * innerWidth) + 'px'; bub.style.top = ((1 - v.y) / 2 * innerHeight) + 'px'; const html = `${I18N.en.promoDogs}<br>${I18N.ru.promoDogs}`; if (bub.innerHTML !== html) bub.innerHTML = html; } else bub.style.display = 'none';
+}
 function layoutDio(dt = 0) { // cubes sit one behind another along the depth axis; the camera slides along it to the focused cube
   dio.cam.aspect = innerWidth / innerHeight; dio.cam.updateProjectionMatrix();
   const portrait = innerHeight > innerWidth; const fz = -dio.focus * 11; const dist = portrait ? 17 : 14;
