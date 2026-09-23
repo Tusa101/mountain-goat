@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v93 -->
+<!-- build v94 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -411,6 +411,7 @@ const I18N = {
     customize: 'CUSTOMIZE', chooseHero: 'CHOOSE A HERO', coats: 'COATS', reachWorld: 'reach {w}', selectedW: 'selected', equipW: 'equip',
     botCheck: 'Route bot: check all levels', botTitle: 'ROUTE BOT', botOk: 'all reachable', botBad: '{k} unreachable', fpsToggle: 'FPS counter',
     boostsTitle: 'Boosts for this run', b_hooves: 'Soft hooves', b_hooves_d: 'no exhaustion, every landing is soft', b_wind: 'Second wind', b_wind_d: 'one free CONTINUE', b_reach: 'Long reach', b_reach_d: 'edge catches from 1.6× further', boostHint: 'tap to arm · charged on your first jump', freeW: 'free', legendary: 'LEGENDARY', legendary_d: 'glows, and leaves stars behind',
+    endlessCap: 'salt today {a} / {b}', endlessCapped: 'daily cap reached', endlessNote: 'up to {n} ◆ a day per mode · only past your day\'s best', devPass: 'Developer password', devWrong: 'Wrong password',
     spacePan: '✥ drag to move · pinch or double-tap to zoom', swipeLR: '‹ swipe sideways ›', swipeUD: '⇅ scroll',
     nextWorld: 'NEXT WORLD', worldDone: 'You have cleared everything in {w}!', worldDoneMissing: 'You have cleared everything in {w} — but you missed something along the way. Look again on the map.',
     ok: 'OK', cancel: 'CANCEL', oops: 'Hmm', lockedTitle: 'Locked', deleteQ: 'Delete «{n}»?', deleteBtn: 'DELETE', pasteJson: 'Paste the level JSON', copyJson: 'Level JSON', needFinish: 'Add a FINISH terrace first', copiedJson: 'Level JSON copied to clipboard', resetTitle: 'Reset progress', resetBtn: 'RESET', importTitle: 'Import save', importBtn: 'REPLACE', towerRestartQ: 'Start this week\'s tower from the ground?', linkTitle: 'Share link',
@@ -462,6 +463,7 @@ const I18N = {
     customize: 'КАСТОМИЗАЦИЯ', chooseHero: 'ВЫБЕРИ ГЕРОЯ', coats: 'ОКРАСЫ', reachWorld: 'дойди до {w}', selectedW: 'выбран', equipW: 'надеть',
     botCheck: 'Бот маршрутов: проверить уровни', botTitle: 'БОТ МАРШРУТОВ', botOk: 'все проходимы', botBad: 'непроходимых: {k}', fpsToggle: 'Счётчик FPS',
     boostsTitle: 'Усиления на забег', b_hooves: 'Мягкие копыта', b_hooves_d: 'без усталости, любая посадка мягкая', b_wind: 'Второе дыхание', b_wind_d: 'один бесплатный CONTINUE', b_reach: 'Длинная рука', b_reach_d: 'зацеп в 1,6 раза дальше', boostHint: 'тап — взять · спишется на первом прыжке', freeW: 'бесплатно', legendary: 'ЛЕГЕНДАРНЫЙ', legendary_d: 'светится и оставляет звёзды',
+    endlessCap: 'соль за сегодня {a} / {b}', endlessCapped: 'дневной лимит', endlessNote: 'до {n} ◆ в день на режим · только дальше сегодняшнего рекорда', devPass: 'Пароль разработчика', devWrong: 'Неверный пароль',
     spacePan: '✥ двигай пальцем · щипок или двойной тап — зум', swipeLR: '‹ листай вбок ›', swipeUD: '⇅ листай вниз',
     nextWorld: 'СЛЕДУЮЩИЙ МИР', worldDone: 'Ты прошёл всё в мире {w}!', worldDoneMissing: 'Ты прошёл всё в мире {w} — но что-то потерял по пути. Присмотрись к карте.',
     ok: 'ОК', cancel: 'ОТМЕНА', oops: 'Хм', lockedTitle: 'Закрыто', deleteQ: 'Удалить «{n}»?', deleteBtn: 'УДАЛИТЬ', pasteJson: 'Вставь JSON уровня', copyJson: 'JSON уровня', needFinish: 'Сначала поставь террасу FINISH', copiedJson: 'JSON уровня скопирован', resetTitle: 'Сброс прогресса', resetBtn: 'СБРОСИТЬ', importTitle: 'Импорт сохранения', importBtn: 'ЗАМЕНИТЬ', towerRestartQ: 'Начать башню этой недели с земли?', linkTitle: 'Ссылка',
@@ -488,7 +490,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v93', date: '2026-09-22' };
+const BUILD = { version: 'v94', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -517,6 +519,7 @@ const CONFIG = {
   followerDelay: 0.45,       // seconds between the player's jump and each rescued kid's replay
   kidSalt: 2,                // salt awarded per kid on first rescue
   maxLedgesSkipped: 3, ledgeRowGap: 2.5,   // drop past more than this many rows of ledges = the goat collapses, exhausted
+  endlessDailySalt: 12,   // salt you can bank from endless runs per UTC day, per mode
   cameraIdleSpeed: 0.45, cameraAimMultiplier: 0.75, cameraDownFollowSpeed: 5, cameraUpFollowSpeed: 0.8, cameraXFollow: 3,
   goatScreenFraction: 0.35, cameraWarnFraction: 0.2, cameraDangerFraction: 0.07, cameraFailureGrace: 1.25,
   trajectoryPoints: 14, trajectoryPreviewFraction: 0.65,
@@ -1092,6 +1095,7 @@ function dailyDefOnce(info) {
   def.daily = true; def.date = info.date; def.mods = mods; def.character = character; def.forceChar = character; return def;
 }
 const DAILY_REWARD = [3, 3, 4];
+function endlessDay(key) { const d = dailyDate(); save.endlessDay = save.endlessDay || {}; const e = save.endlessDay[key] = save.endlessDay[key] || { date: d, salt: 0, far: 0 }; if (e.date !== d) { e.date = d; e.salt = 0; e.far = 0; } return e; }
 // ---- weekly tower: deterministic 5-section climb, biome per section, hazards escalate, checkpoints between sections ----
 function weekId() { const d = new Date(); const day = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - day + 3); const y0 = new Date(Date.UTC(d.getUTCFullYear(), 0, 4)); return d.getUTCFullYear() + '-W' + String(1 + Math.round(((d - y0) / 864e5 - 3 + ((y0.getUTCDay() + 6) % 7)) / 7)).padStart(2, '0'); }
 function towerDef() {
@@ -1613,7 +1617,8 @@ function genNext() {
     const f = makeSurface(['f' + g.n, +fx.toFixed(1), +y.toFixed(1), fw, fw < 1.7 ? 'foothold' : 'narrow'], g.n, g.seed + 500); L.surfaces.push(f);
     L.crystals.push(makeCrystalObj(fx, y + 0.6, L.crystals.length, L.surfaces));
   }
-  g.sincePickup++; if (g.sincePickup >= 4 && R() < 0.6) { g.sincePickup = 0;
+  g.sincePickup++; const farthest = endlessDay(L.def.key).far; const beyond = dist > farthest; const rarer = clamp(1 - dist / 400, 0.25, 1);   // no salt on ground you already covered today; sparser past 100 m
+  if (beyond && g.sincePickup >= 4 && R() < 0.6 * rarer) { g.sincePickup = 0;
     const px = spk ? (spk === 'L' ? s.x + s.w / 4 : s.x - s.w / 4) : s.x; L.crystals.push(makeCrystalObj(px, y + 0.6, L.crystals.length, L.surfaces)); }
   else if (R() < 0.12) L.crystals.push(makeCrystalObj((g.lastX + x) / 2, (g.lastY + y) / 2 + (L.ascent ? 1.5 : 2.5), L.crystals.length, L.surfaces));
   g.sinceHawk++;
@@ -2562,7 +2567,7 @@ function refreshChal() {
   const ts = towerState(); $('towerInfo').textContent = `${t('towerWeek', { w: ts.week })} · ${ts.done ? t('towerDone', { t: fmtTime(ts.time) }) : t('towerHeight', { h: Math.round(ts.best), c: ts.cp })}`;
   const sn = save.runs && save.runs.daily; const resumeTxt = sn && sn.def.date === info.date ? ` · ▶ ${Math.round(sn.stats.maxDesc)} m` : '';
   $('dailyInfo').innerHTML = `${label} · ${worldName} ${dirMark} · ${info.mods.join(', ')}<br>${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}${d.streak ? ` · 🔥${d.streak}` : ''}${resumeTxt}`;
-  $('expInfo').textContent = t('expBest', { n: stats().expBest || 0 }); $('endInfo').textContent = t('runsN', { n: Math.max(0, ...Object.values(save.endless || {}).map(Number).filter(n => !isNaN(n))) });
+  $('expInfo').textContent = t('expBest', { n: stats().expBest || 0 }); $('endInfo').textContent = t('runsN', { n: Math.max(0, ...Object.values(save.endless || {}).map(Number).filter(n => !isNaN(n))) }) + ' · ' + t('endlessNote', { n: CONFIG.endlessDailySalt });
 
 }
 const CHANGELOG = { en: ['Home hub with tiles, tab bar and one-tap PLAY', 'Heroes screen with a big figure and a separate customisation window', 'Seasons, accessories, expeditions of 5/7/9 stages, synthesized sound', 'Ghost runs and share links', 'Route bot checks that every level can be finished'], ru: ['Хаб «Домой»: плитки, таб-бар, «Играть» в один тап', 'Экран героев с крупной фигуркой и отдельной кастомизацией', 'Сезоны, аксессуары, походы на 5/7/9 этапов, синтезированный звук', 'Призраки забегов и ссылки-вызовы', 'Бот маршрутов проверяет проходимость каждого уровня'] };
@@ -2574,7 +2579,9 @@ function goAbout() {
 }
 $('bAbout').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goAbout(); });
 $('bBackAbout').addEventListener('click', e => { e.stopPropagation(); goColl(); });
-$('aboutVersion').addEventListener('click', e => { e.stopPropagation(); if (++verTaps < 7) return; verTaps = 0; save.settings.devMode = !save.settings.devMode; if (!save.settings.devMode) { save.settings.devUnlock = false; save.settings.fps = false; } persist(); goAbout(); hubToastAny(t(save.settings.devMode ? 'devOn' : 'devOff')); });
+$('aboutVersion').addEventListener('click', e => { e.stopPropagation(); if (++verTaps < 7) return; verTaps = 0;
+  const flip = () => { save.settings.devMode = !save.settings.devMode; if (!save.settings.devMode) { save.settings.devUnlock = false; save.settings.fps = false; } persist(); goAbout(); hubToastAny(t(save.settings.devMode ? 'devOn' : 'devOff')); };
+  if (save.settings.devMode) { flip(); return; } UI.prompt(t('devPass'), '').then(v => { if (v === null) return; if ((v || '').trim() === 'dachshund123') flip(); else UI.error(t('devWrong')); }); });
 $('bCopyLog').addEventListener('click', e => { e.stopPropagation(); const log = localStorage.getItem('mountainGoatErrors') || '[]'; const txt = `Mountain Goat ${BUILD.version} · ${navigator.userAgent}\n${log}`; (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => hubToastAny(t('linkCopied'))).catch(() => UI.show(t('copyLog'), txt)); });
 function hubToastAny(msg) { const el = $('selfTestOut'); el.style.display = 'block'; el.style.borderLeft = '6px solid #ffd76a'; el.textContent = msg; el.onclick = () => el.style.display = 'none'; setTimeout(() => { if (el.textContent === msg) el.style.display = 'none'; }, 2200); }
 // ---- save export / import (for switching phones) ----
@@ -2759,9 +2766,10 @@ function finishLevel(win, reason) {
   }
   if (L.endless) {
     save.endless = save.endless || {}; const best = save.endless[def.key] || 0; const distm = Math.round(G.maxDesc); const newBest = distm > best;
-    if (newBest) save.endless[def.key] = distm; const gained = Math.min(5, G.collected); save.totalSaltCrystals += gained; persist();
+    if (newBest) save.endless[def.key] = distm;
+    const E = endlessDay(def.key); E.far = Math.max(E.far, G.maxDesc); const cap = CONFIG.endlessDailySalt; const room = Math.max(0, cap - E.salt); const gained = Math.min(room, G.collected); E.salt += gained; save.totalSaltCrystals += gained; persist(); G.endlessCapped = gained < G.collected;
     $('rTitle').textContent = reason === 'hawk' ? 'THE HAWK GOT YOU' : reason === 'tired' ? 'TOO FAR' : reason === 'spikes' ? 'SPIKED' : reason === 'rock' ? 'ROCKFALL' : 'YOU FELL';
-    $('rSub').innerHTML = `${t(L.ascent ? 'climbed' : 'descended')} <b>${distm} m</b>${newBest ? ' — ' + t('newBestBang') : ' · ' + t('bestM', { n: best })}<br>${t('p_' + STYLE.pickupName)} ◆ ${G.collected}${gained ? ` (${t('saltGain', { n: gained })})` : ''} · ${t('jumps')} ${G.jumps}`;
+    $('rSub').innerHTML = `${t(L.ascent ? 'climbed' : 'descended')} <b>${distm} m</b>${newBest ? ' — ' + t('newBestBang') : ' · ' + t('bestM', { n: best })}<br>${t('p_' + STYLE.pickupName)} ◆ ${G.collected}${gained ? ` (${t('saltGain', { n: gained })})` : ''} · ${t('jumps')} ${G.jumps}<br><span style="opacity:.75;font-size:13px">${t('endlessCap', { a: endlessDay(def.key).salt, b: CONFIG.endlessDailySalt })}${G.endlessCapped ? ' · ' + t('endlessCapped') : ''}</span>`;
     $('rStars').innerHTML = ''; $('bNext').style.display = 'none';
     const canCont = goats.every(g => g.lastSafe) && save.totalSaltCrystals >= CONFIG.continueCost;
     $('bContinue').style.display = 'block'; $('bContinue').classList.toggle('dim', !canCont); $('contCost').textContent = `◆ ${CONFIG.continueCost}  (you have ${save.totalSaltCrystals})`;
