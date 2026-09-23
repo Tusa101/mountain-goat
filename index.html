@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v95 -->
+<!-- build v98 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -41,10 +41,10 @@
   .screen h1 { font-size:40px; margin:0 0 4px; letter-spacing:.06em; font-weight:800; }
   .screen h2 { font-size:22px; margin:0 0 18px; letter-spacing:.04em; font-weight:700; opacity:.95; }
   .screen .sub { font-size:16px; opacity:.9; line-height:1.7; margin-bottom:18px; }
-  .btn { display:block; box-sizing:border-box; width:min(360px, 100%); margin:8px auto; padding:14px 18px; border:2px solid rgba(255,248,238,.7); border-radius:10px; font-size:17px; font-weight:700; letter-spacing:.1em; background:rgba(255,248,238,.08); cursor:pointer; }
+  .btn { display:block; box-sizing:border-box; width:min(330px, 100%); margin:6px auto; padding:11px 16px; min-height:46px; border:2px solid rgba(255,248,238,.7); border-radius:10px; font-size:15px; font-weight:700; letter-spacing:.08em; background:rgba(255,248,238,.08); cursor:pointer; }
   .btn:active { background:rgba(255,248,238,.25); }
   .btn.dim { opacity:.55; }
-  .btn { background:rgba(46,30,16,.82); border-color:rgba(255,248,238,.55); box-shadow:0 3px 0 rgba(0,0,0,.25); }
+
   #scResult, #scPause { background:rgba(50,32,18,.66); }
   .screen h1 { text-shadow:0 2px 10px rgba(40,26,14,.6), 0 1px 2px rgba(40,26,14,.8); }
   .screen .sub, .screen .lbl, .screen .salt, #mapView .lbl { text-shadow:0 1px 5px rgba(40,26,14,.85), 0 0 2px rgba(40,26,14,.9); }
@@ -53,10 +53,10 @@
   .stars { font-size:15px; line-height:1.9; margin:6px 0 18px; text-align:left; display:inline-block; }
   .stars .on { color:#ffd76a; } .stars .off { opacity:.5; }
   .salt { font-size:14px; letter-spacing:.12em; opacity:.9; margin-top:14px; }
-  .back { position:fixed; left:12px; bottom:calc(12px + env(safe-area-inset-bottom)); min-height:48px; padding:0 18px; display:flex; align-items:center; border-radius:14px; background:rgba(40,26,14,.85); border:2px solid rgba(255,248,238,.4); font-size:14px; font-weight:700; letter-spacing:.08em; cursor:pointer; z-index:26; box-sizing:border-box; }
+  .back { position:fixed; left:12px; bottom:calc(12px + env(safe-area-inset-bottom)); min-height:44px; padding:0 14px; display:flex; align-items:center; border-radius:14px; background:rgba(40,26,14,.85); border:2px solid rgba(255,248,238,.4); font-size:14px; font-weight:700; letter-spacing:.08em; cursor:pointer; z-index:26; box-sizing:border-box; }
   .screen { padding-bottom:calc(84px + env(safe-area-inset-bottom)) !important; }
   body.tabs .screen { padding-bottom:calc(160px + env(safe-area-inset-bottom)) !important; }
-  body.tabs .back { bottom:calc(84px + env(safe-area-inset-bottom)); }
+  body.tabs .back { bottom:calc(78px + env(safe-area-inset-bottom)); }
   body.tabs #scIbex .back, body.tabs #scChal .back, body.tabs #scColl .back { display:none; }
   #scSelect .back { display:flex !important; }
   [data-ico] { display:inline-flex; } [data-ico] svg { width:100%; height:100%; }
@@ -70,7 +70,7 @@
   .curIco { width:20px; height:20px; color:#9fe0ff; } .curIco.star { color:#ffd76a; }
   .tiles { position:absolute; top:calc(72px + env(safe-area-inset-top)); display:flex; flex-direction:column; gap:12px; }
   .tiles.l { left:10px; } .tiles.r { right:10px; }
-  .tile { width:80px; min-height:80px; box-sizing:border-box; padding:7px 4px 6px; border-radius:16px; background:linear-gradient(#4a8ad8,#2a5aa0); border:2px solid rgba(255,255,255,.5); box-shadow:0 4px 0 rgba(0,0,0,.35); display:flex; flex-direction:column; align-items:center; gap:2px; position:relative; cursor:pointer; color:#fff; }
+  .tile { width:80px; min-height:80px; box-sizing:border-box; padding:7px 4px 6px; border-radius:16px; background:linear-gradient(#4b7db5,#345f93); border:2px solid rgba(255,255,255,.5); box-shadow:0 4px 0 rgba(0,0,0,.35); display:flex; flex-direction:column; align-items:center; gap:2px; position:relative; cursor:pointer; color:#fff; }
   .tile.gold { background:linear-gradient(#f0b840,#c07818); } .tile.purple { background:linear-gradient(#8a64d0,#5a3a98); } .tile.green { background:linear-gradient(#5aa85a,#2f7a3a); }
   .tile > i:first-child { width:30px; height:30px; }
   .tile b { font-size:11px; line-height:1.1; letter-spacing:.02em; text-align:center; max-width:74px; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 2px rgba(0,0,0,.4); }
@@ -84,8 +84,8 @@
   .playGroup { position:absolute; left:50%; transform:translateX(-50%); bottom:calc(86px + env(safe-area-inset-bottom)); width:min(340px, calc(100vw - 40px)); display:flex; flex-direction:column; gap:8px; }
   .dimDots { display:flex; justify-content:center; gap:8px; } .dimDots i { width:8px; height:8px; border-radius:4px; background:rgba(255,248,238,.4); } .dimDots i.on { background:#ffd76a; width:20px; }
   .modePill { display:flex; min-height:52px; border-radius:14px; overflow:hidden; border:2px solid rgba(255,255,255,.55); cursor:pointer; box-shadow:0 3px 0 rgba(0,0,0,.3); }
-  .modePill > span:first-child { background:#1f4a8a; padding:0 12px; display:flex; align-items:center; font-size:12px; font-weight:800; letter-spacing:.06em; white-space:nowrap; }
-  .modePill > span:last-child { flex:1; min-width:0; background:#3a78c8; padding:5px 10px; display:flex; flex-direction:column; justify-content:center; text-align:left; }
+  .modePill > span:first-child { background:#2b4d79; padding:0 12px; display:flex; align-items:center; font-size:12px; font-weight:800; letter-spacing:.06em; white-space:nowrap; }
+  .modePill > span:last-child { flex:1; min-width:0; background:#4b7db5; padding:5px 10px; display:flex; flex-direction:column; justify-content:center; text-align:left; }
   .modePill b, .modePill small { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .modePill b { font-size:14px; } .modePill small { font-size:12px; opacity:.9; }
   .playBtn { height:70px; border-radius:18px; background:linear-gradient(#ffe07a,#f0a830); color:#3a2410; border:3px solid #fff4c8; box-shadow:0 6px 0 #a8661a; display:flex; align-items:center; justify-content:center; gap:10px; font-size:30px; font-weight:900; letter-spacing:.1em; cursor:pointer; box-sizing:border-box; }
   .playBtn.locked { background:linear-gradient(#a8a098,#7a726a); box-shadow:0 6px 0 #4a443e; font-size:16px; letter-spacing:.04em; color:#fff8ee; border-color:#d8d0c8; padding:0 12px; text-align:center; }
@@ -120,11 +120,11 @@
   .heroTag { position:absolute; transform:translate(-50%,0); padding:3px 10px; border-radius:10px; font-size:10px !important; background:rgba(40,26,14,.8); border:2px solid rgba(255,248,238,.35); font-size:12px; font-weight:800; letter-spacing:.05em; white-space:nowrap; cursor:pointer; display:none; }
   .heroTag small { display:block; font-size:10px; font-weight:600; opacity:.8; letter-spacing:0; text-align:center; }
   .hubToast { position:absolute; left:50%; transform:translateX(-50%); top:calc(66px + env(safe-area-inset-top)); max-width:78vw; padding:10px 14px; border-radius:12px; background:rgba(20,12,6,.88); font-size:14px; text-align:center; opacity:0; transition:opacity .25s; pointer-events:none !important; }
-  #tabBar { position:fixed; left:0; right:0; bottom:0; z-index:25; display:none; align-items:flex-end; gap:2px; padding:0 6px env(safe-area-inset-bottom); height:calc(72px + env(safe-area-inset-bottom)); box-sizing:border-box; background:linear-gradient(#2f64b0,#1d3f75); border-top:2px solid rgba(255,255,255,.4); }
+  #tabBar { position:fixed; left:0; right:0; bottom:0; z-index:25; display:none; align-items:flex-end; gap:2px; padding:0 6px env(safe-area-inset-bottom); height:calc(66px + env(safe-area-inset-bottom)); box-sizing:border-box; background:linear-gradient(#3f6ea6,#2b4d79); border-top:2px solid rgba(255,255,255,.4); }
   #tabBar.show { display:flex; }
-  .tab { flex:1; min-width:0; height:70px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; position:relative; color:#fff8ee; opacity:.85; border-radius:14px 14px 0 0; }
+  .tab { flex:1; min-width:0; height:64px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; position:relative; color:#fff8ee; opacity:.85; border-radius:14px 14px 0 0; }
   .tab > i:first-child { width:26px; height:26px; } .tab span { font-size:10.5px; font-weight:800; letter-spacing:.03em; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .tab.on { opacity:1; background:linear-gradient(#ffe07a,#e8a030); color:#3a2410; height:82px; box-shadow:0 -2px 0 rgba(255,255,255,.5) inset; }
+  .tab.on { opacity:1; background:linear-gradient(#ffe07a,#e8a030); color:#3a2410; height:74px; box-shadow:0 -2px 0 rgba(255,255,255,.5) inset; }
   .tab .badge { top:6px; right:calc(50% - 26px); }
   #fpsBox { position:fixed; left:6px; top:calc(62px + env(safe-area-inset-top)); z-index:55; display:none; padding:3px 6px; border-radius:6px; background:rgba(0,0,0,.6); font:11px/1.3 monospace; color:#b8ffb8; pointer-events:none; white-space:pre; }
   #updBanner { position:fixed; left:10px; right:10px; top:calc(10px + env(safe-area-inset-top)); z-index:58; display:none; align-items:center; gap:10px; padding:8px 8px 8px 14px; border-radius:14px; background:rgba(30,20,10,.92); border:2px solid #ffd76a; font-size:14px; font-weight:700; }
@@ -171,6 +171,18 @@
   #dbg { position:fixed; left:8px; bottom:calc(8px + env(safe-area-inset-bottom)); font:11px/1.45 Menlo, Consolas, monospace; background:rgba(0,0,0,.55); padding:6px 8px; white-space:pre; display:none; pointer-events:none; border-radius:4px; }
   .dline { position:fixed; left:0; right:0; height:0; border-top:1px dashed; display:none; pointer-events:none; }
   #dpref { border-color:#4cff7a; } #ddanger { border-color:#ff4c4c; }
+  /* ---- unified blue theme (tab-bar colours) — kept last so it overrides screen-specific rules ---- */
+  .btn, .tile-plain { background:linear-gradient(#4b7db5,#345f93); border-color:rgba(255,255,255,.4); color:#fff8ee; box-shadow:0 2px 0 rgba(0,0,0,.25); border-radius:12px; }
+  .btn.on { background:linear-gradient(#ffe07a,#f0a830); color:#3a2410; border-color:#fff4c8; box-shadow:0 3px 0 #a8661a; }
+  .btn.dim { opacity:.5; background:linear-gradient(#6e7a8c,#4a5468); }
+  .charCard { background:linear-gradient(#4b7db5,#345f93); border-color:rgba(255,255,255,.5); box-shadow:0 3px 0 rgba(0,0,0,.3); }
+  .charCard.on { background:linear-gradient(#ffe07a,#e8a030); color:#3a2410; border-color:#fff4c8; box-shadow:0 3px 0 #a8661a; }
+  .boost { background:linear-gradient(#4b7db5,#345f93); border-color:rgba(255,255,255,.5); } .boost.on { background:linear-gradient(#ffe07a,#e8a030); color:#3a2410; border-color:#fff4c8; }
+  .hubIcon, .dimNav, .back, .cur, .heroTag { background:linear-gradient(#4b7db5,#345f93); border-color:rgba(255,255,255,.5); }
+  .mBox .btn { color:#fff8ee; } .mBox .btn.primary { color:#3a2410; }
+  .btn.danger { background:linear-gradient(#d8544a,#a83028); border-color:#ffd0c8; color:#fff8ee; }
+  .hubIcon, .dimNav, .back, .cur, .heroTag, .pauseIcons .hubIcon, .rSalt { background:linear-gradient(#4b7db5,#345f93) !important; border-color:rgba(255,255,255,.5) !important; color:#fff8ee; }
+  .charCard { color:#fff8ee; } .charCard.on { color:#3a2410; } .charCard img, .charCard .q { background:rgba(255,255,255,.14); }
 </style>
 </head>
 <body>
@@ -234,7 +246,8 @@
 </div>
 <div class="screen" id="scColl">
   <h1 data-i18n="collection">COLLECTION</h1>
-  <div class="btn" id="bCollStats"><span data-i18n="statsAch">STATS & ACHIEVEMENTS</span><small id="collAch"></small></div>
+  <div class="btn" id="bCollAch"><span data-i18n="achievements">ACHIEVEMENTS</span><small id="collAch"></small></div>
+  <div class="btn" id="bCollStats"><span data-i18n="stats">STATS</span><small id="collStats"></small></div>
   <div class="btn" id="bCollMech"><span data-i18n="mechanics">MECHANICS</span><small id="collMech"></small></div>
   <div class="btn" id="bBuilder"><span data-i18n="builder">LEVEL BUILDER</span><small id="collBuilder"></small></div>
   <div class="btn" id="bCollSecrets" style="cursor:default"><span data-i18n="secretsTitle">SECRETS</span><small id="collSecrets"></small></div>
@@ -285,6 +298,14 @@
   <h1 data-i18n="expedition">EXPEDITION</h1>
   <div class="sub" id="expSub" style="max-width:340px"></div>
   <div id="expList" class="list"></div>
+</div>
+<div class="screen" id="scAch">
+  <div class="back" id="bBackAch">◀</div>
+  <h1 data-i18n="achievements">ACHIEVEMENTS</h1>
+  <div class="cur rSalt"><i data-ico="diamond" class="curIco"></i><span id="achSalt">0</span></div>
+  <div class="sub" id="achSub"></div>
+  <div class="btn reward" id="bClaimAll" style="display:none"></div>
+  <div id="achList" class="list"></div>
 </div>
 <div class="screen" id="scStats">
   <div class="back" id="bBackStats" data-i18n="menu">◀ MENU</div>
@@ -411,6 +432,7 @@ const I18N = {
     customize: 'CUSTOMIZE', chooseHero: 'CHOOSE A HERO', coats: 'COATS', reachWorld: 'reach {w}', selectedW: 'selected', equipW: 'equip',
     botCheck: 'Route bot: check all levels', botTitle: 'ROUTE BOT', botOk: 'all reachable', botBad: '{k} unreachable', fpsToggle: 'FPS counter',
     boostsTitle: 'Boosts for this run', b_hooves: 'Soft hooves', b_hooves_d: 'no exhaustion, every landing is soft', b_wind: 'Second wind', b_wind_d: 'one free CONTINUE', b_reach: 'Long reach', b_reach_d: 'edge catches from 1.6× further', boostHint: 'tap to arm · charged on your first jump', freeW: 'free', legendary: 'LEGENDARY', legendary_d: 'glows, and leaves stars behind',
+    claimAll: 'CLAIM ALL · +{n} ◆', claimed: 'claimed', tapClaim: 'tap to claim +5 ◆', toClaim: '{n} ◆ to claim',
     endlessCap: 'salt today {a} / {b}', endlessCapped: 'daily cap reached', endlessNote: 'up to {n} ◆ a day per mode · only past your day\'s best', devPass: 'Developer password', devWrong: 'Wrong password',
     spacePan: '✥ drag to move · pinch or double-tap to zoom', swipeLR: '‹ swipe sideways ›', swipeUD: '⇅ scroll',
     nextWorld: 'NEXT WORLD', worldDone: 'You have cleared everything in {w}!', worldDoneMissing: 'You have cleared everything in {w} — but you missed something along the way. Look again on the map.',
@@ -463,6 +485,7 @@ const I18N = {
     customize: 'КАСТОМИЗАЦИЯ', chooseHero: 'ВЫБЕРИ ГЕРОЯ', coats: 'ОКРАСЫ', reachWorld: 'дойди до {w}', selectedW: 'выбран', equipW: 'надеть',
     botCheck: 'Бот маршрутов: проверить уровни', botTitle: 'БОТ МАРШРУТОВ', botOk: 'все проходимы', botBad: 'непроходимых: {k}', fpsToggle: 'Счётчик FPS',
     boostsTitle: 'Усиления на забег', b_hooves: 'Мягкие копыта', b_hooves_d: 'без усталости, любая посадка мягкая', b_wind: 'Второе дыхание', b_wind_d: 'один бесплатный CONTINUE', b_reach: 'Длинная рука', b_reach_d: 'зацеп в 1,6 раза дальше', boostHint: 'тап — взять · спишется на первом прыжке', freeW: 'бесплатно', legendary: 'ЛЕГЕНДАРНЫЙ', legendary_d: 'светится и оставляет звёзды',
+    claimAll: 'ЗАБРАТЬ ВСЁ · +{n} ◆', claimed: 'получено', tapClaim: 'тап — забрать +5 ◆', toClaim: 'можно забрать {n} ◆',
     endlessCap: 'соль за сегодня {a} / {b}', endlessCapped: 'дневной лимит', endlessNote: 'до {n} ◆ в день на режим · только дальше сегодняшнего рекорда', devPass: 'Пароль разработчика', devWrong: 'Неверный пароль',
     spacePan: '✥ двигай пальцем · щипок или двойной тап — зум', swipeLR: '‹ листай вбок ›', swipeUD: '⇅ листай вниз',
     nextWorld: 'СЛЕДУЮЩИЙ МИР', worldDone: 'Ты прошёл всё в мире {w}!', worldDoneMissing: 'Ты прошёл всё в мире {w} — но что-то потерял по пути. Присмотрись к карте.',
@@ -490,7 +513,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v95', date: '2026-09-22' };
+const BUILD = { version: 'v98', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -1165,8 +1188,8 @@ function softenFirstEncounters(def) {
 // ============================================================
 const SAVE_KEY = 'mountainGoatSave';
 let save = { settings: { sound: true, music: true, vibro: true, left: false, drag: 1, quality: 'high', lang: null }, totalSaltCrystals: 0, levels: {}, skin: 'classic', character: 'goat', skins: { goat: 'classic', kong: 'classic', cat: 'ginger' }, unlocked: { classic: true, 'kong:classic': true, 'cat:ginger': true } };
-const SAVE_VERSION = 2;
-const MIGRATIONS = { 1: s => { s.settings = s.settings || {}; if (s.settings.devUnlock) s.settings.devMode = true; } };   // n: upgrades a v(n) save to v(n+1)
+const SAVE_VERSION = 3;
+const MIGRATIONS = { 1: s => { s.settings = s.settings || {}; if (s.settings.devUnlock) s.settings.devMode = true; }, 2: s => { s.achClaimed = Object.assign({}, s.ach || {}); } };   // n: upgrades a v(n) save to v(n+1)
 try { const raw = localStorage.getItem(SAVE_KEY); const s = raw && JSON.parse(raw);
   if (s) { const from = s.v || 1; if (from < SAVE_VERSION) { try { localStorage.setItem(SAVE_KEY + '.bak.v' + from, raw); } catch (e) {} for (let v = from; v < SAVE_VERSION; v++) if (MIGRATIONS[v]) MIGRATIONS[v](s); s.v = SAVE_VERSION; } save = Object.assign(save, s); } } catch (e) {}
 save.v = SAVE_VERSION;
@@ -2493,7 +2516,7 @@ const goats = [], herd = [], followers = [];
 const G = { aim: null, drag: null, airInput: 0, keyInput: 0, camFx: 0, camFy: 0, dangerT: 0, endT: 0, time: 0, jumps: 0, maxDesc: 0, started: false, hintDone: false, collected: 0, result: null, twin: false };
 
 let screenShownAt = 0;
-const TAB_OF = { scAbout: 'coll', scMenu: 'home', scIbex: 'chars', scWardrobe: 'chars', scSelect: 'map', scChal: 'chal', scEndless: 'chal', scTower: 'chal', scExp: 'chal', scMut: 'chal', scColl: 'coll', scStats: 'coll', scMech: 'coll', scBuilder: 'coll', scSettings: '' };
+const TAB_OF = { scAch: 'coll', scAbout: 'coll', scMenu: 'home', scIbex: 'chars', scWardrobe: 'chars', scSelect: 'map', scChal: 'chal', scEndless: 'chal', scTower: 'chal', scExp: 'chal', scMut: 'chal', scColl: 'coll', scStats: 'coll', scMech: 'coll', scBuilder: 'coll', scSettings: '' };
 const ORIGIN = {};
 function goOrigin(id, fallback) { const o = ORIGIN[id]; if (o === 'scMenu') goMenu(); else if (o === 'scChal') goChal(); else if (o === 'scColl') goColl(); else if (o === 'scIbex') goIbex(); else fallback(); }
 function showScreen(id) {
@@ -2555,7 +2578,7 @@ function refreshBadges() {
   const set = (id, v) => { const b = $(id); if (!b) return; b.textContent = v === true ? '!' : v || ''; b.classList.toggle('on', !!v); };
   const info = dailyInfo(), dd = save.daily || {}; const dailyNew = !(dd.date === info.date && (dd.stars || 0) > 0); const ts = towerState(); const towerNew = !ts.done && ts.cp === 0 && ts.best === 0;
   set('bdgDaily', dailyNew); set('bdgTower', towerNew); set('bdgChal', (dailyNew ? 1 : 0) + (towerNew ? 1 : 0));
-  const achNew = Object.keys(save.ach || {}).length - (save.achSeen || 0); set('bdgColl', achNew > 0 ? achNew : 0); set('bdgProfile', achNew > 0 ? achNew : 0);
+  const achNew = achClaimable().length; set('bdgColl', achNew > 0 ? achNew : 0); set('bdgProfile', achNew > 0 ? achNew : 0);
   const chNew = Object.keys(save.charSeen || {}).filter(c => !(save.charViewed || {})[c]).length; set('bdgChars', chNew);
   const openW = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); const wNew = openW.filter(n => !(save.worldsSeen || []).includes(n)).length; set('bdgMap', save.worldsSeen ? wNew : 0);
 }
@@ -2601,7 +2624,7 @@ setTimeout(checkForUpdate, 8000); setInterval(checkForUpdate, 30 * 60 * 1000); d
 function goChal() { mode = 'select'; hud.style.display = 'none'; dio.bg = true; refreshChal(); showScreen('scChal'); }
 function goColl() {
   mode = 'select'; hud.style.display = 'none'; dio.bg = true;
-  $('collAch').textContent = t('achN', { a: Object.keys(save.ach || {}).length, b: ACH.length }); $('collMech').textContent = t('mechN', { a: Object.keys(save.mechSeen || {}).length, b: MECHS.length });
+  { const c = achClaimable().length; $('collAch').textContent = t('achN', { a: Object.keys(save.ach || {}).length, b: ACH.length }) + (c ? ' · ' + t('toClaim', { n: c * 5 }) : ''); $('collStats').textContent = t('st_levels') + ': ' + stats().levels; } $('collMech').textContent = t('mechN', { a: Object.keys(save.mechSeen || {}).length, b: MECHS.length });
   $('aboutVer').textContent = BUILD.version; $('collBuilder').textContent = t('customN', { n: Object.keys(save.custom || {}).length }); $('collSecrets').textContent = t('secretsN', { a: Object.keys(save.secretFound || {}).length, b: LEVELS.filter(l => l.secret).length });
   showScreen('scColl');
 }
@@ -2662,6 +2685,7 @@ function goSelect() {
   }
   const space = d.key === 'moon', street = !space && W > 360; $('selTitle').style.display = ''; $('selTitle').textContent = t(d.nameKey); mv.className = space ? 'space' : street ? 'street' : 'tall'; mv.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="${space ? 'xMidYMid' : street ? 'xMinYMid' : 'xMidYMin'} slice">${svg}</svg>`;
   setTimeout(() => { if (space) { const sz = Math.max(mv.clientWidth, mv.clientHeight) * 1.9; const sv = mv.querySelector('svg'); sv.style.width = sv.style.height = sz + 'px'; mv.dataset.k = 1; let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; const sp = [[560, 380], [860, 640], [330, 760], [900, 250], [640, 900]][cur % 5]; mv.scrollLeft = sp[0] / W * sz - mv.clientWidth / 2; mv.scrollTop = sp[1] / H * sz - mv.clientHeight / 2; }
+    if (!space && !street) { const sv = mv.querySelector('svg'); const kk = sv.getBoundingClientRect().height / H; let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; const ny = d.key === 'city' ? 560 - cur * (440 / Math.max(1, wis.length - 1)) : 90 + cur * 112; mv.scrollTop = Math.max(0, ny * kk - mv.clientHeight * 0.55); }
     const k = street ? mv.clientHeight / H : mv.clientWidth / W; if (street) { let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; mv.scrollLeft = Math.max(0, (cur * 150 + 80) * k - mv.clientWidth / 2); }
     const canScroll = space || (street ? mv.scrollWidth > mv.clientWidth + 8 : mv.scrollHeight > mv.clientHeight + 8); const hint = $('mapHint'); hint.textContent = space ? t('spacePan') : street ? t('swipeLR') : t('swipeUD'); hint.classList.toggle('show', canScroll && !(save.mapHinted || {})[d.key]);
     const done = () => { hint.classList.remove('show'); save.mapHinted = save.mapHinted || {}; save.mapHinted[d.key] = true; persist(); mv.removeEventListener('scroll', done); }; if (canScroll) { mv.addEventListener('scroll', done, { once: true }); setTimeout(() => hint.classList.remove('show'), 6000); } }, 0);
@@ -3321,17 +3345,29 @@ const ACH = [
   ['secrets', () => Object.keys(save.secretFound || {}).length >= 4], ['five', () => Object.values(save.levels).some(l => l.stars >= 5)], ['tower', () => save.tower && save.tower.done], ['endless', () => Object.values(save.endless || {}).some(v => v >= 300)],
   ['chars', () => Object.keys(save.charSeen || {}).length + 1 >= 8], ['exp', s => s.exp >= 1], ['streak', () => save.daily && (save.daily.streak || 0) >= 7],
 ];
-function checkAchievements() { const s = stats(); save.ach = save.ach || {}; let gained = 0; for (const [id, fn] of ACH) if (!save.ach[id] && fn(s)) { save.ach[id] = Date.now(); gained += 5; } if (gained) { save.totalSaltCrystals += gained; persist(); } return gained; }
+function checkAchievements() { const s = stats(); save.ach = save.ach || {}; let fresh = 0; for (const [id, fn] of ACH) if (!save.ach[id] && fn(s)) { save.ach[id] = Date.now(); fresh++; } if (fresh) persist(); return fresh; }
+function achClaimable() { return ACH.filter(([id]) => (save.ach || {})[id] && !(save.achClaimed || {})[id]).map(([id]) => id); }
+function claimAch(ids) { save.achClaimed = save.achClaimed || {}; let n = 0; for (const id of ids) if (!save.achClaimed[id] && (save.ach || {})[id]) { save.achClaimed[id] = Date.now(); n++; } if (n) { save.totalSaltCrystals += n * 5; persist(); AudioSys.play('pickup'); hubToastAny(t('saltGain', { n: n * 5 })); } return n; }
+function goAch() {
+  save.achSeen = Object.keys(save.ach || {}).length; persist(); mode = 'select'; hud.style.display = 'none'; paintIcons($('scAch')); $('achSalt').textContent = save.totalSaltCrystals;
+  const list = $('achList'); list.innerHTML = ''; const claimable = achClaimable(); const done = Object.keys(save.ach || {}).length;
+  $('achSub').textContent = t('achN', { a: done, b: ACH.length }); const ca = $('bClaimAll'); ca.style.display = claimable.length > 1 ? 'block' : 'none'; ca.textContent = t('claimAll', { n: claimable.length * 5 }); ca.onclick = e => { e.stopPropagation(); if (!fresh()) { claimAch(claimable); goAch(); } };
+  const order = [...ACH].sort((a, b) => (claimable.includes(b[0]) - claimable.includes(a[0])) || (!!(save.ach || {})[b[0]] - !!(save.ach || {})[a[0]]));
+  for (const [id] of order) { const got = !!(save.ach || {})[id], claimed = !!(save.achClaimed || {})[id]; const d = document.createElement('div'); d.className = 'btn' + (got ? (claimed ? '' : ' reward') : ' dim'); d.style.cursor = got && !claimed ? 'pointer' : 'default';
+    d.innerHTML = `${got ? (claimed ? '✓ ' : '★ ') : ''}${t('a_' + id)}<small>${t('a_' + id + '_d')} · ${got ? (claimed ? t('claimed') : t('tapClaim')) : '+5 ◆'}</small>`;
+    if (got && !claimed) d.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) { claimAch([id]); goAch(); } }); list.appendChild(d); }
+  showScreen('scAch');
+}
+$('bCollAch').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goAch(); });
+$('bBackAch').addEventListener('click', e => { e.stopPropagation(); goOrigin('scAch', goColl); });
 function goStats() {
   save.achSeen = Object.keys(save.ach || {}).length; persist();
   mode = 'select'; hud.style.display = 'none'; const st = stats(); const list = $('statsList'); list.innerHTML = '';
   const row = (k, v) => { const d = document.createElement('div'); d.className = 'btn'; d.style.cursor = 'default'; d.innerHTML = `${t(k)}<small>${v}</small>`; list.appendChild(d); };
   row('st_jumps', st.jumps); row('st_saves', st.saves); row('st_meters', Math.round(st.meters)); row('st_time', fmtTime(st.time)); row('st_levels', st.levels); row('st_kids', st.kids); row('st_secrets', Object.keys(save.secretFound || {}).length); row('st_exp', st.exp); row('st_streak', (save.daily && save.daily.streak) || 0);
-  const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '12px 0 4px'; h.textContent = t('achievements'); list.appendChild(h);
-  for (const [id] of ACH) { const d = document.createElement('div'); d.className = 'btn' + ((save.ach || {})[id] ? '' : ' dim'); d.style.cursor = 'default'; d.innerHTML = `${(save.ach || {})[id] ? '✓ ' : ''}${t('a_' + id)}<small>${t('a_' + id + '_d')} · +5 ◆</small>`; list.appendChild(d); }
   showScreen('scStats');
 }
-$('bStats').addEventListener('click', e => { e.stopPropagation(); goStats(); });
+$('bStats').addEventListener('click', e => { e.stopPropagation(); if (achClaimable().length) goAch(); else goStats(); });
 $('bBackStats').addEventListener('click', e => { e.stopPropagation(); goOrigin('scStats', goColl); });
 // ---- expedition: five random open levels, one life, a choice of two cards between stages ----
 const EXP = { on: false, step: 0, salt: 0, used: [], len: 5, lives: 0, log: [] };
@@ -3430,7 +3466,7 @@ function tickStage(id, dt) {
     const box = new THREE.Box3().setFromObject(g.root); const c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3()); g.root.position.x -= c.x; g.root.position.z -= c.z; S.R = Math.max(sz.x, sz.y, sz.z); S.cy = sz.y / 2; }
   const g = S.goat; g.pos.set(-g.root.position.x + g.root.position.x, 0); g.state = ST.IDLE; g.stateT = (g.stateT || 0) + dt; const px = g.root.position.x, pz = g.root.position.z; g.animate(dt, null); g.root.position.x = px; g.root.position.z = pz;
   if (!S.drag) { S.yaw += S.vel * dt; S.vel *= Math.pow(0.04, dt); S.idle += dt; if (S.idle > 2.5 && Math.abs(S.vel) < 0.05) S.yaw += dt * 0.35; }
-  S.pivot.rotation.y = S.yaw; const R = S.R || 2; S.cam.position.set(0, S.cy + R * 0.35, R * 2.3); S.cam.lookAt(0, S.cy * 0.9, 0); S.r.render(S.sc, S.cam);
+  S.pivot.rotation.y = S.yaw; const R = S.R || 2; S.cam.position.set(0, S.cy + R * 0.5, R * 2.7); S.cam.lookAt(0, S.cy * 0.85, 0); S.r.render(S.sc, S.cam);
 }
 function goIbex() {
   save.charViewed = Object.assign({}, save.charSeen || {}); persist();
