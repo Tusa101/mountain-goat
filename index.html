@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v89 -->
+<!-- build v91 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -28,7 +28,14 @@
   @keyframes windy { from { background-position:0 0; } to { background-position:0 260px; } }
   .screen { position:fixed; inset:0; z-index:20; display:none; flex-direction:column; align-items:center; justify-content:safe center; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; touch-action:pan-y; text-align:center; background:rgba(236,226,208,.22); padding:24px; box-sizing:border-box; overflow-x:hidden; }
   .screen > * { flex-shrink:0; }
-  #mapView svg { display:block; } #mapView .node { cursor:pointer; } #mapView .node text { font-family:inherit; }
+  #mapView { display:none; position:fixed; left:0; right:0; top:0; bottom:calc(72px + env(safe-area-inset-bottom)); overflow:auto; touch-action:pan-x pan-y; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; scrollbar-width:none; }
+  #mapView::-webkit-scrollbar { display:none; } #mapView svg { display:block; }
+  #mapView.street svg { height:100%; width:auto; } #mapView.space { background:#070812; } #mapView.space svg { width:200vmax; height:200vmax; } #mapView.tall svg { width:100%; height:auto; min-height:100%; }
+  #scSelect { padding-top:calc(60px + env(safe-area-inset-top)) !important; justify-content:flex-start; }
+  #scSelect #selTitle { position:fixed; top:calc(6px + env(safe-area-inset-top)); left:0; right:0; margin:0; z-index:2; font-size:clamp(20px, 6.5vw, 30px); pointer-events:none; }
+  #mapHint { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(140px + env(safe-area-inset-bottom)); z-index:3; display:none; padding:6px 14px; border-radius:14px; background:rgba(40,26,14,.8); font-size:13px; font-weight:700; letter-spacing:.06em; pointer-events:none; animation:hintPulse 1.6s ease-in-out infinite; }
+  #mapHint.show { display:block; } @keyframes hintPulse { 0%,100% { opacity:.55; transform:translateX(-50%) scale(1); } 50% { opacity:1; transform:translateX(-50%) scale(1.06); } }
+  #scSelect #selTitle { text-shadow:0 2px 10px rgba(0,0,0,.6), 0 0 3px rgba(0,0,0,.8); } #mapView .node { cursor:pointer; } #mapView .node text { font-family:inherit; }
   .list { max-height:none; overflow-y:visible; overflow-x:hidden !important; scrollbar-width:none; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
   .screen.show { display:flex; }
   .screen h1 { font-size:40px; margin:0 0 4px; letter-spacing:.06em; font-weight:800; }
@@ -243,7 +250,7 @@
 <div class="screen" id="scSelect">
   <div class="back" id="bBackMenu" data-i18n="menu">◀ MENU</div>
   <h1 id="selTitle">MOUNTAIN GOAT</h1>
-  <div id="mapView" style="display:none;width:100%;max-width:520px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain"></div>
+  <div id="mapView"></div><div id="mapHint"></div>
   <div id="levelList" class="list"></div>
 </div>
 <div class="screen" id="scEndless">
@@ -404,6 +411,7 @@ const I18N = {
     customize: 'CUSTOMIZE', chooseHero: 'CHOOSE A HERO', coats: 'COATS', reachWorld: 'reach {w}', selectedW: 'selected', equipW: 'equip',
     botCheck: 'Route bot: check all levels', botTitle: 'ROUTE BOT', botOk: 'all reachable', botBad: '{k} unreachable', fpsToggle: 'FPS counter',
     boostsTitle: 'Boosts for this run', b_hooves: 'Soft hooves', b_hooves_d: 'no exhaustion, every landing is soft', b_wind: 'Second wind', b_wind_d: 'one free CONTINUE', b_reach: 'Long reach', b_reach_d: 'edge catches from 1.6× further', boostHint: 'tap to arm · charged on your first jump', freeW: 'free', legendary: 'LEGENDARY', legendary_d: 'glows, and leaves stars behind',
+    spacePan: '✥ drag space around — worlds are scattered', swipeLR: '‹ swipe sideways ›', swipeUD: '⇅ scroll',
     nextWorld: 'NEXT WORLD', worldDone: 'You have cleared everything in {w}!', worldDoneMissing: 'You have cleared everything in {w} — but you missed something along the way. Look again on the map.',
     ok: 'OK', cancel: 'CANCEL', oops: 'Hmm', lockedTitle: 'Locked', deleteQ: 'Delete «{n}»?', deleteBtn: 'DELETE', pasteJson: 'Paste the level JSON', copyJson: 'Level JSON', needFinish: 'Add a FINISH terrace first', copiedJson: 'Level JSON copied to clipboard', resetTitle: 'Reset progress', resetBtn: 'RESET', importTitle: 'Import save', importBtn: 'REPLACE', towerRestartQ: 'Start this week\'s tower from the ground?', linkTitle: 'Share link',
     tab_home: 'HOME', tab_chars: 'HEROES', tab_map: 'MAP', tab_chal: 'MODES', tab_coll: 'JOURNAL', change: 'CHANGE', challenges: 'MODES', collection: 'JOURNAL', statsAch: 'STATS & ACHIEVEMENTS', secretsTitle: 'SECRETS', secretsN: 'found {a} / {b}', achN: '{a} / {b} achievements', mechN: '{a} / {b} met', customN: '{n} custom levels', tDaily: 'DAILY', tTower: 'TOWER', tSeason: 'season', tEndless: 'ENDLESS', tExp: 'EXPEDITION', tBuilder: 'BUILDER', leftH: '{h}h {m}m left', expBestShort: 'best {n}', playDone: 'all done — replay', playLockedDim: 'finish {n} mountain levels', backExit: 'Press back again to exit', selfTest: 'Layout self-test', selfTestOk: 'LAYOUT SELF-TEST · {n} screens · 0 problems', selfTestBad: 'LAYOUT SELF-TEST · {n} screens · {k} problems', tapToClose: 'tap to close', runsN: 'best {n} m', mutOnN: 'active: {l}', mutNone: 'none active',
@@ -454,6 +462,7 @@ const I18N = {
     customize: 'КАСТОМИЗАЦИЯ', chooseHero: 'ВЫБЕРИ ГЕРОЯ', coats: 'ОКРАСЫ', reachWorld: 'дойди до {w}', selectedW: 'выбран', equipW: 'надеть',
     botCheck: 'Бот маршрутов: проверить уровни', botTitle: 'БОТ МАРШРУТОВ', botOk: 'все проходимы', botBad: 'непроходимых: {k}', fpsToggle: 'Счётчик FPS',
     boostsTitle: 'Усиления на забег', b_hooves: 'Мягкие копыта', b_hooves_d: 'без усталости, любая посадка мягкая', b_wind: 'Второе дыхание', b_wind_d: 'один бесплатный CONTINUE', b_reach: 'Длинная рука', b_reach_d: 'зацеп в 1,6 раза дальше', boostHint: 'тап — взять · спишется на первом прыжке', freeW: 'бесплатно', legendary: 'ЛЕГЕНДАРНЫЙ', legendary_d: 'светится и оставляет звёзды',
+    spacePan: '✥ двигай пространство — миры разбросаны', swipeLR: '‹ листай вбок ›', swipeUD: '⇅ листай вниз',
     nextWorld: 'СЛЕДУЮЩИЙ МИР', worldDone: 'Ты прошёл всё в мире {w}!', worldDoneMissing: 'Ты прошёл всё в мире {w} — но что-то потерял по пути. Присмотрись к карте.',
     ok: 'ОК', cancel: 'ОТМЕНА', oops: 'Хм', lockedTitle: 'Закрыто', deleteQ: 'Удалить «{n}»?', deleteBtn: 'УДАЛИТЬ', pasteJson: 'Вставь JSON уровня', copyJson: 'JSON уровня', needFinish: 'Сначала поставь террасу FINISH', copiedJson: 'JSON уровня скопирован', resetTitle: 'Сброс прогресса', resetBtn: 'СБРОСИТЬ', importTitle: 'Импорт сохранения', importBtn: 'ЗАМЕНИТЬ', towerRestartQ: 'Начать башню этой недели с земли?', linkTitle: 'Ссылка',
     tab_home: 'ДОМОЙ', tab_chars: 'ГЕРОИ', tab_map: 'КАРТА', tab_chal: 'РЕЖИМЫ', tab_coll: 'ЖУРНАЛ', change: 'СМЕНИТЬ', challenges: 'РЕЖИМЫ', collection: 'ЖУРНАЛ', statsAch: 'СТАТИСТИКА И ДОСТИЖЕНИЯ', secretsTitle: 'СЕКРЕТЫ', secretsN: 'найдено {a} / {b}', achN: 'достижений {a} / {b}', mechN: 'встречено {a} / {b}', customN: 'своих уровней: {n}', tDaily: 'ДЕНЬ', tTower: 'БАШНЯ', tSeason: 'сезон', tEndless: 'БЕЗ КОНЦА', tExp: 'ПОХОД', tBuilder: 'РЕДАКТОР', leftH: 'ещё {h}ч {m}м', expBestShort: 'лучш. {n}', playDone: 'всё пройдено — ещё раз', playLockedDim: 'пройди {n} уровней горы', backExit: 'Нажми «назад» ещё раз для выхода', selfTest: 'Self-test раскладки', selfTestOk: 'SELF-TEST РАСКЛАДКИ · экранов {n} · 0 проблем', selfTestBad: 'SELF-TEST РАСКЛАДКИ · экранов {n} · проблем {k}', tapToClose: 'тап — закрыть', runsN: 'рекорд {n} м', mutOnN: 'включены: {l}', mutNone: 'не включены',
@@ -479,7 +488,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v89', date: '2026-09-22' };
+const BUILD = { version: 'v91', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -2482,6 +2491,7 @@ const TAB_OF = { scAbout: 'coll', scMenu: 'home', scIbex: 'chars', scWardrobe: '
 const ORIGIN = {};
 function goOrigin(id, fallback) { const o = ORIGIN[id]; if (o === 'scMenu') goMenu(); else if (o === 'scChal') goChal(); else if (o === 'scColl') goColl(); else if (o === 'scIbex') goIbex(); else fallback(); }
 function showScreen(id) {
+  if (id !== 'scSelect') { $('mapHint').classList.remove('show'); }
   { const prev = document.querySelector('.screen.show'); if (prev && id && prev.id !== id && ['scMenu', 'scChal', 'scColl', 'scIbex'].includes(prev.id)) ORIGIN[id] = prev.id; }
   for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now(); if (id !== 'scMenu') $('heroTag').style.display = 'none';
   const tabbed = id in TAB_OF && mode !== 'pause' && mode !== 'play' && mode !== 'result'; $('tabBar').classList.toggle('show', tabbed); document.body.classList.toggle('tabs', tabbed);
@@ -2609,15 +2619,16 @@ function goSelect() {
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const nodeInfo = wi => { const w = WORLDS[wi], open = worldOpen(wi), got = worldStars(wi), max = worldMax(wi), done = worldLevelsDone(wi) >= worldCount(wi); return { w, open, got, max, done }; };
   let svg = '', W = 360, H = 640;
-  if (d.key === 'moon') { // the Moon: black sky, a cratered surface, nodes along the rim
-    svg += `<rect x="0" y="0" width="360" height="640" fill="#0a0c16"/>`; for (let i = 0; i < 60; i++) svg += `<circle cx="${(i * 97) % 360}" cy="${(i * 61) % 380}" r="${i % 5 ? 1 : 1.8}" fill="#fff" opacity="${0.4 + (i % 4) * 0.15}"/>`;
-    svg += `<circle cx="300" cy="80" r="26" fill="#3a78c8"/><path d="M286 70a14 8 0 0 0 20 12a10 6 0 0 0 12-4" fill="#6fd08a" opacity=".8"/><ellipse cx="300" cy="72" rx="24" ry="8" fill="#fff" opacity=".18"/>`;
-    svg += `<path d="M0 640 L0 400 Q90 350 180 380 T360 360 L360 640 Z" fill="#8c8e96"/><path d="M0 640 L0 470 Q120 440 200 470 T360 450 L360 640 Z" fill="#a4a6ae"/>`;
-    for (const [cx, cy, r] of [[70, 470, 34], [180, 520, 22], [290, 490, 40], [120, 600, 28], [250, 600, 18]]) svg += `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r * 0.45}" fill="#6e7078"/><ellipse cx="${cx}" cy="${cy - 3}" rx="${r * 0.8}" ry="${r * 0.3}" fill="#7c7e86"/><path d="M${cx - r} ${cy} a${r} ${r * 0.45} 0 0 1 ${2 * r} 0" fill="none" stroke="#bcbec6" stroke-width="2"/>`;
-    const pts = wis.map((wi, i) => [90 + i * 120, 430 - (i % 2) * 30]);
-    wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
-      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d8dce4') : '#3a3c44'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#1a1c24">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
-      svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
+  if (d.key === 'moon') { // space: worlds are planets scattered across a field you drag around
+    W = 1100; H = 1100; svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#070812"/>`; for (let i = 0; i < 160; i++) svg += `<circle cx="${(i * 233) % W}" cy="${(i * 151 + 37) % H}" r="${i % 7 ? 1.1 : 2}" fill="#fff" opacity="${0.3 + (i % 5) * 0.14}"/>`;
+    svg += `<circle cx="180" cy="200" r="70" fill="#3a78c8"/><path d="M130 180q30-30 60 0t60 10q-20 30-60 20t-60-30z" fill="#6fd08a" opacity=".85"/><ellipse cx="180" cy="176" rx="64" ry="18" fill="#fff" opacity=".18"/>`;
+    const spots = [[560, 380, 60, '#b4b6be'], [860, 640, 44, '#c8b090'], [330, 760, 52, '#9aa4b8'], [900, 250, 36, '#d0c0a0'], [640, 900, 48, '#aeb6c0']];
+    const pts = wis.map((wi, i) => spots[i % spots.length]);
+    for (let i = 1; i < pts.length; i++) svg += `<path d="M${pts[i - 1][0]} ${pts[i - 1][1]} Q${(pts[i - 1][0] + pts[i][0]) / 2 + 60} ${(pts[i - 1][1] + pts[i][1]) / 2 - 80} ${pts[i][0]} ${pts[i][1]}" fill="none" stroke="#fff8ee" stroke-width="2" stroke-dasharray="4 10" opacity=".5"/>`;
+    wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y, r, col] = pts[i];
+      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="${r}" fill="${open ? col : '#3a3c44'}"/>`; for (let c = 0; c < 5; c++) { const a = c * 1.9 + i, rr = r * (0.16 + (c % 3) * 0.05); svg += `<ellipse cx="${x + Math.cos(a) * r * 0.55}" cy="${y + Math.sin(a) * r * 0.55}" rx="${rr}" ry="${rr * 0.7}" fill="#000" opacity=".22"/>`; }
+      svg += `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#fff8ee" stroke-width="3" opacity=".9"/><text x="${x}" y="${y + 8}" text-anchor="middle" font-size="22" fill="#1a1c24" font-weight="800">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `<text x="${x}" y="${y + r + 24}" text-anchor="middle" font-size="14" font-weight="700" fill="#fff8ee">${esc(w.name)}</text><text x="${x}" y="${y + r + 42}" text-anchor="middle" font-size="12" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
   } else if (d.key === 'mountain') { // a mountain: worlds are tiers from the summit down
     const pts = wis.map((wi, i) => [i % 2 ? 250 : 110, 90 + i * 112]);
     svg += `<path d="M0 640 L0 420 L70 300 L130 340 L180 120 L230 190 L270 60 L320 200 L360 140 L360 640 Z" fill="#8d6240" opacity=".55"/><path d="M0 640 L0 500 L90 420 L160 470 L240 330 L300 400 L360 320 L360 640 Z" fill="#b9865a" opacity=".55"/><path d="M160 160 L180 120 L200 160 Z" fill="#f4f7fa" opacity=".8"/>`;
@@ -2633,7 +2644,7 @@ function goSelect() {
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
   } else { // a street: worlds left to right, the map scrolls sideways
     W = Math.max(360, 80 + wis.length * 150); H = 360;
-    svg += `<rect x="0" y="230" width="${W}" height="130" fill="#7fa74e" opacity=".8"/><rect x="0" y="250" width="${W}" height="8" fill="#b98a5a"/>`; for (let i = 0; i < W / 30; i++) svg += `<rect x="${i * 30 + 6}" y="212" width="8" height="40" fill="#b98a5a"/>`;
+    svg += `<rect x="0" y="0" width="${W}" height="230" fill="#a8d0ea" opacity=".55"/><rect x="0" y="230" width="${W}" height="130" fill="#7fa74e" opacity=".8"/><rect x="0" y="250" width="${W}" height="8" fill="#b98a5a"/>`; for (let i = 0; i < W / 30; i++) svg += `<rect x="${i * 30 + 6}" y="212" width="8" height="40" fill="#b98a5a"/>`;
     for (let i = 0; i < W / 120; i++) svg += `<circle cx="${i * 120 + 60}" cy="${140 + (i % 2) * 20}" r="34" fill="#4f7a34" opacity=".7"/><rect x="${i * 120 + 56}" y="170" width="8" height="60" fill="#6e4e30"/>`;
     const pts = wis.map((wi, i) => [80 + i * 150, 250 + (i % 2 ? 24 : -24)]);
     svg += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#fff8ee" stroke-width="3" stroke-dasharray="6 8" opacity=".7"/>`;
@@ -2641,13 +2652,16 @@ function goSelect() {
       svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d2a878') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
   }
-  const street = W > 360; const k = street ? 1.35 : 1; $('selTitle').style.display = ''; $('selTitle').textContent = t(d.nameKey); $('selTitle').style.fontSize = 'clamp(22px, 7vw, 34px)'; mv.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${Math.round(W * k)}" height="${Math.round(H * k)}" style="${street ? 'max-width:none;display:block' : 'max-width:100%;height:auto'}">${svg}</svg>`;
-  mv.style.overflowX = street ? 'auto' : 'hidden'; if (street) setTimeout(() => { let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; mv.scrollLeft = Math.max(0, (cur * 150 + 80) * k - innerWidth / 2); }, 0);
+  const space = d.key === 'moon', street = !space && W > 360; $('selTitle').style.display = ''; $('selTitle').textContent = t(d.nameKey); mv.className = space ? 'space' : street ? 'street' : 'tall'; mv.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="${space ? 'xMidYMid' : street ? 'xMinYMid' : 'xMidYMin'} slice">${svg}</svg>`;
+  setTimeout(() => { if (space) { const sz = Math.max(mv.clientWidth, mv.clientHeight) * 1.9; const sv = mv.querySelector('svg'); sv.style.width = sv.style.height = sz + 'px'; let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; const sp = [[560, 380], [860, 640], [330, 760], [900, 250], [640, 900]][cur % 5]; mv.scrollLeft = sp[0] / W * sz - mv.clientWidth / 2; mv.scrollTop = sp[1] / H * sz - mv.clientHeight / 2; }
+    const k = street ? mv.clientHeight / H : mv.clientWidth / W; if (street) { let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; mv.scrollLeft = Math.max(0, (cur * 150 + 80) * k - mv.clientWidth / 2); }
+    const canScroll = space || (street ? mv.scrollWidth > mv.clientWidth + 8 : mv.scrollHeight > mv.clientHeight + 8); const hint = $('mapHint'); hint.textContent = space ? t('spacePan') : street ? t('swipeLR') : t('swipeUD'); hint.classList.toggle('show', canScroll && !(save.mapHinted || {})[d.key]);
+    const done = () => { hint.classList.remove('show'); save.mapHinted = save.mapHinted || {}; save.mapHinted[d.key] = true; persist(); mv.removeEventListener('scroll', done); }; if (canScroll) { mv.addEventListener('scroll', done, { once: true }); setTimeout(() => hint.classList.remove('show'), 6000); } }, 0);
   for (const n of mv.querySelectorAll('.node')) n.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; const wi = +n.dataset.wi; if (worldOpen(wi)) goWorld(wi); else { const { w } = nodeInfo(wi); const pos = d.worlds.indexOf(w.name); if (pos > 0) { const prev = WORLDS.findIndex(x => x.name === d.worlds[pos - 1]); UI.alert(`<b>${w.name}</b><br>${t('earnStars', { n: Math.ceil(worldMax(prev) * 0.6), w: WORLDS[prev].name, g: worldStars(prev) })}<br>${t('worldsDone', { a: worldLevelsDone(prev), b: worldCount(prev) })}`, { kind: 'err', title: t('lockedTitle') }); } } });
   showScreen('scSelect');
 }
 function goWorld(wi) {
-  $('selTitle').style.display = ''; $('selTitle').style.fontSize = ''; $('selTitle').textContent = WORLDS[wi].name; $('bBackMenu').style.display = ''; mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
+  $('mapHint').classList.remove('show'); $('selTitle').style.display = ''; $('selTitle').style.fontSize = ''; $('selTitle').textContent = WORLDS[wi].name; $('bBackMenu').style.display = ''; mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
   const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `${t('world')} ${wi + 1} · ${w.name}`; list.appendChild(h);
   w.levels.forEach((k, li) => {
     const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
