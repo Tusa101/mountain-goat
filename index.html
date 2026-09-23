@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v92 -->
+<!-- build v93 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -488,7 +488,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v92', date: '2026-09-22' };
+const BUILD = { version: 'v93', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -1108,10 +1108,10 @@ function towerState() { const wk = weekId(); save.tower = save.tower || {}; if (
 const DIMS = [
   { key: 'mountain', nameKey: 'dimMountain', subKey: 'dimMountainSub', worlds: ['NEGEV', 'RED CANYON', 'CHALK COAST', 'MOONLIT RIDGE', 'THE ALPS'] },
   { key: 'city', nameKey: 'dimCity', subKey: 'dimCitySub', worlds: ['SKYSCRAPER', 'PANELKI'], need: { dim: 0, n: 8 } },
+  { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET', 'THE APARTMENT', 'THE LAKE'], need: { dim: 1, n: 5 } },
   { key: 'frog', nameKey: 'dimFrog', subKey: 'dimFrogSub', worlds: ['FOREST FLOOR', 'THE POND', 'THE ANTHILL'], need: { dim: 2, n: 8 } },
   { key: 'moon', nameKey: 'dimMoon', subKey: 'dimMoonSub', worlds: ['MARE TRANQUILLITATIS', 'CRATER HIGHLANDS', 'THE FAR SIDE'], need: { dim: 0, n: 14 } },
   { key: 'soon', nameKey: 'dimSoon', subKey: 'dimSoonSub', worlds: [], soon: true },
-  { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET', 'THE APARTMENT', 'THE LAKE'], need: { dim: 1, n: 5 } },
 ];
 const WORLDS = [
   { name: 'NEGEV', sub: 'desert cliffs', levels: ['steps', 'descent', 'crystal', 'twin', 'hawk', 'negevPuzzle', 'negevChal', 'negevSecret'] },
