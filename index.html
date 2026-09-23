@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v86 -->
+<!-- build v88 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -383,7 +383,7 @@ const I18N = {
     camMsg: 'The mountain stopped waiting for you.', tiredMsg: 'That drop was too long. The goat is exhausted and cannot go on.', spikeMsg: 'Those spikes were not a landing spot.', rockMsg: 'A boulder came down the chute.', kidMsg: 'The little one did not make that jump.',
     tipCamera: 'Tip: the top of the screen is the deadline — jump before it reaches you.', tipTired: 'Tip: never drop past more than 3 rows of ledges in one jump.', tipSpikes: 'Tip: land on the clear half of a spiked ledge.', tipHawk: 'Tip: birds only strike in the air — let one pass, then jump.', tipRock: 'Tip: the dark shadow at a crevice means a boulder is about to drop.', tipKid: 'Tip: kids replay your exact jumps — a jump you barely made, they may not.', tipFall: 'Tip: an edge within an arm\'s reach still counts — aim for the ledge, not past it.',
     jumps: 'Jumps', saves: 'Edge saves', kidsRescued: 'Kids rescued', under: 'UNDER', allKids: 'ALL KIDS RESCUED', noSaves: 'NO EDGE SAVES', cleanRun: 'CLEAN RUN', today: 'today', streak: 'Streak', newBest: 'NEW BEST!', best: 'best', youHave: 'you have', salt: 'salt',
-    devUnlock: 'Unlock everything (dev)', p_SLIPPERS: 'SLIPPERS', p_BALLS: 'BALLS', p_STICKS: 'STICKS', p_FISH: 'FISH', 'p_MOON ROCK': 'MOON ROCK', dimMoon: 'THE MOON', dimMoonSub: 'ibex in a helmet · one sixth of the gravity, long slow arcs', h_moon: 'Low gravity: arcs are long and slow<br>Aim shorter than you think', 'p_ICE CREAM': 'ICE CREAM', h_soft: 'Snowdrift — a soft landing from any height<br>but powder edges give no grip', m_soft: 'Soft landings', m_soft_d: 'Snowdrifts and cushions absorb any fall — no exhaustion, no hard landing. But their edges crumble: no edge catches.', h_seesaw: 'A seesaw — land on one end, the other rises<br>Jump off the rising end for a boost', m_seesaw: 'Seesaw', m_seesaw_d: 'A plank on a pivot. Your weight tips it; jump off the end that is swinging up and it throws you higher.',
+    devUnlock: 'Unlock everything (dev)', p_SLIPPERS: 'SLIPPERS', p_BALLS: 'BALLS', p_STICKS: 'STICKS', p_FISH: 'FISH', p_FLIES: 'FLIES', dimSoon: 'COMING SOON', dimSoonSub: 'a new world is being carved…', dimFrog: 'THE UNDERGROWTH', dimFrogSub: 'a tiny frog · leaves, stones and lily pads below the grass', h_ants: 'Ants patrol the leaves — they shove you off<br>Wait for them to turn, or hop over', m_ants: 'Ants', m_ants_d: 'They walk back and forth along a ledge. Touch one and it pushes you off — time your landing.', 'p_MOON ROCK': 'MOON ROCK', dimMoon: 'THE MOON', dimMoonSub: 'ibex in a helmet · one sixth of the gravity, long slow arcs', h_moon: 'Low gravity: arcs are long and slow<br>Aim shorter than you think', 'p_ICE CREAM': 'ICE CREAM', h_soft: 'Snowdrift — a soft landing from any height<br>but powder edges give no grip', m_soft: 'Soft landings', m_soft_d: 'Snowdrifts and cushions absorb any fall — no exhaustion, no hard landing. But their edges crumble: no edge catches.', h_seesaw: 'A seesaw — land on one end, the other rises<br>Jump off the rising end for a boost', m_seesaw: 'Seesaw', m_seesaw_d: 'A plank on a pivot. Your weight tips it; jump off the end that is swinging up and it throws you higher.',
     soundOn: 'Sound', musicOn: 'Music', vibro: 'Vibration', leftHand: 'Left-handed', dragSens: 'Drag sensitivity', quality: 'Quality', lang: 'Language', resetProgress: 'RESET PROGRESS', resetConfirm: 'Erase all progress, salt and custom levels?', low: 'low', high: 'high', short: 'short', normal: 'normal', long: 'long', auto: 'auto',
     skinsNote: 'Skins change the coat only — never the jump.', selected: 'SELECTED', equip: 'EQUIP', unlock: 'UNLOCK', playing: 'PLAYING', reachWorld: 'Reach the {w} world',
     endlessSub: 'Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.', endlessDown: 'ENDLESS DESCENT', endlessUp: 'ENDLESS ASCENT', resumeRun: 'RESUME',
@@ -413,7 +413,7 @@ const I18N = {
     expedition: 'EXPEDITION', expSub: 'Five random levels in one life. No CONTINUE. Between levels you choose the next card.', expStep: 'stage {k} / {n}', expChoose: 'Choose the next stage', expOver: 'EXPEDITION OVER', expWin: 'EXPEDITION COMPLETE', expReward: '+10 ◆ · expeditions won: {n}', expSalt: 'salt so far: {n}', expStart: 'SET OUT', stats: 'STATS', st_jumps: 'Jumps', st_saves: 'Edge catches', st_meters: 'Metres travelled', st_time: 'Time played', st_levels: 'Levels completed', st_kids: 'Kids rescued', st_secrets: 'Secrets found', st_exp: 'Expeditions won', st_streak: 'Best daily streak', achievements: 'ACHIEVEMENTS', saveImage: 'SAVE RUN CARD', runCard: 'Run card',
     a_catch1: 'First catch', a_catch1_d: 'grab an edge once', a_catch100: 'Hundred hands', a_catch100_d: '100 edge catches', a_km: 'Kilometre', a_km_d: '1 000 m travelled', a_km10: 'Ten kilometres', a_km10_d: '10 000 m travelled', a_lv10: 'Getting somewhere', a_lv10_d: '10 levels completed', a_lv30: 'Mountaineer', a_lv30_d: '30 levels completed', a_kids10: 'Shepherd', a_kids10_d: '10 kids rescued', a_secrets: 'Nosy', a_secrets_d: 'find 4 secret passages', a_five: 'Perfect ledge', a_five_d: '5 ★ on one level', a_tower: 'Tower top', a_tower_d: 'finish a weekly tower', a_endless: 'Far below', a_endless_d: '300 m in one endless run', a_chars: 'Menagerie', a_chars_d: 'unlock 8 characters', a_exp: 'Explorer', a_exp_d: 'win an expedition', a_streak: 'Regular', a_streak_d: '7-day daily streak',
     tower: 'WEEKLY TOWER', towerSub: 'One 200 m climb per week, same for everyone. Five sections, checkpoints between them. Fall — resume from the last checkpoint.', towerWeek: 'week {w}', towerHeight: 'height {h} m · checkpoint {c} / 5', towerClimb: 'CLIMB', towerResume: 'RESUME FROM CHECKPOINT {c}', towerRestart: 'RESTART THE WEEK', towerDone: 'TOWER COMPLETE · {t}', towerCp: 'Checkpoint {c} / 5', towerBest: 'best this week: {h} m', towerTop: 'TOP OF THE TOWER',
-    mutators: 'MUTATORS', mutSub: 'Bend the rules. Salt is multiplied; goals and stars are not awarded while a mutator is on.', mut_lowGrav: 'Low gravity', mut_lowGrav_d: 'gravity ×0.75 — long floaty arcs', mut_fog: 'Fog', mut_fog_d: 'you see only the next ledge', mut_mirror: 'Mirror', mut_mirror_d: 'the whole level flipped left↔right', mut_rush: 'Rush', mut_rush_d: 'camera ×1.5, ◆ ×2', mut_heavy: 'Heavy', mut_heavy_d: 'jump power ×0.85', mut_echo: 'Echo', mut_echo_d: 'a ghost replays your previous run', mutOn: 'ON', mutOff: 'off', mutMult: 'salt ×{m}', mutActive: 'mutators: {list}', mutNoStars: 'no stars with mutators',
+    mutators: 'MUTATORS', mutSub: 'Bend the rules. Salt is multiplied; goals and stars are not awarded while a mutator is on.', mut_chase: 'The chase', mut_chase_d: 'the camera hunts you — stop and it wins', mut_lowGrav: 'Low gravity', mut_lowGrav_d: 'gravity ×0.75 — long floaty arcs', mut_fog: 'Fog', mut_fog_d: 'you see only the next ledge', mut_mirror: 'Mirror', mut_mirror_d: 'the whole level flipped left↔right', mut_rush: 'Rush', mut_rush_d: 'camera ×1.5, ◆ ×2', mut_heavy: 'Heavy', mut_heavy_d: 'jump power ×0.85', mut_echo: 'Echo', mut_echo_d: 'a ghost replays your previous run', mutOn: 'ON', mutOff: 'off', mutMult: 'salt ×{m}', mutActive: 'mutators: {list}', mutNoStars: 'no stars with mutators',
     g_pickups: 'collect every ◆', g_time: 'under {t}', g_jumps: '{n} jumps or fewer', g_noCatch: 'no edge catches', g_noAir: 'no air control', g_kids: 'rescue all kids', g_noIdle: 'never stand still for 3 s', g_noContinue: 'without CONTINUE', g_noIce: 'never land on ice', g_noMoving: 'never land on a moving ledge', g_noSlide: 'no sliding off a slope', goalsDone: 'all goals done', goalsNew: 'new goals', starOf: '★ {n} / 5',
     puzzle: 'puzzle', challenge: 'challenge', secret: 'secret', secretHidden: '???', secretHint: 'find the hidden entrance somewhere in this world', inJumps: 'IN {n} JUMPS', mod_noCatch: 'no edge catches', mod_fastCam: 'camera ×1.4', secretFound: 'A hidden passage! Entering…',
     notEnough: 'Not enough ◆',
@@ -433,7 +433,7 @@ const I18N = {
     camMsg: 'Гора перестала ждать.', tiredMsg: 'Слишком долгое падение. Козёл выбился из сил.', spikeMsg: 'Шипы — не место для посадки.', rockMsg: 'Валун прилетел из расщелины.', kidMsg: 'Малыш не осилил этот прыжок.',
     tipCamera: 'Совет: верх экрана — это дедлайн, прыгай раньше, чем он дойдёт до тебя.', tipTired: 'Совет: не пролетай больше 3 рядов уступов за прыжок.', tipSpikes: 'Совет: приземляйся на чистую половину площадки.', tipHawk: 'Совет: птицы бьют только в воздухе — пропусти и прыгай.', tipRock: 'Совет: тёмное пятно у расщелины — сейчас упадёт валун.', tipKid: 'Совет: малыши повторяют твой прыжок точь-в-точь — то, что ты еле взял, они могут не взять.', tipFall: 'Совет: край в пределах досягаемости всё ещё считается — целься в уступ, а не дальше.',
     jumps: 'Прыжков', saves: 'Зацепов', kidsRescued: 'Спасено малышей', under: 'БЫСТРЕЕ', allKids: 'ВСЕ МАЛЫШИ СПАСЕНЫ', noSaves: 'БЕЗ ЗАЦЕПОВ', cleanRun: 'ЧИСТЫЙ ЗАБЕГ', today: 'сегодня', streak: 'Серия', newBest: 'НОВЫЙ РЕКОРД!', best: 'рекорд', youHave: 'у тебя', salt: 'соли',
-    devUnlock: 'Открыть всё (dev)', p_SLIPPERS: 'ТАПКИ', p_BALLS: 'МЯЧИ', p_STICKS: 'ПАЛКИ', p_FISH: 'РЫБА', 'p_MOON ROCK': 'ЛУННЫЙ КАМЕНЬ', dimMoon: 'ЛУНА', dimMoonSub: 'ибекс в шлеме · гравитация в шесть раз слабее, долгие дуги', h_moon: 'Низкая гравитация: дуги длинные и медленные<br>Целься короче, чем кажется', 'p_ICE CREAM': 'МОРОЖЕНОЕ', h_soft: 'Сугроб — мягкая посадка с любой высоты<br>но за рыхлый край не зацепиться', m_soft: 'Мягкая посадка', m_soft_d: 'Сугробы и подушки гасят любое падение — без усталости и жёсткой посадки. Но их края осыпаются: зацепа нет.', h_seesaw: 'Балансир — сядь на один край, второй поднимется<br>Прыгни с поднимающегося края — подбросит', m_seesaw: 'Балансир', m_seesaw_d: 'Доска на опоре. Твой вес её наклоняет; прыгни с края, который идёт вверх, — подбросит выше.',
+    devUnlock: 'Открыть всё (dev)', p_SLIPPERS: 'ТАПКИ', p_BALLS: 'МЯЧИ', p_STICKS: 'ПАЛКИ', p_FISH: 'РЫБА', p_FLIES: 'МУХИ', dimSoon: 'СКОРО', dimSoonSub: 'новый мир ещё вырубается из камня…', dimFrog: 'ПОДЛЕСОК', dimFrogSub: 'крошечная жаба · листья, камни и кувшинки ниже травы', h_ants: 'Муравьи ходят по листьям — сталкивают<br>Дождись, пока развернутся, или перепрыгни', m_ants: 'Муравьи', m_ants_d: 'Ходят туда-сюда по уступу. Заденешь — столкнёт. Подгадай посадку.', 'p_MOON ROCK': 'ЛУННЫЙ КАМЕНЬ', dimMoon: 'ЛУНА', dimMoonSub: 'ибекс в шлеме · гравитация в шесть раз слабее, долгие дуги', h_moon: 'Низкая гравитация: дуги длинные и медленные<br>Целься короче, чем кажется', 'p_ICE CREAM': 'МОРОЖЕНОЕ', h_soft: 'Сугроб — мягкая посадка с любой высоты<br>но за рыхлый край не зацепиться', m_soft: 'Мягкая посадка', m_soft_d: 'Сугробы и подушки гасят любое падение — без усталости и жёсткой посадки. Но их края осыпаются: зацепа нет.', h_seesaw: 'Балансир — сядь на один край, второй поднимется<br>Прыгни с поднимающегося края — подбросит', m_seesaw: 'Балансир', m_seesaw_d: 'Доска на опоре. Твой вес её наклоняет; прыгни с края, который идёт вверх, — подбросит выше.',
     soundOn: 'Звук', musicOn: 'Музыка', vibro: 'Вибрация', leftHand: 'Левая рука', dragSens: 'Чувствительность драга', quality: 'Качество', lang: 'Язык', resetProgress: 'СБРОСИТЬ ПРОГРЕСС', resetConfirm: 'Стереть весь прогресс, соль и свои уровни?', low: 'низкое', high: 'высокое', short: 'короткий', normal: 'обычный', long: 'длинный', auto: 'авто',
     skinsNote: 'Скины меняют только шкуру — никогда прыжок.', selected: 'ВЫБРАНО', equip: 'НАДЕТЬ', unlock: 'ОТКРЫТЬ', playing: 'ИГРАЕШЬ', reachWorld: 'Дойди до мира {w}',
     endlessSub: 'Процедурная гора. Уступы сужаются, пролёты растут,<br>появляются шипы и птицы, биомы плывут от дня к ночи.', endlessDown: 'БЕСКОНЕЧНЫЙ СПУСК', endlessUp: 'БЕСКОНЕЧНЫЙ ПОДЪЁМ', resumeRun: 'ПРОДОЛЖИТЬ',
@@ -463,7 +463,7 @@ const I18N = {
     expedition: 'ЭКСПЕДИЦИЯ', expSub: 'Пять случайных уровней на одну жизнь. Без CONTINUE. Между уровнями выбираешь следующую карту.', expStep: 'этап {k} / {n}', expChoose: 'Выбери следующий этап', expOver: 'ЭКСПЕДИЦИЯ ОКОНЧЕНА', expWin: 'ЭКСПЕДИЦИЯ ПРОЙДЕНА', expReward: '+10 ◆ · экспедиций пройдено: {n}', expSalt: 'соли набрано: {n}', expStart: 'В ПУТЬ', stats: 'СТАТИСТИКА', st_jumps: 'Прыжков', st_saves: 'Зацепов', st_meters: 'Метров пройдено', st_time: 'Время в игре', st_levels: 'Уровней пройдено', st_kids: 'Малышей спасено', st_secrets: 'Секретов найдено', st_exp: 'Экспедиций пройдено', st_streak: 'Лучшая серия daily', achievements: 'ДОСТИЖЕНИЯ', saveImage: 'СОХРАНИТЬ КАРТОЧКУ', runCard: 'Карточка прогона',
     a_catch1: 'Первый зацеп', a_catch1_d: 'зацепись за край', a_catch100: 'Сто рук', a_catch100_d: '100 зацепов', a_km: 'Километр', a_km_d: '1 000 м пути', a_km10: 'Десять километров', a_km10_d: '10 000 м пути', a_lv10: 'Пошло дело', a_lv10_d: '10 уровней', a_lv30: 'Альпинист', a_lv30_d: '30 уровней', a_kids10: 'Пастух', a_kids10_d: '10 спасённых малышей', a_secrets: 'Любопытный', a_secrets_d: 'найди 4 секрета', a_five: 'Идеальный уступ', a_five_d: '5 ★ на одном уровне', a_tower: 'Вершина башни', a_tower_d: 'пройди недельную башню', a_endless: 'Глубоко внизу', a_endless_d: '300 м за один endless', a_chars: 'Зверинец', a_chars_d: 'открой 8 персонажей', a_exp: 'Исследователь', a_exp_d: 'пройди экспедицию', a_streak: 'Постоянный', a_streak_d: 'серия daily 7 дней',
     tower: 'НЕДЕЛЬНАЯ БАШНЯ', towerSub: 'Один подъём на 200 м в неделю, у всех одинаковый. Пять секций, между ними контрольные точки. Упал — продолжай с последней.', towerWeek: 'неделя {w}', towerHeight: 'высота {h} м · точка {c} / 5', towerClimb: 'ПОДНИМАТЬСЯ', towerResume: 'ПРОДОЛЖИТЬ С ТОЧКИ {c}', towerRestart: 'НАЧАТЬ НЕДЕЛЮ ЗАНОВО', towerDone: 'БАШНЯ ПРОЙДЕНА · {t}', towerCp: 'Контрольная точка {c} / 5', towerBest: 'лучшее за неделю: {h} м', towerTop: 'ВЕРШИНА БАШНИ',
-    mutators: 'МУТАТОРЫ', mutSub: 'Меняй правила. Соль умножается; цели и звёзды с мутаторами не засчитываются.', mut_lowGrav: 'Низкая гравитация', mut_lowGrav_d: 'гравитация ×0.75 — длинные парящие дуги', mut_fog: 'Туман', mut_fog_d: 'видно только следующий уступ', mut_mirror: 'Зеркало', mut_mirror_d: 'весь уровень отражён влево↔вправо', mut_rush: 'Спешка', mut_rush_d: 'камера ×1.5, ◆ ×2', mut_heavy: 'Тяжесть', mut_heavy_d: 'сила прыжка ×0.85', mut_echo: 'Эхо', mut_echo_d: 'призрак повторяет твой прошлый прогон', mutOn: 'ВКЛ', mutOff: 'выкл', mutMult: 'соль ×{m}', mutActive: 'мутаторы: {list}', mutNoStars: 'звёзды с мутаторами не даются',
+    mutators: 'МУТАТОРЫ', mutSub: 'Меняй правила. Соль умножается; цели и звёзды с мутаторами не засчитываются.', mut_chase: 'Погоня', mut_chase_d: 'камера гонит тебя — остановишься, и она победит', mut_lowGrav: 'Низкая гравитация', mut_lowGrav_d: 'гравитация ×0.75 — длинные парящие дуги', mut_fog: 'Туман', mut_fog_d: 'видно только следующий уступ', mut_mirror: 'Зеркало', mut_mirror_d: 'весь уровень отражён влево↔вправо', mut_rush: 'Спешка', mut_rush_d: 'камера ×1.5, ◆ ×2', mut_heavy: 'Тяжесть', mut_heavy_d: 'сила прыжка ×0.85', mut_echo: 'Эхо', mut_echo_d: 'призрак повторяет твой прошлый прогон', mutOn: 'ВКЛ', mutOff: 'выкл', mutMult: 'соль ×{m}', mutActive: 'мутаторы: {list}', mutNoStars: 'звёзды с мутаторами не даются',
     g_pickups: 'собери все ◆', g_time: 'быстрее {t}', g_jumps: 'не больше {n} прыжков', g_noCatch: 'без зацепов', g_noAir: 'без подруливания', g_kids: 'спаси всех малышей', g_noIdle: 'не стоять дольше 3 с', g_noContinue: 'без CONTINUE', g_noIce: 'ни разу не сесть на лёд', g_noMoving: 'ни разу не сесть на движущуюся', g_noSlide: 'не съехать со склона', goalsDone: 'все цели выполнены', goalsNew: 'новые цели', starOf: '★ {n} / 5',
     puzzle: 'пазл', challenge: 'испытание', secret: 'секрет', secretHidden: '???', secretHint: 'найди скрытый вход где-то в этом мире', inJumps: 'ЗА {n} ПРЫЖКОВ', mod_noCatch: 'без зацепов', mod_fastCam: 'камера ×1.4', secretFound: 'Скрытый проход! Входим…',
     notEnough: 'Не хватает ◆',
@@ -478,7 +478,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v86', date: '2026-09-22' };
+const BUILD = { version: 'v88', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -566,6 +566,18 @@ const STYLES = {
     bands: [0x8c8e96, 0x9a9ca4, 0x7c7e86, 0xa4a6ae, 0x6e7078], tops: [0xb4b6be, 0xaaacb4, 0xbcbec6], sides: [0x84868e, 0x8e9098, 0x7a7c84, 0x8a8c94],
     dark: 0x3a3c44, plateau: 0x9a9ca4, mesa: 0x6e7078, canyon: [0x7c7e86, 0x84868e], bush: 0x6e7078, blocker: 0x5a5c64, spike: 0xd0d4dc, crystal: [0xa8f0ff, 0x2a8ab0],
     bird: 'meteor', veg: 'none', pickup: 'moonrock', pickupName: 'MOON ROCK', stars: true },
+  forest: { sky: [0x6aa04a, 0xd8ecb8], haze: 0xcfe4b0, sun: 0xfff4c8, sunI: 2.4, hemi: [0xd8f0c0, 0x3a5a2a], hemiI: 1.15, flat: true,
+    bands: [0x4e7c3a, 0x5a8a44, 0x466e34, 0x62944c, 0x3e6630], tops: [0x6aa84a, 0x74b252, 0x60a044], sides: [0x8a6a48, 0x92724e, 0x826244, 0x8e6e4a],
+    dark: 0x3a4a26, plateau: 0x5a8a44, mesa: 0x466e34, canyon: [0x4e7c3a, 0x5a8a44], bush: 0x8ac860, blocker: 0x6e4e30, spike: 0xd8b070, crystal: [0xffc84a, 0x8a5a10],
+    bird: 'mosquito', veg: 'grass', pickup: 'fly', pickupName: 'FLIES' },
+  pond: { sky: [0x5aa8c8, 0xe0f4f4], haze: 0xd0ecec, sun: 0xfff8e0, sunI: 2.6, hemi: [0xd8f0f8, 0x3a7a6a], hemiI: 1.1, flat: true, water: true,
+    bands: [0x4e7c3a, 0x5a8a44, 0x466e34, 0x62944c, 0x3e6630], tops: [0x5aa048, 0x64aa50, 0x52984a], sides: [0x3f7a34, 0x4a8a3c, 0x387030, 0x448438],
+    dark: 0x2a4a3a, plateau: 0x5a8a44, mesa: 0x466e34, canyon: [0x4e7c3a, 0x5a8a44], bush: 0x8ac860, blocker: 0x6e4e30, spike: 0x8a8a6a, crystal: [0x8ae0ff, 0x2a6a9a],
+    bird: 'mosquito', veg: 'reed', pickup: 'fly', pickupName: 'FLIES' },
+  anthill: { sky: [0xc8a878, 0xf0e6d0], haze: 0xe8dcc4, sun: 0xffe8c0, sunI: 2.5, hemi: [0xf0e4d0, 0x6a5038], hemiI: 1.05, flat: true,
+    bands: [0x9a7048, 0xa87c52, 0x8e6640, 0xb2865a, 0x82603c], tops: [0xb8905c, 0xc09a64, 0xb08a58], sides: [0x8a6a48, 0x92724e, 0x826244, 0x8e6e4a],
+    dark: 0x4a3420, plateau: 0xa87c52, mesa: 0x8e6640, canyon: [0x9a7048, 0xa87c52], bush: 0x8ac860, blocker: 0x6e4e30, spike: 0xd8b070, crystal: [0xffc84a, 0x8a5a10],
+    bird: 'mosquito', veg: 'grass', pickup: 'fly', pickupName: 'FLIES' },
   winter: { sky: [0x8fb0d8, 0xf0f3f7], haze: 0xe8edf3, sun: 0xfff6ea, sunI: 2.6, hemi: [0xdce8f8, 0x7a8290], hemiI: 1.1, flat: true, snow: true,
     bands: [0xb8bcc4, 0xc6cad2, 0xaab0b8, 0xd0d4dc, 0xa0a6ae], tops: [0xf2f6fa, 0xecf1f6, 0xf6f9fc], sides: [0x8a6a4a, 0x927250, 0x816244, 0x8d6d4c],
     dark: 0x5a5e66, plateau: 0xeef3f7, mesa: 0xc4cfda, canyon: [0xb8bcc4, 0xc6cad2], bush: 0x2e5a3c, blocker: 0x6f7680, spike: 0xd8ecfa, crystal: [0xfff0f4, 0xff8aa8],
@@ -788,6 +800,15 @@ function defineLevels() { LEVELS = [
   makeRun({ key: 'winter1', name: 'SNOW STREET', style: 'winter', seed: 96, n: 14, soft: true, character: 'husky' }),
   makeRun({ key: 'winter2', name: 'GARLAND WIND', style: 'winter', seed: 97, n: 16, soft: true, ice: true, wind: true, hawks: 1, character: 'husky' }),
   makeRun({ key: 'winter3', name: 'CAR ROOFS', style: 'winter', seed: 98, n: 18, soft: true, ice: true, move: true, hawks: 1, kid: true, character: 'husky' }),
+  makeRun({ key: 'frog1', name: 'LEAF TO LEAF', style: 'forest', seed: 401, n: 14, character: 'frog' }),
+  makeRun({ key: 'frog2', name: 'MUSHROOM ROW', style: 'forest', seed: 402, n: 16, hawks: 1, character: 'frog' }),
+  makeRun({ key: 'frog3', name: 'THE BIG LEAF', style: 'forest', seed: 403, n: 18, hawks: 1, ants: true, kid: true, character: 'frog' }),
+  makeRun({ key: 'pond1', name: 'LILY PADS', style: 'pond', seed: 411, n: 14, move: true, character: 'frog' }),
+  makeRun({ key: 'pond2', name: 'MOSQUITO HOUR', style: 'pond', seed: 412, n: 16, move: true, hawks: 2, character: 'frog' }),
+  makeRun({ key: 'pond3', name: 'ACROSS THE POND', style: 'pond', seed: 413, n: 18, move: true, ice: true, hawks: 2, kid: true, character: 'frog' }),
+  makeRun({ key: 'ant1', name: 'THE TRAIL', style: 'anthill', seed: 421, n: 16, ants: true, character: 'frog' }),
+  makeRun({ key: 'ant2', name: 'SOLDIERS', style: 'anthill', seed: 422, n: 18, ants: true, hawks: 1, spikes: true, character: 'frog' }),
+  makeRun({ key: 'ant3', name: 'THE QUEEN\'S HALL', style: 'anthill', seed: 423, n: 20, ants: true, hawks: 2, spikes: true, kid: true, character: 'frog' }),
   moonOf(makeDescent({ key: 'moon1', name: 'MARE DESCENT', style: 'moon', seed: 301, n: 16, hawks: 1 })),
   moonOf(makeClimb({ key: 'moon2', name: 'CRATER RIM', style: 'moon', seed: 302, n: 18, rocks: 2 })),
   moonOf(makeRun({ key: 'moon3', name: 'REGOLITH RUN', style: 'moon', seed: 303, n: 18, hawks: 2, kid: true })),
@@ -815,6 +836,7 @@ function defineLevels() { LEVELS = [
   secretOf(makeRun({ key: 'houseSecret', name: 'THE ATTIC', style: 'house', seed: 179, n: 12, move: true, character: 'corgi' })),
   secretOf(makeRun({ key: 'parkSecret', name: 'UNDER THE BRIDGE', style: 'park', seed: 189, n: 12, hawks: 1, character: 'collie' })),
   secretOf(moonOf(makeDescent({ key: 'moonSecret', name: 'THE DARK SIDE', style: 'moon', seed: 309, n: 14, crumble: true }))),
+  secretOf(makeRun({ key: 'pondSecret', name: 'THE DEEP END', style: 'pond', seed: 419, n: 12, move: true, hawks: 1, character: 'frog' })),
   secretOf(makeRun({ key: 'flatSecret', name: 'UNDER THE BED', style: 'flat', seed: 199, n: 12, soft: true, character: 'dog' })),
   secretOf(makeRun({ key: 'lakeSecret', name: 'THE REEDS', style: 'lake', seed: 209, n: 12, hawks: 1, character: 'husky' })),
 ];
@@ -822,11 +844,12 @@ function defineLevels() { LEVELS = [
   for (const [key, base, mod, twists] of [['negevChal', 'crystal', 'fastCam', []], ['redChal', 'red', 'noCatch', ['heavy']], ['chalkChal', 'chalk', 'fastCam', ['fog']], ['nightChal', 'nightrun', 'noCatch', ['fog']], ['alpsChal', 'alpine', 'noCatch', ['heavy', 'rush']]]) {
     const b = LEVELS.find(l => l.key === base); const d = JSON.parse(JSON.stringify(b)); d.key = key; d.name = b.name + ' ⚡'; d.mod = mod; d.twists = twists; d.challenge = true; d.stars = { crystals: b.stars.crystals, time: Math.round(b.stars.time * 1.15) }; d.firstOf = []; d.softened = true; LEVELS.push(d);
   }
-  for (const l of LEVELS) if (l.gen && !l.tutorial && !l.twin && !l.challenge) unstackClimb(l.surfaces, l.crystals, l.updrafts || [], l.blockers || []);
+  padWorlds();
+  for (const l of LEVELS) if (l.gen && !l.tutorial && !l.twin && !l.challenge && !l.gravity) unstackClimb(l.surfaces, l.crystals, l.updrafts || [], l.blockers || []);
   // secret entrances: an off-route stone with a dark cave mouth in an existing level
   const cr = LEVELS.find(l => l.key === 'crystal'); cr.surfaces.push(['sec', 11, -34, 2, 'stone']); cr.secretEntry = { surface: 'sec', level: 'negevSecret' };
   { const lv = LEVELS.find(l => l.key === 'moon1'); const a = lv.surfaces[6]; lv.surfaces.push(['sec', a[1] > 0 ? -12 : 12, +(a[2] - 2).toFixed(1), 2, 'stone']); lv.secretEntry = { surface: 'sec', level: 'moonSecret' }; }
-  for (const [lvl, sec] of [['house1', 'houseSecret'], ['park1', 'parkSecret'], ['flat1', 'flatSecret'], ['lake1', 'lakeSecret']]) { const lv = LEVELS.find(l => l.key === lvl); const a = lv.surfaces[5], nb = lv.surfaces[6]; lv.surfaces.push(['sec', +((a[1] + a[3] / 2 + nb[1] - nb[3] / 2) / 2).toFixed(1), +(Math.max(a[2], nb[2]) + 3.6).toFixed(1), 1.6, 'stone']); lv.secretEntry = { surface: 'sec', level: sec }; lv.scent = true; }
+  for (const [lvl, sec] of [['house1', 'houseSecret'], ['park1', 'parkSecret'], ['flat1', 'flatSecret'], ['lake1', 'lakeSecret'], ['pond1', 'pondSecret']]) { const lv = LEVELS.find(l => l.key === lvl); const a = lv.surfaces[5], nb = lv.surfaces[6]; lv.surfaces.push(['sec', +((a[1] + a[3] / 2 + nb[1] - nb[3] / 2) / 2).toFixed(1), +(Math.max(a[2], nb[2]) + 3.6).toFixed(1), 1.6, 'stone']); lv.secretEntry = { surface: 'sec', level: sec }; lv.scent = true; }
   const cd = LEVELS.find(l => l.key === 'citydown'); const mid = cd.surfaces[Math.floor(cd.surfaces.length / 2)]; cd.surfaces.push(['sec', mid[1] > 0 ? -9 : 9, +(mid[2] - 3).toFixed(1), 2, 'stone']); cd.secretEntry = { surface: 'sec', level: 'citySecret' };
 }
 function tutorialOf(def, nameKey, keys) { def.tutorial = true; def.nameKey = nameKey; def.stars = { crystals: 0, time: 0 }; def.hawks = (def.hawks || []).slice(0, 1); def.rocks = []; def.kids = []; def.tutHints = {}; const ids = def.surfaces.map(r => r[0]); keys.forEach((k, i) => { const id = ids[Math.min(ids.length - 2, i * 2)]; if (id) def.tutHints[id] = k; }); return def; }
@@ -836,6 +859,31 @@ function moonOf(def) { def.gravity = 10; def.mutGrav = 10; def.twists = def.twis
   def.crystals = def.crystals.map(([x, y]) => [+(x * kx).toFixed(1), +(y * ky).toFixed(1)]); for (const h of (def.hawks || [])) { h.x1 *= kx; h.x2 *= kx; h.y *= ky; h.speed *= 0.8; } for (const r of (def.rocks || [])) { r.x *= kx; r.y *= ky; r.len *= ky; } for (const b of (def.blockers || [])) { b.x1 *= kx; b.x2 *= kx; b.top *= ky; b.h *= ky; }
   for (const w of (def.winds || [])) { w.y1 *= ky; w.y2 *= ky; } for (const u of (def.updrafts || [])) { u.x *= kx; u.y1 *= ky; u.y2 *= ky; } for (const k of (def.kids || [])) if (k.x != null) k.x *= kx; return def; }
 function twistOf(def, twists) { def.twists = twists; return def; }
+const NAME_POOL = {
+  desert: ['SALT FLATS', 'DUST DEVIL', 'THE WADI', 'ACACIA SHELF', 'THE GORGE', 'SANDSTONE STAIR', 'THE OVERHANG', 'NOON HEAT'], red: ['RUST LADDER', 'THE ARCH', 'EMBER RIDGE', 'RED SHELVES', 'DUSK CHIMNEY', 'THE FUNNEL', 'OCHRE RUN', 'LAST LIGHT'],
+  chalk: ['GULL ROCK', 'WHITE STAIR', 'THE STACK', 'TIDE LINE', 'FLINT SHELF', 'THE COVE', 'SEA WIND', 'CLIFF EDGE'], night: ['STARFALL', 'THE OWL', 'MOONDUST', 'DARK STAIR', 'FIREFLY LEDGE', 'THE HOLLOW', 'MIDNIGHT', 'FIRST LIGHT'], alpine: ['THE SERAC', 'ICE STAIR', 'THE COL', 'FROSTBITE', 'AVALANCHE', 'THE CORNICE', 'WHITEOUT', 'THE GLACIER'],
+  city: ['FIRE ESCAPE', 'THE CRANE', 'BILLBOARD', 'NEON LEDGE', 'WATER TOWER', 'THE SCAFFOLD', 'ROOF GARDEN', 'CHOPPER PAD'], panel: ['LAUNDRY LINE', 'THE STAIRWELL', 'SATELLITE DISH', 'NINTH FLOOR', 'THE COURTYARD', 'BALCONY ROW', 'PIGEON LOFT', 'THE ROOFTOP'],
+  yard: ['THE FENCE', 'FLOWER BED', 'GARDEN HOSE', 'THE SANDBOX', 'WOODPILE', 'THE GATE', 'COMPOST HEAP', 'BIRD BATH'], house: ['THE HALLWAY', 'KITCHEN COUNTER', 'THE ATTIC STAIR', 'WINDOW SILL', 'THE PIANO', 'LAUNDRY BASKET', 'THE FRIDGE', 'BOOK TOWER'], park: ['THE FOUNTAIN', 'SWING SET', 'THE SLIDE', 'DUCK POND', 'PICNIC ROW', 'THE BANDSTAND', 'BIKE RACK', 'THE HEDGE'],
+  lot: ['CEMENT MIXER', 'THE SCAFFOLD', 'GRAVEL PILE', 'THE CRANE', 'REBAR ROW', 'THE DUMPSTER', 'PLANK BRIDGE', 'FENCE LINE'], winter: ['SNOWPLOW', 'THE ICICLES', 'SLED HILL', 'BUS STOP', 'THE MARKET', 'FROZEN FOUNTAIN', 'CHRISTMAS TREE', 'THE RINK'], flat: ['COFFEE TABLE', 'THE WARDROBE', 'BATHTUB', 'THE BALCONY', 'TV STAND', 'THE CRIB', 'HALLWAY RUG', 'WINDOW SEAT'], lake: ['THE JETTY', 'REED BEDS', 'THE SANDBAR', 'DRIFTWOOD', 'THE HERON', 'LILY COVE', 'BEAVER DAM', 'THE FERRY'],
+  forest: ['ACORN DROP', 'THE FERN', 'MOSS BANK', 'BEETLE ROAD', 'THE STUMP', 'DEW LEAVES', 'SNAIL TRAIL', 'THE ROOT'], pond: ['DUCKWEED', 'THE REEDS', 'FROGSPAWN', 'THE DEEP', 'DRAGONFLY REACH', 'WATER STRIDER', 'THE SHALLOWS', 'HERON WATCH'], anthill: ['THE TUNNEL', 'SEED STORE', 'GUARD POST', 'THE MOUND', 'LARVAE ROW', 'THE GATE', 'TRAIL SPLIT', 'SOLDIER LINE'],
+  moon: ['SEA OF RAINS', 'THE CRATER', 'REGOLITH FIELD', 'LANDER SITE', 'SHADOW RIM', 'THE RILLE', 'BOULDER TRACK', 'EARTHRISE'],
+};
+function padWorlds() { // bring every world to ten visible levels, mixing types and hazards at the world's difficulty; one of them is a chase
+  let seedBase = 5000;
+  for (const w of WORLDS) { const vis = () => w.levels.filter(k => { const l = LEVELS.find(l => l.key === k); return l && !l.secret; }).length; if (vis() >= 10) continue;
+    const sample = LEVELS.find(l => w.levels.includes(l.key) && !l.tutorial && !l.secret) || LEVELS.find(l => w.levels.includes(l.key)); if (!sample) continue;
+    const style = sample.style, ch = sample.character, horizontal = !!sample.horizontal, moon = !!sample.gravity; const pool = NAME_POOL[style] || NAME_POOL.desert; let k = 0; const has = f => LEVELS.some(l => w.levels.includes(l.key) && f(l));
+    const tier = ['SKYSCRAPER', 'PANELKI', 'DACHSHUND YARD', 'NEGEV', 'FOREST FLOOR', 'MARE TRANQUILLITATIS'].includes(w.name) ? 0 : ['RED CANYON', 'CHALK COAST', 'THE HOUSE', 'THE PARK', 'THE POND', 'CRATER HIGHLANDS'].includes(w.name) ? 1 : 2;
+    const hz = { spikes: tier >= 1 && has(l => l.surfaces.some(r => r[5] && /\b[LR]\b/.test(r[5]))), hawks: has(l => (l.hawks || []).length), rocks: tier >= 1 && has(l => (l.rocks || []).length), crumble: tier >= 2, wind: tier >= 1, move: has(l => l.surfaces.some(r => r[6])), soft: has(l => l.surfaces.some(r => r[5] && r[5].includes('soft'))), ants: has(l => (l.ants || []).length), ice: tier >= 2 && ['alpine', 'winter', 'lake', 'pond'].includes(style) };
+    const needed = 10 - vis(), chaseAt = Math.min(3, needed - 1), nameOff = (WORLDS.indexOf(w) * 3) % pool.length; let retry = 0;
+    while (vis() < 10) { let seed = seedBase++; const name = pool[(k + nameOff) % pool.length]; const key = w.name.toLowerCase().replace(/[^a-z]+/g, '') + 'x' + (k + 1); const n = 14 + (k % 3) * 2 + tier * 2; const kind = horizontal ? 'run' : (k % 3 === 1 ? 'climb' : 'descent'); const chase = k === chaseAt;
+      let def; const o = { key, name, style, seed, n, character: ch, hawks: kind === 'climb' ? [] : (hz.hawks ? 1 + (k % 2) : 0), spikes: hz.spikes && k % 2 === 0, rocks: hz.rocks && kind !== 'run' ? 1 + (k % 2) : 0, crumble: hz.crumble && kind === 'descent', wind: hz.wind && k % 4 === 2, move: hz.move && k % 2 === 1, soft: hz.soft, ants: hz.ants && k % 2 === 0, ice: hz.ice && k % 3 === 0, kid: k % 3 === 2 };
+      if (kind === 'climb') { o.hawks = hz.hawks && k % 2 ? [{ x1: -7, x2: 7, y: 20 + (k % 3) * 8, speed: 4.5 + tier }] : []; def = makeClimb(o); } else if (kind === 'run') def = makeRun(o); else def = makeDescent(o);
+      if (moon) moonOf(def); if (chase) def.twists = (def.twists || []).concat(['chase']); if (!chase && tier === 2 && k === 5) def.twists = (def.twists || []).concat([['fog', 'heavy'][k % 2]]);
+      unstackClimb(def.surfaces, def.crystals, def.updrafts || [], def.blockers || []); def.gen = true;
+      if (hasCapped(def) && ++retry < 8) continue;   // a stubborn overhang: roll the next seed instead
+      retry = 0; LEVELS.push(def); w.levels.push(key); k++; } }
+}
 function puzzleOf(def) { def.puzzle = true; def.stars = { crystals: def.stars.crystals, jumps: def.surfaces.length + 1, time: 0 }; return def; }
 function secretOf(def) { def.secret = true; def.herd = []; return def; }
 // left-to-right run generator (deterministic): gaps grow, heights wander, finish far right
@@ -845,7 +893,7 @@ function unstackClimb(S, crystals, updrafts, blockers = []) {
   const E = (x, w) => [x - w / 2, x + w / 2]; const ROUTE = r => /^(d|u|l|s|t)\d/.test(r[0]);
   const hOf = r => (TYPE[r[4]] || TYPE.slab).h;
   const CAPPER = r => ROUTE(r) || r[0] === 'start';
-  const capped = (a, ax, aw, b) => { if (!CAPPER(a) || !ROUTE(b)) return false; const clear = (a[2] - hOf(a)) - b[2]; if (clear <= 0.2 || clear > 4.3) return false;
+  const capped = (a, ax, aw, b) => { if (!CAPPER(a) || !ROUTE(b)) return false; const clear = (a[2] - hOf(a)) - b[2]; if (clear <= 0.2 || clear > 4.5) return false;
     const [a1, a2] = E(ax, aw), [b1, b2] = E(b[1], b[3]); return !(a2 + 0.3 <= b1 || a1 - 0.3 >= b2); };
   const fits = (a, nx, nw = a[3]) => { if (nx - nw / 2 < -9 || nx + nw / 2 > 9) return false;
     for (const c of S) { if (c === a || c[0] === 'finish') continue; const [a1, a2] = E(nx, nw), [c1, c2] = E(c[1], c[3]); const gapX = Math.max(c1 - a2, a1 - c2);
@@ -864,12 +912,12 @@ function unstackClimb(S, crystals, updrafts, blockers = []) {
       if (done) continue;
       const [a1, a2] = E(a[1], a[3]), [b1, b2] = E(b[1], b[3]); let n1, n2; if (a[1] >= b[1]) { n1 = b2 + 0.4; n2 = Math.max(a2, n1 + 1.4); } else { n2 = b1 - 0.4; n1 = Math.min(a1, n2 - 1.4); }
       const nw = +(n2 - n1).toFixed(1), nx = +((n1 + n2) / 2).toFixed(1); if (fits(a, nx, nw)) { shift(a, nx, nw); continue; }
-      { const need = 4.35 - ((a[2] - hOf(a)) - b[2]); if (need > 0 && need <= 0.8) { const ny = +(a[2] + need).toFixed(1); for (const c of crystals) if (Math.abs(c[1] - (a[2] + 0.6)) < 0.4 && Math.abs(c[0] - a[1]) <= a[3] / 2) c[1] = +(ny + 0.6).toFixed(1); a[2] = ny; } }
+      { const need = 4.55 - ((a[2] - hOf(a)) - b[2]); if (need > 0 && need <= 0.8) { const ny = +(a[2] + need).toFixed(1); for (const c of crystals) if (Math.abs(c[1] - (a[2] + 0.6)) < 0.4 && Math.abs(c[0] - a[1]) <= a[3] / 2) c[1] = +(ny + 0.6).toFixed(1); a[2] = ny; } }
     }
     if (!any) break; }
 }
 function makeRun(o) {
-  const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = []; let x = 0, y = 0, w = 8;
+  const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = [], ants = []; let x = 0, y = 0, w = 8;
   const hawkAt = []; for (let k = 0; k < (o.hawks || 0); k++) hawkAt.push(Math.floor((k + 1) * o.n / ((o.hawks || 0) + 1)));
   for (let i = 1; i <= o.n; i++) {
     const t = i / o.n; const prevX = x, prevW = w, prevY = y;
@@ -881,6 +929,7 @@ function makeRun(o) {
     const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : 'narrow';
     const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 ? 'L' : null; if (spk && w < 3.6) { w = 3.6; x = +(prevX + prevW / 2 + gap + w / 2).toFixed(1); }
     const row = ['r' + i, x, +y.toFixed(1), w, type]; if (spk) row.push(spk);
+    if (o.ants && i > 2 && i % 4 === 0 && w >= 3.0 && !spk) ants.push({ surface: 'r' + i, speed: 1.1 + t * 1.2 });
     if (o.soft && i > 1 && i % 3 === 0 && !spk) { row[5] = 'soft'; } else if (o.ice && i > 2 && i % 4 === 1 && !spk) { row[5] = 'ice'; }
     if (o.seesaw && i > 2 && i % 3 === 0 && !spk) { row[3] = 4.5; row[4] = 'seesaw'; w = 4.5; x = +(prevX + prevW / 2 + gap + w / 2).toFixed(1); row[1] = x; }
     else if (o.move && i > 2 && i % 3 === 0 && !spk) { row[5] = row[5] || undefined; row[6] = (i % 2 ? { dx: 1.6 + r() * 0.8, dy: 0, period: 3 + r() * 1.5, phase: r() } : { dx: 0, dy: 1.2 + r() * 0.6, period: 3 + r(), phase: r() }); if (row.length === 7 && row[5] === undefined) row[5] = ''; }
@@ -891,7 +940,7 @@ function makeRun(o) {
   const fx = +(x + w / 2 + 3 + 10).toFixed(1); surfaces.push(['finish', fx, +y.toFixed(1), 20, 'terrace']);
   const winds = o.wind ? [{ y1: 9, y2: -9, force: -(2 + r()) }] : [];
   const kidLedge = o.kid ? surfaces[Math.floor(o.n * 0.6)] : null; const kids = kidLedge ? [{ surface: kidLedge[0], x: kidLedge[1] }] : [];
-  return { gen: true, key: o.key, name: o.name, style: o.style, horizontal: true, character: o.character, winds, kids, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, blockers: [], hawks, rocks: [], herd: [{ surface: 'finish', x: fx + 6, dir: 1, n: 4 }] };
+  return { gen: true, key: o.key, name: o.name, style: o.style, horizontal: true, character: o.character, winds, kids, ants, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, blockers: [], hawks, rocks: [], herd: [{ surface: 'finish', x: fx + 6, dir: 1, n: 4 }] };
 }
 // zig-zag descent generator (deterministic): widths shrink and gaps grow along the way, forks with a pickup, spikes on wide ledges, bird lanes spread evenly
 // ============================================================
@@ -925,7 +974,7 @@ const MOTIFS = {
   iceSlope(c, r) { const s = c.side; const I = { x: clamp(c.x + s * 4, -7, 7), y: c.y - 5 }; const F = { x: clamp(I.x + s * 4.3, -8.5, 8.5), y: I.y - 3.5 }; const C = { x: clamp(I.x - s * 3, -8, 8), y: I.y - 6.5 };
     return { rows: [[`d${c.i}`, I.x, I.y, 4, 'slab', 'ice'], [`f${c.i}`, F.x, F.y, 1.4, 'foothold'], [`d${c.i}b`, C.x, C.y, 2.6, 'slab']], crystals: [[F.x, F.y + 0.6]], exit: { ...C, w: 2.6, side: -s } }; },
   // three crumbling ledges in a row: keep moving
-  crumbleBridge(c, r) { const s = c.side; const B1 = { x: clamp(c.x + s * 3.5, -8, 8), y: c.y - 4 }, B2 = { x: clamp(B1.x + s * 3.5, -8, 8), y: c.y - 8 }, B3 = { x: clamp(B2.x - s * 1.5, -8, 8), y: c.y - 12 }, C = { x: clamp(B3.x - s * 3.5, -8, 8), y: c.y - 16 };
+  crumbleBridge(c, r) { const s = c.side; const B1 = { x: clamp(c.x + s * 3.5, -8, 8), y: c.y - 4 }, B2 = { x: clamp(B1.x + s * 3.5, -8, 8), y: c.y - 8 }, B3 = { x: clamp(B2.x - s * 4.2, -8, 8), y: c.y - 12 }, C = { x: clamp(B3.x - s * 3.6, -8, 8), y: c.y - 16 };
     return { rows: [[`d${c.i}`, B1.x, B1.y, 2.5, 'slab', 'crumble'], [`d${c.i}b`, B2.x, B2.y, 2.5, 'slab', 'crumble'], [`d${c.i}c`, B3.x, B3.y, 2.5, 'slab', 'crumble'], [`d${c.i}d`, C.x, C.y, 3, 'broad']], exit: { ...C, w: 3, side: -s } }; },
   // a band of headwind: the obvious jump falls short
   windPocket(c, r) { const s = c.side; const T = { x: clamp(c.x + s * 5, -8, 8), y: c.y - 8 };
@@ -947,7 +996,7 @@ function makeDescent(o) {
     if (ctx.i >= 3 && ctx.i % 3 === 0) { const cand = pool.filter(m => !used.includes(m)); name = (cand.length ? cand : pool)[Math.floor(r() * (cand.length ? cand : pool).length)]; used.push(name); if (used.length > pool.length - 1) used = []; }
     if (o.kid && !kidDone && ctx.i >= Math.floor(o.n * 0.55) && name !== 'link') { name = 'kidNest'; kidDone = true; }
     if (name === 'birdSlalom' && hawkLanes >= (o.hawks || 0) + 1) name = 'link'; if (name === 'crevasse' && rockChutes >= (o.rocks || 0)) name = 'link';
-    if (name !== 'link' && Math.abs(ctx.x) > 4) ctx.side = -Math.sign(ctx.x);   // motifs run toward the middle so clamping never stacks ledges
+    if (name !== 'link' && Math.abs(ctx.x) > 2.5) ctx.side = -Math.sign(ctx.x);   // motifs run toward the middle so clamping never stacks ledges
     const m = MOTIFS[name](ctx, r);
     for (const row of m.rows) surfaces.push(row); if (m.crystalAt) crystals.push(m.crystalAt); for (const cr of (m.crystals || [])) crystals.push(cr);
     for (const h of (m.hawks || [])) { hawks.push(h); hawkLanes++; } for (const rk of (m.rocks || [])) { rocks.push(rk); rockChutes++; } for (const w of (m.winds || [])) winds.push(w); for (const b of (m.blockers || [])) blockers.push(b); for (const k of (m.kids || [])) kids.push(k);
@@ -1049,7 +1098,9 @@ function towerState() { const wk = weekId(); save.tower = save.tower || {}; if (
 const DIMS = [
   { key: 'mountain', nameKey: 'dimMountain', subKey: 'dimMountainSub', worlds: ['NEGEV', 'RED CANYON', 'CHALK COAST', 'MOONLIT RIDGE', 'THE ALPS'] },
   { key: 'city', nameKey: 'dimCity', subKey: 'dimCitySub', worlds: ['SKYSCRAPER', 'PANELKI'], need: { dim: 0, n: 8 } },
+  { key: 'frog', nameKey: 'dimFrog', subKey: 'dimFrogSub', worlds: ['FOREST FLOOR', 'THE POND', 'THE ANTHILL'], need: { dim: 2, n: 8 } },
   { key: 'moon', nameKey: 'dimMoon', subKey: 'dimMoonSub', worlds: ['MARE TRANQUILLITATIS', 'CRATER HIGHLANDS', 'THE FAR SIDE'], need: { dim: 0, n: 14 } },
+  { key: 'soon', nameKey: 'dimSoon', subKey: 'dimSoonSub', worlds: [], soon: true },
   { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET', 'THE APARTMENT', 'THE LAKE'], need: { dim: 1, n: 5 } },
 ];
 const WORLDS = [
@@ -1065,6 +1116,9 @@ const WORLDS = [
   { name: 'THE PARK', sub: 'border collie · swings, ducks, benches', character: 'collie', levels: ['park1', 'park2', 'park3', 'parkSecret'] },
   { name: 'THE LOT', sub: 'basset · planks, barrels, crows', character: 'basset', levels: ['lot1', 'lot2', 'lot3'] },
   { name: 'WINTER STREET', sub: 'husky · snowdrifts, car roofs, garlands', character: 'husky', levels: ['winter1', 'winter2', 'winter3'] },
+  { name: 'FOREST FLOOR', sub: 'frog · leaves, stones, mushrooms', character: 'frog', levels: ['frog1', 'frog2', 'frog3'] },
+  { name: 'THE POND', sub: 'frog · lily pads and mosquitoes', character: 'frog', levels: ['pond1', 'pond2', 'pond3', 'pondSecret'] },
+  { name: 'THE ANTHILL', sub: 'frog · ant trails and pebbles', character: 'frog', levels: ['ant1', 'ant2', 'ant3'] },
   { name: 'MARE TRANQUILLITATIS', sub: 'first steps in low gravity', levels: ['moon1', 'moon2', 'moon3'] },
   { name: 'CRATER HIGHLANDS', sub: 'sharp rims, loose rock, rockfall', levels: ['moon4', 'moon5', 'moon6', 'moonSecret'] },
   { name: 'THE FAR SIDE', sub: 'no Earth-light: fog, meteors, ice', levels: ['moon7', 'moon8', 'moon9'] },
@@ -1076,7 +1130,7 @@ function orderLevels() { const byKey = Object.fromEntries(LEVELS.map(l => [l.key
 // which level introduces each mechanic (by world order) — those levels get a gentler first version of it
 function levelMechanics(l) {
   const m = new Set(); const flag = f => l.surfaces.some(r => r[5] && r[5].split(' ').includes(f));
-  if (l.surfaces.some(r => r[6])) m.add('moving'); if (l.surfaces.some(r => r[4] === 'seesaw')) m.add('seesaw'); if (flag('soft')) m.add('soft'); if (flag('L') || flag('R')) m.add('spikes'); if (flag('ice')) m.add('ice'); if (flag('crumble')) m.add('crumble');
+  if ((l.ants || []).length) m.add('ants'); if (l.surfaces.some(r => r[6])) m.add('moving'); if (l.surfaces.some(r => r[4] === 'seesaw')) m.add('seesaw'); if (flag('soft')) m.add('soft'); if (flag('L') || flag('R')) m.add('spikes'); if (flag('ice')) m.add('ice'); if (flag('crumble')) m.add('crumble');
   if (l.hawks && l.hawks.length) m.add('birds'); if (l.rocks && l.rocks.length) m.add('rocks'); if (l.winds && l.winds.length) m.add('wind'); if (l.updrafts && l.updrafts.length) m.add('updraft'); if (l.kids && l.kids.length) m.add('kids'); if (l.twin) m.add('twin');
   return m;
 }
@@ -1255,6 +1309,7 @@ function makeCrystal() {
   else if (kind === 'slipper') { const m = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.16, 0.3), crystalMat); m.position.y = 0.2; m.castShadow = true; g.add(m); const toe = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.32), crystalMat); toe.position.set(0.16, 0.3, 0); g.add(toe); }
   else if (kind === 'bone') { const m = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.5, 6), crystalMat); m.rotation.z = Math.PI / 2; m.position.y = 0.3; g.add(m); for (const dx of [-0.25, 0.25]) for (const dy of [-0.08, 0.08]) { const k = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 5), crystalMat); k.position.set(dx, 0.3 + dy, 0); g.add(k); } }
   else if (kind === 'banana') { const m = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.09, 5, 8, Math.PI * 0.9), crystalMat); m.position.y = 0.3; m.rotation.z = -0.5; m.castShadow = true; g.add(m); }
+  else if (kind === 'fly') { const m = new THREE.Mesh(new THREE.SphereGeometry(0.2, 6, 5), new THREE.MeshLambertMaterial({ color: 0x2a2a30, flatShading: true })); m.position.y = 0.45; g.add(m); for (const sd of [-1, 1]) { const w = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.16), new THREE.MeshBasicMaterial({ color: 0xd8f0ff, transparent: true, opacity: 0.6, side: THREE.DoubleSide })); w.position.set(0, 0.55, sd * 0.16); w.rotation.x = sd * 0.5; g.add(w); } }
   else if (kind === 'moonrock') { const m = new THREE.Mesh(new THREE.DodecahedronGeometry(0.32, 0), crystalMat); m.position.y = 0.32; m.castShadow = true; g.add(m); }
   else if (kind === 'fish') { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28, 0), crystalMat); m.scale.set(1.6, 0.8, 0.5); m.position.y = 0.3; g.add(m); const t = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.3, 4), crystalMat); t.position.set(-0.5, 0.3, 0); t.rotation.z = Math.PI / 2; g.add(t); }
   else if (kind === 'moon') { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3, 1), crystalMat); m.position.y = 0.32; g.add(m); }
@@ -1291,7 +1346,7 @@ function dressGround(s, g, seed, small) {
   if (!STYLE.flat) for (let k = 0; k < 6; k++) { const lump = new THREE.Mesh(makeRock(2 + rr() * 3, 1.2 + rr() * 1.5, 3, seed + 200 + k, 0.45), rockMaterials(seed + 200 + k)); lump.position.set(s.x1 + 2 + rr() * (s.w - 4), s.y + 0.4, -6 - rr() * 5); lump.castShadow = lump.receiveShadow = true; g.add(lump); }
 }
 // dog worlds: ledges are things — roofs, sofas, benches, crates, car roofs, islands — not chunks of rock
-const PROP_STYLES = { yard: 'yard', house: 'house', park: 'park', lot: 'lot', winter: 'winter', flat: 'flat', lake: 'lake' };
+const PROP_STYLES = { yard: 'yard', house: 'house', park: 'park', lot: 'lot', winter: 'winter', flat: 'flat', lake: 'lake', forest: 'forest', pond: 'pond', anthill: 'anthill' };
 function propLedge(s, g, seed, mats) {
   const kind = PROP_STYLES[styleKey()]; if (!kind || s.finish || s.type === 'terrace' || s.seesaw) return false;
   const rr = mulberry(seed + 5); const M = c => new THREE.MeshLambertMaterial({ color: c, flatShading: true }); const z0 = LEDGE_FRONT_Z - 2.3;
@@ -1319,6 +1374,15 @@ function propLedge(s, g, seed, mats) {
     if (size === 'big') { box(W, 0.9, 3.0, [0xc03a3a, 0x3a5aa8, 0xe8e8e8][seed % 3], 0, -0.45); box(W * 1.3, 0.8, 3.4, [0xc03a3a, 0x3a5aa8, 0xe8e8e8][seed % 3], 0, -1.3); box(W * 0.8, 0.5, 2.4, 0x88a8c8, 0, -0.5, 1.6); box(W, 0.12, 3.0, 0xf6f9fc, 0, 0.06); }   // car: snow on the roof
     else if (size === 'mid') { box(W, 0.14, 1.6, wood, 0, -0.07, 0.2); box(W, 0.14, 1.2, wood, 0, -0.07, -1.4); box(W, 0.12, 1.6, 0xf6f9fc, 0, 0.06, 0.2); for (const sx of [-1, 1]) box(0.12, H, 0.12, 0x4a4e55, sx * (W / 2 - 0.3), -H / 2, 0.2); }   // snowed bench
     else { const mound = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), M(0xf6f9fc)); mound.scale.set(W / 2 + 0.2, H * 0.8, 1.6); mound.position.set(s.x, s.y - H * 0.7, z0); mound.castShadow = true; g.add(mound); }   // snow pile
+  } else if (kind === 'forest' || kind === 'anthill') {
+    if (size === 'big' || size === 'mid') { const leaf = new THREE.Mesh(new THREE.CylinderGeometry(W / 2 + 0.2, W / 2 + 0.2, 0.14, 12), M([0x6aa84a, 0x8ac860, 0x5a9840, 0xc8a040][seed % 4])); leaf.scale.z = 0.7; leaf.position.set(s.x, s.y - 0.07, z0); leaf.receiveShadow = leaf.castShadow = true; g.add(leaf);
+      const vein = new THREE.Mesh(new THREE.BoxGeometry(W * 0.9, 0.05, 0.08), M(0x4a7a30)); vein.position.set(s.x, s.y - 0.02, z0); g.add(vein); const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, H + 1.5, 5), M(0x5a7a34)); stem.position.set(s.x - W / 2 + 0.3, s.y - (H + 1.5) / 2, z0 - 0.4); stem.rotation.z = 0.35; g.add(stem); }
+    else if (size === 'small') { const cap = new THREE.Mesh(new THREE.SphereGeometry(W / 2 + 0.2, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2), M([0xd8402a, 0xe8b060, 0xd8d0b0][seed % 3])); cap.scale.y = 0.5; cap.position.set(s.x, s.y - 0.3, z0); cap.castShadow = true; g.add(cap); const st = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, H, 7), M(0xe8e0c8)); st.position.set(s.x, s.y - H / 2 - 0.2, z0); g.add(st); }   // mushroom: stand on the cap
+    else { const pebble = new THREE.Mesh(makeRock(W + 0.3, H, 1.6, seed, 0.25, { solid: true }), M(0x8a8a82)); pebble.position.set(s.x, s.y - H / 2, z0); pebble.castShadow = true; g.add(pebble); }
+  } else if (kind === 'pond') {
+    const pad = new THREE.Mesh(new THREE.CylinderGeometry(W / 2 + 0.25, W / 2 + 0.25, 0.12, 14, 1, false, 0.3, Math.PI * 2 - 0.6), M([0x4a9a40, 0x5aa848, 0x3f8a38][seed % 3])); pad.position.set(s.x, s.y - 0.06, z0); pad.receiveShadow = true; g.add(pad);
+    if (size === 'tiny') { const log = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.28, W + 0.6, 7), M(0x6e4e30)); log.rotation.z = Math.PI / 2; log.position.set(s.x, s.y - 0.25, z0 + 0.3); g.add(log); pad.visible = false; }
+    if (size === 'big' && !s.move) { const fl = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28, 0), M(0xf6a8c8)); fl.position.set(s.x + W / 2 - 0.5, s.y + 0.25, z0 - 0.8); g.add(fl); }
   } else if (kind === 'lake') {
     const island = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), M(0x8a6a48)); island.scale.set(W / 2 + 0.4, H * 0.9, 2.2); island.position.set(s.x, s.y - H * 0.75, z0); island.castShadow = island.receiveShadow = true; g.add(island);
     if (size === 'tiny') { const log = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.32, W + 0.6, 7), M(0x6e4e30)); log.rotation.z = Math.PI / 2; log.position.set(s.x, s.y - 0.3, z0 + 0.4); log.castShadow = true; g.add(log); }
@@ -1326,8 +1390,12 @@ function propLedge(s, g, seed, mats) {
   }
   return true;
 }
+function makeAnt() { const g = new THREE.Group(); const M = new THREE.MeshLambertMaterial({ color: 0x2a1c14, flatShading: true }); for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(new THREE.SphereGeometry(i === 2 ? 0.26 : 0.17, 6, 5), M); b.position.set(0.28 - i * 0.28, 0.28, 0); g.add(b); }
+  for (let i = 0; i < 3; i++) for (const sd of [-1, 1]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.4, 4), M); leg.position.set(0.2 - i * 0.2, 0.15, sd * 0.2); leg.rotation.x = sd * 0.9; g.add(leg); g.legsA = g.legsA || []; g.legsA.push(leg); }
+  for (const sd of [-1, 1]) { const an = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.3, 4), M); an.position.set(0.5, 0.42, sd * 0.06); an.rotation.z = -0.9; g.add(an); } g.traverse(o => { if (o.isMesh) o.castShadow = true; }); return g; }
 function makeVegetation(r) {
   const g = new THREE.Group(); const leaf = new THREE.MeshLambertMaterial({ color: STYLE.bush, flatShading: true });
+  if (STYLE.veg === 'grass') { for (let i = 0; i < 5; i++) { const bl = new THREE.Mesh(new THREE.ConeGeometry(0.12, 2.2 + r() * 1.6, 4), leaf); bl.position.set((r() - .5) * 0.5, 1.2, (r() - .5) * 0.4); bl.rotation.z = (r() - .5) * 0.5; bl.rotation.x = (r() - .5) * 0.3; g.add(bl); } return g; }
   if (STYLE.veg === 'none') { const b = new THREE.Mesh(makeRock(0.5 + r() * 0.5, 0.35, 0.5, Math.floor(r() * 1000), 0.4), new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true })); b.position.y = 0.15; g.add(b); return g; }
   if (STYLE.veg === 'pine') {
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 0.5, 5), new THREE.MeshLambertMaterial({ color: 0x4a3526, flatShading: true })); trunk.position.y = 0.25; g.add(trunk);
@@ -1474,9 +1542,10 @@ function buildLevel(idx, defOverride) {
   const rocks = (def.rocks || []).map((r, i) => ({ ...r, t: -(r.offset || 0), warn: null, boulder: null, chute: makeChute(r.x, r.y, 900 + i + idx * 17) }));
   const winds = (def.winds || []).map(w => ({ ...w, force: w.force * (styleAt(def, (w.y1 + w.y2) / 2).windBoost || 1) }));
   const updrafts = (def.updrafts || []).map((u, i) => ({ ...u, lift: u.lift * (styleAt(def, u.y1).liftBoost || 1), mesh: makeVent(u, 700 + i) }));
-  const kids = (def.kids || []).map(k => { const sf = surfaces.find(s => s.id === k.surface); const cs = currentSkin(); const g = cs.ch === 'kong' ? new Goat('classic', 1, 'human') : new Goat(cs.sk, ['dog', 'corgi', 'collie', 'basset', 'husky'].includes(cs.ch) ? 0.55 : 0.6, cs.ch); g.spawn(sf, k.x ?? sf.x); g.root.position.z = -0.4; g.herdZ = -0.4; g.isKid = true; return { surface: sf, goat: g, rescued: false }; });
+  const kids = (def.kids || []).map(k => { const sf = surfaces.find(s => s.id === k.surface); const cs = currentSkin(); const g = cs.ch === 'kong' ? new Goat('classic', 1, 'human') : new Goat(cs.sk, ['dog', 'corgi', 'collie', 'basset', 'husky'].includes(cs.ch) ? 0.55 : cs.ch === 'frog' ? 0.5 : 0.6, cs.ch); g.spawn(sf, k.x ?? sf.x); g.root.position.z = -0.4; g.herdZ = -0.4; g.isKid = true; return { surface: sf, goat: g, rescued: false }; });
   layoutEnv(def, surfaces);
-  L = { idx, def, surfaces, blockers, crystals, hawks, rocks, winds, updrafts, kids, falling: [], windDust: [], liftDust: [], starts, start: starts[0], bottom, top, twin: !!def.twin, ascent: !!def.ascent, horizontal: !!def.horizontal, dir: def.ascent ? -1 : 1, endless: !!def.endless,
+  const ants = (def.ants || []).map(a => { const sf = surfaces.find(s => s.id === a.surface); if (!sf) return null; const m = makeAnt(); m.position.set(sf.x, sf.y, 0.4); levelGroup.add(m); return { s: sf, x: sf.x, dir: 1, speed: a.speed || 1.4, mesh: m, t: 0 }; }).filter(Boolean);
+  L = { idx, def, surfaces, blockers, crystals, hawks, rocks, winds, updrafts, kids, ants, falling: [], windDust: [], liftDust: [], starts, start: starts[0], bottom, top, twin: !!def.twin, ascent: !!def.ascent, horizontal: !!def.horizontal, dir: def.ascent ? -1 : 1, endless: !!def.endless,
         left: Math.min(...surfaces.map(s => s.x1)), right: Math.max(...surfaces.map(s => s.x2)),
         gen: { lastX: 0, lastY: 0, lastW: 8, n: 0, sinceHawk: 0, sincePickup: 0, biome: 0, seed: 1000 } };
   buildDebug();
@@ -1619,10 +1688,12 @@ CHARACTERS.corgi = { name: 'CORGI', world: 'THE HOUSE', model: 'dog', variant: '
 CHARACTERS.dog = { name: 'DACHSHUND', world: 'DACHSHUND YARD', skins: DOG_SKINS, list: [{ id: 'red', name: 'RED DACHSHUND', cost: 0 }, { id: 'blacktan', name: 'BLACK & TAN', cost: 14 }, { id: 'dapple', name: 'DAPPLE', cost: 18 }] };
 const HUMAN_SKINS = { classic: { body: 0x3a5a8a, belly: 0xe8c8a8, dark: 0x2a2a30, horn: 0 } };
 for (const [ch, C] of Object.entries(CHARACTERS)) if (!C.hidden && !C.list.some(i => i.id === 'legend')) C.list.push({ id: 'legend', name: 'LEGENDARY', cost: 40, legend: true });
+const FROG_SKINS = { green: { body: 0x5aa848, belly: 0xd8e8a0, dark: 0x2a5a2a, horn: 0 }, tree: { body: 0x48b060, belly: 0xf0f0c0, dark: 0xd8402a, horn: 0 }, toad: { body: 0x8a7a48, belly: 0xd8c898, dark: 0x4a3a20, horn: 0 } };
+CHARACTERS.frog = { name: 'FROG', world: 'FOREST FLOOR', skins: FROG_SKINS, list: [{ id: 'green', name: 'GREEN FROG', cost: 0 }, { id: 'tree', name: 'TREE FROG', cost: 14 }, { id: 'toad', name: 'TOAD', cost: 18 }, { id: 'legend', name: 'LEGENDARY', cost: 40, legend: true }] };
 CHARACTERS.human = { name: 'PERSON', hidden: true, skins: HUMAN_SKINS, list: [{ id: 'classic', name: 'PERSON', cost: 0 }] };
 let forcedChar = null;
 function currentSkin() { const ch = forcedChar && CHARACTERS[forcedChar] ? forcedChar : CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id; return { ch, sk }; }
-const HAWK_SKINS = { meteor: { dark: 0x5a4a3a, light: 0xffa040, beak: 0xffe080 }, dragonfly: { dark: 0x3a9ad0, light: 0xa8e8ff, beak: 0x2a4a5a }, crow: { dark: 0x15151a, light: 0x2a2a32, beak: 0x4a4a50 }, drone: { dark: 0xe8e8ee, light: 0x3a7ad8, beak: 0xff5040 }, wasp: { dark: 0x2a2418, light: 0xf0c020, beak: 0x222222 }, chopper: { dark: 0x2c3138, light: 0x6b7480, beak: 0xff3030 }, pigeon: { dark: 0x6f7480, light: 0xc9cbd3, beak: 0xe0b060 }, hawk: { dark: 0x4a3324, light: 0xa88664, beak: 0xd9b23c }, raven: { dark: 0x15131c, light: 0x2c2936, beak: 0x4a4a4a }, eagle: { dark: 0x5e3a1a, light: 0xeee6d6, beak: 0xe6c23c }, falcon: { dark: 0x596270, light: 0xd9d5cc, beak: 0xd6b23a } };
+const HAWK_SKINS = { mosquito: { dark: 0x3a3a44, light: 0x9aa0b0, beak: 0x2a2a30 }, meteor: { dark: 0x5a4a3a, light: 0xffa040, beak: 0xffe080 }, dragonfly: { dark: 0x3a9ad0, light: 0xa8e8ff, beak: 0x2a4a5a }, crow: { dark: 0x15151a, light: 0x2a2a32, beak: 0x4a4a50 }, drone: { dark: 0xe8e8ee, light: 0x3a7ad8, beak: 0xff5040 }, wasp: { dark: 0x2a2418, light: 0xf0c020, beak: 0x222222 }, chopper: { dark: 0x2c3138, light: 0x6b7480, beak: 0xff3030 }, pigeon: { dark: 0x6f7480, light: 0xc9cbd3, beak: 0xe0b060 }, hawk: { dark: 0x4a3324, light: 0xa88664, beak: 0xd9b23c }, raven: { dark: 0x15131c, light: 0x2c2936, beak: 0x4a4a4a }, eagle: { dark: 0x5e3a1a, light: 0xeee6d6, beak: 0xe6c23c }, falcon: { dark: 0x596270, light: 0xd9d5cc, beak: 0xd6b23a } };
 
 class Goat {
   constructor(skin, scale = 1, character = 'goat') {
@@ -1655,6 +1726,7 @@ class Goat {
     if (this.character === 'cat') return this.buildCat(sk);
     if (this.character === 'human') return this.buildHuman(sk);
     if (this.character === 'dog') return this.buildDog(sk);
+    if (this.character === 'frog') return this.buildFrog(sk);
     if (this.character === 'corgi') return this.buildDog(sk, 'corgi');
     if (this.character === 'collie') return this.buildDog(sk, 'collie');
     if (this.character === 'basset') return this.buildDog(sk, 'basset');
@@ -1694,6 +1766,19 @@ class Goat {
     makeLeg(0.48, 0.16, true); makeLeg(0.48, -0.16, true); makeLeg(-0.5, 0.15, false); makeLeg(-0.5, -0.15, false);
     goat.traverse(o => { if (o.isMesh) o.castShadow = true; }); goat.scale.setScalar(this.scale);
     scene.add(goat);
+  }
+  buildFrog(sk) { // squat body, bulging eyes on top, big folded back legs, small front legs
+    const M = { fur: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), tan: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }), dark: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0x120c08 }), white: new THREE.MeshLambertMaterial({ color: 0xf4f0c0 }) };
+    const root = this.root = new THREE.Group(); const bodyG = this.bodyG = new THREE.Group(); root.add(bodyG); this.legs = [];
+    const torso = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 6), M.fur); torso.scale.set(1.25, 0.75, 1.0); torso.position.set(-0.05, 0.62, 0); bodyG.add(torso);
+    const belly = new THREE.Mesh(new THREE.SphereGeometry(0.42, 8, 6), M.tan); belly.scale.set(1.15, 0.6, 0.9); belly.position.set(0.0, 0.5, 0); bodyG.add(belly);
+    const headG = this.headG = new THREE.Group(); headG.position.set(0.5, 0.78, 0); bodyG.add(headG);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.34, 8, 6), M.fur); head.scale.set(1.2, 0.7, 1.05); head.position.set(0.05, 0, 0); headG.add(head);
+    for (const sd of [-1, 1]) { const eye = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), M.white); eye.position.set(0.05, 0.22, sd * 0.24); headG.add(eye); const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 5), M.eye); pupil.position.set(0.17, 0.24, sd * 0.25); headG.add(pupil); }
+    const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.03, 0.5), M.dark); mouth.position.set(0.28, -0.12, 0); headG.add(mouth);
+    const makeLeg = (x, z, front) => { const g = new THREE.Group(); const LL = front ? 0.38 : 0.62; g.position.set(x, front ? 0.42 : 0.5, z); bodyG.add(g); const up = new THREE.Mesh(new THREE.CylinderGeometry(front ? 0.06 : 0.11, front ? 0.05 : 0.08, LL * 0.55, 5), M.fur); up.position.y = -LL * 0.27; up.rotation.z = front ? 0 : 0.6; g.add(up); const low = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, LL * 0.5, 5), M.fur); low.position.set(front ? 0 : -0.12, -LL * 0.75, 0); g.add(low); const foot = new THREE.Mesh(new THREE.BoxGeometry(front ? 0.22 : 0.34, 0.05, front ? 0.16 : 0.22), M.dark); foot.position.set(front ? 0.06 : -0.02, -LL, 0); g.add(foot); g.userData.front = front; this.legs.push(g); };
+    makeLeg(0.35, 0.22, true); makeLeg(0.35, -0.22, true); makeLeg(-0.45, 0.3, false); makeLeg(-0.45, -0.3, false);
+    root.traverse(o => { if (o.isMesh) o.castShadow = true; }); root.scale.setScalar(this.scale); scene.add(root);
   }
   buildDog(sk, variant) { // dachshund: very long body, short legs, floppy ears, tail up; corgi: shorter body, big upright ears, no tail
     const corgi = variant === 'corgi', collie = variant === 'collie' || variant === 'husky', basset = variant === 'basset', husky = variant === 'husky'; const BL = corgi ? 1.25 : collie ? 1.45 : basset ? 1.7 : 1.8, HX = corgi ? 0.8 : collie ? 0.95 : 1.05;
@@ -1864,6 +1949,7 @@ class Goat {
       const w = this.walk; w.t += dt; const k = clamp(w.t / w.dur, 0, 1); this.pos.x = lerp(w.from, w.to, k); this.pos.y = this.onSurface.y;
       if (k >= 1) { this.pos.x = w.to; this.launch(w.aim); }
     } else if (s === ST.HERD) {
+      if (this.finale === 'croak') { this.pos.y = this.onSurface.y; if (!this.throat) { this.throat = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), new THREE.MeshLambertMaterial({ color: 0xe8e0a0, flatShading: true })); this.throat.position.set(0.35, -0.15, 0); this.headG.add(this.throat); } this.throat.scale.setScalar(0.4 + 0.9 * Math.abs(Math.sin(performance.now() / 380))); }
       if (this.finale === 'chest' || this.finale === 'nap' || this.finale === 'howl') { this.pos.y = this.onSurface.y; if (this.finale === 'howl' && Math.random() < 0.15) spawnDust(this.pos.x + this.facing * 0.9, this.pos.y + 1.4, 1, 0.3, new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 })); }
       else { if (this.stateT > this.herdDelay) this.pos.x += this.herdDir * (this.finale === 'chase' ? 4.2 : 3.2) * dt; this.pos.y = this.onSurface.y; this.facing = this.herdDir; }
       if (this.chaseBird) { const b = this.chaseBird; b.position.x += this.herdDir * 4.6 * dt; b.position.y += 0.6 * dt; const f = Math.sin(this.stateT * 12); for (const w of b.wings) { w.rotation.x = w.userData.side * f * 0.6; w.outer.rotation.x = w.userData.side * f * 0.5; } }
@@ -1897,6 +1983,7 @@ class Goat {
     if (s === ST.IDLE && !aim) { crouch = 0.03 + Math.sin(now * 2.2) * 0.03; headPitch = Math.sin(now * 0.9) * 0.12 - 0.15; }
     else if (s === ST.IDLE && aim) { crouch = 0.18 + aim.t * 0.62; headPitch = clamp(aim.dir.y * 0.8, -0.5, 0.7); }
     else if (s === ST.HERD && this.finale === 'chest') { pitch = 0.9; crouch = -0.1; headPitch = 0.4; legFwd = 0; }
+    else if (s === ST.HERD && this.finale === 'croak') { pitch = -0.1; crouch = 0.1; }
     else if (s === ST.HERD && this.finale === 'howl') { const k = clamp(t / 0.6, 0, 1); headPitch = 0.95 * k + Math.sin(now * 1.2) * 0.05; pitch = 0.15 * k; crouch = -0.05; }
     else if (s === ST.HERD && this.finale === 'nap') { const k = clamp(t / 0.8, 0, 1); crouch = 1.3 * k + Math.sin(now * 1.4) * 0.05; headPitch = -0.7 * k; legFwd = 1.5 * k; }
     else if (s === ST.WALK || (s === ST.HERD && t > this.herdDelay)) { crouch = 0.12 + Math.abs(Math.sin(now * 22)) * 0.08; headPitch = -0.35; }
@@ -2152,6 +2239,7 @@ function H_seen(k) { return G.hints && G.hints.seen[k]; }
 function activeHint() {
   const g = goats[0], y = g.pos.y, ahead = 15, back = 4; const inView = yy => L.horizontal ? Math.abs(yy - y) < 10 : L.ascent ? (yy > y - back && yy < y + ahead) : (yy < y + back && yy > y - ahead);
   if (L.def.gravity && L.def.gravity < 15 && G.jumps === 0 && !H_seen('moon')) return 'moon';
+  if ((L.ants || []).some(a => inView(a.s.y)) && !H_seen('ants')) return 'ants';
   if (L.def.scent && G.jumps >= 2 && !(save.secretFound || {})[L.def.secretEntry.level] && !(H_seen('scent'))) return 'scent';
   if (G.jumps === 0) { if (L.twin) return 'twin'; if (L.horizontal) return 'run'; if (L.ascent) return 'ascent'; if (L.def.daily) return 'daily'; if (L.endless) return 'endless'; if (!save.seenDrag) return 'drag'; }
   for (const k of L.kids) if (!k.rescued && inView(k.surface.y)) return 'kids';
@@ -2177,7 +2265,7 @@ function updateHints(dt, playing) {
   H.idleT += dt;
   if (key && key !== H.key) {
     const fresh = !H.seen[key], idleAgain = H.idleT > 2.5;
-    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; save.mechSeen = save.mechSeen || {}; if (['birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'scent', 'kids', 'twin'].includes(key) && !save.mechSeen[key]) { save.mechSeen[key] = true; persist(); } H.shownAt = now; hint.innerHTML = (key.startsWith('tut') ? t(key) : t('h_' + key)) + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
+    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; save.mechSeen = save.mechSeen || {}; if (['birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'scent', 'ants', 'kids', 'twin'].includes(key) && !save.mechSeen[key]) { save.mechSeen[key] = true; persist(); } H.shownAt = now; hint.innerHTML = (key.startsWith('tut') ? t(key) : t('h_' + key)) + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
   }
   if (H.key && now - H.shownAt > 7 && H.idleT < 2.5) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; }
   if (!key && H.key) { hint.style.opacity = 0; H.key = null; }
@@ -2264,7 +2352,7 @@ function goSettings(from) {
 }
 document.getElementById('bSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('menu'); });
 // ---- mechanics reference: cards with a live mini-scene on the expanded card ----
-const MECHS = ['drag', 'catch', 'air', 'up', 'camera', 'birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'scent', 'kids', 'twin'];
+const MECHS = ['drag', 'catch', 'air', 'up', 'camera', 'birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'scent', 'ants', 'kids', 'twin'];
 let mechFrom = 'menu', mechOpen = null, mechScene = null;
 function goMech(from) {
   mechFrom = from; mode = from === 'pause' ? 'pause' : 'mech'; hud.style.display = 'none'; const list = document.getElementById('mechList'); list.innerHTML = ''; mechOpen = null; mechScene = null;
@@ -2299,6 +2387,7 @@ function buildMechScene(m, canvas) {
   else if (m === 'rocks') { rock(-1, -1.2, 5); const b = new THREE.Mesh(boulderGeo, boulderMat); ps.add(b); S.extra.b = b; goat.spawn({ y: -1.2, x1: -10, x2: 10, w: 20, x: 0 }, 1.5); }
   else if (m === 'wind') { rock(-3.2, 1, 2.2); rock(3, -1.4, 2.6); S.path = t => { const k = (t % 2.8) / 2.8; return { x: -3.2 + 6.2 * k + Math.sin(k * Math.PI) * 1.0, y: 1 - 2.4 * k + 1.6 * 4 * k * (1 - k), k }; }; }
   else if (m === 'updraft') { rock(-3.2, -1.5, 2.2); rock(3, 2.2, 2.4); S.path = t => { const k = (t % 3) / 3; return { x: -3.2 + 6.2 * Math.min(1, k * 1.15), y: -1.5 + 3.7 * Math.sin(k * Math.PI / 2) + 0.6 * Math.sin(k * Math.PI), k }; }; S.steam = true; }
+  else if (m === 'ants') { rock(-3.2, 0.8, 2.2); rock(2, -1.2, 4.2); const ant = makeAnt(); ant.position.set(2, -1.2, 0.3); ps.add(ant); S.extra.ant = ant; S.path = arc({ x: -3.2, y: 0.8 }, { x: 2, y: -1.2 }, 1.4, 3); }
   else if (m === 'scent') { rock(-3, -1.2, 3); rock(3.2, 1.6, 2); S.extra.paws = []; for (let i = 1; i <= 6; i++) { const paw = new THREE.Mesh(new THREE.CircleGeometry(0.16, 8), new THREE.MeshBasicMaterial({ color: 0x3a2a1a, transparent: true, opacity: 0.5 })); paw.position.set(lerp(-3, 3.2, i / 6), lerp(-0.9, 1.9, i / 6) + Math.sin(i / 6 * Math.PI), 0.6); ps.add(paw); S.extra.paws.push(paw); } goat.spawn({ y: -1.2, x1: -10, x2: 10, w: 20, x: 0 }, -3); }
   else if (m === 'soft') { rock(-3.2, 2.2, 2.2); const r2 = rock(2, -1.4, 4); const snow = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshLambertMaterial({ color: 0xf6f9fc, flatShading: true })); snow.scale.set(2.2, 0.45, 1.6); snow.position.set(2, -1.35, -0.4); ps.add(snow); S.path = arc({ x: -3.2, y: 2.2 }, { x: 2, y: -1.3 }, 1.2, 2.8); }
   else if (m === 'seesaw') { rock(-3.4, 0.8, 2.2); S.extra.ss = rock(1.6, -1.2, 4.6); S.extra.ss.position.y = -1.2 - 0.9; S.path = t => { const k = (t % 3.2) / 3.2; return { x: -3.4 + 4.2 * Math.min(1, k * 1.3), y: 0.8 - 2 * Math.min(1, k * 1.3) + 1.6 * 4 * k * (1 - k), k }; }; }
@@ -2316,6 +2405,7 @@ function tickMechScene(dt) {
   if (S.extra.hawk) { const h = S.extra.hawk; const k = (t % 3.4) / 3.4; const x = -3.5 + 7 * Math.abs(((k * 2) % 2) - 1); h.position.set(x, 0.9, 0.2); h.rotation.y = ((k * 2) % 2) < 1 ? 0 : Math.PI; const f = Math.sin(t * 9); for (const w of h.wings) w.rotation.x = w.userData.side * f * 0.55; }
   if (S.extra.b) { const b = S.extra.b; const k = (t % 2.5) / 2.5; b.position.set(-2.2, 5 - 7.5 * k * k, 0.3); b.rotation.x += 4 * dt; g.state = ST.IDLE; g.animate(dt, null); }
   if (S.extra.paws) { S.extra.paws.forEach((p, i) => { p.material.opacity = 0.5 * (0.5 + 0.5 * Math.sin(t * 2 - i * 0.6)); }); g.state = ST.IDLE; g.animate(dt, null); }
+  if (S.extra.ant) { const a = S.extra.ant; a.position.x = 2 + Math.sin(t * 1.4) * 1.5; a.rotation.y = Math.cos(t * 1.4) > 0 ? 0 : Math.PI; (a.legsA || []).forEach((l, i) => l.rotation.z = Math.sin(t * 14 + i) * 0.4); }
   if (S.extra.ss) S.extra.ss.rotation.z = -Math.sin(t * 2) * 0.25;
   if (S.extra.mv) S.extra.mv.position.x = 2.4 + Math.sin(t * 1.6) * 1.4;
   if (S.extra.cr) { const k = (t % 3.6) / 3.6; S.extra.cr.position.y = -1.2 - 0.9 - (k > 0.85 ? (k - 0.85) * 12 : 0); S.extra.cr.position.x = 1.6 + (k > 0.6 && k < 0.85 ? Math.sin(t * 50) * 0.05 : 0); }
@@ -2332,7 +2422,7 @@ document.getElementById('bBackMenu5').addEventListener('click', e => { e.stopPro
 // ============================================================
 //  Mutators — optional rule twists; multiply salt, never award goals/stars
 // ============================================================
-const MUTATORS = [{ id: 'lowGrav', cost: 0, mult: 1.0 }, { id: 'fog', cost: 0, mult: 1.5 }, { id: 'mirror', cost: 8, mult: 1.25 }, { id: 'rush', cost: 8, mult: 2 }, { id: 'heavy', cost: 8, mult: 1.5 }, { id: 'echo', cost: 8, mult: 1.0 }];
+const MUTATORS = [{ id: 'chase', cost: 0, mult: 2 }, { id: 'lowGrav', cost: 0, mult: 1.0 }, { id: 'fog', cost: 0, mult: 1.5 }, { id: 'mirror', cost: 8, mult: 1.25 }, { id: 'rush', cost: 8, mult: 2 }, { id: 'heavy', cost: 8, mult: 1.5 }, { id: 'echo', cost: 8, mult: 1.0 }];
 const mutOn = id => (save.mutators || []).includes(id);
 function mutMult() { return +(save.mutators || []).reduce((m, id) => m * (MUTATORS.find(x => x.id === id) || { mult: 1 }).mult, 1).toFixed(2); }
 function goMutators(from) {
@@ -2504,8 +2594,8 @@ function worldLevelsDone(wi) { return levelsDone(WORLDS[wi].levels); }
 function worldCount(wi) { return WORLDS[wi].levels.filter(k => { const l = LEVELS.find(l => l.key === k); return l && !l.tutorial && !l.secret; }).length; }
 function dimOf(wi) { return DIMS.find(d => d.worlds.includes(WORLDS[wi].name)); }
 function dimKeys(i) { return DIMS[i].worlds.flatMap(n => (WORLDS.find(w => w.name === n) || { levels: [] }).levels); }
-function dimOpen(d) { if (save.settings.devUnlock) return true; if (!d.need) return true; return levelsDone(dimKeys(d.need.dim)) >= d.need.n; }
-function dimLockText(d) { const nd = DIMS[d.need.dim]; return t('dimLocked', { n: d.need.n, d: t(nd.nameKey), have: levelsDone(dimKeys(d.need.dim)) }); }
+function dimOpen(d) { if (d.soon) return false; if (save.settings.devUnlock) return true; if (!d.need) return true; return levelsDone(dimKeys(d.need.dim)) >= d.need.n; }
+function dimLockText(d) { if (d.soon) return t('dimSoonSub'); const nd = DIMS[d.need.dim]; return t('dimLocked', { n: d.need.n, d: t(nd.nameKey), have: levelsDone(dimKeys(d.need.dim)) }); }
 function worldOpen(wi) { if (save.settings.devUnlock) return true; // first world of a dimension: the dimension must be open; otherwise 60% of the previous world's stars OR all its levels done
   const d = dimOf(wi); const pos = d.worlds.indexOf(WORLDS[wi].name);
   if (pos === 0) return dimOpen(d);
@@ -2563,7 +2653,7 @@ function goWorld(wi) {
     const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
     const b = document.createElement('div'); b.className = 'btn';
     const found = !lv.secret || save.settings.devUnlock || (save.secretFound && save.secretFound[k]);
-    const nm = lv.secret && !found ? t('secretHidden') : lv.nameKey ? t(lv.nameKey) : lv.name; const ICO = { birds: '🐦', spikes: '▲', ice: '❄', crumble: '✶', rocks: '●', wind: '≋', updraft: '⇧', moving: '⇄', seesaw: '⚖', soft: '☁', kids: '♥', twin: '⇊' }; const icons = [...levelMechanics(lv)].map(m => ICO[m]).join(' ');
+    const nm = lv.secret && !found ? t('secretHidden') : lv.nameKey ? t(lv.nameKey) : lv.name; const ICO = { ants: '🐜', birds: '🐦', spikes: '▲', ice: '❄', crumble: '✶', rocks: '●', wind: '≋', updraft: '⇧', moving: '⇄', seesaw: '⚖', soft: '☁', kids: '♥', twin: '⇊' }; const icons = [...levelMechanics(lv)].map(m => ICO[m]).join(' ');
     b.innerHTML = lv.tutorial ? `${wi + 1}-${li} · ${nm}<small>${t('firstStepsSub')}</small><small>${stars ? '✓' : ''}</small>` : `${wi + 1}-${li + (WORLDS[wi].levels.some(k => (LEVELS.find(l => l.key === k) || {}).tutorial) ? 0 : 1)} · ${nm}<small>${lv.secret ? (found ? '✦ ' + t('secret') + ' · ' : t('secretHint')) : ''}${lv.puzzle ? '🧩 ' + t('puzzle') + ' · ' : ''}${lv.challenge ? '⚡ ' + t('mod_' + lv.mod) + ' · ' : ''}${(lv.twists || []).map(m => '✦ ' + t('mut_' + m) + ' · ').join('')}${(lv.secret && !found) ? '' : t(lv.horizontal ? 'run' : lv.ascent ? 'up' : lv.twin ? 'twin' : 'down')}${icons && found ? ' · ' + icons : ''}</small><small>${'★'.repeat(Math.min(5, stars)) + '☆'.repeat(Math.max(0, 5 - stars))}</small>${stars ? `<small style="opacity:.7">${goalsText(lv).join(' · ')}</small>` : ''}`;
     if (lv.secret && !found) b.classList.add('dim'); else b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startLevel(idx); });
     list.appendChild(b);
@@ -2753,6 +2843,15 @@ function makeCube(kind, seed) {
     const snow = new THREE.Mesh(makeRock(1.0, 0.6, 1.0, seed + 9, 0.3), flat(0xf4f7fa)); snow.position.set(-0.6, 4.5, 0.3); g.add(snow);
     for (let i = 0; i < 4; i++) { const ledge = new THREE.Mesh(makeRock(0.9, 0.25, 0.7, seed + 20 + i, 0.1, { solid: true }), flat(0xd9bc8e)); ledge.position.set(-1.9 + i * 0.35, 0.8 + i * 0.7, 1.6 - i * 0.25); ledge.castShadow = true; g.add(ledge); }
     for (let i = 0; i < 7; i++) { const b = new THREE.Mesh(new THREE.IcosahedronGeometry(0.2 + rr() * 0.15, 0), flat(0x5f6b3d)); b.position.set(-2.4 + rr() * 4.8, 0.35, -2.4 + rr() * 4.8); if (Math.hypot(b.position.x, b.position.z) < 1.6) b.position.x += 1.6; g.add(b); }
+  } else if (kind === 'frog') {
+    ground(0x5a8a44); for (let i = 0; i < 26; i++) { const bl = new THREE.Mesh(new THREE.ConeGeometry(0.12, 1.4 + rr() * 1.6, 4), flat(0x6aa84a)); bl.position.set(-2.8 + rr() * 5.6, 0.9, -2.8 + rr() * 5.6); bl.rotation.z = (rr() - .5) * 0.5; g.add(bl); }
+    const leaf = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 0.14, 12), flat(0x8ac860)); leaf.scale.z = 0.7; leaf.position.set(-0.6, 0.6, 0.6); leaf.rotation.z = 0.15; leaf.castShadow = true; g.add(leaf);
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(0.8, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2), flat(0xd8402a)); cap.scale.y = 0.55; cap.position.set(1.6, 1.3, -1.2); cap.castShadow = true; g.add(cap); const st = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 1.1, 7), flat(0xe8e0c8)); st.position.set(1.6, 0.75, -1.2); g.add(st);
+    for (let i = 0; i < 4; i++) { const pb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.28 + rr() * 0.2, 0), flat(0x8a8a82)); pb.position.set(-2.2 + rr() * 4.4, 0.4, -2.2 + rr() * 4.4); g.add(pb); }
+  } else if (kind === 'soon') {
+    ground(0x5a5650); const slab = new THREE.Mesh(makeRock(4.2, 2.4, 3.2, seed + 4, 0.35), flat(0x8a8078)); slab.position.set(0, 1.4, 0); slab.castShadow = true; g.add(slab);
+    const q = new THREE.Group(); const qm = flat(0xffd76a); const arc = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.14, 8, 16, Math.PI * 1.5), qm); arc.rotation.z = Math.PI * 0.75; q.add(arc); const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.55, 8), qm); stem.position.set(0, -0.75, 0); q.add(stem); const dot = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), qm); dot.position.set(0, -1.35, 0); q.add(dot);
+    q.position.set(0, 3.9, 0.2); g.add(q); g.q = q;
   } else if (kind === 'moon') {
     ground(0x14161f); for (let i = 0; i < 40; i++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.03, 4, 3), new THREE.MeshBasicMaterial({ color: 0xffffff })); st.position.set(-2.9 + rr() * 5.8, 0.26, -2.9 + rr() * 5.8); g.add(st); }
     // the Moon: a sphere with crater bowls pressed in and raised rims, flat shaded
@@ -2818,9 +2917,9 @@ function goDims() {
 }
 function updateDims(dt) {
   dio.t += dt; layoutDio(dt); const labels = $('dimLabels'); if (labels.children.length !== 1) labels.innerHTML = '<div style="position:fixed;left:0;right:0;bottom:calc(10% + env(safe-area-inset-bottom));text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.6);pointer-events:auto;cursor:pointer"></div>';
-  dio.cubes.forEach((c, i) => { const d = DIMS[i], open = dimOpen(d), focused = i === dio.focus; c.rotation.y = Math.sin(dio.t * 0.4 + i) * 0.08; if (c.moon) c.moon.rotation.y += 0.004; c.position.y = Math.sin(dio.t * 1.1 + i * 2) * 0.1;
+  dio.cubes.forEach((c, i) => { const d = DIMS[i], open = dimOpen(d), focused = i === dio.focus; c.rotation.y = Math.sin(dio.t * 0.4 + i) * 0.08; if (c.moon) c.moon.rotation.y += 0.004; if (c.q) { c.q.rotation.y = Math.sin(dio.t * 0.8) * 0.5; c.q.position.y = 3.9 + Math.sin(dio.t * 1.5) * 0.15; } c.position.y = Math.sin(dio.t * 1.1 + i * 2) * 0.1;
     for (const m of c.mats) { m.color.copy(m.userData.orig); if (!focused) { m.color.lerp(new THREE.Color(0xe6dccb), 0.45); } if (!open) m.color.multiplyScalar(0.7); }
-    c.clouds.visible = !open; if (!open) c.clouds.children.forEach((p, k) => { p.position.y = 1.4 + (k % 3) * 0.9 + Math.sin(dio.t * 0.6 + p.userData.ph) * 0.25; p.position.x += Math.sin(dio.t * 0.3 + p.userData.ph) * 0.004; });
+    c.clouds.visible = !open && !d.soon; if (!open) c.clouds.children.forEach((p, k) => { p.position.y = 1.4 + (k % 3) * 0.9 + Math.sin(dio.t * 0.6 + p.userData.ph) * 0.25; p.position.x += Math.sin(dio.t * 0.3 + p.userData.ph) * 0.004; });
   });
   const d = DIMS[dio.focus], open = dimOpen(d), el = labels.children[0];
   const wk = d.worlds.flatMap(n => (WORLDS.find(w => w.name === n) || { levels: [] }).levels); const done = levelsDone(wk), total = wk.filter(k => { const l = LEVELS.find(l => l.key === k); return l && !l.tutorial; }).length;
@@ -2963,6 +3062,7 @@ addEventListener('pointerup', e => {
 function updateEditor(dt) {
   setHalfH(damp(halfH, ED.zoom, 5, dt)); camera.position.set(ED.camX + camDist * 0.24, ED.camY + camDist * 0.07, camDist); camera.lookAt(ED.camX, ED.camY, 0);
   sun.position.set(ED.camX + 26, ED.camY + 42, 34); sun.target.position.set(ED.camX, ED.camY - 6, 0); ENV.sky.position.y = ED.camY - 20;
+  for (const a of (L.ants || [])) { a.mesh.position.y = a.s.y; }
   const t = performance.now() / 1000; for (const c of L.crystals) c.mesh.rotation.y = t * 1.2 + c.phase; for (const h of L.hawks) { h.t += dt; const f = Math.sin(h.t * 9); for (const w of h.mesh.wings) w.rotation.x = w.userData.side * f * 0.55; }
   for (const k of L.kids) { k.goat.update(dt, 0); k.goat.animate(dt, null); }
 }
@@ -3410,6 +3510,9 @@ function update(dt) {
   updateHazards(dt, playing);
   updateKids(dt, playing);
   // hawks: patrol, flap, and knock the goat off if its body touches one
+  for (const a of (L.ants || [])) { a.t += dt; a.x += a.dir * a.speed * dt; if (a.x > a.s.x2 - 0.4) { a.x = a.s.x2 - 0.4; a.dir = -1; } if (a.x < a.s.x1 + 0.4) { a.x = a.s.x1 + 0.4; a.dir = 1; }
+    a.mesh.position.set(a.x + (a.s.x - a.s.x0), a.s.y, 0.4); a.mesh.rotation.y = a.dir > 0 ? 0 : Math.PI; (a.mesh.legsA || []).forEach((l, i) => l.rotation.z = Math.sin(a.t * 14 + i) * 0.4);
+    if (playing) for (const g of goats) if (g.onSurface === a.s && [ST.IDLE, ST.LAND, ST.WALK, ST.AIM].includes(g.state) && Math.abs(g.pos.x - a.x - (a.s.x - a.s.x0)) < 0.7) { g.dropOff(a.dir * 2.2); AudioSys.play('hit'); vib(20); G.drag = null; G.aiming = false; G.aim = null; } }
   for (const h of L.hawks) {
     h.t += dt; const span = h.x2 - h.x1, ph = (h.t * h.speed) % (2 * span); const k = ph < span ? ph : 2 * span - ph; h.dir = ph < span ? 1 : -1;
     h.x = h.x1 + k; const m = h.mesh; m.position.set(h.x, h.y + Math.sin(h.t * 3) * 0.15, 0.1);
@@ -3442,6 +3545,7 @@ function update(dt) {
         if (g.character === 'kong') { g.finale = 'chest'; const ban = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.07, 5, 8, Math.PI * 0.9), new THREE.MeshLambertMaterial({ color: 0xffe36a, flatShading: true })); ban.position.set(0.1, -1.15, 0); ban.rotation.z = -0.4; g.legs[0].add(ban); g.setState(ST.HERD); }
         else if (g.character === 'basset') { g.finale = 'nap'; g.setState(ST.HERD); }
         else if (g.character === 'husky') { g.finale = 'howl'; g.setState(ST.HERD); }
+        else if (g.character === 'frog') { g.finale = 'croak'; g.setState(ST.HERD); }
         else if (g.character === 'cat') { g.finale = 'chase'; const b = makeHawk(); b.position.set(g.pos.x + g.herdDir * 2.5, g.pos.y + 1.2, 0.2); b.rotation.y = g.herdDir > 0 ? 0 : Math.PI; b.scale.setScalar(0.6); scene.add(b); g.chaseBird = b; g.herdDelay = 0.3; g.setState(ST.HERD); }
         else g.setState(ST.HERD); }
       for (const g of herd) g.setState(ST.HERD);
@@ -3469,13 +3573,13 @@ function update(dt) {
     else {
     const forward = L.dir > 0 ? target < G.camFy : target > G.camFy;   // is the goat ahead of the camera in the level's direction?
     G.camFy = damp(G.camFy, target, forward ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt);
-    if (G.started) G.camFy -= L.dir * idle * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * dt;   // the mountain only starts moving after your first drag
+    if (G.started) G.camFy -= L.dir * idle * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * ((G.muts || []).includes('chase') ? 2.6 : 1) * dt;   // the mountain only starts moving after your first drag; in a chase it never lets up
     G.camFy = clamp(G.camFy, preferredFy(L.bottom) - 1, preferredFy(L.top) + 1); }
   }
   if (L.horizontal) {
     const tx = preferredFx(maxX); const halfW = halfH * camera.aspect;
     if (ended) G.camFx = damp(G.camFx, tx, 4, dt);
-    else { G.camFx = damp(G.camFx, tx, tx > G.camFx ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt); G.camFx += idle * (halfW / halfH) * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * dt; }
+    else { G.camFx = damp(G.camFx, tx, tx > G.camFx ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt); if (G.started) G.camFx += idle * (halfW / halfH) * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * ((G.muts || []).includes('chase') ? 2.6 : 1) * dt; }
     G.camFx = clamp(G.camFx, preferredFx(L.start.x) - 1, preferredFx(L.right - 6) + 1);
   } else if (!(ended && G.result.win)) G.camFx = damp(G.camFx, clamp((minX + maxX) / 2 * 0.6, -4, 5), CONFIG.cameraXFollow, dt);
   G.shake = Math.max(0, (G.shake || 0) - dt * 1.4); const shk = G.shake * G.shake * 0.6, sx = (Math.random() - .5) * shk, sy = (Math.random() - .5) * shk;
@@ -3486,7 +3590,7 @@ function update(dt) {
   let sf = 1, warn = 0;
   for (const g of goats) sf = Math.min(sf, L.horizontal ? screenFractionX(g.pos.x, g.pos.y) : L.ascent ? 1 - screenFraction(g.pos.x, g.pos.y - 0.4) : screenFraction(g.pos.x, g.pos.y));
   if (playing && G.started) {
-    if (sf < CONFIG.cameraDangerFraction) { G.dangerT += dt; if (G.dangerT > CONFIG.cameraFailureGrace) { if (L.def.tutorial) { const g = goats[0]; if (g.lastSafe) { g.spawn(g.lastSafe.s, g.lastSafe.x); G.camFy = preferredFy(g.pos.y); } G.dangerT = 0; } else { for (const g of goats) if (g.state !== ST.JUMP) g.fall(); finishLevel(false, 'camera'); } } }
+    if (sf < CONFIG.cameraDangerFraction) { G.dangerT += dt; if (G.dangerT > CONFIG.cameraFailureGrace * ((G.muts || []).includes('chase') ? 0.35 : 1)) { if (L.def.tutorial) { const g = goats[0]; if (g.lastSafe) { g.spawn(g.lastSafe.s, g.lastSafe.x); G.camFy = preferredFy(g.pos.y); } G.dangerT = 0; } else { for (const g of goats) if (g.state !== ST.JUMP) g.fall(); finishLevel(false, 'camera'); } } }
     else G.dangerT = Math.max(0, G.dangerT - dt * 2);
     warn = clamp((CONFIG.cameraWarnFraction - sf) / (CONFIG.cameraWarnFraction - CONFIG.cameraDangerFraction), 0, 1);
     warn = Math.max(warn, clamp(G.dangerT / CONFIG.cameraFailureGrace, 0, 1) * 1.2);
