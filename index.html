@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v88 -->
+<!-- build v89 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -51,6 +51,7 @@
   body.tabs .screen { padding-bottom:calc(160px + env(safe-area-inset-bottom)) !important; }
   body.tabs .back { bottom:calc(84px + env(safe-area-inset-bottom)); }
   body.tabs #scIbex .back, body.tabs #scChal .back, body.tabs #scColl .back { display:none; }
+  #scSelect .back { display:flex !important; }
   [data-ico] { display:inline-flex; } [data-ico] svg { width:100%; height:100%; }
   #scMenu { background:none; padding:0 !important; overflow:visible; pointer-events:none; }
   #scMenu.show { display:block; }
@@ -478,7 +479,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v88', date: '2026-09-22' };
+const BUILD = { version: 'v89', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -2603,8 +2604,7 @@ function worldOpen(wi) { if (save.settings.devUnlock) return true; // first worl
   return worldStars(prev) >= Math.ceil(worldMax(prev) * 0.6) || worldLevelsDone(prev) >= worldCount(prev);
 }
 function goSelect() {
-  $('selTitle').style.display = 'none';
-  mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; $('bBackMenu').style.display = 'none'; save.worldsSeen = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); persist(); const list = $('levelList'); list.innerHTML = ''; list.style.display = 'none'; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
+  mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; $('bBackMenu').style.display = ''; $('bBackMenu').textContent = t('menu'); save.worldsSeen = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); persist(); const list = $('levelList'); list.innerHTML = ''; list.style.display = 'none'; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
   const d = DIMS[curDim]; const wis = d.worlds.map(n => WORLDS.findIndex(w => w.name === n)); const mv = $('mapView'); mv.style.display = 'block';
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const nodeInfo = wi => { const w = WORLDS[wi], open = worldOpen(wi), got = worldStars(wi), max = worldMax(wi), done = worldLevelsDone(wi) >= worldCount(wi); return { w, open, got, max, done }; };
@@ -2641,13 +2641,13 @@ function goSelect() {
       svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d2a878') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
   }
-  const street = W > 360; const k = street ? 1.35 : 1; mv.innerHTML = `<div class="lbl" style="margin:0 0 6px;text-align:center">${t(d.nameKey)}</div><svg viewBox="0 0 ${W} ${H}" width="${Math.round(W * k)}" height="${Math.round(H * k)}" style="${street ? 'max-width:none;display:block' : 'max-width:100%;height:auto'}">${svg}</svg>`;
-  mv.style.overflowX = street ? 'auto' : 'hidden'; if (street) setTimeout(() => { const first = wis.findIndex(wi => !worldOpen(wi)); const target = Math.max(0, ((first < 0 ? wis.length - 1 : Math.max(0, first - 1)) * 150 + 80) * k - innerWidth / 2); mv.scrollLeft = target; }, 0);
+  const street = W > 360; const k = street ? 1.35 : 1; $('selTitle').style.display = ''; $('selTitle').textContent = t(d.nameKey); $('selTitle').style.fontSize = 'clamp(22px, 7vw, 34px)'; mv.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${Math.round(W * k)}" height="${Math.round(H * k)}" style="${street ? 'max-width:none;display:block' : 'max-width:100%;height:auto'}">${svg}</svg>`;
+  mv.style.overflowX = street ? 'auto' : 'hidden'; if (street) setTimeout(() => { let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; mv.scrollLeft = Math.max(0, (cur * 150 + 80) * k - innerWidth / 2); }, 0);
   for (const n of mv.querySelectorAll('.node')) n.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; const wi = +n.dataset.wi; if (worldOpen(wi)) goWorld(wi); else { const { w } = nodeInfo(wi); const pos = d.worlds.indexOf(w.name); if (pos > 0) { const prev = WORLDS.findIndex(x => x.name === d.worlds[pos - 1]); UI.alert(`<b>${w.name}</b><br>${t('earnStars', { n: Math.ceil(worldMax(prev) * 0.6), w: WORLDS[prev].name, g: worldStars(prev) })}<br>${t('worldsDone', { a: worldLevelsDone(prev), b: worldCount(prev) })}`, { kind: 'err', title: t('lockedTitle') }); } } });
   showScreen('scSelect');
 }
 function goWorld(wi) {
-  $('selTitle').style.display = ''; $('bBackMenu').style.display = ''; mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
+  $('selTitle').style.display = ''; $('selTitle').style.fontSize = ''; $('selTitle').textContent = WORLDS[wi].name; $('bBackMenu').style.display = ''; mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
   const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `${t('world')} ${wi + 1} · ${w.name}`; list.appendChild(h);
   w.levels.forEach((k, li) => {
     const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
