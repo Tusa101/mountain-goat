@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v94 -->
+<!-- build v95 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,7 +14,7 @@
 <style>
   html, body { margin:0; height:100%; overflow:hidden; overflow-x:hidden; background:#d9cbb2; }
   body { font-family: "Trebuchet MS", "Segoe UI", Helvetica, Arial, sans-serif; -webkit-user-select:none; user-select:none; touch-action:none; overscroll-behavior:none; color:#fff8ee; }
-  #c { display:block; width:100%; height:100%; touch-action:none; }
+  #c { display:block; position:fixed; inset:0; width:100%; height:100%; touch-action:none; }
   .hud { position:fixed; top:0; left:0; right:0; padding:calc(12px + env(safe-area-inset-top)) 16px 0; display:flex; justify-content:space-between; pointer-events:none; text-shadow:0 1px 3px rgba(60,30,10,.55); }
   .lbl { font-size:11px; letter-spacing:.14em; opacity:.85; }
   .val { font-size:24px; font-weight:700; line-height:1.05; }
@@ -490,7 +490,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v94', date: '2026-09-22' };
+const BUILD = { version: 'v95', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -1002,15 +1002,15 @@ function typeOf(w, r) { return w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.
 // zig-zag descent generator (deterministic): plain links interleaved with motifs allowed by the level's options
 function makeDescent(o) {
   const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = [], rocks = [], winds = [], blockers = [], kids = [];
-  const pool = ['deadEnd', 'ladder', 'shortcut']; if (o.spikes) pool.push('spikeCorridor'); if (o.hawks) pool.push('birdSlalom'); if (o.rocks) pool.push('crevasse'); if (o.wind) pool.push('windPocket'); if (o.crumble) pool.push('crumbleBridge'); if (o.style === 'alpine' || o.ice) pool.push('iceSlope');
+  const pool = ['ladder', 'shortcut']; if (o.spikes) pool.push('spikeCorridor'); if (o.hawks) pool.push('birdSlalom'); if (o.rocks) pool.push('crevasse'); if (o.wind) pool.push('windPocket'); if (o.crumble) pool.push('crumbleBridge'); if (o.style === 'alpine' || o.ice) pool.push('iceSlope');
   let ctx = { x: 0, y: 0, w: 8, side: 1, t: 0, i: 1 }; let used = [], kidDone = false, hawkLanes = 0, rockChutes = 0;
   while (ctx.i <= o.n) {
     ctx.t = Math.min(1, ctx.i / o.n); let name = 'link';
     if (ctx.i >= 3 && ctx.i % 3 === 0) { const cand = pool.filter(m => !used.includes(m)); name = (cand.length ? cand : pool)[Math.floor(r() * (cand.length ? cand : pool).length)]; used.push(name); if (used.length > pool.length - 1) used = []; }
-    if (o.kid && !kidDone && ctx.i >= Math.floor(o.n * 0.55) && name !== 'link') { name = 'kidNest'; kidDone = true; }
+    let kidHere = false; if (o.kid && !kidDone && ctx.i >= Math.floor(o.n * 0.55) && name !== 'link') { kidHere = true; kidDone = true; }
     if (name === 'birdSlalom' && hawkLanes >= (o.hawks || 0) + 1) name = 'link'; if (name === 'crevasse' && rockChutes >= (o.rocks || 0)) name = 'link';
     if (name !== 'link' && Math.abs(ctx.x) > 2.5) ctx.side = -Math.sign(ctx.x);   // motifs run toward the middle so clamping never stacks ledges
-    const m = MOTIFS[name](ctx, r);
+    const m = MOTIFS[name](ctx, r); if (kidHere) { const wide = m.rows.reduce((a, b) => (b[3] > a[3] ? b : a)); wide[3] = Math.max(wide[3], 2.6); m.kids = [{ surface: wide[0], x: wide[1] }]; }
     for (const row of m.rows) surfaces.push(row); if (m.crystalAt) crystals.push(m.crystalAt); for (const cr of (m.crystals || [])) crystals.push(cr);
     for (const h of (m.hawks || [])) { hawks.push(h); hawkLanes++; } for (const rk of (m.rocks || [])) { rocks.push(rk); rockChutes++; } for (const w of (m.winds || [])) winds.push(w); for (const b of (m.blockers || [])) blockers.push(b); for (const k of (m.kids || [])) kids.push(k);
     ctx = { x: m.exit.x, y: m.exit.y, w: m.exit.w, side: m.exit.side, t: ctx.t, i: ctx.i + m.rows.length };
@@ -1287,7 +1287,7 @@ function updateSnow(dt, fx, fy) {
   for (let row = -1; row < 220 && i < n; row++) for (let col = -14; col <= 14 && i < n; col++) { if (rr() < 0.25) continue; m4.makeTranslation(col * 2.6 + (row % 2) * 0.6, row * 3.2 - 180 + 1.6, -3.3); inst.setMatrixAt(i++, m4); }
   inst.count = i; inst.instanceMatrix.needsUpdate = true; inst.visible = false; scene.add(inst); ENV.windows = inst; }
 function applyStyle(st) {
-  STYLE = st; if (mode === 'play') AudioSys.ambient(styleKey()); ENV.snow.visible = !!st.snow || !!st.leaves || !!st.stars; ENV.snow.material.size = st.stars ? 0.12 : 0.16; ENV.snow.material.color.set(st.leaves ? 0xd97a2a : 0xffffff); ENV.snow.material.size = st.leaves ? 0.26 : 0.16; ENV.fireflies.visible = !!st.fireflies;
+  STYLE = st; document.body.style.background = '#' + new THREE.Color(st.haze).getHexString(); if (mode === 'play') AudioSys.ambient(styleKey()); ENV.snow.visible = !!st.snow || !!st.leaves || !!st.stars; ENV.snow.material.size = st.stars ? 0.12 : 0.16; ENV.snow.material.color.set(st.leaves ? 0xd97a2a : 0xffffff); ENV.snow.material.size = st.leaves ? 0.26 : 0.16; ENV.fireflies.visible = !!st.fireflies;
   ENV.windows.visible = !!st.windows; if (st.windows) { ENV.windows.material.color.set(st.windows[0]); ENV.windows.material.emissive.set(st.windows[1]); }
   scene.background.set(st.haze); scene.fog.color.set(st.haze);
   sun.color.set(st.sun); sun.intensity = st.sunI; hemi.color.set(st.hemi[0]); hemi.groundColor.set(st.hemi[1]); hemi.intensity = st.hemiI;
@@ -1357,7 +1357,8 @@ function dressGround(s, g, seed, small) {
   const n = Math.max(4, Math.round(s.w / 3));
   for (let k = 0; k < n; k++) { const x = s.x1 + rr() * s.w, z = -2 - rr() * 9; const sz = 0.6 + rr() * 1.6; const b = new THREE.Mesh(makeRock(sz, sz * 0.7, sz, seed + k * 13, 0.4), rockMat); b.position.set(x, s.y + sz * 0.25, z); b.rotation.y = rr() * 3; b.castShadow = b.receiveShadow = true; g.add(b); }
   for (let k = 0; k < n * 2; k++) { const v = makeVegetation(rr); v.position.set(s.x1 + 1 + rr() * (s.w - 2), s.y, -1.5 - rr() * 9); v.scale.setScalar(0.8 + rr() * 0.7); g.add(v); }
-  if (!STYLE.flat) for (let k = 0; k < 6; k++) { const lump = new THREE.Mesh(makeRock(2 + rr() * 3, 1.2 + rr() * 1.5, 3, seed + 200 + k, 0.45), rockMaterials(seed + 200 + k)); lump.position.set(s.x1 + 2 + rr() * (s.w - 4), s.y + 0.4, -6 - rr() * 5); lump.castShadow = lump.receiveShadow = true; g.add(lump); }
+  for (let k = 0; k < 14; k++) { const lump = new THREE.Mesh(makeRock(1.5 + rr() * 3.5, 0.7 + rr() * 1.6, 2 + rr() * 2, seed + 200 + k, 0.45), rockMaterials(seed + 200 + k)); lump.position.set(s.x1 + 1 + rr() * (s.w - 2), s.y + 0.2, -1.2 - rr() * 9); lump.castShadow = lump.receiveShadow = true; g.add(lump); }
+  for (let k = 0; k < 8; k++) { const dip = new THREE.Mesh(new THREE.CylinderGeometry(0.8 + rr() * 1.4, 1 + rr() * 1.6, 0.35, 8), new THREE.MeshLambertMaterial({ color: new THREE.Color(STYLE.tops[0]).offsetHSL(0, 0, -0.08), flatShading: true })); dip.position.set(s.x1 + 2 + rr() * (s.w - 4), s.y - 0.12, -2 - rr() * 8); g.add(dip); }
 }
 // dog worlds: ledges are things — roofs, sofas, benches, crates, car roofs, islands — not chunks of rock
 const PROP_STYLES = { yard: 'yard', house: 'house', park: 'park', lot: 'lot', winter: 'winter', flat: 'flat', lake: 'lake', forest: 'forest', pond: 'pond', anthill: 'anthill' };
@@ -1466,8 +1467,8 @@ function makeSurface(r, i, seed) {
   // the finish is real ground: the canyon floor (descents), a summit shelf running away from the route (ascents), or land continuing past the finish (runs)
   const ground = s.finish && !s.move; const ext = ground ? (makeSurface.ctx.horizontal ? [0, 40] : makeSurface.ctx.ascent ? (s.x >= 0 ? [0, 40] : [40, 0]) : [30, 30]) : [0, 0];
   if (ground) { s.x1 -= ext[0]; s.x2 += ext[1]; s.w = s.x2 - s.x1; s.x = (s.x1 + s.x2) / 2; }
-  const m = new THREE.Mesh(makeRock(ground ? s.w : s.w + 0.3, ground ? 22 : s.h + 0.6, ground ? 26 : s.d, seed, STYLE.flat ? 0.02 : (ground ? 0.3 : s.jitter), { undercut: !STYLE.flat && !ground, solid: true }), mats);
-  m.position.set(s.x, ground ? s.y - 11 : s.y - (s.h + 0.6) / 2, ground ? LEDGE_FRONT_Z - 13 + 0.6 : LEDGE_FRONT_Z - s.d / 2); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m); s.mesh = m;
+  const m = new THREE.Mesh(makeRock(ground ? s.w : s.w + 0.3, ground ? 12 : s.h + 0.6, ground ? 26 : s.d, seed, STYLE.flat ? 0.02 : (ground ? 0.35 : s.jitter), { undercut: !STYLE.flat, solid: true }), mats);
+  m.position.set(s.x, ground ? s.y - 6 : s.y - (s.h + 0.6) / 2, ground ? LEDGE_FRONT_Z - 13 + 0.6 : LEDGE_FRONT_Z - s.d / 2); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m); s.mesh = m;
   if (propLedge(s, g, seed, mats)) { m.visible = false; m.castShadow = false; }
   if (ground) dressGround(s, g, seed); else if (s.type === 'terrace') dressGround(s, g, seed, true);
   if (s.seesaw) { const piv = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 1.0, 1.6, 3), new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true })); piv.position.set(s.x, s.y - 1.4, LEDGE_FRONT_Z - s.d / 2); piv.rotation.y = Math.PI / 2; piv.castShadow = true; g.add(piv); }
@@ -1504,7 +1505,7 @@ function makeSurface(r, i, seed) {
 }
 function makeBlockerObj(b, seed, i = 0) {
   const w = b.x2 - b.x1, cx = (b.x1 + b.x2) / 2; const geo = makeRock(w, b.h + 0.6, 3.6, seed, 0.45, { solid: true }); const p = geo.attributes.position;
-  for (let k = 0; k < p.count; k++) { const x = p.getX(k), y = p.getY(k), z = p.getZ(k); if (y > 0) { const t = y / ((b.h + 0.6) / 2); p.setX(k, x * (1 - t * 0.45) + t * (i % 2 ? -1 : 1) * 0.25); p.setY(k, y - Math.abs(x) / (w / 2) * 1.9 * t); p.setZ(k, z * (1 - t * 0.55) - t * 0.6); } }
+  for (let k = 0; k < p.count; k++) { const x = p.getX(k), y = p.getY(k), z = p.getZ(k); const t = Math.abs(y) / ((b.h + 0.6) / 2); const sg = y > 0 ? 1 : -1; p.setX(k, x * (1 - t * 0.4) + t * (i % 2 ? -1 : 1) * 0.25); p.setY(k, y - sg * Math.abs(x) / (w / 2) * 1.4 * t); p.setZ(k, z * (1 - t * 0.5) - t * 0.6); }
   const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: STYLE.blocker, flatShading: true }));
   m.position.set(cx, b.top - (b.h + 0.6) / 2, -2.0); m.castShadow = m.receiveShadow = true; levelGroup.add(m); return { ...b, mesh: m };
 }
@@ -1518,7 +1519,7 @@ function makeHawkObj(h, i) { const m = makeHawk(); m.position.set(h.x1, h.y, 0.1
 function fixLane(h, rects) {
   for (let pass = 0; pass < 4; pass++) {
     let moved = false;
-    for (const r of rects) { if (h.x2 < r.x1 - 0.5 || h.x1 > r.x2 + 0.5) continue; if (h.y > r.y - r.h - 0.6 && h.y < r.y + 2.0) { h.y = +(r.y + 2.4).toFixed(1); moved = true; } }
+    for (const r of rects) { if (h.x2 < r.x1 - 0.5 || h.x1 > r.x2 + 0.5) continue; if (h.y > r.y - r.h - 1.6 && h.y < r.y + 3.0) { h.y = +(r.y + 3.2).toFixed(1); moved = true; } }
     if (!moved) break;
   }
 }
@@ -1584,7 +1585,7 @@ function genNext() {
   g.n++; g.seed++;
   g.sinceMotif = (g.sinceMotif || 0) + 1;
   if (!L.ascent && dist > 30 && g.sinceMotif >= 3 && R() < 0.55) { // splice in a hand-designed motif instead of a plain ledge
-    g.sinceMotif = 0; const pool = ['deadEnd', 'ladder', 'shortcut']; if (dist > ENDLESS.spikeStart) pool.push('spikeCorridor'); if (dist > ENDLESS.hawkStart) pool.push('birdSlalom'); if (dist > 90) pool.push('crevasse'); if (dist > 60) pool.push('windPocket'); if (dist > 120) pool.push('crumbleBridge'); if (BIOME_CYCLE[g.biome % BIOME_CYCLE.length] === 'alpine') pool.push('iceSlope');
+    g.sinceMotif = 0; const pool = ['ladder', 'shortcut']; if (dist > ENDLESS.spikeStart) pool.push('spikeCorridor'); if (dist > ENDLESS.hawkStart) pool.push('birdSlalom'); if (dist > 90) pool.push('crevasse'); if (dist > 60) pool.push('windPocket'); if (dist > 120) pool.push('crumbleBridge'); if (BIOME_CYCLE[g.biome % BIOME_CYCLE.length] === 'alpine') pool.push('iceSlope');
     const name = pool[Math.floor(R() * pool.length)]; const m = MOTIFS[name]({ x: g.lastX, y: g.lastY, w: g.lastW, side: (g.n % 2 ? 1 : -1), t: Math.min(1, d), i: g.n }, R);
     for (const row of m.rows) { g.seed++; L.surfaces.push(makeSurface(row, g.n, g.seed)); }
     if (m.crystalAt) L.crystals.push(makeCrystalObj(m.crystalAt[0], m.crystalAt[1], L.crystals.length, L.surfaces)); for (const cr of (m.crystals || [])) L.crystals.push(makeCrystalObj(cr[0], cr[1], L.crystals.length, L.surfaces));
@@ -3595,7 +3596,7 @@ function update(dt) {
   let wanted = G.twin ? Math.max(baseHalf, ((maxX - minX) / 2 + CONFIG.twinCameraPadding + 1.5) / camera.aspect) : baseHalf;
   if (G.aiming) wanted *= 1.05; if (G.zoomPunch) { wanted *= 1 - G.zoomPunch; G.zoomPunch = damp(G.zoomPunch, 0, 4, dt); if (G.zoomPunch < 0.002) G.zoomPunch = 0; }
   setHalfH(damp(halfH, wanted, 3, dt));
-  const target = preferredFy(maxY);
+  const onGround = goats.every(g => g.onSurface && g.onSurface.finish && g.state !== ST.JUMP); const target = onGround ? maxY - (L.horizontal ? 0.2 : L.dir * (0.5 - 0.68)) * 2 * halfH * (L.horizontal ? 1 : 1) - (L.horizontal ? 0 : 0) : preferredFy(maxY);
   const idle = CONFIG.cameraIdleSpeed * (halfH / CONFIG.baseHalfHeight) * (G.twin ? CONFIG.twinCameraPressureMultiplier : 1) * (L.def.tutorial ? 0.5 : 1) * (L.def.mod === 'fastCam' ? 1.4 : 1) * ((G.muts || []).includes('rush') ? 1.5 : 1);
   const ended = mode === 'result';
   if (ended) { // follow the fall, but never below the bottom terrace (no endless chase into the void)
