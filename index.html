@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v82 -->
+<!-- build v86 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -138,6 +138,11 @@
   .mRow { display:flex; gap:10px; margin-top:14px; } .mRow .btn { flex:1; min-width:0; margin:0; font-size:14px; padding:12px 8px; }
   .mRow .btn.primary { font-size:16px; padding:12px 8px; }
   #selfTestOut { position:fixed; left:8px; right:8px; top:calc(8px + env(safe-area-inset-top)); z-index:60; display:none; max-height:70vh; overflow:auto; padding:12px; border-radius:12px; background:rgba(10,10,10,.92); font:12px/1.4 monospace; color:#e8ffe8; white-space:pre-wrap; }
+  @media (orientation: portrait) and (max-height: 700px) { /* short screens and embedded previews: compact tiles so the play group never overlaps them */
+    .tiles { top:calc(64px + env(safe-area-inset-top)); gap:8px; } .tile { width:70px; min-height:64px; padding:5px 3px 4px; } .tile > i:first-child { width:24px; height:24px; } .tile b { font-size:10px; } .tile small { font-size:9px; }
+    .playGroup { gap:6px; width:min(300px, calc(100vw - 180px)); } .playBtn { height:56px; font-size:24px; } .modePill { min-height:44px; } .modePill b { font-size:13px; } .modePill small { font-size:11px; }
+    .cur { height:32px; font-size:14px; } .dimNav { height:44px; width:44px; } .playGroup { bottom:calc(92px + env(safe-area-inset-bottom)); } .tab.on { height:74px; }
+  }
   @media (orientation: landscape) and (max-height: 520px) {
     .tiles { top:calc(64px + env(safe-area-inset-top)); gap:8px; } .tile { min-height:66px; width:76px; padding:5px 3px; } .tile > i:first-child { width:24px; height:24px; }
     .playGroup { bottom:calc(80px + env(safe-area-inset-bottom)); gap:6px; } .playBtn { height:56px; font-size:24px; } .modePill { min-height:44px; }
@@ -237,7 +242,7 @@
 <div class="screen" id="scSelect">
   <div class="back" id="bBackMenu" data-i18n="menu">◀ MENU</div>
   <h1 id="selTitle">MOUNTAIN GOAT</h1>
-  <div id="mapView" style="display:none;width:100%;max-width:520px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch"></div>
+  <div id="mapView" style="display:none;width:100%;max-width:520px;overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain"></div>
   <div id="levelList" class="list"></div>
 </div>
 <div class="screen" id="scEndless">
@@ -473,7 +478,7 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v82', date: '2026-09-22' };
+const BUILD = { version: 'v86', date: '2026-09-22' };
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -786,6 +791,12 @@ function defineLevels() { LEVELS = [
   moonOf(makeDescent({ key: 'moon1', name: 'MARE DESCENT', style: 'moon', seed: 301, n: 16, hawks: 1 })),
   moonOf(makeClimb({ key: 'moon2', name: 'CRATER RIM', style: 'moon', seed: 302, n: 18, rocks: 2 })),
   moonOf(makeRun({ key: 'moon3', name: 'REGOLITH RUN', style: 'moon', seed: 303, n: 18, hawks: 2, kid: true })),
+  moonOf(makeDescent({ key: 'moon4', name: 'SHARP RIM', style: 'moon', seed: 304, n: 18, spikes: true, hawks: 1 })),
+  moonOf(makeClimb({ key: 'moon5', name: 'LOOSE SCREE', style: 'moon', seed: 305, n: 22, spikes: true, rocks: 3 })),
+  moonOf(makeDescent({ key: 'moon6', name: 'ROCKFALL BASIN', style: 'moon', seed: 306, n: 20, rocks: 2, crumble: true, hawks: 1, kid: true })),
+  twistOf(moonOf(makeDescent({ key: 'moon7', name: 'EARTHSET', style: 'moon', seed: 307, n: 20, crumble: true, hawks: 2 })), ['fog']),
+  twistOf(moonOf(makeClimb({ key: 'moon8', name: 'COLD TRAP', style: 'moon', seed: 308, n: 24, spikes: true, rocks: 2, wind: true })), ['heavy']),
+  twistOf(moonOf(makeRun({ key: 'moon9', name: 'THE LONG DARK', style: 'moon', seed: 310, n: 22, ice: true, hawks: 3, kid: true })), ['fog', 'rush']),
   makeRun({ key: 'flat1', name: 'SOFA TO SOFA', style: 'flat', seed: 111, n: 14, soft: true, character: 'dog' }),
   makeRun({ key: 'flat2', name: 'THE BOOKSHELF', style: 'flat', seed: 112, n: 16, soft: true, hawks: 1, character: 'dog' }),
   makeRun({ key: 'flat3', name: 'BEDROOM RUN', style: 'flat', seed: 113, n: 18, soft: true, hawks: 2, kid: true, character: 'dog' }),
@@ -824,6 +835,7 @@ function moonOf(def) { def.gravity = 10; def.mutGrav = 10; def.twists = def.twis
   for (const r of def.surfaces) { if (r[0] === 'start') continue; r[1] = +(r[1] * kx).toFixed(1); r[2] = +(r[2] * ky).toFixed(1); }
   def.crystals = def.crystals.map(([x, y]) => [+(x * kx).toFixed(1), +(y * ky).toFixed(1)]); for (const h of (def.hawks || [])) { h.x1 *= kx; h.x2 *= kx; h.y *= ky; h.speed *= 0.8; } for (const r of (def.rocks || [])) { r.x *= kx; r.y *= ky; r.len *= ky; } for (const b of (def.blockers || [])) { b.x1 *= kx; b.x2 *= kx; b.top *= ky; b.h *= ky; }
   for (const w of (def.winds || [])) { w.y1 *= ky; w.y2 *= ky; } for (const u of (def.updrafts || [])) { u.x *= kx; u.y1 *= ky; u.y2 *= ky; } for (const k of (def.kids || [])) if (k.x != null) k.x *= kx; return def; }
+function twistOf(def, twists) { def.twists = twists; return def; }
 function puzzleOf(def) { def.puzzle = true; def.stars = { crystals: def.stars.crystals, jumps: def.surfaces.length + 1, time: 0 }; return def; }
 function secretOf(def) { def.secret = true; def.herd = []; return def; }
 // left-to-right run generator (deterministic): gaps grow, heights wander, finish far right
@@ -1037,7 +1049,7 @@ function towerState() { const wk = weekId(); save.tower = save.tower || {}; if (
 const DIMS = [
   { key: 'mountain', nameKey: 'dimMountain', subKey: 'dimMountainSub', worlds: ['NEGEV', 'RED CANYON', 'CHALK COAST', 'MOONLIT RIDGE', 'THE ALPS'] },
   { key: 'city', nameKey: 'dimCity', subKey: 'dimCitySub', worlds: ['SKYSCRAPER', 'PANELKI'], need: { dim: 0, n: 8 } },
-  { key: 'moon', nameKey: 'dimMoon', subKey: 'dimMoonSub', worlds: ['THE MOON'], need: { dim: 0, n: 14 } },
+  { key: 'moon', nameKey: 'dimMoon', subKey: 'dimMoonSub', worlds: ['MARE TRANQUILLITATIS', 'CRATER HIGHLANDS', 'THE FAR SIDE'], need: { dim: 0, n: 14 } },
   { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET', 'THE APARTMENT', 'THE LAKE'], need: { dim: 1, n: 5 } },
 ];
 const WORLDS = [
@@ -1053,7 +1065,9 @@ const WORLDS = [
   { name: 'THE PARK', sub: 'border collie · swings, ducks, benches', character: 'collie', levels: ['park1', 'park2', 'park3', 'parkSecret'] },
   { name: 'THE LOT', sub: 'basset · planks, barrels, crows', character: 'basset', levels: ['lot1', 'lot2', 'lot3'] },
   { name: 'WINTER STREET', sub: 'husky · snowdrifts, car roofs, garlands', character: 'husky', levels: ['winter1', 'winter2', 'winter3'] },
-  { name: 'THE MOON', sub: 'craters, meteors, one sixth gravity', levels: ['moon1', 'moon2', 'moon3', 'moonSecret'] },
+  { name: 'MARE TRANQUILLITATIS', sub: 'first steps in low gravity', levels: ['moon1', 'moon2', 'moon3'] },
+  { name: 'CRATER HIGHLANDS', sub: 'sharp rims, loose rock, rockfall', levels: ['moon4', 'moon5', 'moon6', 'moonSecret'] },
+  { name: 'THE FAR SIDE', sub: 'no Earth-light: fog, meteors, ice', levels: ['moon7', 'moon8', 'moon9'] },
   { name: 'THE APARTMENT', sub: 'dachshund · sofa to sofa', character: 'dog', levels: ['flat1', 'flat2', 'flat3', 'flatSecret'] },
   { name: 'THE LAKE', sub: 'husky · islands, rafts and dragonflies', character: 'husky', levels: ['lake1', 'lake2', 'lake3', 'lakeSecret'] },
 ];
@@ -1210,7 +1224,7 @@ function applyStyle(st) {
   scene.background.set(st.haze); scene.fog.color.set(st.haze);
   sun.color.set(st.sun); sun.intensity = st.sunI; hemi.color.set(st.hemi[0]); hemi.groundColor.set(st.hemi[1]); hemi.intensity = st.hemiI;
   ENV.plateau.material.color.set(st.plateau);
-  ENV.mesas.forEach((m, i) => m.material.color.set(st.mesa).offsetHSL(0, -0.05, ((i * 0.37) % 1 - .5) * .1));
+  { const mountains = MOUNTAIN_STYLES.includes(styleKey()); ENV.mesas.forEach((m, i) => { m.visible = mountains; m.material.color.set(st.mesa).offsetHSL(0, -0.05, ((i * 0.37) % 1 - .5) * .1); }); }
   ENV.canyon.forEach((m, i) => m.material.color.set(st.canyon[i]));
   { const col = ENV.sky.geometry.attributes.color, p = ENV.sky.geometry.attributes.position; const top = new THREE.Color(st.sky[0]), bot = new THREE.Color(st.sky[1]);
     for (let i = 0; i < p.count; i++) { const t = clamp((p.getY(i) + 300) / 600, 0, 1); const c = bot.clone().lerp(top, Math.pow(t, 0.7)); col.setXYZ(i, c.r, c.g, c.b); } col.needsUpdate = true; }
@@ -2422,7 +2436,7 @@ function updateHubHero(dt) {
   if (!dio.scene) return; const { ch, sk } = heroChar(); const key = ch + ':' + sk + ':' + JSON.stringify(currentAcc());
   if (!HERO.holder) { HERO.holder = new THREE.Group(); HERO.holder.scale.setScalar(1.0); }
   if (key !== HERO.key) { if (HERO.goat) HERO.holder.remove(HERO.goat.root); const g = new Goat(sk, 1, ch); scene.remove(g.root); HERO.holder.add(g.root); g.root.traverse(o => { if (o.isMesh) o.castShadow = true; }); HERO.goat = g; HERO.key = key; }
-  if (HERO.cube !== curDim) { const c = dio.cubes[curDim]; c.add(HERO.holder); HERO.cube = curDim; HERO.hopT = 0; HERO.holder.position.set(0.6, 0.25, 2.2); HERO.holder.rotation.y = -0.85; }
+  if (HERO.cube !== curDim) { const c = dio.cubes[curDim]; c.add(HERO.holder); HERO.cube = curDim; HERO.hopT = 0; HERO.holder.position.set(c.moon ? 1.9 : 0.6, 0.25, c.moon ? 2.0 : 2.2); HERO.holder.rotation.y = -0.85; }
   HERO.hopT = Math.min(1, HERO.hopT + dt * 2.2); const g = HERO.goat; g.pos.set(0, Math.sin(HERO.hopT * Math.PI) * 0.9); g.state = HERO.hopT < 1 ? ST.JUMP : ST.IDLE; g.vel.set(1, HERO.hopT < 0.5 ? 3 : -3); g.facing = 1; g.stateT = HERO.hopT < 1 ? 0.3 : (g.stateT || 0) + dt; g.animate(dt, null);
   HERO.holder.visible = dimOpen(DIMS[curDim]);
   const tag = $('heroTag'); if (!HERO.holder.visible || mode !== 'menu') { tag.style.display = 'none'; return; }
@@ -2505,7 +2519,16 @@ function goSelect() {
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const nodeInfo = wi => { const w = WORLDS[wi], open = worldOpen(wi), got = worldStars(wi), max = worldMax(wi), done = worldLevelsDone(wi) >= worldCount(wi); return { w, open, got, max, done }; };
   let svg = '', W = 360, H = 640;
-  if (d.key === 'mountain' || d.key === 'moon') { // a mountain: worlds are tiers from the summit down
+  if (d.key === 'moon') { // the Moon: black sky, a cratered surface, nodes along the rim
+    svg += `<rect x="0" y="0" width="360" height="640" fill="#0a0c16"/>`; for (let i = 0; i < 60; i++) svg += `<circle cx="${(i * 97) % 360}" cy="${(i * 61) % 380}" r="${i % 5 ? 1 : 1.8}" fill="#fff" opacity="${0.4 + (i % 4) * 0.15}"/>`;
+    svg += `<circle cx="300" cy="80" r="26" fill="#3a78c8"/><path d="M286 70a14 8 0 0 0 20 12a10 6 0 0 0 12-4" fill="#6fd08a" opacity=".8"/><ellipse cx="300" cy="72" rx="24" ry="8" fill="#fff" opacity=".18"/>`;
+    svg += `<path d="M0 640 L0 400 Q90 350 180 380 T360 360 L360 640 Z" fill="#8c8e96"/><path d="M0 640 L0 470 Q120 440 200 470 T360 450 L360 640 Z" fill="#a4a6ae"/>`;
+    for (const [cx, cy, r] of [[70, 470, 34], [180, 520, 22], [290, 490, 40], [120, 600, 28], [250, 600, 18]]) svg += `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r * 0.45}" fill="#6e7078"/><ellipse cx="${cx}" cy="${cy - 3}" rx="${r * 0.8}" ry="${r * 0.3}" fill="#7c7e86"/><path d="M${cx - r} ${cy} a${r} ${r * 0.45} 0 0 1 ${2 * r} 0" fill="none" stroke="#bcbec6" stroke-width="2"/>`;
+    const pts = wis.map((wi, i) => [90 + i * 120, 430 - (i % 2) * 30]);
+    wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
+      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d8dce4') : '#3a3c44'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#1a1c24">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
+  } else if (d.key === 'mountain') { // a mountain: worlds are tiers from the summit down
     const pts = wis.map((wi, i) => [i % 2 ? 250 : 110, 90 + i * 112]);
     svg += `<path d="M0 640 L0 420 L70 300 L130 340 L180 120 L230 190 L270 60 L320 200 L360 140 L360 640 Z" fill="#8d6240" opacity=".55"/><path d="M0 640 L0 500 L90 420 L160 470 L240 330 L300 400 L360 320 L360 640 Z" fill="#b9865a" opacity=".55"/><path d="M160 160 L180 120 L200 160 Z" fill="#f4f7fa" opacity=".8"/>`;
     svg += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#fff8ee" stroke-width="3" stroke-dasharray="6 8" opacity=".7"/>`;
@@ -2528,7 +2551,8 @@ function goSelect() {
       svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d2a878') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
   }
-  mv.innerHTML = `<div class="lbl" style="margin:0 0 6px;text-align:center">${t(d.nameKey)}</div><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="max-width:100%;height:auto">${svg}</svg>`;
+  const street = W > 360; const k = street ? 1.35 : 1; mv.innerHTML = `<div class="lbl" style="margin:0 0 6px;text-align:center">${t(d.nameKey)}</div><svg viewBox="0 0 ${W} ${H}" width="${Math.round(W * k)}" height="${Math.round(H * k)}" style="${street ? 'max-width:none;display:block' : 'max-width:100%;height:auto'}">${svg}</svg>`;
+  mv.style.overflowX = street ? 'auto' : 'hidden'; if (street) setTimeout(() => { const first = wis.findIndex(wi => !worldOpen(wi)); const target = Math.max(0, ((first < 0 ? wis.length - 1 : Math.max(0, first - 1)) * 150 + 80) * k - innerWidth / 2); mv.scrollLeft = target; }, 0);
   for (const n of mv.querySelectorAll('.node')) n.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; const wi = +n.dataset.wi; if (worldOpen(wi)) goWorld(wi); else { const { w } = nodeInfo(wi); const pos = d.worlds.indexOf(w.name); if (pos > 0) { const prev = WORLDS.findIndex(x => x.name === d.worlds[pos - 1]); UI.alert(`<b>${w.name}</b><br>${t('earnStars', { n: Math.ceil(worldMax(prev) * 0.6), w: WORLDS[prev].name, g: worldStars(prev) })}<br>${t('worldsDone', { a: worldLevelsDone(prev), b: worldCount(prev) })}`, { kind: 'err', title: t('lockedTitle') }); } } });
   showScreen('scSelect');
 }
@@ -2730,9 +2754,14 @@ function makeCube(kind, seed) {
     for (let i = 0; i < 4; i++) { const ledge = new THREE.Mesh(makeRock(0.9, 0.25, 0.7, seed + 20 + i, 0.1, { solid: true }), flat(0xd9bc8e)); ledge.position.set(-1.9 + i * 0.35, 0.8 + i * 0.7, 1.6 - i * 0.25); ledge.castShadow = true; g.add(ledge); }
     for (let i = 0; i < 7; i++) { const b = new THREE.Mesh(new THREE.IcosahedronGeometry(0.2 + rr() * 0.15, 0), flat(0x5f6b3d)); b.position.set(-2.4 + rr() * 4.8, 0.35, -2.4 + rr() * 4.8); if (Math.hypot(b.position.x, b.position.z) < 1.6) b.position.x += 1.6; g.add(b); }
   } else if (kind === 'moon') {
-    ground(0x9a9ca4); for (let i = 0; i < 5; i++) { const cr = new THREE.Mesh(new THREE.TorusGeometry(0.5 + rr() * 0.7, 0.14, 6, 14), flat(0x7c7e86)); cr.rotation.x = Math.PI / 2; cr.position.set(-2 + rr() * 4, 0.28, -2 + rr() * 4); g.add(cr); }
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 5), flat(0xd0d4dc)); pole.position.set(1.4, 1.3, -1.2); g.add(pole); const flag = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.55), new THREE.MeshBasicMaterial({ color: 0xffd76a, side: THREE.DoubleSide })); flag.position.set(1.85, 2.1, -1.2); g.add(flag);
-    const earth = new THREE.Mesh(new THREE.SphereGeometry(0.7, 12, 10), flat(0x3a78c8)); earth.position.set(-1.6, 2.6, 0.4); g.add(earth); const cloud = new THREE.Mesh(new THREE.SphereGeometry(0.72, 8, 6), new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.35, flatShading: true })); cloud.position.copy(earth.position); g.add(cloud);
+    ground(0x14161f); for (let i = 0; i < 40; i++) { const st = new THREE.Mesh(new THREE.SphereGeometry(0.03, 4, 3), new THREE.MeshBasicMaterial({ color: 0xffffff })); st.position.set(-2.9 + rr() * 5.8, 0.26, -2.9 + rr() * 5.8); g.add(st); }
+    // the Moon: a sphere with crater bowls pressed in and raised rims, flat shaded
+    const R = 2.3; const geo = new THREE.IcosahedronGeometry(R, 4); const pos = geo.attributes.position; const craters = []; for (let i = 0; i < 16; i++) { const v = new THREE.Vector3(rr() - .5, rr() - .5, rr() - .5).normalize(); craters.push({ n: v, r: 0.22 + rr() * 0.42, d: 0.12 + rr() * 0.16 }); }
+    const v = new THREE.Vector3(); for (let i = 0; i < pos.count; i++) { v.set(pos.getX(i), pos.getY(i), pos.getZ(i)); const n = v.clone().normalize(); let rad = R + (rr() - .5) * 0.05;
+      for (const c of craters) { const a = n.angleTo(c.n); if (a < c.r) { const k = a / c.r; rad -= c.d * (1 - k * k) - (k > 0.75 ? c.d * 0.35 * (k - 0.75) / 0.25 : 0); } else if (a < c.r * 1.15) rad += c.d * 0.3 * (1 - (a - c.r) / (c.r * 0.15)); }
+      v.copy(n).multiplyScalar(rad); pos.setXYZ(i, v.x, v.y, v.z); }
+    geo.computeVertexNormals(); const moon = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: 0xb4b6be, flatShading: true })); moon.position.set(0, R + 0.45, 0); moon.castShadow = moon.receiveShadow = true; g.add(moon); g.moon = moon;
+
   } else if (kind === 'city') {
     ground(0x6e7278);
     const road = new THREE.Mesh(new THREE.BoxGeometry(6, 0.02, 1.2), flat(0x3a3d44)); road.position.set(0, 0.26, 1.9); g.add(road);
@@ -2789,7 +2818,7 @@ function goDims() {
 }
 function updateDims(dt) {
   dio.t += dt; layoutDio(dt); const labels = $('dimLabels'); if (labels.children.length !== 1) labels.innerHTML = '<div style="position:fixed;left:0;right:0;bottom:calc(10% + env(safe-area-inset-bottom));text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.6);pointer-events:auto;cursor:pointer"></div>';
-  dio.cubes.forEach((c, i) => { const d = DIMS[i], open = dimOpen(d), focused = i === dio.focus; c.rotation.y = Math.sin(dio.t * 0.4 + i) * 0.08; c.position.y = Math.sin(dio.t * 1.1 + i * 2) * 0.1;
+  dio.cubes.forEach((c, i) => { const d = DIMS[i], open = dimOpen(d), focused = i === dio.focus; c.rotation.y = Math.sin(dio.t * 0.4 + i) * 0.08; if (c.moon) c.moon.rotation.y += 0.004; c.position.y = Math.sin(dio.t * 1.1 + i * 2) * 0.1;
     for (const m of c.mats) { m.color.copy(m.userData.orig); if (!focused) { m.color.lerp(new THREE.Color(0xe6dccb), 0.45); } if (!open) m.color.multiplyScalar(0.7); }
     c.clouds.visible = !open; if (!open) c.clouds.children.forEach((p, k) => { p.position.y = 1.4 + (k % 3) * 0.9 + Math.sin(dio.t * 0.6 + p.userData.ph) * 0.25; p.position.x += Math.sin(dio.t * 0.3 + p.userData.ph) * 0.004; });
   });
