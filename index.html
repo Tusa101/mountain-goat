@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v110 -->
+<!-- build v124 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -79,6 +79,17 @@
   .tile:active, .playBtn:active, .tab:active, .hubIcon:active, .modePill:active { transform:translateY(2px); }
   .badge { position:absolute; top:-7px; right:-7px; min-width:22px; height:22px; border-radius:11px; background:#e5483a; color:#fff; font-size:12px; font-weight:800; font-style:normal; display:none; align-items:center; justify-content:center; padding:0 5px; border:2px solid #fff8ee; box-sizing:border-box; pointer-events:none; }
   .badge.on { display:flex; }
+  .heroNav { display:flex; align-items:center; gap:8px; margin:0 0 10px; width:min(420px,100%); }
+  .heroArrow { flex:none; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:800; background:linear-gradient(#4b7db5,#345f93); border:2px solid rgba(255,255,255,.5); color:#fff; box-shadow:0 3px 0 rgba(0,0,0,.3); cursor:pointer; user-select:none; box-sizing:border-box; }
+  .heroArrow.off { opacity:.3; pointer-events:none; }
+  .heroDim { flex:1; min-width:0; text-align:center; } .heroDim b { display:block; font-size:17px; letter-spacing:.06em; } .heroDim small { display:block; font-size:12px; opacity:.75; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .skinStrip { display:flex; gap:8px; overflow-x:auto; width:min(420px,100%); padding:4px 2px 6px; margin-top:10px; scrollbar-width:none; } .skinStrip::-webkit-scrollbar { display:none; }
+  .skinStrip .charCard { flex:none; width:96px; min-height:104px; } .skinStrip .charCard.locked { opacity:.55; } .skinStrip .charCard img { width:64px; height:64px; }
+  .btn.row { position:relative; } .btn.row.hasBdg .rt { padding-right:30px; } .btn.row > .badge { top:50%; right:14px; transform:translateY(-50%); }
+  .charCard { position:relative; } .charCard .newTag { position:absolute; top:-6px; right:-6px; padding:2px 7px; border-radius:10px; background:#e5483a; color:#fff; font-size:11px; font-weight:800; letter-spacing:.04em; box-shadow:0 0 0 2px #fff; }
+  #mapNew { position:fixed; left:50%; transform:translateX(-50%); top:calc(88px + env(safe-area-inset-top)); z-index:3; display:none; max-width:86vw; padding:5px 12px; border-radius:14px; background:#e5483a; color:#fff; font-size:13px; font-weight:800; letter-spacing:.03em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; box-shadow:0 0 0 2px #fff; pointer-events:none; }
+  #mapNew.show { display:block; }
+  .badge2 { position:relative; } .badge2.claim::after { content:'!'; position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:10px; background:#e5483a; color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 2px #fff; }
   .dimRow { display:flex; align-items:center; justify-content:center; gap:14px; }
   .dimNav { width:44px; height:44px; border-radius:11px; background:rgba(40,26,14,.7); display:flex; align-items:center; justify-content:center; font-size:44px; line-height:1; cursor:pointer; color:#fff8ee; text-shadow:0 2px 6px rgba(0,0,0,.6); }
   .dimNav.off { opacity:.3; }
@@ -112,7 +123,7 @@
   #heroBig, #wardPreview { touch-action:pan-y; cursor:grab; }
   #heroBig { width:min(62vw, 260px); height:min(62vw, 260px); border-radius:24px; background:radial-gradient(circle at 50% 60%, rgba(255,248,238,.55), rgba(255,248,238,0) 70%); }
   .heroName { font-size:24px; font-weight:900; letter-spacing:.08em; text-shadow:0 2px 8px rgba(40,26,14,.7); } .heroSkin { font-size:13px; opacity:.9; text-shadow:0 1px 4px rgba(40,26,14,.9); }
-  .charGrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)); gap:8px; width:min(420px,100%); }
+  .charGrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 124px)); justify-content:center; gap:8px; width:min(420px,100%); }
   .charCard { border-radius:16px; background:rgba(46,30,16,.82); border:2px solid rgba(255,248,238,.45); box-shadow:0 3px 0 rgba(0,0,0,.25); padding:6px 4px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; min-height:120px; box-sizing:border-box; }
   .charCard img { width:78px; height:78px; border-radius:12px; background:rgba(255,248,238,.12); }
   .charCard b { font-size:11px; letter-spacing:.04em; } .charCard small { font-size:10px; opacity:.8; }
@@ -243,8 +254,8 @@
 </div>
 <div class="screen" id="scChal">
   <h1 data-i18n="challenges">CHALLENGES</h1>
-  <div class="btn row" id="bDaily"><i data-ico="daily"></i><span class="rt"><span data-i18n="daily">DAILY CHALLENGE</span><small id="dailyInfo"></small></span></div>
-  <div class="btn row" id="bTower"><i data-ico="tower"></i><span class="rt"><span data-i18n="tower">WEEKLY TOWER</span><small id="towerInfo"></small></span></div>
+  <div class="btn row hasBdg" id="bDaily"><i data-ico="daily"></i><span class="rt"><span data-i18n="daily">DAILY CHALLENGE</span><small id="dailyInfo"></small></span><i class="badge" id="bdgDailyRow"></i></div>
+  <div class="btn row hasBdg" id="bTower"><i data-ico="tower"></i><span class="rt"><span data-i18n="tower">WEEKLY TOWER</span><small id="towerInfo"></small></span><i class="badge" id="bdgTowerRow"></i></div>
   <div class="btn row" id="bExp"><i data-ico="compass"></i><span class="rt"><span data-i18n="expedition">EXPEDITION</span><small id="expInfo"></small></span></div>
   <div class="btn row" id="bEndless"><i data-ico="endless"></i><span class="rt"><span data-i18n="endless">ENDLESS</span><small id="endInfo"></small></span></div>
   <div class="sub" id="seasonInfo" style="font-size:12px;opacity:.75;margin-top:8px"></div>
@@ -259,8 +270,7 @@
 </div>
 <div class="screen" id="scColl">
   <h1 data-i18n="collection">COLLECTION</h1>
-  <div class="btn row" id="bCollAch"><i data-ico="trophy"></i><span class="rt"><span data-i18n="achievements">ACHIEVEMENTS</span><small id="collAch"></small></span></div>
-  <div class="btn row" id="bCollStats"><i data-ico="profile"></i><span class="rt"><span data-i18n="stats">STATS</span><small id="collStats"></small></span></div>
+  <div class="btn row hasBdg" id="bCollAch"><i data-ico="trophy"></i><span class="rt"><span data-i18n="achievements">ACHIEVEMENTS</span><small id="collAch"></small></span><i class="badge" id="bdgAchRow"></i></div>
   <div class="btn row" id="bCollMech"><i data-ico="book"></i><span class="rt"><span data-i18n="mechanics">MECHANICS</span><small id="collMech"></small></span></div>
   <div class="btn row" id="bBuilder"><i data-ico="hammer"></i><span class="rt"><span data-i18n="builder">LEVEL BUILDER</span><small id="collBuilder"></small></span></div>
   <div class="btn row" id="bCollSecrets" style="cursor:default"><i data-ico="lock"></i><span class="rt"><span data-i18n="secretsTitle">SECRETS</span><small id="collSecrets"></small></span></div>
@@ -276,7 +286,7 @@
 <div class="screen" id="scSelect">
   <div class="back" id="bBackMenu" data-i18n="menu">◀ MENU</div>
   <h1 id="selTitle">MOUNTAIN GOAT</h1>
-  <div id="mapView"></div><div id="mapHint"></div>
+  <div id="mapView"></div><div id="mapHint"></div><div id="mapNew"></div>
   <div id="levelList" class="list"></div>
 </div>
 <div class="screen" id="scEndless">
@@ -362,8 +372,10 @@
   <div class="heroStage"><canvas id="heroBig"></canvas><div class="heroName" id="heroName"></div><div class="heroSkin" id="heroSkin"></div></div>
   <div class="btn primary" id="bWardrobe" data-i18n="customize">CUSTOMIZE</div>
   <div class="lbl" style="margin:12px 0 6px" data-i18n="chooseHero">CHOOSE A HERO</div>
+  <div class="heroNav"><div class="heroArrow" id="ibexPrev">‹</div><div class="heroDim"><b id="ibexDim"></b><small id="ibexDimSub"></small></div><div class="heroArrow" id="ibexNext">›</div></div>
   <div id="skinList" class="charGrid"></div>
-  <div class="sub" style="margin-top:10px;font-size:13px;opacity:.75" data-i18n="skinsNote">Skins change the coat only — never the jump.</div>
+  <div class="lbl" style="margin:14px 0 2px" id="skinStripLbl"></div><div id="skinStrip" class="skinStrip"></div>
+  <div class="sub" style="margin-top:6px;font-size:13px;opacity:.75" data-i18n="skinsNote">Skins change the coat only — never the jump.</div>
 </div>
 <div class="screen" id="scWardrobe">
   <div class="back" id="bBackWardrobe">◀</div>
@@ -421,11 +433,11 @@ const I18N = {
     menu: '◀ MENU', worlds: '◀ WORLDS', resume: 'RESUME', restart: 'RESTART', exit: 'EXIT', paused: 'PAUSED', retry: 'RETRY', next: 'NEXT LEVEL', levels: 'LEVELS', editor: 'EDITOR', continueFrom: 'CONTINUE FROM LAST LEDGE',
     descent: 'DESCENT', ascent: 'ASCENT', distance: 'DISTANCE', time: 'TIME', kids: 'KIDS', world: 'WORLD', level: 'LEVEL', locked: 'LOCKED', earnStars: 'earn {n} ★ in {w} ({g} so far)', levelsN: '{n} levels',
     run: '▶ run', up: '▲ ascent', down: '▼ descent', twin: '⇊ twin descent', birds: 'birds',
-    complete: 'COMPLETE', descentDone: 'DESCENT COMPLETE', summit: 'SUMMIT REACHED', across: 'MADE IT ACROSS', fell: 'YOU FELL', oneFell: 'ONE GOAT FELL', hawk: 'THE HAWK GOT YOU', tooFar: 'TOO FAR', spiked: 'SPIKED', rockfall: 'ROCKFALL', kidFell: 'A KID FELL',
+    complete: 'COMPLETE', descentDone: 'DESCENT COMPLETE', summit: 'SUMMIT REACHED', across: 'MADE IT ACROSS', fell: 'YOU FELL', newTag: 'NEW', newWorld: 'NEW WORLD', leftBehind: 'LEFT BEHIND', kidFell: 'A LITTLE ONE FELL', antPush: 'AN ANT PUSHED YOU', inWater: 'INTO THE WATER', oneFell: 'ONE GOAT FELL', hawk: 'THE HAWK GOT YOU', tooFar: 'TOO FAR', spiked: 'SPIKED', rockfall: 'ROCKFALL', kidFell: 'A KID FELL',
     camMsg: 'The mountain stopped waiting for you.', tiredMsg: 'That drop was too long. The goat is exhausted and cannot go on.', spikeMsg: 'Those spikes were not a landing spot.', rockMsg: 'A boulder came down the chute.', kidMsg: 'The little one did not make that jump.',
     tipCamera: 'Tip: the top of the screen is the deadline — jump before it reaches you.', tipTired: 'Tip: never drop past more than 3 rows of ledges in one jump.', tipSpikes: 'Tip: land on the clear half of a spiked ledge.', tipHawk: 'Tip: birds only strike in the air — let one pass, then jump.', tipRock: 'Tip: the dark shadow at a crevice means a boulder is about to drop.', tipKid: 'Tip: kids replay your exact jumps — a jump you barely made, they may not.', tipFall: 'Tip: an edge within an arm\'s reach still counts — aim for the ledge, not past it.',
     jumps: 'Jumps', saves: 'Edge saves', kidsRescued: 'Kids rescued', under: 'UNDER', allKids: 'ALL KIDS RESCUED', noSaves: 'NO EDGE SAVES', cleanRun: 'CLEAN RUN', today: 'today', streak: 'Streak', newBest: 'NEW BEST!', best: 'best', youHave: 'you have', salt: 'salt',
-    devUnlock: 'Unlock everything (dev)', p_SLIPPERS: 'SLIPPERS', p_BALLS: 'BALLS', p_STICKS: 'STICKS', p_FISH: 'FISH', p_FLIES: 'FLIES', dimSoon: 'COMING SOON', dimSoonSub: 'a new world is being carved…', dimFrog: 'THE UNDERGROWTH', dimFrogSub: 'a tiny frog · leaves, stones and lily pads below the grass', h_ants: 'Ants patrol the leaves — they shove you off<br>Wait for them to turn, or hop over', m_ants: 'Ants', m_ants_d: 'They walk back and forth along a ledge. Touch one and it pushes you off — time your landing.', 'p_MOON ROCK': 'MOON ROCK', dimMoon: 'THE MOON', dimMoonSub: 'ibex in a helmet · one sixth of the gravity, long slow arcs', h_moon: 'Low gravity: arcs are long and slow<br>Tap while flying for one extra kick', 'p_ICE CREAM': 'ICE CREAM', h_soft: 'Snowdrift — a soft landing from any height<br>but powder edges give no grip', m_soft: 'Soft landings', m_soft_d: 'Snowdrifts and cushions absorb any fall — no exhaustion, no hard landing. But their edges crumble: no edge catches.', h_seesaw: 'A seesaw — land on one end, the other rises<br>Jump off the rising end for a boost', m_seesaw: 'Seesaw', m_seesaw_d: 'A plank on a pivot. Your weight tips it; jump off the end that is swinging up and it throws you higher.',
+    devUnlock: 'Unlock everything (dev)', p_SLIPPERS: 'SLIPPERS', p_BALLS: 'BALLS', p_STICKS: 'STICKS', p_FISH: 'FISH', p_FLIES: 'FLIES', dimSoon: 'COMING SOON', dimSoonSub: 'a new world is being carved…', dimFrog: 'THE UNDERGROWTH', dimFrogSub: 'a tiny frog · leaves, stones and lily pads below the grass', h_ants: 'Ants patrol the leaves — they shove you off<br>Wait for them to turn, or hop over', m_ants: 'Ants', m_ants_d: 'They walk back and forth along a ledge. Land right on one and it knocks you off; stand still and it turns back.', 'p_MOON ROCK': 'MOON ROCK', dimMoon: 'THE MOON', dimMoonSub: 'ibex in a helmet · one sixth of the gravity, long slow arcs', h_moon: 'Low gravity: arcs are long and slow<br>Tap while flying for one extra kick', h_meteors: 'Asteroids burn through the air<br>Let one pass, then jump', 'p_ICE CREAM': 'ICE CREAM', h_soft: 'Snowdrift — a soft landing from any height<br>but powder edges give no grip', m_soft: 'Soft landings', m_soft_d: 'Snowdrifts and cushions absorb any fall — no exhaustion, no hard landing. But their edges crumble: no edge catches.', h_seesaw: 'A seesaw — land on one end, the other rises<br>Jump off the rising end for a boost', m_seesaw: 'Seesaw', m_seesaw_d: 'A plank on a pivot. Your weight tips it; jump off the end that is swinging up and it throws you higher.',
     soundOn: 'Sound', musicOn: 'Music', vibro: 'Vibration', leftHand: 'Left-handed', dragSens: 'Drag sensitivity', quality: 'Quality', lang: 'Language', resetProgress: 'RESET PROGRESS', resetConfirm: 'Erase all progress, salt and custom levels?', low: 'low', high: 'high', short: 'short', normal: 'normal', long: 'long', auto: 'auto',
     skinsNote: 'Skins change the coat only — never the jump.', selected: 'SELECTED', equip: 'EQUIP', unlock: 'UNLOCK', playing: 'PLAYING', reachWorld: 'Reach the {w} world',
     endlessSub: 'Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.', endlessDown: 'ENDLESS DESCENT', endlessUp: 'ENDLESS ASCENT', resumeRun: 'RESUME',
@@ -476,11 +488,11 @@ const I18N = {
     menu: '◀ МЕНЮ', worlds: '◀ МИРЫ', resume: 'ПРОДОЛЖИТЬ', restart: 'ЗАНОВО', exit: 'ВЫЙТИ', paused: 'ПАУЗА', retry: 'ЕЩЁ РАЗ', next: 'СЛЕДУЮЩИЙ', levels: 'УРОВНИ', editor: 'РЕДАКТОР', continueFrom: 'ПРОДОЛЖИТЬ С ПОСЛЕДНЕГО УСТУПА',
     descent: 'СПУСК', ascent: 'ПОДЪЁМ', distance: 'ПУТЬ', time: 'ВРЕМЯ', kids: 'МАЛЫШИ', world: 'МИР', level: 'УРОВЕНЬ', locked: 'ЗАКРЫТО', earnStars: 'набери {n} ★ в {w} (пока {g})', levelsN: 'уровней: {n}',
     run: '▶ забег', up: '▲ подъём', down: '▼ спуск', twin: '⇊ двойной спуск', birds: 'птицы',
-    complete: 'ПРОЙДЕНО', descentDone: 'СПУСК ЗАВЕРШЁН', summit: 'ВЕРШИНА ВЗЯТА', across: 'ДОБРАЛСЯ', fell: 'ТЫ УПАЛ', oneFell: 'ОДИН КОЗЁЛ УПАЛ', hawk: 'ПТИЦА СБИЛА', tooFar: 'СЛИШКОМ ДАЛЕКО', spiked: 'НА ШИПЫ', rockfall: 'КАМНЕПАД', kidFell: 'МАЛЫШ УПАЛ',
+    complete: 'ПРОЙДЕНО', descentDone: 'СПУСК ЗАВЕРШЁН', summit: 'ВЕРШИНА ВЗЯТА', across: 'ДОБРАЛСЯ', fell: 'ТЫ УПАЛ', newTag: 'НОВЫЙ', newWorld: 'НОВЫЙ МИР', leftBehind: 'ОТСТАЛ', kidFell: 'МАЛЫШ УПАЛ', antPush: 'МУРАВЕЙ СТОЛКНУЛ', inWater: 'В ВОДУ', oneFell: 'ОДИН КОЗЁЛ УПАЛ', hawk: 'ПТИЦА СБИЛА', tooFar: 'СЛИШКОМ ДАЛЕКО', spiked: 'НА ШИПЫ', rockfall: 'КАМНЕПАД', kidFell: 'МАЛЫШ УПАЛ',
     camMsg: 'Гора перестала ждать.', tiredMsg: 'Слишком долгое падение. Козёл выбился из сил.', spikeMsg: 'Шипы — не место для посадки.', rockMsg: 'Валун прилетел из расщелины.', kidMsg: 'Малыш не осилил этот прыжок.',
     tipCamera: 'Совет: верх экрана — это дедлайн, прыгай раньше, чем он дойдёт до тебя.', tipTired: 'Совет: не пролетай больше 3 рядов уступов за прыжок.', tipSpikes: 'Совет: приземляйся на чистую половину площадки.', tipHawk: 'Совет: птицы бьют только в воздухе — пропусти и прыгай.', tipRock: 'Совет: тёмное пятно у расщелины — сейчас упадёт валун.', tipKid: 'Совет: малыши повторяют твой прыжок точь-в-точь — то, что ты еле взял, они могут не взять.', tipFall: 'Совет: край в пределах досягаемости всё ещё считается — целься в уступ, а не дальше.',
     jumps: 'Прыжков', saves: 'Зацепов', kidsRescued: 'Спасено малышей', under: 'БЫСТРЕЕ', allKids: 'ВСЕ МАЛЫШИ СПАСЕНЫ', noSaves: 'БЕЗ ЗАЦЕПОВ', cleanRun: 'ЧИСТЫЙ ЗАБЕГ', today: 'сегодня', streak: 'Серия', newBest: 'НОВЫЙ РЕКОРД!', best: 'рекорд', youHave: 'у тебя', salt: 'соли',
-    devUnlock: 'Открыть всё (dev)', p_SLIPPERS: 'ТАПКИ', p_BALLS: 'МЯЧИ', p_STICKS: 'ПАЛКИ', p_FISH: 'РЫБА', p_FLIES: 'МУХИ', dimSoon: 'СКОРО', dimSoonSub: 'новый мир ещё вырубается из камня…', dimFrog: 'ПОДЛЕСОК', dimFrogSub: 'крошечная жаба · листья, камни и кувшинки ниже травы', h_ants: 'Муравьи ходят по листьям — сталкивают<br>Дождись, пока развернутся, или перепрыгни', m_ants: 'Муравьи', m_ants_d: 'Ходят туда-сюда по уступу. Заденешь — столкнёт. Подгадай посадку.', 'p_MOON ROCK': 'ЛУННЫЙ КАМЕНЬ', dimMoon: 'ЛУНА', dimMoonSub: 'ибекс в шлеме · гравитация в шесть раз слабее, долгие дуги', h_moon: 'Низкая гравитация: дуги длинные и медленные<br>Тап в полёте — ещё один толчок', 'p_ICE CREAM': 'МОРОЖЕНОЕ', h_soft: 'Сугроб — мягкая посадка с любой высоты<br>но за рыхлый край не зацепиться', m_soft: 'Мягкая посадка', m_soft_d: 'Сугробы и подушки гасят любое падение — без усталости и жёсткой посадки. Но их края осыпаются: зацепа нет.', h_seesaw: 'Балансир — сядь на один край, второй поднимется<br>Прыгни с поднимающегося края — подбросит', m_seesaw: 'Балансир', m_seesaw_d: 'Доска на опоре. Твой вес её наклоняет; прыгни с края, который идёт вверх, — подбросит выше.',
+    devUnlock: 'Открыть всё (dev)', p_SLIPPERS: 'ТАПКИ', p_BALLS: 'МЯЧИ', p_STICKS: 'ПАЛКИ', p_FISH: 'РЫБА', p_FLIES: 'МУХИ', dimSoon: 'СКОРО', dimSoonSub: 'новый мир ещё вырубается из камня…', dimFrog: 'ПОДЛЕСОК', dimFrogSub: 'крошечная жаба · листья, камни и кувшинки ниже травы', h_ants: 'Муравьи ходят по листьям — сталкивают<br>Дождись, пока развернутся, или перепрыгни', m_ants: 'Муравьи', m_ants_d: 'Ходят туда-сюда по уступу. Приземлишься прямо на муравья — столкнёт; стоишь — он развернётся.', 'p_MOON ROCK': 'ЛУННЫЙ КАМЕНЬ', dimMoon: 'ЛУНА', dimMoonSub: 'ибекс в шлеме · гравитация в шесть раз слабее, долгие дуги', h_moon: 'Низкая гравитация: дуги длинные и медленные<br>Тап в полёте — ещё один толчок', h_meteors: 'Астероиды прожигают воздух<br>Пропусти и прыгай', 'p_ICE CREAM': 'МОРОЖЕНОЕ', h_soft: 'Сугроб — мягкая посадка с любой высоты<br>но за рыхлый край не зацепиться', m_soft: 'Мягкая посадка', m_soft_d: 'Сугробы и подушки гасят любое падение — без усталости и жёсткой посадки. Но их края осыпаются: зацепа нет.', h_seesaw: 'Балансир — сядь на один край, второй поднимется<br>Прыгни с поднимающегося края — подбросит', m_seesaw: 'Балансир', m_seesaw_d: 'Доска на опоре. Твой вес её наклоняет; прыгни с края, который идёт вверх, — подбросит выше.',
     soundOn: 'Звук', musicOn: 'Музыка', vibro: 'Вибрация', leftHand: 'Левая рука', dragSens: 'Чувствительность драга', quality: 'Качество', lang: 'Язык', resetProgress: 'СБРОСИТЬ ПРОГРЕСС', resetConfirm: 'Стереть весь прогресс, соль и свои уровни?', low: 'низкое', high: 'высокое', short: 'короткий', normal: 'обычный', long: 'длинный', auto: 'авто',
     skinsNote: 'Скины меняют только шкуру — никогда прыжок.', selected: 'ВЫБРАНО', equip: 'НАДЕТЬ', unlock: 'ОТКРЫТЬ', playing: 'ИГРАЕШЬ', reachWorld: 'Дойди до мира {w}',
     endlessSub: 'Процедурная гора. Уступы сужаются, пролёты растут,<br>появляются шипы и птицы, биомы плывут от дня к ночи.', endlessDown: 'БЕСКОНЕЧНЫЙ СПУСК', endlessUp: 'БЕСКОНЕЧНЫЙ ПОДЪЁМ', resumeRun: 'ПРОДОЛЖИТЬ',
@@ -530,7 +542,8 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v110', date: '2026-09-22' };
+const BUILD = { version: 'v124', date: '2026-09-23' };
+const NEW_NOW = { chars: new Set(), worlds: new Set() };   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -675,6 +688,7 @@ const TYPE = { // every ledge has the same depth so the goat always stands on ro
   terrace:  { h: 2.6, d: 5.5, jitter: 0.22 }, broad: { h: 2.0, d: 4.6, jitter: 0.25 }, slab: { h: 1.5, d: 4.6, jitter: 0.22 },
   narrow:   { h: 1.5, d: 4.6, jitter: 0.28 }, sloped: { h: 1.7, d: 4.6, jitter: 0.22, tilt: 0.11 },
   stone:    { h: 1.3, d: 4.6, jitter: 0.38 }, foothold: { h: 1.2, d: 4.6, jitter: 0.32 }, seesaw: { h: 0.45, d: 4.0, jitter: 0.02 },
+  log: { h: 1.0, d: 4.6, jitter: 0.02 },
 };
 const LEDGE_FRONT_Z = 1.0;
 let LEVELS = [];
@@ -969,30 +983,41 @@ function unstackClimb(S, crystals, updrafts, blockers = []) {
     }
     if (!any) break; }
 }
+const TERRAIN_STYLES = ['yard', 'park', 'lot', 'winter', 'lake', 'forest', 'pond', 'anthill'];   // outdoor runs: real ground under every ledge
 function makeRun(o) {
   const r = mulberry(o.seed), surfaces = [['start', 0, 0, 8, 'terrace']], crystals = [], hawks = [], ants = []; let x = 0, y = 0, w = 8;
   const hawkAt = []; for (let k = 0; k < (o.hawks || 0); k++) hawkAt.push(Math.floor((k + 1) * o.n / ((o.hawks || 0) + 1)));
   for (let i = 1; i <= o.n; i++) {
     const t = i / o.n; const prevX = x, prevW = w, prevY = y;
+    if (TERRAIN_STYLES.includes(o.style) && !o.noArch && i > 2 && i < o.n - 1 && i % 6 === 4) {
+      const gap = 1.9 + r() * 0.5, Lw = 4.6, ly = prevY, a = prevX + prevW / 2 + gap, lx1 = a + 0.6, Fw = Lw + 0.6 + 1.6;   // the low ledge runs from before the log to 1.6 m past its end
+      surfaces.push(['r' + i, +(a + Fw / 2).toFixed(1), +ly.toFixed(1), +Fw.toFixed(1), 'broad']);
+      const top = +(ly + 5.6).toFixed(1); surfaces.push(['k' + i, +(lx1 + Lw / 2).toFixed(1), top, Lw, 'log', 'arch']);   // log bottom at ly + 4.6: clear of the overhang rule (4.35)
+      const aw = 2.0, ax = +(a + Fw + 1.7 + aw / 2).toFixed(1), ay = +(ly + 2.8).toFixed(1); surfaces.push(['j' + i, ax, ay, aw, 'narrow']);   // the step past the log's far end
+      crystals.push([+(lx1 + 0.8).toFixed(1), +(top + 0.6).toFixed(1)]);   // the fly waits at the near end of the log: walk back along it
+      crystals.push([+(a + Fw - 0.8).toFixed(1), +(ly + 0.6).toFixed(1)]);
+      x = ax; y = ay; w = aw; continue; }
     const nw = Math.max(1.4, +(3.8 - t * 2 + (r() - .5) * 1.2).toFixed(1));
-    y = clamp(y + (r() - .5) * 5, -6, 6); if (y > prevY + 3.2) y = prevY + 3.2;
+    const hilly = ['yard', 'house', 'park', 'lot', 'winter', 'flat', 'lake', 'forest', 'pond', 'anthill'].includes(o.style);
+    y = clamp(y + (r() - (hilly ? 0.55 : 0.5)) * (hilly ? 9 : 5), hilly ? -16 : -6, 6); if (y > prevY + 3.2) y = prevY + 3.2; if (hilly && i % 5 === 0 && y < prevY) y = clamp(prevY + 1.5 + r() * 1.5, -16, 6);
     // the goat takes off from where it landed (the near part of the ledge), so budget the whole flight, not just the gap
     const gap = Math.max(1.6, (2.2 + r() * 1.4 + t * 1.4) - Math.max(0, y - prevY) * 0.6 - (o.wind ? 0.8 : 0) - Math.max(0, prevW - 2.5) * 0.4);
     x = +(prevX + prevW / 2 + gap + nw / 2).toFixed(1); w = nw;
     const type = w < 1.7 ? 'foothold' : w > 3.2 ? 'broad' : w > 2.4 ? 'slab' : 'narrow';
-    const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 ? 'L' : null; if (spk && w < 3.6) { w = 3.6; x = +(prevX + prevW / 2 + gap + w / 2).toFixed(1); }
+    const spk = o.spikes && w >= 3.0 && i > 3 && i % 3 === 0 && y - prevY < 1.5 ? 'L' : null;   // no spikes on a ledge you have to climb onto if (spk && w < 3.6) { w = 3.6; x = +(prevX + prevW / 2 + gap + w / 2).toFixed(1); }
     const row = ['r' + i, x, +y.toFixed(1), w, type]; if (spk) row.push(spk);
-    if (o.ants && i > 2 && i % 4 === 0 && w >= 3.0 && !spk) ants.push({ surface: 'r' + i, speed: 1.1 + t * 1.2 });
+    if (o.ants && i > 2 && i % 4 === 0 && !spk) { w = Math.max(w, 5.2); x = +(prevX + prevW / 2 + gap + w / 2).toFixed(1); row[1] = x; row[3] = w; row[4] = 'broad'; ants.push({ surface: 'r' + i, speed: 0.9 + t * 0.9 }); }   // room to wait at either end while the ant turns
+    if (hilly && prevY - y > 4.5 && !spk) row[5] = 'soft';   // a big drop lands on something forgiving
     if (o.soft && i > 1 && i % 3 === 0 && !spk) { row[5] = 'soft'; } else if (o.ice && i > 2 && i % 4 === 1 && !spk) { row[5] = 'ice'; }
     if (o.seesaw && i > 2 && i % 3 === 0 && !spk) { row[3] = 4.5; row[4] = 'seesaw'; w = 4.5; x = +(prevX + prevW / 2 + gap + w / 2).toFixed(1); row[1] = x; }
-    else if (o.move && i > 2 && i % 3 === 0 && !spk) { row[5] = row[5] || undefined; row[6] = (i % 2 ? { dx: 1.6 + r() * 0.8, dy: 0, period: 3 + r() * 1.5, phase: r() } : { dx: 0, dy: 1.2 + r() * 0.6, period: 3 + r(), phase: r() }); if (row.length === 7 && row[5] === undefined) row[5] = ''; }
+    else if (o.move && i > 2 && i % 3 === 0 && !spk) { row[5] = row[5] || undefined; row[6] = (i % 2 || ['pond', 'lake'].includes(o.style) ? { dx: 1.6 + r() * 0.8, dy: 0, period: 3 + r() * 1.5, phase: r() } : { dx: 0, dy: 1.2 + r() * 0.6, period: 3 + r(), phase: r() }); if (row.length === 7 && row[5] === undefined) row[5] = ''; }
     surfaces.push(row);
-    if (i % 3 === 1) crystals.push([+(spk ? x + w / 4 : x).toFixed(1), +(y + 0.6).toFixed(1)]); else if (i % 4 === 2) crystals.push([+((prevX + x) / 2).toFixed(1), +(Math.max(prevY, y) + 2.6).toFixed(1)]);
+    if (i % 3 === 1) crystals.push([+(spk ? x + w / 4 : x).toFixed(1), +(y + 0.6).toFixed(1)]); else if (i % 4 === 2) crystals.push(TERRAIN_STYLES.includes(o.style) ? [+(spk ? x + w / 4 : x - w / 4).toFixed(1), +(y + 0.6).toFixed(1)] : [+((prevX + x) / 2).toFixed(1), +(Math.max(prevY, y) + 2.6).toFixed(1)]);   // outdoor runs: flies sit over a ledge
     if (hawkAt.includes(i)) hawks.push({ x1: +(prevX + 1).toFixed(1), x2: +(x - 1).toFixed(1), y: +(Math.max(prevY, y) + 2.2).toFixed(1), speed: 4 + t * 3 });
   }
   const fx = +(x + w / 2 + 3 + 10).toFixed(1); surfaces.push(['finish', fx, +y.toFixed(1), 20, 'terrace']);
   const winds = o.wind ? [{ y1: 9, y2: -9, force: -(2 + r()) }] : [];
-  const kidLedge = o.kid ? surfaces[Math.floor(o.n * 0.6)] : null; const kids = kidLedge ? [{ surface: kidLedge[0], x: kidLedge[1] }] : [];
+  const kidPool = surfaces.filter(q => /^r\d/.test(q[0])); const kidLedge = o.kid ? kidPool[Math.floor(kidPool.length * 0.6)] : null; const kids = kidLedge ? [{ surface: kidLedge[0], x: kidLedge[1] }] : [];
   return { gen: true, key: o.key, name: o.name, style: o.style, horizontal: true, character: o.character, winds, kids, ants, stars: { crystals: Math.max(2, Math.floor(crystals.length * 0.7)), time: 40 + o.n * 5 }, surfaces, crystals, blockers: [], hawks, rocks: [], herd: [{ surface: 'finish', x: fx + 6, dir: 1, n: 4 }] };
 }
 // zig-zag descent generator (deterministic): widths shrink and gaps grow along the way, forks with a pickup, spikes on wide ledges, bird lanes spread evenly
@@ -1224,7 +1249,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = CONFIG.shadows; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene(); scene.background = new THREE.Color(STYLE.haze); scene.fog = new THREE.Fog(STYLE.haze, 45, 170);
-const camera = new THREE.PerspectiveCamera(CONFIG.fov, 1, 0.1, 500);
+const camera = new THREE.PerspectiveCamera(CONFIG.fov, 1, 0.5, 500);   // near 0.5: far better depth precision on phones (the closest thing is ~15 m away)
 let halfH = CONFIG.baseHalfHeight, camDist = 20, baseHalf = CONFIG.baseHalfHeight;
 function setHalfH(h) { halfH = h; camDist = halfH / Math.tan(THREE.MathUtils.degToRad(CONFIG.fov / 2)); }
 function resize() {
@@ -1372,6 +1397,11 @@ function makeCrystal() {
   return g;
 }
 function makeHawk() {
+  if (STYLE.bird === 'meteor') { // in space the flying hazard is an asteroid with a burning tail, not a bird
+    const g = new THREE.Group(); const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(0.75, 0), new THREE.MeshLambertMaterial({ color: 0x5a4a3a, flatShading: true })); rock.castShadow = true; g.add(rock); g.rock = rock;
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.55, 3.2, 7), new THREE.MeshBasicMaterial({ color: 0xffa040, transparent: true, opacity: 0.55 })); tail.rotation.z = Math.PI / 2; tail.position.x = -2.1; g.add(tail);
+    const core = new THREE.Mesh(new THREE.ConeGeometry(0.28, 2.2, 6), new THREE.MeshBasicMaterial({ color: 0xffe080, transparent: true, opacity: 0.8 })); core.rotation.z = Math.PI / 2; core.position.x = -1.6; g.add(core);
+    g.wings = []; g.asteroid = true; return g; }
   const g = new THREE.Group();
   const hs = HAWK_SKINS[STYLE.bird] || HAWK_SKINS.hawk;
   const dark = new THREE.MeshLambertMaterial({ color: hs.dark, flatShading: true }), light = new THREE.MeshLambertMaterial({ color: hs.light, flatShading: true }), beakM = new THREE.MeshLambertMaterial({ color: hs.beak, flatShading: true });
@@ -1398,13 +1428,12 @@ function dressGround(s, g, seed, small) {
   for (let k = 0; k < n; k++) { const x = s.x1 + rr() * s.w, z = -2 - rr() * 9; const sz = 0.6 + rr() * 1.6; const b = new THREE.Mesh(makeRock(sz, sz * 0.7, sz, seed + k * 13, 0.4), rockMat); b.position.set(x, s.y + sz * 0.25, z); b.rotation.y = rr() * 3; b.castShadow = b.receiveShadow = true; g.add(b); }
   for (let k = 0; k < n * 2; k++) { const v = makeVegetation(rr); v.position.set(s.x1 + 1 + rr() * (s.w - 2), s.y, -1.5 - rr() * 9); v.scale.setScalar(0.8 + rr() * 0.7); g.add(v); }
   for (let k = 0; k < 14; k++) { const lump = new THREE.Mesh(makeRock(1.5 + rr() * 3.5, 0.7 + rr() * 1.6, 2 + rr() * 2, seed + 200 + k, 0.45), rockMaterials(seed + 200 + k)); lump.position.set(s.x1 + 1 + rr() * (s.w - 2), s.y + 0.2, -1.2 - rr() * 9); lump.castShadow = lump.receiveShadow = true; g.add(lump); }
-  for (let k = 0; k < 8; k++) { const dip = new THREE.Mesh(new THREE.CylinderGeometry(0.8 + rr() * 1.4, 1 + rr() * 1.6, 0.35, 8), new THREE.MeshLambertMaterial({ color: new THREE.Color(STYLE.tops[0]).offsetHSL(0, 0, -0.08), flatShading: true })); dip.position.set(s.x1 + 2 + rr() * (s.w - 4), s.y - 0.12, -2 - rr() * 8); g.add(dip); }
 }
 // dog worlds: ledges are things — roofs, sofas, benches, crates, car roofs, islands — not chunks of rock
 const PROP_STYLES = { moon: 'moon', yard: 'yard', house: 'house', park: 'park', lot: 'lot', winter: 'winter', flat: 'flat', lake: 'lake', forest: 'forest', pond: 'pond', anthill: 'anthill' };
 function propLedge(s, g, seed, mats) {
   const kind = PROP_STYLES[styleKey()]; if (!kind || s.finish || s.type === 'terrace' || s.seesaw) return false;
-  const rr = mulberry(seed + 5); const M = c => new THREE.MeshLambertMaterial({ color: c, flatShading: true }); const z0 = LEDGE_FRONT_Z - 2.3;
+  const rr = mulberry(seed + 5); const M = c => new THREE.MeshLambertMaterial({ color: c, flatShading: true }); const z0 = LEDGE_FRONT_Z - 1.6;   // centred near the hero's plane (z 0): round props (caps, pads, leaves) are under his feet, not behind them
   const box = (w, h, d, c, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), M(c)); m.position.set(s.x + x, s.y + y, z0 + z); m.castShadow = m.receiveShadow = true; g.add(m); return m; };
   const wood = [0xa87b4e, 0xb98a5a, 0x9c7046][seed % 3], W = s.w, H = s.h + 0.6;
   const size = W >= 3.2 ? 'big' : W >= 2.2 ? 'mid' : W >= 1.7 ? 'small' : 'tiny';
@@ -1444,11 +1473,96 @@ function propLedge(s, g, seed, mats) {
     if (size === 'big') { const rim = new THREE.Mesh(new THREE.TorusGeometry(W / 2 + 0.1, 0.32, 8, 20), M(0x9a9ca4)); rim.rotation.x = Math.PI / 2; rim.scale.z = 0.55; rim.position.set(s.x, s.y - 0.2, z0); rim.castShadow = true; g.add(rim); const floor = new THREE.Mesh(new THREE.CylinderGeometry(W / 2, W / 2 + 0.3, H, 20), M(0x7c7e86)); floor.position.set(s.x, s.y - H / 2 - 0.2, z0); g.add(floor); return true; }   // a crater rim: stand on the raised ring
     return false;
   } else if (kind === 'lake') {
-    const island = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), M(0x8a6a48)); island.scale.set(W / 2 + 0.4, H * 0.9, 2.2); island.position.set(s.x, s.y - H * 0.75, z0); island.castShadow = island.receiveShadow = true; g.add(island);
+    const island = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), M(0x8a6a48)); island.scale.set(W / 2 + 0.4, 1.0, 2.2); island.position.set(s.x, s.y - 0.95, z0); island.castShadow = island.receiveShadow = true; g.add(island);
     if (size === 'tiny') { const log = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.32, W + 0.6, 7), M(0x6e4e30)); log.rotation.z = Math.PI / 2; log.position.set(s.x, s.y - 0.3, z0 + 0.4); log.castShadow = true; g.add(log); }
     else { const grass = new THREE.Mesh(new THREE.CylinderGeometry(W / 2 + 0.2, W / 2 + 0.35, 0.3, 10), M(0x6aa04a)); grass.position.set(s.x, s.y - 0.15, z0); grass.receiveShadow = true; g.add(grass); if (s.move) { grass.material.color.set(wood); for (let k = 0; k < 3; k++) box(W, 0.1, 0.5, wood, 0, 0.02, -0.8 + k * 0.8); } }   // island, or a raft when it moves
   }
   return true;
+}
+// ground for outdoor runs, as segments along x: an earth column under every ledge whose top is where the prop's feet stand,
+// a pool under every lily pad / island, and a ditch of water (or a dark pit in the anthill) in every gap. Falling in is final.
+function footDepth(st, r) {
+  const t = r[4], w = r[3], H = (TYPE[t] || TYPE.slab).h + 0.6, size = w >= 3.2 ? 'big' : w >= 2.2 ? 'mid' : w >= 1.7 ? 'small' : 'tiny';
+  if (r[0].startsWith('finish') || t === 'terrace') return 0.02; if (t === 'seesaw') return 2.2;
+  if (st === 'yard') return size === 'big' ? Math.min(H, 2.35) : H; if (st === 'lot') return size === 'mid' ? 0.42 : H;
+  if (st === 'winter') return size === 'big' ? 1.75 : H; if (st === 'forest' || st === 'anthill') return size === 'big' || size === 'mid' ? (H + 1.5) * 0.9 : size === 'small' ? H + 0.2 : H;
+  return H;
+}
+function runTerrainModel(def) {
+  if (!def.horizontal || !TERRAIN_STYLES.includes(def.style)) return null;
+  const st = def.style, float = st === 'pond' || st === 'lake'; const segs = [];
+  for (const r of def.surfaces) { if (/^sec/.test(r[0]) || String(r[5] || '').includes('arch')) continue; const fin = r[0].startsWith('finish'), start = r[0] === 'start' || (def.starts || []).includes(r[0]); const mv = r[6] || null, dx = mv ? Math.abs(mv.dx || 0) : 0;
+    const x1 = r[1] - r[3] / 2, x2 = r[1] + r[3] / 2;
+    if (float && r[4] !== 'terrace' && r[4] !== 'seesaw' && !fin) { const size = r[3] >= 1.7 ? 'pad' : 'log'; segs.push({ a: x1 - dx - 0.2, b: x2 + dx + 0.2, top: r[2] - (st === 'lake' ? (size === 'pad' && !mv ? 0.6 : 0.3) : (size === 'pad' ? 0.06 : 0.3)), water: true }); continue; }
+    if (mv) continue;   // hanging trolleys and cages: open ground below
+    segs.push({ a: x1 - (start ? 60 : 0.35), b: x2 + (fin ? 40 : 0.35), top: r[2] - footDepth(st, r), water: false }); }
+  segs.sort((p, q) => p.a - q.a); const gaps = [];
+  for (let i = 0; i + 1 < segs.length; i++) { const A = segs[i], B = segs[i + 1]; if (B.a <= A.b + 0.05) continue; const lA = A.water ? A.top : A.top - 0.8, lB = B.water ? B.top : B.top - 0.8; gaps.push({ a: A.b, b: B.a, y: Math.min(lA, lB), A, B }); }
+  const low = Math.min(...segs.map(q => q.top)) - 0.8;
+  return { segs, gaps, pit: st === 'anthill',
+    gapAt(x) { for (const g of gaps) if (x > g.a && x < g.b) return g.y; return null; },
+    at(x) { let best = null; for (const q of segs) if (x >= q.a && x <= q.b && (best == null || q.top > best.y)) best = { y: q.top, water: q.water }; if (best) return best; const g = this.gapAt(x); return { y: g != null ? g : low, water: !this.pit }; } };
+}
+// terrain is static: fold every mesh into one per material (hundreds of draw calls become ~a dozen; phones stop stuttering)
+function mergeStatic(group) {
+  group.updateMatrixWorld(true); const buckets = new Map();
+  group.traverse(o => { if (!o.isMesh) return; const m = o.material; const key = (m.type || '') + ':' + (m.color ? m.color.getHexString() : '') + ':' + (m.transparent ? m.opacity : 1) + ':' + (m.flatShading ? 1 : 0);
+    let b = buckets.get(key); if (!b) { b = { mat: m, pos: [], nor: [], cast: false, order: o.renderOrder || 0 }; buckets.set(key, b); }
+    let gm = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone(); gm.applyMatrix4(o.matrixWorld); if (!gm.attributes.normal) gm.computeVertexNormals();
+    b.pos.push(gm.attributes.position.array); b.nor.push(gm.attributes.normal.array); b.cast = b.cast || o.castShadow; gm.dispose(); });
+  const cat = arrs => { const n = arrs.reduce((a, x) => a + x.length, 0), out = new Float32Array(n); let k = 0; for (const x of arrs) { out.set(x, k); k += x.length; } return out; };
+  while (group.children.length) group.remove(group.children[0]);
+  for (const b of buckets.values()) { const gm = new THREE.BufferGeometry(); gm.setAttribute('position', new THREE.BufferAttribute(cat(b.pos), 3)); gm.setAttribute('normal', new THREE.BufferAttribute(cat(b.nor), 3)); gm.computeBoundingSphere();
+    const mesh = new THREE.Mesh(gm, b.mat); mesh.castShadow = b.cast; mesh.receiveShadow = true; mesh.renderOrder = b.order; group.add(mesh); }
+  return buckets.size;
+}
+function buildRunTerrain(def, idx) {
+  const T = runTerrainModel(def); if (!T) return null; const st = def.style; const g = new THREE.Group(); const rr = mulberry(idx * 7 + 3);
+  const pal = { yard: [0x7a5a3a, 0x7fae52, 0x4a90c8], park: [0x7a5a3a, 0x7fa74e, 0x4a90c8], lot: [0x6e6a64, 0x8a8680, 0x7a6a4a], winter: [0x8a8e96, 0xf2f6fa, 0x5a8ab0],
+    forest: [0x7a5a3c, 0x5a8a44, 0x3f8a86], pond: [0x6e5436, 0x5a8a44, 0x3a8ac8], lake: [0x7a5e3e, 0x6aa04a, 0x3a8ac8], anthill: [0x7a5a38, 0xb8905c, 0x2e2014] }[st];
+  const M = c => new THREE.MeshLambertMaterial({ color: c, flatShading: true }); const soil = M(pal[0]), top = M(pal[1]);
+  const wmat = T.pit ? M(pal[2]) : new THREE.MeshPhongMaterial({ color: pal[2], transparent: true, opacity: 0.78, shininess: 110, specular: 0xffffff });
+  const FRONT = 0.3, D = 32, zc = FRONT - D / 2;   // every terrain mesh ends at z = 0.3, behind the front edge of the ledges (z = 1.0)
+  const column = (a, b, y, k) => { const sh = new THREE.Shape(); sh.moveTo(a, y); sh.lineTo(b, y); sh.lineTo(b + k * 40, y - 40); sh.lineTo(a - k * 40, y - 40); sh.closePath();
+    const m = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: D, bevelEnabled: false }), soil); m.position.z = FRONT - D; m.receiveShadow = true; g.add(m); return m; };
+  const spans = []; const water = (a, b, y) => spans.push([a, b, y]);   // collected, merged where pools touch at one level, built once (no overlapping transparent faces)
+  const buildWater = () => { spans.sort((p, q) => p[0] - q[0]); const out = []; for (const sp of spans) { const l = out[out.length - 1]; if (l && Math.abs(l[2] - sp[2]) < 0.02 && sp[0] <= l[1] + 0.05) l[1] = Math.max(l[1], sp[1]); else out.push(sp.slice()); }
+    for (const [a, b, y] of out) { const w = new THREE.Mesh(new THREE.BoxGeometry(b - a, 1.05, D - 0.1), wmat); w.position.set((a + b) / 2, y - 0.525, zc - 0.05); w.renderOrder = 2; g.add(w);
+    } };   // a light line on the near rim reads as a water surface from any angle
+  const dark = M(new THREE.Color(pal[0]).multiplyScalar(0.62)), band = M(new THREE.Color(pal[0]).multiplyScalar(0.8)), lip = M(pal[1]), lump = M(new THREE.Color(pal[1]).multiplyScalar(0.88));
+  const dressCut = (a, b, y) => { const w = b - a; if (w < 0.6) return;
+    const sh = new THREE.Shape(); const y0 = y - 3.4; sh.moveTo(a - 0.12 * 3.3, y0); sh.lineTo(b + 0.12 * 3.3, y0); sh.lineTo(b + 0.12 * 40, y0 - 36); sh.lineTo(a - 0.12 * 40, y0 - 36); sh.closePath();
+    const base = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: 0.06, bevelEnabled: false }), dark); base.position.z = FRONT - 0.02; g.add(base);   // deep soil goes dark: the cut reads as depth, not as a wall
+    for (const [dy, hh] of [[1.25, 0.18], [2.45, 0.24]]) { const bw = w + 0.24 * dy; const bd = new THREE.Mesh(new THREE.BoxGeometry(bw, hh, 0.06), band); bd.position.set((a + b) / 2, y - dy, FRONT + 0.03); g.add(bd); }   // strata
+    { let x = a - 0.1; while (x < b + 0.1) { const lw = Math.min(b + 0.1 - x, 0.9 + rr() * 1.6); const lp = new THREE.Mesh(new THREE.BoxGeometry(lw + 0.05, 0.26 + rr() * 0.08, 0.5), lip); lp.position.set(x + lw / 2, y - 0.11, FRONT + 0.03 + rr() * 0.04); lp.receiveShadow = true; g.add(lp); x += lw; } }   // the turf rolls a little over the cut, in uneven pieces
+    for (let k = 0; k < Math.min(9, Math.ceil(w / 1.4)); k++) { const tl = 0.2 + rr() * 0.28; const tuft = new THREE.Mesh(new THREE.ConeGeometry(0.07 + rr() * 0.05, tl, 4), lip); tuft.position.set(a + 0.15 + rr() * Math.max(0.1, w - 0.3), y + 0.04 + tl / 2, FRONT + 0.05 + rr() * 0.25); tuft.rotation.z = (rr() - .5) * 0.5; g.add(tuft); }   // grass standing up along the rim
+    for (let k = 0; k < Math.min(12, Math.ceil(w / 5)); k++) { const lm = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 0), lump); lm.scale.set(0.8 + rr() * 1.4, 0.25 + rr() * 0.3, 0.8 + rr() * 1.2); lm.position.set(a + rr() * w, y + 0.02, -4.5 - rr() * 16); lm.receiveShadow = true; g.add(lm); } };   // low hummocks on the ground behind the props
+  for (const q of T.segs) {
+    if (q.water) { water(q.a, q.b, q.top); column(q.a - 0.3, q.b + 0.3, q.top - 1.1, 0.05); continue; }
+    column(q.a, q.b, q.top - 0.12, 0.12);
+    dressCut(q.a, q.b, q.top);
+    if (q.b - q.a > 20) { const w = q.b - q.a, boulderM = M(new THREE.Color(pal[0]).lerp(new THREE.Color(0x8a8a84), 0.55));   // wide ground (start, finish): a real landscape, not a bare plate
+      for (let k = 0; k < Math.min(14, Math.ceil(w / 4.5)); k++) { const v = makeVegetation(rr); v.position.set(q.a + rr() * w, q.top + 0.05, -7 - rr() * 17); v.scale.setScalar(1.8 + rr() * 1.6); g.add(v); }
+      for (let k = 0; k < Math.min(9, Math.ceil(w / 7)); k++) { const sz = 0.9 + rr() * 1.7; const bl = new THREE.Mesh(makeRock(sz * 1.3, sz * 0.8, sz, idx * 17 + k, 0.4), boulderM); bl.position.set(q.a + rr() * w, q.top + sz * 0.25, -3.5 - rr() * 16); bl.rotation.y = rr() * 3; bl.castShadow = bl.receiveShadow = true; g.add(bl); }
+      for (let k = 0; k < Math.min(12, Math.ceil(w / 5)); k++) { const v = makeVegetation(rr); v.position.set(q.a + rr() * w, q.top + 0.05, -1.4 - rr() * 1.8); v.scale.setScalar(0.6 + rr() * 0.4); g.add(v); } }
+    const turf = new THREE.Mesh(new THREE.BoxGeometry(q.b - q.a + 0.12, 0.3, D + 0.06), top); turf.position.set((q.a + q.b) / 2, q.top - 0.1, zc + 0.03); turf.receiveShadow = true; g.add(turf);   // top at q.top + 0.05, front a little ahead of the soil face: no shared planes
+    const n = Math.min(16, Math.max(1, Math.round((q.b - q.a) / 3))); for (let k = 0; k < n; k++) { const v = makeVegetation(rr); v.position.set(q.a + 0.4 + rr() * Math.max(0.1, q.b - q.a - 0.8), q.top + 0.05, -3.9 - rr() * 7); v.scale.setScalar(0.7 + rr() * 0.5); g.add(v); }   // behind the props (they end at z = -3.1)
+  }
+  for (const G2 of T.gaps) { water(G2.a, G2.b, G2.y); column(G2.a - 0.3, G2.b + 0.3, G2.y - 1.1, 0.02);
+    for (const [q, side] of [[G2.A, 1], [G2.B, -1]]) if (q.water && q.top > G2.y + 0.05) { const e = side > 0 ? q.b : q.a; const dw = Math.min(0.7, (G2.b - G2.a) / 2); column(side > 0 ? e - 0.25 : e - dw, side > 0 ? e + dw : e + 0.25, q.top + 0.04, 0.1); }   // a mud dam holds the higher pool
+    if (!T.pit) for (let k = 0; k < 2; k++) { const v = makeVegetation(rr); v.position.set(G2.a + rr() * (G2.b - G2.a), G2.y, -5 - rr() * 8); v.scale.setScalar(0.6); g.add(v); } }
+  buildWater(); ENV.groundCalls = mergeStatic(g); scene.add(g); ENV.ground = g; return T;
+}
+function buildArch(s, g, seed) {
+  const M = c => new THREE.MeshLambertMaterial({ color: c, flatShading: true }); const st = styleKey(), plank = ['yard', 'park', 'lot'].includes(st); const z0 = LEDGE_FRONT_Z - 1.6, back = z0 - 1.5;   // posts at z -3.4: behind every prop, never in the jump plane
+  const gy = ENV.terrain ? Math.min(ENV.terrain.at(s.x1).y, ENV.terrain.at(s.x2).y) : s.y - 8;
+  if (plank) { const wood = [0xa87b4e, 0xb98a5a, 0x9c7046][seed % 3]; const deck = new THREE.Mesh(new THREE.BoxGeometry(s.w + 0.4, 0.35, 2.6), M(wood)); deck.position.set(s.x, s.y - 0.18, z0); deck.castShadow = deck.receiveShadow = true; g.add(deck);
+    for (let k = 0; k < Math.round(s.w / 0.7); k++) { const seam = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.02, 2.62), M(0x6e5034)); seam.position.set(s.x1 + 0.35 + k * 0.7, s.y + 0.005, z0); g.add(seam); }
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(s.w + 0.6, 0.4, 0.4), M(0x7a5a3a)); beam.position.set(s.x, s.y - 0.55, back + 0.3); g.add(beam); }
+  else { const bark = st === 'winter' ? 0x5a4a3e : 0x6e4e30; const log = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.8, s.w + 0.6, 10), M(bark)); log.rotation.z = Math.PI / 2; log.position.set(s.x, s.y - 0.7, z0); log.castShadow = log.receiveShadow = true; g.add(log);
+    const walk = new THREE.Mesh(new THREE.BoxGeometry(s.w + 0.4, 0.12, 1.2), M(st === 'winter' ? 0xf6f9fc : 0x5a8a44)); walk.position.set(s.x, s.y - 0.08, z0); walk.receiveShadow = true; g.add(walk);   // flat mossy (or snowy) walk along the top
+    for (const e of [-1, 1]) { const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.05, 10), M(0xc8a070)); ring.rotation.z = Math.PI / 2; ring.position.set(s.x + e * (s.w / 2 + 0.31), s.y - 0.7, z0); g.add(ring); } }   // cut ends
+  for (const e of [-1, 1]) { const px = s.x + e * (s.w / 2 - 0.4), ph = s.y - 1.2 - gy + 1.5; if (ph <= 0.2) continue; const post = new THREE.Mesh(plank ? new THREE.BoxGeometry(0.35, ph, 0.35) : new THREE.CylinderGeometry(0.55, 0.7, ph, 8), M(plank ? 0x7a5a3a : 0x5a4028)); post.position.set(px, s.y - 1.2 - ph / 2, back); post.castShadow = true; g.add(post); }   // stumps / posts go down into the ground
 }
 function makeAnt() { const g = new THREE.Group(); const M = new THREE.MeshLambertMaterial({ color: 0x2a1c14, flatShading: true }); for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(new THREE.SphereGeometry(i === 2 ? 0.26 : 0.17, 6, 5), M); b.position.set(0.28 - i * 0.28, 0.28, 0); g.add(b); }
   for (let i = 0; i < 3; i++) for (const sd of [-1, 1]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.4, 4), M); leg.position.set(0.2 - i * 0.2, 0.15, sd * 0.2); leg.rotation.x = sd * 0.9; g.add(leg); g.legsA = g.legsA || []; g.legsA.push(leg); }
@@ -1501,7 +1615,7 @@ function makeSurface(r, i, seed) {
   // 6th element: space-separated flags — 'L' / 'R' spikes on that half, 'crumble', 'ice'
   for (const f of String(r[5] || '').split(' ').filter(Boolean)) {
     if (f === 'L') s.spikes = { x1: s.x1, x2: s.x }; else if (f === 'R') s.spikes = { x1: s.x, x2: s.x2 };
-    else if (f === 'crumble') s.crumble = true; else if (f === 'ice') s.ice = true; else if (f === 'soft') s.soft = true;
+    else if (f === 'crumble') s.crumble = true; else if (f === 'ice') s.ice = true; else if (f === 'soft') s.soft = true; else if (f === 'arch') s.arch = true;
   }
   if (r.softSpikes && s.spikes) { const mid = s.x; s.spikes = s.spikes.x1 < mid ? { x1: s.x1, x2: s.x1 + s.w * 0.4 } : { x1: s.x2 - s.w * 0.4, x2: s.x2 }; }
   s.iceStop = !!r.iceStop; s.crumbleSlow = !!r.crumbleSlow;
@@ -1514,14 +1628,16 @@ function makeSurface(r, i, seed) {
   if (ground) { s.x1 -= ext[0]; s.x2 += ext[1]; s.w = s.x2 - s.x1; s.x = (s.x1 + s.x2) / 2; }
   const m = new THREE.Mesh(makeRock(ground ? s.w : s.w + 0.3, ground ? 12 : s.h + 0.6, ground ? 26 : s.d, seed, STYLE.flat ? 0.02 : (ground ? 0.35 : s.jitter), { undercut: !STYLE.flat, solid: true }), mats);
   m.position.set(s.x, ground ? s.y - 6 : s.y - (s.h + 0.6) / 2, ground ? LEDGE_FRONT_Z - 13 + 0.6 : LEDGE_FRONT_Z - s.d / 2); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m); s.mesh = m;
-  if (propLedge(s, g, seed, mats)) { m.visible = false; m.castShadow = false; }
-  if (ground) dressGround(s, g, seed); else if (s.type === 'terrace') dressGround(s, g, seed, true);
+  if (s.arch) { m.visible = false; m.castShadow = false; s.prop = true; buildArch(s, g, seed); }
+  else if (propLedge(s, g, seed, mats)) { m.visible = false; m.castShadow = false; s.prop = true; }
+  if (ENV.terrain && (s.finish || s.type === 'terrace') && !s.move) { m.visible = false; m.castShadow = false; }   // the run's terrain is the surface here
+  else if (ground) dressGround(s, g, seed); else if (s.type === 'terrace') dressGround(s, g, seed, true);
   if (s.seesaw) { const piv = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 1.0, 1.6, 3), new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true })); piv.position.set(s.x, s.y - 1.4, LEDGE_FRONT_Z - s.d / 2); piv.rotation.y = Math.PI / 2; piv.castShadow = true; g.add(piv); }
-  if (STYLE.flat && !s.finish && s.w < 20) { // balcony railing along the back edge
+  if ((styleKey() === 'city' || styleKey() === 'panel') && !s.finish && s.w < 20) { // balcony railing along the back edge
     const rail = new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true }); const bar = new THREE.Mesh(new THREE.BoxGeometry(s.w + 0.2, 0.05, 0.05), rail); bar.position.set(s.x, s.y + 0.95, -1.2); g.add(bar);
     for (let k = 0; k <= Math.round(s.w / 0.6); k++) { const post = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.95, 0.05), rail); post.position.set(s.x - s.w / 2 + k * (s.w / Math.max(1, Math.round(s.w / 0.6))), s.y + 0.48, -1.2); g.add(post); }
   }
-  if (s.soft) { const snow = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshLambertMaterial({ color: 0xf6f9fc, flatShading: true })); snow.scale.set(s.w / 2 + 0.2, 0.45, 1.6); snow.position.set(s.x, s.y + 0.05, -0.4); snow.receiveShadow = true; g.add(snow); }
+  if (s.soft) { const snow = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshLambertMaterial({ color: STYLE.snow ? 0xf6f9fc : ['house', 'flat'].includes(styleKey()) ? 0xc8a878 : STYLE.bush, flatShading: true })); snow.scale.set(s.w / 2 + 0.2, 0.45, 1.6); snow.position.set(s.x, s.y + 0.05, -0.4); snow.receiveShadow = true; g.add(snow); }
   if (s.iceStop) { const stop = new THREE.Mesh(makeRock(0.5, 0.7, 1.2, seed + 9, 0.2, { solid: true }), rockMaterials(seed + 9)); stop.position.set(s.x2 - 0.3, s.y + 0.35, -0.3); s.stopX = s.x2 - 0.65; g.add(stop); const stop2 = stop.clone(); stop2.position.x = s.x1 + 0.3; s.stopX1 = s.x1 + 0.65; g.add(stop2); }
   if (s.move) { // hanging trolley on a beam (horizontal) or a cage on a rail (vertical)
     const metal = new THREE.MeshLambertMaterial({ color: 0x4a4e55, flatShading: true }); const rope = new THREE.MeshLambertMaterial({ color: 0x2e2a26 });
@@ -1544,7 +1660,7 @@ function makeSurface(r, i, seed) {
       sp.rotation.z = (rr() - .5) * 0.35; sp.rotation.x = (rr() - .5) * 0.2; sp.castShadow = true; g.add(sp);
     }
   }
-  if (s.w >= 3.5 && i > 0) { const rr = mulberry(seed + 3); const n = 1 + Math.floor(rr() * 2);
+  if (s.w >= 3.5 && i > 0 && !s.prop) { const rr = mulberry(seed + 3); const n = 1 + Math.floor(rr() * 2);
     for (let k = 0; k < n; k++) { const v = makeVegetation(rr); v.position.set(s.x + (rr() - .5) * Math.min(s.w - 1.2, 12), s.y, -0.9 - rr() * 1.2); g.add(v); } }
   levelGroup.add(g); return s;
 }
@@ -1579,7 +1695,7 @@ function styleAt(def, y) { // biome markers: the zone the goat has passed in the
   return best ? (STYLES[best.style] || STYLES.desert) : (STYLES[def.style] || STYLES.desert);
 }
 function buildLevel(idx, defOverride) {
-  const def = defOverride || LEVELS[idx]; forcedChar = def.forceChar || null; if (!defOverride && !def.softened) { softenFirstEncounters(def); def.softened = true; }   // worlds only suggest a character; daily/endless runs fix it
+  const def = defOverride || LEVELS[idx]; forcedChar = def.forceChar || (!defOverride && dimOfLevel(idx) >= 0 ? charForDim(dimOfLevel(idx), def.character) : null); if (!defOverride && !def.softened) { softenFirstEncounters(def); def.softened = true; }   // worlds only suggest a character; daily/endless runs fix it
   if (L) { for (const d of (L.liftDust || [])) scene.remove(d); for (const k of L.kids) scene.remove(k.goat.root); for (const r of L.rocks) { if (r.boulder) scene.remove(r.boulder); if (r.warn) scene.remove(r.warn); } for (const f of L.falling) levelGroup.remove(f.group); for (const d of L.windDust) scene.remove(d); }
   applyStyle(styleAt(def, 0));
   while (levelGroup.children.length) levelGroup.remove(levelGroup.children[0]);
@@ -1593,7 +1709,16 @@ function buildLevel(idx, defOverride) {
   const seasonRow = (r, i) => { const st = styleAt(def, r[2]); if (!st.seasonIce || def.tutorial || i === 0 || i === def.surfaces.length - 1 || i % 5 !== 3 || r[4] === 'seesaw' || r[6] || (r[5] && /\b(L|R|crumble|soft|ice)\b/.test(r[5]))) return r; const c = r.slice(); c[5] = ((c[5] || '') + ' ice').trim(); if (r.secretMouth) c.secretMouth = true; if (r.softSpikes) c.softSpikes = true; return c; };
   makeSurface.ctx = { horizontal: !!def.horizontal, ascent: !!def.ascent };
   if (ENV.ufo) { scene.remove(ENV.ufo); ENV.ufo = null; } if ((STYLES[def.style] || {}).stars) { const u = new THREE.Group(); const disc = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 2.2, 0.5, 14), new THREE.MeshLambertMaterial({ color: 0xc8ccd4, flatShading: true })); u.add(disc); const dome = new THREE.Mesh(new THREE.SphereGeometry(0.9, 10, 8, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshPhongMaterial({ color: 0x8ae0ff, transparent: true, opacity: 0.55, shininess: 100 })); dome.position.y = 0.25; u.add(dome); for (let i = 0; i < 8; i++) { const l = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 5), new THREE.MeshBasicMaterial({ color: i % 2 ? 0xff5a5a : 0x5aff8a })); const a = i / 8 * Math.PI * 2; l.position.set(Math.cos(a) * 1.9, -0.2, Math.sin(a) * 1.9); u.add(l); } u.position.set(-30, 0, -40); scene.add(u); ENV.ufo = u; ENV.ufoT = 0; }
-  if (ENV.water) { scene.remove(ENV.water); ENV.water = null; } if ((STYLES[def.style] || {}).water) { const ys = def.surfaces.map(r => r[2]); const wy = Math.min(...ys) - 2.4; const xs = def.surfaces.map(r => r[1]); const w = new THREE.Mesh(new THREE.PlaneGeometry(Math.max(...xs) - Math.min(...xs) + 200, 120), new THREE.MeshPhongMaterial({ color: 0x3a8ac8, transparent: true, opacity: 0.82, shininess: 120, specular: 0xffffff })); w.rotation.x = -Math.PI / 2; w.position.set((Math.max(...xs) + Math.min(...xs)) / 2, wy, -20); scene.add(w); ENV.water = w; }
+  if (ENV.ground) { scene.remove(ENV.ground); ENV.ground = null; } ENV.terrain = null;
+  if (def.horizontal && TERRAIN_STYLES.includes(def.style)) ENV.terrain = buildRunTerrain(def, idx);
+  else if (def.horizontal && !(STYLES[def.style] || {}).water) { // solid ground under a run: soil with a grassy or dusty top, puddles in the yard
+    const st = STYLES[def.style] || STYLE; const ys = def.surfaces.map(r => r[2]); const xs = def.surfaces.map(r => r[1]); const gy = Math.min(...ys) - 8.5; const gg = new THREE.Group();
+    const span = Math.max(...xs) - Math.min(...xs) + 160, cx = (Math.max(...xs) + Math.min(...xs)) / 2; const soil = new THREE.Mesh(new THREE.BoxGeometry(span, 14, 44), new THREE.MeshLambertMaterial({ color: st.sides ? st.sides[0] : 0x8a6a48, flatShading: true })); soil.position.set(cx, gy - 7.2, -21.7); soil.receiveShadow = true; gg.add(soil);
+    const top = new THREE.Mesh(new THREE.BoxGeometry(span, 0.6, 44), new THREE.MeshLambertMaterial({ color: st.plateau, flatShading: true })); top.position.set(cx, gy - 0.3, -21.66); top.receiveShadow = true; gg.add(top);
+    const rr = mulberry(idx * 3 + 7); for (let k = 0; k < span / 3; k++) { const b = new THREE.Mesh(makeRock(0.8 + rr() * 2.2, 0.5 + rr() * 1.2, 1.5, idx + k, 0.4), new THREE.MeshLambertMaterial({ color: new THREE.Color(st.plateau).offsetHSL(0, -0.05, (rr() - .5) * 0.12), flatShading: true })); b.position.set(cx - span / 2 + rr() * span, gy + 0.2, -3 - rr() * 24); b.castShadow = true; gg.add(b); }
+    if (['yard', 'park', 'lot', 'anthill', 'forest'].includes(def.style)) for (let k = 0; k < span / 9; k++) { const pd = new THREE.Mesh(new THREE.CircleGeometry(1.2 + rr() * 2.2, 12), new THREE.MeshPhongMaterial({ color: 0x4a90c8, transparent: true, opacity: 0.75, shininess: 140 })); pd.rotation.x = -Math.PI / 2; pd.scale.x = 1.6; pd.material.polygonOffset = true; pd.material.polygonOffsetFactor = -2; pd.material.polygonOffsetUnits = -2; pd.position.set(cx - span / 2 + rr() * span, gy + 0.03, -3 - rr() * 18); gg.add(pd); }
+    scene.add(gg); ENV.ground = gg; }
+  if (ENV.water) { scene.remove(ENV.water); ENV.water = null; } if ((STYLES[def.style] || {}).water && !ENV.terrain) { const ys = def.surfaces.map(r => r[2]); const wy = Math.min(...ys) - 2.4; const xs = def.surfaces.map(r => r[1]); const w = new THREE.Mesh(new THREE.PlaneGeometry(Math.max(...xs) - Math.min(...xs) + 200, 120), new THREE.MeshPhongMaterial({ color: 0x3a8ac8, transparent: true, opacity: 0.82, shininess: 120, specular: 0xffffff })); w.rotation.x = -Math.PI / 2; w.position.set((Math.max(...xs) + Math.min(...xs)) / 2, wy, -20); scene.add(w); ENV.water = w; }
   const surfaces = def.surfaces.map((r, i) => zoned(() => makeSurface(seasonRow(r, i), i, 10 + i + idx * 100))(r[2]));
   const blockers = def.blockers.map((b, i) => makeBlockerObj(b, 300 + i + idx * 11, i));
   const crystals = def.crystals.map(([x, y], i) => zoned(() => makeCrystalObj(x, y, i, surfaces))(y));
@@ -1626,6 +1751,7 @@ function endlessDef(ascent, biome, character) {
     surfaces: [['start', 0, 0, 8, 'terrace']], crystals: [], blockers: [], hawks: [], rocks: [], winds: [], updrafts: [], herd: [] };
 }
 function genNext() {
+  if (goats[0] && (goats[0].state === ST.FALL || goats[0].state === ST.DEAD)) return;
   const g = L.gen, R = Math.random, dirY = L.dir > 0 ? -1 : 1;   // world direction of progress
   const dist = Math.abs(g.lastY), d = dist / 100;                 // difficulty 0 → 1 over the first 100 m, keeps growing
   g.n++; g.seed++;
@@ -1754,6 +1880,11 @@ const FROG_SKINS = { green: { body: 0x5aa848, belly: 0xd8e8a0, dark: 0x2a5a2a, h
 CHARACTERS.frog = { name: 'FROG', world: 'FOREST FLOOR', skins: FROG_SKINS, list: [{ id: 'green', name: 'GREEN FROG', cost: 0 }, { id: 'tree', name: 'TREE FROG', cost: 14 }, { id: 'toad', name: 'TOAD', cost: 18 }, { id: 'legend', name: 'LEGENDARY', cost: 40, legend: true }] };
 CHARACTERS.human = { name: 'PERSON', hidden: true, skins: HUMAN_SKINS, list: [{ id: 'classic', name: 'PERSON', cost: 0 }] };
 let forcedChar = null;
+// heroes belong to dimensions: the mountain and the moon are the ibex's, the city has Kong and the cat, the yard its dogs, the undergrowth the frog
+function dimChars(di) { const d = DIMS[di]; if (!d || d.soon) return []; if (d.key === 'mountain') return ['goat']; if (d.key === 'moon') return Object.keys(CHARACTERS).filter(c => !CHARACTERS[c].hidden); return Object.keys(CHARACTERS).filter(c => !CHARACTERS[c].hidden && CHARACTERS[c].world && d.worlds.includes(CHARACTERS[c].world)); }
+function charUnlocked(ch) { const C = CHARACTERS[ch]; return !!C && (!C.world || (save.settings && save.settings.devUnlock) || !!(save.charSeen && save.charSeen[ch])); }
+function dimOfLevel(idx) { const w = WORLDS.find(w => w.levels.includes(LEVELS[idx].key)); return w ? DIMS.findIndex(d => d.worlds.includes(w.name)) : -1; }
+function charForDim(di, fallback) { const cs = dimChars(di); const fb = CHARACTERS[fallback] ? fallback : CHARACTERS[save.character] ? save.character : 'goat'; if (!cs.length) return fb; const c = (save.charByDim || {})[DIMS[di].key]; if (c && cs.includes(c) && charUnlocked(c)) return c; if (cs.includes(fb) && charUnlocked(fb)) return fb; return cs.find(charUnlocked) || fb; }
 function currentSkin() { const ch = forcedChar && CHARACTERS[forcedChar] ? forcedChar : CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id; return { ch, sk }; }
 const HAWK_SKINS = { mosquito: { dark: 0x3a3a44, light: 0x9aa0b0, beak: 0x2a2a30 }, meteor: { dark: 0x5a4a3a, light: 0xffa040, beak: 0xffe080 }, dragonfly: { dark: 0x3a9ad0, light: 0xa8e8ff, beak: 0x2a4a5a }, crow: { dark: 0x15151a, light: 0x2a2a32, beak: 0x4a4a50 }, drone: { dark: 0xe8e8ee, light: 0x3a7ad8, beak: 0xff5040 }, wasp: { dark: 0x2a2418, light: 0xf0c020, beak: 0x222222 }, chopper: { dark: 0x2c3138, light: 0x6b7480, beak: 0xff3030 }, pigeon: { dark: 0x6f7480, light: 0xc9cbd3, beak: 0xe0b060 }, hawk: { dark: 0x4a3324, light: 0xa88664, beak: 0xd9b23c }, raven: { dark: 0x15131c, light: 0x2c2936, beak: 0x4a4a4a }, eagle: { dark: 0x5e3a1a, light: 0xeee6d6, beak: 0xe6c23c }, falcon: { dark: 0x596270, light: 0xd9d5cc, beak: 0xd6b23a } };
 
@@ -1761,7 +1892,7 @@ class Goat {
   constructor(skin, scale = 1, character = 'goat') {
     this.scale = scale; this.character = CHARACTERS[character] ? character : 'goat';
     this.pos = new THREE.Vector2(); this.vel = new THREE.Vector2(); this.corr = 0; this.facing = 1;
-    this.state = ST.IDLE; this.stateT = 0; this.onSurface = null; this.originSurface = null; this.graceT = 0; this.descendT = 0;
+    this.state = ST.IDLE; this.stateT = 0; this.sunk = false; this.onSurface = null; this.originSurface = null; this.graceT = 0; this.descendT = 0;
     this.landKind = 'normal'; this.slideV = 0; this.catchEdge = null; this.catchSide = 1; this.fallTumble = 0; this.saves = 0;
     this.A = { crouch: 0, tuck: 0, pitch: 0, headPitch: 0, face: 1, roll: 0 };
     const pal = CHARACTERS[this.character].skins; this.buildModel(pal[skin] || pal[CHARACTERS[this.character].list[0].id]); this.acc = { ...currentAcc() }; if (this.character !== 'human') this.attachAccessories(this.acc);
@@ -1839,10 +1970,10 @@ class Goat {
     for (const sd of [-1, 1]) { const eye = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), M.white); eye.position.set(0.05, 0.22, sd * 0.24); headG.add(eye); const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 5), M.eye); pupil.position.set(0.17, 0.24, sd * 0.25); headG.add(pupil); }
     const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.03, 0.5), M.dark); mouth.position.set(0.28, -0.12, 0); headG.add(mouth);
     const makeLeg = (x, z, front) => { const g = new THREE.Group(); const LL = front ? 0.4 : 0.6; g.position.set(x, 0.5, z); bodyG.add(g);   // the joint sits inside the body; every segment hangs from its top end
-      const hip = new THREE.Mesh(new THREE.SphereGeometry(front ? 0.09 : 0.15, 6, 5), M.fur); g.add(hip); const upG = new THREE.CylinderGeometry(front ? 0.07 : 0.12, front ? 0.05 : 0.08, LL * 0.55, 5); upG.translate(0, -LL * 0.275, 0); const up = new THREE.Mesh(upG, M.fur); up.rotation.z = front ? 0.1 : 0.55; g.add(up);
+      const hip = new THREE.Mesh(new THREE.SphereGeometry(front ? 0.1 : 0.22, 7, 6), M.fur); hip.scale.set(1.2, 0.9, 1); g.add(hip); const upG = new THREE.CylinderGeometry(front ? 0.07 : 0.12, front ? 0.05 : 0.08, LL * 0.55, 5); upG.translate(0, -LL * 0.275, 0); const up = new THREE.Mesh(upG, M.fur); up.rotation.z = front ? 0.1 : 0.55; g.add(up);
       const knee = new THREE.Group(); knee.position.set(front ? -LL * 0.03 : -Math.sin(0.55) * LL * 0.55, -Math.cos(front ? 0.1 : 0.55) * LL * 0.55, 0); g.add(knee); const lowG = new THREE.CylinderGeometry(0.05, 0.05, LL * 0.5, 5); lowG.translate(0, -LL * 0.25, 0); const low = new THREE.Mesh(lowG, M.fur); low.rotation.z = front ? -0.1 : -0.55; knee.add(low);
       const foot = new THREE.Mesh(new THREE.BoxGeometry(front ? 0.22 : 0.34, 0.05, front ? 0.16 : 0.22), M.dark); foot.position.set(front ? 0.08 : 0.16, -LL * 0.5, 0); knee.add(foot); g.userData.front = front; this.legs.push(g); };
-    makeLeg(0.3, 0.24, true); makeLeg(0.3, -0.24, true); makeLeg(-0.35, 0.3, false); makeLeg(-0.35, -0.3, false);
+    makeLeg(0.28, 0.22, true); makeLeg(0.28, -0.22, true); makeLeg(-0.22, 0.24, false); makeLeg(-0.22, -0.24, false);
     root.traverse(o => { if (o.isMesh) o.castShadow = true; }); root.scale.setScalar(this.scale); scene.add(root);
   }
   buildDog(sk, variant) { // dachshund: very long body, short legs, floppy ears, tail up; corgi: shorter body, big upright ears, no tail
@@ -1937,6 +2068,7 @@ class Goat {
   airStep() {
     const prev = this.pos.clone(); integrate(this.pos, this.vel, this.corr, FIXED); this.graceT -= FIXED; if (this.path) this.path.push(this.pos.clone());
     const p = this.pos, v = this.vel, tol = CONFIG.landingTolerance, o = this.originSurface, g = this.graceT > 0;
+    if (v.y > 0) { const r = roofHit(prev, p); if (r) { p.y = r; v.y = -1.6; v.x *= 0.4; this.corr = 0; if (!this.isKid) { thud(0.5, 320, 0.08); spawnDust(p.x, r + CONFIG.goatBodyHeight, 4, 0.8); } } }   // head against the underside of a log
     if (v.y <= 0) for (const s of L.surfaces) { if (s === o && g) continue; const m = s === o ? 0 : tol; if (prev.y >= s.y - 1e-4 && p.y < s.y && p.x >= s.x1 - m && p.x <= s.x2 + m) return { type: 'land', s, speed: -v.y }; }
     if (v.y < 0 && -v.y <= CONFIG.maxEdgeGrabFallSpeed * (G.boosts && G.boosts.strong && !this.isKid ? 3 : 1) && L.def.mod !== 'noCatch') for (const s of L.surfaces) {
       if (s === o && g) continue; if (p.y > s.y - 0.05 || p.y < s.y - CONFIG.edgeGrabDepth) continue; const gd = CONFIG.edgeGrabDistance * (G.boosts && G.boosts.reach && !this.isKid ? 1.6 : 1);
@@ -1998,7 +2130,7 @@ class Goat {
   }
   spiked(s, dir) { AudioSys.play('spikes'); G.failReason = 'spikes'; spawnPebbles(this.pos.x, this.pos.y + 0.2, 6, 1.5); thud(0.9, 700, 0.1); this.vel.set(dir * 3, 6); this.corr = 0; this.state = ST.JUMP; this.fall(); }
   dropOff(vx) { if (!this.isKid && this.onSurface && (this.onSurface.tilt || this.onSurface.seesaw)) G.slidOff = true; this.originSurface = this.onSurface; this.onSurface = null; this.graceT = 0.05; this.descendT = 0; this.launchY = this.pos.y; this.path = null; this.vel.set(vx, 0); this.corr = 0; this.snap = null; this.setState(ST.JUMP); }
-  fall() { if (!this.isKid && this.state !== ST.FALL) AudioSys.play('fail'); this.vel.x *= 0.5; this.corr = 0; if (this.state !== ST.JUMP) this.vel.set(this.facing * 0.5, 1.5); this.setState(ST.FALL); }
+  fall() { if (this.state !== ST.FALL) this.sunk = false; if (!this.isKid && this.state !== ST.FALL) AudioSys.play('fail'); this.vel.x *= 0.5; this.corr = 0; if (this.state !== ST.JUMP) this.vel.set(this.facing * 0.5, 1.5); this.setState(ST.FALL); }
   update(dt, input) {
     this.stateT += dt; const s = this.state;
     if (s === ST.JUMP) {
@@ -2010,7 +2142,8 @@ class Goat {
         const ev = this.airStep();
         if (ev) { if (ev.type === 'land') { this.land(ev.s, ev.speed, this.vel.x + this.corr); break; } if (ev.type === 'catch') { this.catch(ev.s, ev.edge, ev.side); break; } if (Math.random() < 0.15) spawnPebbles(this.pos.x, this.pos.y + 0.3, 1, 0.6); }
       }
-      if (this.state === ST.JUMP) { if (this.vel.y < 0) this.descendT += dt; else this.descendT = 0; if (this.descendT > CONFIG.deathFallTime || this.pos.y < L.bottom - 8) this.fall(); }
+      if (this.state === ST.JUMP) { if (this.vel.y < 0) this.descendT += dt; else this.descendT = 0; const below = L.surfaces.some(o => o.y < this.pos.y && o.y > this.pos.y - halfH * 3 && this.pos.x > o.x1 - 3 && this.pos.x < o.x2 + 3); if ((this.descendT > CONFIG.deathFallTime * (L.def.gravity && L.def.gravity < 15 ? 2.2 : 1) && !below) || this.pos.y < L.bottom - 8) this.fall();
+        else if (ENV.terrain && !this.isKid) { const gy = ENV.terrain.gapAt(this.pos.x); if (gy != null && this.pos.y < gy - CONFIG.edgeGrabDepth - 0.1) { if (!G.failReason) G.failReason = 'ditch'; this.fall(); } } }   // under the water line of a ditch, deeper than any edge grab: in
     } else if (s === ST.WALK) {
       const w = this.walk; w.t += dt; const k = clamp(w.t / w.dur, 0, 1); this.pos.x = lerp(w.from, w.to, k); this.pos.y = this.onSurface.y;
       if (k >= 1) { this.pos.x = w.to; this.launch(w.aim); }
@@ -2034,7 +2167,9 @@ class Goat {
       else { this.pos.x = e + side * Math.min(0.55, sf.w / 2); this.pos.y = sf.y; spawnDust(this.pos.x, this.pos.y, 3, 0.6); this.setState(ST.IDLE); }
     } else if (s === ST.FALL || s === ST.DEAD) {
       if (this.pos.y < L.bottom - 40) return;
-      const py = this.pos.y; this.fallTumble += dt * 4; this.vel.y -= CONFIG.gravity * dt; this.pos.x += this.vel.x * dt; this.pos.y += this.vel.y * dt;
+      if (this.sunk) return; const py = this.pos.y; this.fallTumble += dt * 4; this.vel.y -= CONFIG.gravity * dt; this.pos.x += this.vel.x * dt; this.pos.y += this.vel.y * dt;
+      if (ENV.terrain) { const tg = ENV.terrain.at(this.pos.x); if (this.pos.y < tg.y - (tg.water ? 0.5 : 0)) { this.pos.y = tg.y - (tg.water ? 0.5 : 0); this.vel.set(0, 0); this.sunk = true; if (tg.water) { spawnDust(this.pos.x, tg.y + 0.1, 16, 1.6, splashMat); thud(0.7, 240, 0.12); } else { spawnDust(this.pos.x, tg.y, 12, 1.4); thud(0.9, 160, 0.16); } return; } }   // lands in the ditch: splash, and stays there
+      if (s === ST.FALL && !this.isKid && !G.unseenHidden) { G.unseenHidden = true; const lo = (G.seenLo ?? -Infinity) - 2, hi = (G.seenHi ?? Infinity) + 2; for (const o of L.surfaces) if ((o.y < lo || o.y > hi) && o.group) o.group.visible = false; for (const c of L.crystals || []) if (c.mesh && (c.y < lo || c.y > hi)) c.mesh.visible = false; }
       if (s === ST.FALL && !this.isKid) { const fin = L.surfaces.find(o => o.finish && py >= o.y && this.pos.y < o.y && this.pos.x >= o.x1 && this.pos.x <= o.x2); if (fin) { const seen = (G.seenLo ?? Infinity) <= fin.y + 1.5 && (G.seenHi ?? -Infinity) >= fin.y; if (seen) { this.pos.y = fin.y; this.onSurface = fin; this.vel.set(0, 0); this.fallTumble = 0; spawnDust(this.pos.x, this.pos.y, 14, 2); spawnPebbles(this.pos.x, this.pos.y - 0.2, 8, 1.8); thud(1, 160, 0.2); this.setState(ST.TIRED); G.landedTired = true; return; } else { fin.group.visible = false; } } }
     }
     if (s === ST.IDLE || s === ST.AIM || s === ST.TIRED) { this.acc = 0; if (this.onSurface) this.pos.y = this.onSurface.y; }
@@ -2095,9 +2230,11 @@ function launchStart(goat, aim) {
   const ex = aim.dir.x > 0.05 ? s.x2 : aim.dir.x < -0.05 ? s.x1 : (p.x - s.x1 <= s.x2 - p.x ? s.x1 : s.x2);
   return { x: ex, y: s.y, walk: Math.abs(ex - p.x) > 0.05 };
 }
+// the underside of an arch (log / plank bridge) is solid: a rising hero bumps his head on it, and the preview arc ends there
+function roofHit(prev, p) { const h = CONFIG.goatBodyHeight; for (const s of L.surfaces) { if (!s.arch) continue; const b = s.y - 1.0; if (prev.y + h <= b && p.y + h > b && p.x > s.x1 - 0.25 && p.x < s.x2 + 0.25) return b - h; } return null; }
 function previewTrajectory(from, aim, carry) {
   const pos = from.clone(), vel = launchVelocity(aim, carry); const pts = [pos.clone()]; let t = 0;
-  while (t < 2.4 && pos.y > from.y - 11) { integrate(pos, vel, 0, FIXED, CONFIG.windPreviewFactor); t += FIXED; pts.push(pos.clone()); }
+  while (t < 2.4 && pos.y > from.y - 11) { const prev = pos.clone(); integrate(pos, vel, 0, FIXED, CONFIG.windPreviewFactor); t += FIXED; if (vel.y > 0) { const r = roofHit(prev, pos); if (r != null) { pos.y = r; pts.push(pos.clone()); break; } } pts.push(pos.clone()); }
   return pts;
 }
 
@@ -2116,6 +2253,7 @@ const particles = [];
 const dustGeo = new THREE.IcosahedronGeometry(0.16, 0), pebGeo = new THREE.DodecahedronGeometry(0.08, 0);
 const dustMat = new THREE.MeshLambertMaterial({ color: 0xe6d3b2, transparent: true, opacity: 0.8 }), sparkMat = new THREE.MeshBasicMaterial({ color: 0xf6f9ff, transparent: true, opacity: 0.95 });
 const pebMat = new THREE.MeshLambertMaterial({ color: 0x7c5a3d, flatShading: true });
+const splashMat = new THREE.MeshLambertMaterial({ color: 0xdff2ff, transparent: true, opacity: 0.85 });
 function spawnDust(x, y, n, spread = 1, mat = dustMat) {
   n = Math.min(n, Math.max(0, (save.settings.quality === 'low' ? 120 : 260) - particles.length));
   for (let i = 0; i < n; i++) { const m = new THREE.Mesh(dustGeo, mat.clone()); m.position.set(x + (Math.random() - .5) * 0.6, y + 0.1, 0.3 + Math.random() * 0.4);
@@ -2310,7 +2448,7 @@ function activeHint() {
   if (L.def.scent && G.jumps >= 2 && !(save.secretFound || {})[L.def.secretEntry.level] && !(H_seen('scent'))) return 'scent';
   if (G.jumps === 0) { if (L.twin) return 'twin'; if (L.horizontal) return 'run'; if (L.ascent) return 'ascent'; if (L.def.daily) return 'daily'; if (L.endless) return 'endless'; if (!save.seenDrag) return 'drag'; }
   for (const k of L.kids) if (!k.rescued && inView(k.surface.y)) return 'kids';
-  if (L.hawks.some(h => inView(h.y))) return 'birds';
+  if (L.hawks.some(h => inView(h.y))) return STYLE.bird === 'meteor' ? 'meteors' : 'birds';
   if (L.rocks.some(r => inView(r.y) || inView(r.y - r.len / 2))) return 'rocks';
   if (L.winds.some(w => inView(w.y1) || inView(w.y2))) return 'wind';
   if ((L.updrafts || []).some(u => inView(u.y1) || inView(u.y2))) return 'updraft';
@@ -2548,7 +2686,8 @@ const TAB_OF = { scAch: 'coll', scAbout: 'coll', scMenu: 'home', scIbex: 'chars'
 const ORIGIN = {};
 function goOrigin(id, fallback) { const o = ORIGIN[id]; if (o === 'scMenu') goMenu(); else if (o === 'scChal') goChal(); else if (o === 'scColl') goColl(); else if (o === 'scIbex') goIbex(); else fallback(); }
 function showScreen(id) {
-  if (id !== 'scSelect') { $('mapHint').classList.remove('show'); }
+  if (id !== 'scSelect') { $('mapHint').classList.remove('show'); $('mapNew').classList.remove('show'); NEW_NOW.worlds.clear(); }
+  if (id !== 'scIbex' && id !== 'scWardrobe') NEW_NOW.chars.clear();
   { const prev = document.querySelector('.screen.show'); if (prev && id && prev.id !== id && ['scMenu', 'scChal', 'scColl', 'scIbex'].includes(prev.id)) ORIGIN[id] = prev.id; }
   for (const s of document.querySelectorAll('.screen')) s.classList.toggle('show', s.id === id); screenShownAt = performance.now(); if (id !== 'scMenu') $('heroTag').style.display = 'none';
   const tabbed = id in TAB_OF && mode !== 'pause' && mode !== 'play' && mode !== 'result'; $('tabBar').classList.toggle('show', tabbed); document.body.classList.toggle('tabs', tabbed);
@@ -2589,7 +2728,7 @@ function refreshHub() {
 }
 // the player's character stands on the focused cube; tap it (or its tag) for the wardrobe
 const HERO = { holder: null, goat: null, key: '', hopT: 1, cube: -1 };
-function heroChar() { const ch = CHARACTERS[save.character] ? save.character : 'goat'; return { ch, sk: (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id }; }
+function heroChar() { const ch = charForDim(curDim); return { ch, sk: (save.skins && save.skins[ch]) || CHARACTERS[ch].list[0].id }; }
 function updateHubHero(dt) {
   if (!dio.scene) return; const { ch, sk } = heroChar(); const key = ch + ':' + sk + ':' + JSON.stringify(currentAcc());
   if (!HERO.holder) { HERO.holder = new THREE.Group(); HERO.holder.scale.setScalar(1.0); }
@@ -2606,8 +2745,8 @@ function heroHit(e) { if (!HERO.holder || !HERO.holder.visible) return false; co
 function refreshBadges() {
   const set = (id, v) => { const b = $(id); if (!b) return; b.textContent = v === true ? '!' : v || ''; b.classList.toggle('on', !!v); };
   const info = dailyInfo(), dd = save.daily || {}; const dailyNew = !(dd.date === info.date && (dd.stars || 0) > 0); const ts = towerState(); const towerNew = !ts.done && ts.cp === 0 && ts.best === 0;
-  set('bdgDaily', dailyNew); set('bdgTower', towerNew); set('bdgChal', (dailyNew ? 1 : 0) + (towerNew ? 1 : 0));
-  const achNew = achClaimable().length; set('bdgColl', achNew > 0 ? achNew : 0); set('bdgProfile', achNew > 0 ? achNew : 0);
+  set('bdgDaily', dailyNew); set('bdgTower', towerNew); set('bdgDailyRow', dailyNew); set('bdgTowerRow', towerNew); set('bdgChal', (dailyNew ? 1 : 0) + (towerNew ? 1 : 0));
+  const achNew = achClaimable().length; set('bdgColl', achNew > 0 ? achNew : 0); set('bdgProfile', achNew > 0 ? achNew : 0); set('bdgAchRow', achNew > 0 ? achNew : 0);
   const chNew = Object.keys(save.charSeen || {}).filter(c => !(save.charViewed || {})[c]).length; set('bdgChars', chNew);
   const openW = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); const wNew = openW.filter(n => !(save.worldsSeen || []).includes(n)).length; set('bdgMap', save.worldsSeen ? wNew : 0);
 }
@@ -2623,7 +2762,7 @@ function refreshChal() {
   $('expInfo').textContent = t('expBest', { n: stats().expBest || 0 }); $('endInfo').textContent = t('runsN', { n: Math.max(0, ...Object.values(save.endless || {}).map(Number).filter(n => !isNaN(n))) }) + ' · ' + t('endlessNote', { n: CONFIG.endlessDailySalt });
 
 }
-const CHANGELOG = { en: ['Home hub with tiles, tab bar and one-tap PLAY', 'Heroes screen with a big figure and a separate customisation window', 'Seasons, accessories, expeditions of 5/7/9 stages, synthesized sound', 'Ghost runs and share links', 'Route bot checks that every level can be finished'], ru: ['Хаб «Домой»: плитки, таб-бар, «Играть» в один тап', 'Экран героев с крупной фигуркой и отдельной кастомизацией', 'Сезоны, аксессуары, походы на 5/7/9 этапов, синтезированный звук', 'Призраки забегов и ссылки-вызовы', 'Бот маршрутов проверяет проходимость каждого уровня'] };
+const CHANGELOG = { en: ['Home hub with tiles, tab bar and one-tap PLAY', 'Heroes screen with a big figure and a separate customisation window', 'Seasons, accessories, expeditions of 5/7/9 stages, synthesized sound', 'Ghost runs and share links', 'Route bot checks that every level can be finished', 'Outdoor runs stand on real ground: stems, pools and ditches — nothing floats', 'Logs and plank bridges over the route: pass under, climb up past the end, walk back for the fly', 'The result says why you lost; ants turn back from a hero who stands still', 'Runs: water fills its ditches, soil cuts with strata, stones and roots, a higher camera', 'Red dots now point at the exact item inside a screen; stats open from the profile button', 'Runs: the hero stands on caps and pads, aim follows the camera, smoother frame rate, a lived-in finish', 'Heroes by dimension: flip pages with ‹ ›, each dimension keeps its own hero; head bumps on logs'], ru: ['Хаб «Домой»: плитки, таб-бар, «Играть» в один тап', 'Экран героев с крупной фигуркой и отдельной кастомизацией', 'Сезоны, аксессуары, походы на 5/7/9 этапов, синтезированный звук', 'Призраки забегов и ссылки-вызовы', 'Бот маршрутов проверяет проходимость каждого уровня', 'Уличные забеги стоят на настоящей земле: стебли, пруды и канавы — ничего не парит', 'Брёвна и мостики над маршрутом: пройди под ними, поднимись за дальним концом и вернись за мухой', 'Экран результата называет причину проигрыша; муравей разворачивается перед стоящим героем', 'Забеги: вода заполняет канавы, срезы земли со слоями, камнями и корнями, камера выше', 'Красные метки показывают конкретный пункт внутри экрана; статистика открывается с кнопки профиля', 'Забеги: герой стоит на шляпках и кувшинках, прицел учитывает камеру, плавнее кадр, живой финиш', 'Герои по измерениям: листай ‹ ›, у каждого измерения свой герой; удар головой о бревно'] };
 let verTaps = 0;
 function goAbout() {
   mode = 'select'; hud.style.display = 'none'; const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]');
@@ -2653,7 +2792,7 @@ setTimeout(checkForUpdate, 8000); setInterval(checkForUpdate, 30 * 60 * 1000); d
 function goChal() { mode = 'select'; hud.style.display = 'none'; dio.bg = true; refreshChal(); paintIcons($('scChal')); showScreen('scChal'); }
 function goColl() {
   mode = 'select'; hud.style.display = 'none'; dio.bg = true;
-  { const c = achClaimable().length; $('collAch').textContent = t('achN', { a: Object.keys(save.ach || {}).length, b: ACH.length }) + (c ? ' · ' + t('toClaim', { n: c * 5 }) : ''); $('collStats').textContent = t('st_levels') + ': ' + stats().levels; } $('collMech').textContent = t('mechN', { a: Object.keys(save.mechSeen || {}).length, b: MECHS.length });
+  { const c = achClaimable().length; $('collAch').textContent = t('achN', { a: Object.keys(save.ach || {}).length, b: ACH.length }) + (c ? ' · ' + t('toClaim', { n: c * 5 }) : ''); } $('collMech').textContent = t('mechN', { a: Object.keys(save.mechSeen || {}).length, b: MECHS.length });
   $('aboutVer').textContent = BUILD.version; $('collBuilder').textContent = t('customN', { n: Object.keys(save.custom || {}).length }); $('collSecrets').textContent = t('secretsN', { a: Object.keys(save.secretFound || {}).length, b: LEVELS.filter(l => l.secret).length });
   paintIcons($('scColl')); showScreen('scColl');
 }
@@ -2674,7 +2813,9 @@ function worldOpen(wi) { if (save.settings.devUnlock) return true; // first worl
   return worldStars(prev) >= Math.ceil(worldMax(prev) * 0.6) || worldLevelsDone(prev) >= worldCount(prev);
 }
 function goSelect() {
-  mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; $('bBackMenu').style.display = ''; $('bBackMenu').textContent = t('menu'); save.worldsSeen = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); persist(); const list = $('levelList'); list.innerHTML = ''; list.style.display = 'none'; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
+  mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; $('bBackMenu').style.display = ''; $('bBackMenu').textContent = t('menu'); if (save.worldsSeen) for (const w of WORLDS.filter((w, i) => worldOpen(i))) if (!save.worldsSeen.includes(w.name)) NEW_NOW.worlds.add(w.name);
+  { const nw = [...NEW_NOW.worlds]; $('mapNew').textContent = nw.length ? t('newWorld') + ': ' + nw.join(' · ') : ''; $('mapNew').classList.toggle('show', nw.length > 0); }
+  save.worldsSeen = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); persist(); const list = $('levelList'); list.innerHTML = ''; list.style.display = 'none'; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
   const d = DIMS[curDim]; const wis = d.worlds.map(n => WORLDS.findIndex(w => w.name === n)); const mv = $('mapView'); mv.style.display = 'block';
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const nodeInfo = wi => { const w = WORLDS[wi], open = worldOpen(wi), got = worldStars(wi), max = worldMax(wi), done = worldLevelsDone(wi) >= worldCount(wi); return { w, open, got, max, done }; };
@@ -2735,11 +2876,12 @@ function goWorld(wi) {
   });
   showScreen('scSelect');
 }
-function preferredFy(y) { if (L && L.horizontal) return y - 0.08 * halfH; return y - (L ? L.dir : 1) * (0.5 - CONFIG.goatScreenFraction) * 2 * halfH; }
+function camLift() { return L && L.horizontal && mode !== 'select' ? 0.32 : 0.07; }
+function preferredFy(y) { if (L && L.horizontal) return y + 0.2 * halfH; return y - (L ? L.dir : 1) * (0.5 - CONFIG.goatScreenFraction) * 2 * halfH; }
 function preferredFx(x) { return x + (0.5 - CONFIG.goatScreenFraction) * 2 * halfH * camera.aspect; }
 function startLevel(idx, defOverride) {
   if (!defOverride && LEVELS[idx]) save.lastPlayed = LEVELS[idx].key;
-  { const ch = (defOverride && defOverride.forceChar) || (!defOverride && LEVELS[idx].character) || (CHARACTERS[save.character] ? save.character : 'goat'); save.charPlays = save.charPlays || {}; save.charPlays[ch] = (save.charPlays[ch] || 0) + 1; }
+  { const ch = currentSkin().ch; save.charPlays = save.charPlays || {}; save.charPlays[ch] = (save.charPlays[ch] || 0) + 1; }
   dio.bg = false; initAudio(); applyAudioSettings(); setTimeout(() => { AudioSys.ambient(styleKey()); AudioSys.music('play'); }, 50);
   const baseDef = defOverride || LEVELS[idx]; const muts = baseDef.expedition ? (baseDef.expMut ? [baseDef.expMut] : []) : (baseDef.twists || []).slice();
   if (muts.includes('mirror')) defOverride = mirrorDef(defOverride || LEVELS[idx]);
@@ -2780,6 +2922,7 @@ function nextAfter(def) {
   return null;
 }
 function finishLevel(win, reason) {
+  if (!win) try { const g = goats[0]; const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg: 'loss ' + (reason || '?') + ' · ' + (L.def && L.def.key) + ' · state ' + (g ? Object.keys(ST).find(k => ST[k] === g.state) : '?') + ' · ledge ' + (g && (g.onSurface || g.originSurface) ? (g.onSurface || g.originSurface).id : '-') + ' · x ' + (g ? g.pos.x.toFixed(1) : '?') + ' y ' + (g ? g.pos.y.toFixed(1) : '?') + ' · kids ' + followers.map(f => Object.keys(ST).find(k => ST[k] === f.state)).join('/') }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   $('boostBar').classList.remove('show');
   if (!win && !L.horizontal) { // one camera destination for the whole fall, decided now: the seen finish's framing, or a short dip that never shows the unexplored
     const g = goats[0]; const fin = L.surfaces.find(o => o.finish && g && g.pos.x >= o.x1 - 3 && g.pos.x <= o.x2 + 3 && (L.dir < 0 ? o.y < g.pos.y : o.y > g.pos.y)); const seen = fin && (G.seenLo ?? Infinity) <= fin.y + 1.5 && (G.seenHi ?? -Infinity) >= fin.y;
@@ -2854,7 +2997,7 @@ function finishLevel(win, reason) {
       else { const w = WORLDS.find(w => w.levels.includes(def.key)); if (w && worldLevelsDone(WORLDS.indexOf(w)) >= worldCount(WORLDS.indexOf(w))) { const missing = w.levels.some(k => { const l = LEVELS.find(l => l.key === k); return l && l.secret && !(save.secretFound || {})[k]; }); $('rStars').innerHTML += `<div style="margin-top:8px;font-size:13px;opacity:.9">${missing ? t('worldDoneMissing', { w: w.name }) : t('worldDone', { w: w.name })}</div>`; } } }
     if (def.tutorial) { $('rStars').innerHTML = `<div style="font-size:14px;opacity:.9;max-width:320px">${t('tutResult')}</div>`; $('rSub').innerHTML = `${t('jumps')} ${G.jumps} · ${t('saves')} ${saves}`; }
   } else {
-    $('rTitle').textContent = G.twin ? t('oneFell') : t('fell');
+    $('rTitle').textContent = G.twin ? t('oneFell') : reason === 'hawk' ? t('hawk') : reason === 'spikes' ? t('spiked') : reason === 'rock' ? t('rockfall') : reason === 'camera' ? t('leftBehind') : reason === 'kid' ? t('kidFell') : reason === 'ant' ? t('antPush') : reason === 'ditch' ? t('inWater') : t('fell');   // say what actually happened
     $('rTitle').textContent = reason === 'hawk' ? t('hawk') : reason === 'tired' ? t('tooFar') : reason === 'spikes' ? t('spiked') : reason === 'rock' ? t('rockfall') : reason === 'kid' ? t('kidFell') : $('rTitle').textContent;
     const why = { camera: 'camMsg', tired: 'tiredMsg', spikes: 'spikeMsg', rock: 'rockMsg', kid: 'kidMsg' }[reason]; const tip = { camera: 'tipCamera', tired: 'tipTired', spikes: 'tipSpikes', hawk: 'tipHawk', rock: 'tipRock', kid: 'tipKid', fall: 'tipFall' }[reason || 'fall'];
     $('rSub').innerHTML = (why ? t(why) + '<br>' : '') + `${Math.round(G.maxDesc)} m` + (L.crystals.length ? ` · ◆ ${G.collected} / ${L.crystals.length}` : '') + (tip ? `<br><span style="opacity:.8;font-size:14px">${t(tip)}</span>` : '');
@@ -2874,14 +3017,14 @@ const hubDim = k => { const n = clamp(curDim + k, 0, DIMS.length - 1); if (n ===
 $('dimPrevH').addEventListener('click', e => { e.stopPropagation(); hubDim(-1); }); $('dimNextH').addEventListener('click', e => { e.stopPropagation(); hubDim(1); });
 { let sx = null, sy = 0; canvas.addEventListener('pointerdown', e => { if (mode === 'menu') { sx = e.clientX; sy = e.clientY; } }); canvas.addEventListener('pointerup', e => { if (mode !== 'menu' || sx === null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null; if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) hubDim(dx < 0 ? 1 : -1); else if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && (heroHit(e) || cubeHit(e))) $('bMode').click(); }); }
 function cubeHit(e) { const c = dio.cubes && dio.cubes[curDim]; if (!c) return false; const r = new THREE.Raycaster(); r.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), dio.cam); return r.intersectObject(c, true).some(h => !c.clouds.children.includes(h.object)); }
-$('heroTag').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) $('bMode').click(); });
+$('heroTag').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goIbex(curDim); });
 for (const [tile, btn] of [['tDaily', 'bDaily'], ['tTower', 'bTower'], ['tEndless', 'bEndless'], ['tExp', 'bExp'], ['tBuilder', 'bBuilder']]) $(tile).addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; $(btn).click(); });
 $('tSeason').addEventListener('click', e => { e.stopPropagation(); const se = season(); hubToast(`<b>${t('s_' + se)}</b><br>${t('season' + se[0].toUpperCase() + se.slice(1) + '_d')}`); });
 $('tabHome').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
 $('tabMap').addEventListener('click', e => { e.stopPropagation(); if (!dimOpen(DIMS[curDim])) curDim = 0; goSelect(); });
 $('tabChal').addEventListener('click', e => { e.stopPropagation(); goChal(); });
 $('tabColl').addEventListener('click', e => { e.stopPropagation(); goColl(); });
-$('bCollStats').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goStats(); });
+
 $('bCollMech').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goMech('menu'); });
 $('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBackMenu').textContent === t('worlds')) goSelect(); else goMenu(); });
 // space map: pinch / wheel / double-tap zoom, keeping the point under the fingers still
@@ -3419,14 +3562,14 @@ function goStats() {
   dash.innerHTML = `<div class="card hero"><img src="${skinPreview(favCh, favSk)}"><div class="ht"><small>${t('favHero')}</small><b>${CHARACTERS[favCh].name}</b><small>${t('playsN', { n: fav ? fav[1] : 0 })}</small></div></div>` +
     [['star', st.levels, 'st_levels'], ['diamond', save.totalSaltCrystals, 'saltW'], ['map', Math.round(st.meters) + ' m', 'st_meters'], ['daily', fmtTime(st.time), 'st_time'], ['goat', st.jumps, 'st_jumps'], ['home', st.saves, 'st_saves'], ['lock', Object.keys(save.secretFound || {}).length + ' / ' + LEVELS.filter(l => l.secret).length, 'st_secrets'], ['compass', st.exp, 'st_exp'], ['trophy', (save.daily && save.daily.streak) || 0, 'st_streak'], ['endless', Math.max(0, ...Object.values(save.endless || {}).map(Number).filter(n => !isNaN(n))) + ' m', 'st_endless']].map(([ic, v, k]) => `<div class="card"><i data-ico="${ic}"></i><b>${v}</b><small>${t(k)}</small></div>`).join('');
   list.appendChild(dash);
-  const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '8px 0 6px'; h.textContent = t('badgesTitle') + ' · ' + t('achN', { a: Object.keys(save.ach || {}).length, b: ACH.length }); list.appendChild(h);
+  const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '8px 0 6px'; h.textContent = t('badgesTitle') + ' · ' + t('achN', { a: Object.keys(save.ach || {}).length, b: ACH.length }) + (achClaimable().length ? ' · ' + t('toClaim', { n: achClaimable().length * 5 }) : ''); list.appendChild(h);
   const grid = document.createElement('div'); grid.className = 'badges';
   for (const [id] of ACH) { const got = !!(save.ach || {})[id], claimed = !!(save.achClaimed || {})[id]; const d = document.createElement('div'); d.className = 'badge2 ' + (got ? (claimed ? 'done' : 'claim') : 'locked'); d.innerHTML = `<i data-ico="${ACH_ICON[id] || 'star'}"></i><small>${t('a_' + id)}</small>`;
     d.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (got && !claimed) { claimAch([id]); goStats(); } else UI.info(`<b>${t('a_' + id)}</b><br>${t('a_' + id + '_d')}${got ? '<br>✓ ' + t('claimed') : '<br>+5 ◆'}`); }); grid.appendChild(d); }
   list.appendChild(grid); paintIcons(list); showScreen('scStats');
 }
-$('bStats').addEventListener('click', e => { e.stopPropagation(); if (achClaimable().length) goAch(); else goStats(); });
-$('bBackStats').addEventListener('click', e => { e.stopPropagation(); goOrigin('scStats', goColl); });
+$('bStats').addEventListener('click', e => { e.stopPropagation(); goStats(); });
+$('bBackStats').addEventListener('click', e => { e.stopPropagation(); goMenu(); });
 // ---- expedition: five random open levels, one life, a choice of two cards between stages ----
 const EXP = { on: false, step: 0, salt: 0, used: [], len: 5, lives: 0, log: [] };
 const EXP_BONUS = ['life', 'salt', 'sky', 'step'];
@@ -3556,19 +3699,31 @@ function tickStage(id, dt) {
   if (!S.drag) { S.yaw += S.vel * dt; S.vel *= Math.pow(0.04, dt); S.idle += dt; if (S.idle > 2.5 && Math.abs(S.vel) < 0.05) S.yaw += dt * 0.35; }
   S.pivot.rotation.y = S.yaw; const R = S.R || 2; S.cam.position.set(0, S.cy + R * 0.5, R * 2.7); S.cam.lookAt(0, S.cy * 0.85, 0); S.r.render(S.sc, S.cam);
 }
-function goIbex() {
+let ibexPage = 0;
+function goIbex(page) {
+  const pages = DIMS.map((d, i) => i).filter(i => !DIMS[i].soon); if (typeof page === 'number' && pages.includes(page)) ibexPage = page; if (!pages.includes(ibexPage)) ibexPage = pages[0];
+  for (const c of Object.keys(save.charSeen || {})) if (!(save.charViewed || {})[c]) NEW_NOW.chars.add(c);
   save.charViewed = Object.assign({}, save.charSeen || {}); persist();
   mode = 'ibex'; hud.style.display = 'none'; paintIcons($('scIbex')); $('ibexSalt').textContent = save.totalSaltCrystals;
-  const cur = CHARACTERS[save.character] ? save.character : 'goat'; const sk = (save.skins && save.skins[cur]) || CHARACTERS[cur].list[0].id;
+  const d = DIMS[ibexPage], open = dimOpen(d), chars = dimChars(ibexPage); $('ibexDim').textContent = t(d.nameKey); $('ibexDimSub').textContent = open ? t(d.subKey) : dimLockText(d);
+  $('ibexPrev').classList.toggle('off', pages.indexOf(ibexPage) === 0); $('ibexNext').classList.toggle('off', pages.indexOf(ibexPage) === pages.length - 1);
+  $('ibexPrev').onclick = e => { e.stopPropagation(); goIbex(pages[pages.indexOf(ibexPage) - 1]); }; $('ibexNext').onclick = e => { e.stopPropagation(); goIbex(pages[pages.indexOf(ibexPage) + 1]); };
+  const cur = charForDim(ibexPage); if (charUnlocked(cur) && save.character !== cur) { save.character = cur; save.skins = save.skins || {}; if (!save.skins[cur]) save.skins[cur] = CHARACTERS[cur].list[0].id; save.skin = save.skins.goat; persist(); }   // the showcase and the wardrobe follow the page
+  const sk = (save.skins && save.skins[cur]) || CHARACTERS[cur].list[0].id;
   $('heroName').textContent = CHARACTERS[cur].name; const it = CHARACTERS[cur].list.find(i => i.id === sk); $('heroSkin').textContent = it ? (it.legend ? t('legendary') : it.name) : '';
   const list = $('skinList'); list.innerHTML = '';
-  for (const [ch, C] of Object.entries(CHARACTERS)) {
-    if (C.hidden) continue; const locked = C.world && !save.settings.devUnlock && !(save.charSeen && save.charSeen[ch]); const csk = (save.skins && save.skins[ch]) || C.list[0].id;
+  for (const ch of chars) { const C = CHARACTERS[ch];
+    const locked = !open || !charUnlocked(ch); const csk = (save.skins && save.skins[ch]) || C.list[0].id;
     const b = document.createElement('div'); b.className = 'charCard' + (ch === cur ? ' on' : '') + (locked ? ' locked' : '');
     b.innerHTML = locked ? `<div class="q">?</div><b>???</b><small>${t('reachWorld', { w: C.world })}</small>` : `<img src="${skinPreview(ch, csk)}"><b>${C.name}</b><small>${ch === cur ? t('selectedW') : ''}</small>`;
-    if (!locked) b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; save.character = ch; save.skins = save.skins || {}; if (!save.skins[ch]) save.skins[ch] = C.list[0].id; save.skin = save.skins.goat; persist(); screenShownAt = 0; goIbex(); });
+    if (!locked && NEW_NOW.chars.has(ch)) b.insertAdjacentHTML('beforeend', `<i class="newTag">${t('newTag')}</i>`);
+    if (!locked) b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; save.charByDim = save.charByDim || {}; save.charByDim[d.key] = ch; save.character = ch; save.skins = save.skins || {}; if (!save.skins[ch]) save.skins[ch] = C.list[0].id; save.skin = save.skins.goat; persist(); screenShownAt = 0; goIbex(); });
     list.appendChild(b);
   }
+  { const strip = $('skinStrip'); strip.innerHTML = ''; const C = CHARACTERS[cur]; $('skinStripLbl').textContent = t('coats') + ' · ' + C.name; save.unlocked = save.unlocked || {};
+    for (const it of C.list) { const uid = cur === 'goat' ? it.id : cur + ':' + it.id; const un = it.cost === 0 || !!save.unlocked[uid], sel = sk === it.id, can = save.totalSaltCrystals >= (it.cost || 0);
+      const b = document.createElement('div'); b.className = 'charCard' + (sel ? ' on' : '') + (un ? '' : ' locked'); b.innerHTML = `<img src="${skinPreview(cur, it.id)}"><b>${it.legend ? t('legendary') : it.name}</b><small>${sel ? t('selectedW') : un ? '' : '◆ ' + it.cost}</small>`;
+      b.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!un) { if (!can) return; save.totalSaltCrystals -= it.cost; save.unlocked[uid] = true; } save.skins = save.skins || {}; save.skins[cur] = it.id; save.skin = save.skins.goat; persist(); screenShownAt = 0; goIbex(); }); strip.appendChild(b); } }
   showScreen('scIbex');
 }
 $('bRetry').addEventListener('click', e => { e.stopPropagation(); $('bRetry').textContent = t('retry'); if (L.def.tower) { startTower(towerState().cp > 0 && !towerState().done); return; } startLevel(L.idx, L.endless ? endlessDef(L.ascent, L.def.biome, L.def.character) : L.def.daily ? dailyDef() : L.def.custom ? finalizeDef(save.custom[G.customId]) : undefined); });
@@ -3579,7 +3734,7 @@ function continueRun() {
   for (const g of goats) { const ls = g.lastSafe, saves = g.saves; g.spawn(ls.s, ls.x); g.saves = saves; g.lastSafe = ls; g.path = null; }
   for (const f of followers) { f.replay = null; f.queue = []; f.spawn(goats[0].onSurface, clamp(goats[0].pos.x - goats[0].facing * 0.9, goats[0].onSurface.x1 + 0.2, goats[0].onSurface.x2 - 0.2)); }
   clearParticles(); let top = -Infinity; for (const g of goats) top = Math.max(top, g.pos.y);
-  Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, dangerT: 0, endT: 0, result: null, camFy: preferredFy(top), seenLo: undefined, seenHi: undefined, seenL: undefined, seenR: undefined, fallCamT: 0, landedTired: false });
+  Object.assign(G, { failReason: null, aim: null, aiming: false, drag: null, airInput: 0, dangerT: 0, endT: 0, result: null, camFy: preferredFy(top), seenLo: undefined, seenHi: undefined, seenL: undefined, seenR: undefined, fallCamT: 0, landedTired: false, unseenHidden: false });
   mode = 'play'; hud.style.display = 'flex'; showScreen(null);
 }
 $('bNext').addEventListener('click', e => { e.stopPropagation(); if (G.nextIdx >= 0) startLevel(G.nextIdx); });
@@ -3590,10 +3745,16 @@ for (const s of document.querySelectorAll('.screen')) s.addEventListener('pointe
 //  Input (shared aim: one drag drives every goat)
 // ============================================================
 function pointerPos(e) { return { x: e.clientX, y: e.clientY }; }
+// the drag is on the screen, the jump is in the world: send the on-screen direction from the hero back through the camera onto his plane (z 0), so a tilted, offset camera aims true
+const _aimA = new THREE.Vector3(), _aimB = new THREE.Vector3();
+function screenToPlane(cx, cy, out) { const r = renderer.domElement.getBoundingClientRect(); out.set((cx - r.left) / r.width * 2 - 1, -((cy - r.top) / r.height * 2 - 1), 0.5).unproject(camera).sub(camera.position).normalize(); const k = -camera.position.z / out.z; return out.multiplyScalar(k).add(camera.position); }
+function worldDir(ux, uy) { const g = goats && goats[0]; if (!g) return new THREE.Vector2(ux, -uy); const r = renderer.domElement.getBoundingClientRect();
+  _aimA.set(g.pos.x, g.pos.y + 0.5, 0).project(camera); const sx = r.left + (_aimA.x + 1) / 2 * r.width, sy = r.top + (1 - _aimA.y) / 2 * r.height;
+  screenToPlane(sx + ux * 90, sy + uy * 90, _aimB); const d = new THREE.Vector2(_aimB.x - g.pos.x, _aimB.y - g.pos.y - 0.5); return d.lengthSq() > 1e-6 ? d.normalize() : new THREE.Vector2(ux, -uy); }
 function computeAim(dx, dy) {
   const len = Math.hypot(dx, dy); if (len <= CONFIG.dragDeadZone) return null;
   const t = Math.pow(clamp((len - CONFIG.dragDeadZone) / (CONFIG.maxDragDistance - CONFIG.dragDeadZone), 0, 1), CONFIG.jumpPowerCurve);
-  return { dir: new THREE.Vector2(dx / len, -dy / len), power: lerp(CONFIG.minJumpPower, CONFIG.maxJumpPower, t), t };
+  return { dir: worldDir(dx / len, dy / len), power: lerp(CONFIG.minJumpPower, CONFIG.maxJumpPower, t), t };
 }
 const allStable = () => goats.every(g => g.stable);
 const anyAirborne = () => goats.some(g => g.airborne);
@@ -3672,13 +3833,16 @@ function update(dt) {
   updateHazards(dt, playing);
   updateKids(dt, playing);
   // hawks: patrol, flap, and knock the goat off if its body touches one
-  for (const a of (L.ants || [])) { a.t += dt; a.x += a.dir * a.speed * dt; if (a.x > a.s.x2 - 0.4) { a.x = a.s.x2 - 0.4; a.dir = -1; } if (a.x < a.s.x1 + 0.4) { a.x = a.s.x1 + 0.4; a.dir = 1; }
+  for (const a of (L.ants || [])) { a.t += dt; a.x += a.dir * a.speed * dt; if (a.x > a.s.x2 - 1.4) { a.x = a.s.x2 - 1.4; a.dir = -1; } if (a.x < a.s.x1 + 1.4) { a.x = a.s.x1 + 1.4; a.dir = 1; }
     a.mesh.position.set(a.x + (a.s.x - a.s.x0), a.s.y, 0.4); a.mesh.rotation.y = a.dir > 0 ? 0 : Math.PI; (a.mesh.legsA || []).forEach((l, i) => l.rotation.z = Math.sin(a.t * 14 + i) * 0.4);
-    if (playing && !(G.boosts && G.boosts.bark)) for (const g of goats) if (g.onSurface === a.s && [ST.IDLE, ST.LAND, ST.WALK, ST.AIM].includes(g.state) && Math.abs(g.pos.x - a.x - (a.s.x - a.s.x0)) < 0.7) { g.dropOff(a.dir * 2.2); AudioSys.play('hit'); vib(20); G.drag = null; G.aiming = false; G.aim = null; } }
+    if (playing) for (const g of goats.concat(followers)) if (g.onSurface === a.s && Math.abs(g.pos.x - a.x - (a.s.x - a.s.x0)) < 0.7) {
+      if (g.state === ST.LAND && g.stateT < 0.12 && !g.isKid && !(G.boosts && G.boosts.bark)) { G.failReason = 'ant'; g.dropOff(a.dir * 2.2); AudioSys.play('hit'); vib(20); G.drag = null; G.aiming = false; G.aim = null; }
+      else if (Math.sign(g.pos.x - a.x - (a.s.x - a.s.x0)) === a.dir) { a.dir = -a.dir; a.x += a.dir * 0.08; } } }
   for (const h of L.hawks) {
     h.t += dt; const span = h.x2 - h.x1, ph = (h.t * h.speed) % (2 * span); const k = ph < span ? ph : 2 * span - ph; h.dir = ph < span ? 1 : -1;
     h.x = h.x1 + k; const m = h.mesh; m.position.set(h.x, h.y + Math.sin(h.t * 3) * 0.15, 0.1);
     m.rotation.y = damp(m.rotation.y, h.dir > 0 ? 0 : Math.PI, 8, dt); m.rotation.z = Math.sin(h.t * 1.3) * 0.08;
+    if (m.asteroid) { m.rock.rotation.x += 2.4 * dt; m.rock.rotation.y += 1.7 * dt; }
     const flap = Math.sin(h.t * 9); for (const w of m.wings) { w.rotation.x = w.userData.side * flap * 0.55; w.outer.rotation.x = w.userData.side * flap * 0.45; }
     if (playing) for (const g of goats) { if (g.state !== ST.JUMP || (G.boosts && G.boosts.bark)) continue;   // birds only strike a goat in the air
       const r = CONFIG.hawkHitRadius; if (h.x + r > g.pos.x - CONFIG.goatHalfWidth && h.x - r < g.pos.x + CONFIG.goatHalfWidth && h.y + r > g.pos.y + 0.1 && h.y - r < g.pos.y + CONFIG.goatBodyHeight) {
@@ -3724,7 +3888,7 @@ function update(dt) {
   if (G.aiming) wanted *= 1.05; if (G.zoomPunch) { wanted *= 1 - G.zoomPunch; G.zoomPunch = damp(G.zoomPunch, 0, 4, dt); if (G.zoomPunch < 0.002) G.zoomPunch = 0; }
   setHalfH(damp(halfH, wanted, 3, dt));
   if (playing) { G.seenLo = Math.min(G.seenLo ?? Infinity, G.camFy - halfH); G.seenHi = Math.max(G.seenHi ?? -Infinity, G.camFy + halfH); G.seenL = Math.min(G.seenL ?? Infinity, G.camFx - halfH * camera.aspect); G.seenR = Math.max(G.seenR ?? -Infinity, G.camFx + halfH * camera.aspect); }
-  const onGround = goats.every(g => g.onSurface && g.onSurface.finish && g.state !== ST.JUMP); const target = onGround ? maxY - (L.horizontal ? 0.2 : L.dir * (0.5 - 0.68)) * 2 * halfH * (L.horizontal ? 1 : 1) - (L.horizontal ? 0 : 0) : preferredFy(maxY);
+  const onGround = goats.every(g => g.onSurface && g.onSurface.finish && g.state !== ST.JUMP); const target = onGround && L.horizontal ? preferredFy(maxY) : onGround ? maxY - (L.horizontal ? 0.2 : L.dir * (0.5 - 0.68)) * 2 * halfH * (L.horizontal ? 1 : 1) - (L.horizontal ? 0 : 0) : preferredFy(maxY);
   const idle = CONFIG.cameraIdleSpeed * (halfH / CONFIG.baseHalfHeight) * (G.twin ? CONFIG.twinCameraPressureMultiplier : 1) * (L.def.tutorial ? 0.5 : 1) * (L.def.mod === 'fastCam' ? 1.4 : 1) * ((G.muts || []).includes('rush') ? 1.5 : 1);
   const ended = mode === 'result';
   if (ended) { // follow the fall, but never below the bottom terrace (no endless chase into the void)
@@ -3743,10 +3907,10 @@ function update(dt) {
     const tx = preferredFx(maxX); const halfW = halfH * camera.aspect;
     if (ended) G.camFx = damp(G.camFx, tx, 4, dt);
     else { G.camFx = damp(G.camFx, tx, tx > G.camFx ? CONFIG.cameraDownFollowSpeed : CONFIG.cameraUpFollowSpeed, dt); if (G.started) G.camFx += idle * (halfW / halfH) * (G.aiming ? CONFIG.cameraAimMultiplier : 1) * ((G.muts || []).includes('chase') ? 2.6 : 1) * dt; }
-    G.camFx = clamp(G.camFx, preferredFx(L.start.x) - 1, preferredFx(L.right - 6) + 1);
+    G.camFx = clamp(G.camFx, preferredFx(L.start.x) - 1, preferredFx(L.right - 6) + (ended && G.result && G.result.win ? 34 : 1));
   } else if (!(ended && G.result.win)) G.camFx = damp(G.camFx, clamp((minX + maxX) / 2 * 0.6, -4, 5), CONFIG.cameraXFollow, dt);
   G.shake = Math.max(0, (G.shake || 0) - dt * 1.4); const shk = G.shake * G.shake * 0.6, sx = (Math.random() - .5) * shk, sy = (Math.random() - .5) * shk;
-  camera.position.set(G.camFx + camDist * 0.24 + sx, G.camFy + camDist * 0.07 + sy, camDist); camera.lookAt(G.camFx + sx, G.camFy + sy, 0);
+  camera.position.set(G.camFx + camDist * 0.24 + sx, G.camFy + camDist * camLift() + sy, camDist); camera.lookAt(G.camFx + sx, G.camFy + sy, 0);
   sun.position.set(G.camFx + 26, G.camFy + 42, 34); sun.target.position.set(G.camFx, G.camFy - 6, 0);
 
   // ---- camera pressure / failure (highest goat is the one in danger) ----
@@ -3767,9 +3931,10 @@ function update(dt) {
   goats.forEach((g, gi) => {
     const arrow = arrows[gi], dots = dotSets[gi]; arrow.visible = !!showAim;
     if (showAim) {
-      arrow.position.set(g.pos.x, g.pos.y + 0.7, 0.6); arrow.setDirection(new THREE.Vector3(G.aim.dir.x, G.aim.dir.y, 0)); arrow.setLength(1.2 + G.aim.t * 2.4, 0.45, 0.3);
+      arrow.position.set(g.pos.x, g.pos.y + 0.7, 0.15); arrow.setDirection(new THREE.Vector3(G.aim.dir.x, G.aim.dir.y, 0)); arrow.setLength(1.2 + G.aim.t * 2.4, 0.45, 0.3);
       const ls = launchStart(g, G.aim); const pts = previewTrajectory(new THREE.Vector2(ls.x, ls.y), G.aim, carryOf(g)); const n = CONFIG.trajectoryPoints, frac = debugG.visible ? 1 : CONFIG.trajectoryPreviewFraction;
-      for (let i = 0; i < dots.length; i++) { const d = dots[i]; if (i < n) { const k = Math.floor((i + 1) / n * frac * (pts.length - 1)); d.visible = true; d.position.set(pts[k].x, pts[k].y + 0.35, 0.5); d.scale.setScalar(1 - i / n * 0.5); d.material.opacity = 0.9 - i / n * 0.5; } else d.visible = false; }
+      for (let i = 0; i < dots.length; i++) { const d = dots[i]; if (i < n) { const k = Math.floor((i + 1) / n * frac * (pts.length - 1)); d.visible = true; d.position.set(pts[k].x, pts[k].y + 0.35, 0.1); d.scale.setScalar(1 - i / n * 0.5); d.material.opacity = 0.9 - i / n * 0.5; } else d.visible = false; }
+      if (!arrow.userData.top) { arrow.userData.top = true; for (const c of [arrow.line, arrow.cone]) { c.material.depthTest = false; c.renderOrder = 20; } for (const d of dots) { d.material.depthTest = false; d.renderOrder = 20; } }
       if (debugG.visible && gi === 0) { debugTraj.geometry.dispose(); debugTraj.geometry = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p.x, p.y + 0.35, 0.6))); debugTraj.visible = true; }
     } else { for (const d of dots) d.visible = false; if (gi === 0) debugTraj.visible = false; }
     g.animate(dt, showAim ? G.aim : null);
