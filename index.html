@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v124 -->
+<!-- build v130 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -433,11 +433,11 @@ const I18N = {
     menu: '◀ MENU', worlds: '◀ WORLDS', resume: 'RESUME', restart: 'RESTART', exit: 'EXIT', paused: 'PAUSED', retry: 'RETRY', next: 'NEXT LEVEL', levels: 'LEVELS', editor: 'EDITOR', continueFrom: 'CONTINUE FROM LAST LEDGE',
     descent: 'DESCENT', ascent: 'ASCENT', distance: 'DISTANCE', time: 'TIME', kids: 'KIDS', world: 'WORLD', level: 'LEVEL', locked: 'LOCKED', earnStars: 'earn {n} ★ in {w} ({g} so far)', levelsN: '{n} levels',
     run: '▶ run', up: '▲ ascent', down: '▼ descent', twin: '⇊ twin descent', birds: 'birds',
-    complete: 'COMPLETE', descentDone: 'DESCENT COMPLETE', summit: 'SUMMIT REACHED', across: 'MADE IT ACROSS', fell: 'YOU FELL', newTag: 'NEW', newWorld: 'NEW WORLD', leftBehind: 'LEFT BEHIND', kidFell: 'A LITTLE ONE FELL', antPush: 'AN ANT PUSHED YOU', inWater: 'INTO THE WATER', oneFell: 'ONE GOAT FELL', hawk: 'THE HAWK GOT YOU', tooFar: 'TOO FAR', spiked: 'SPIKED', rockfall: 'ROCKFALL', kidFell: 'A KID FELL',
+    complete: 'COMPLETE', descentDone: 'DESCENT COMPLETE', summit: 'SUMMIT REACHED', across: 'MADE IT ACROSS', fell: 'YOU FELL', dimPrice: 'opens for {p} ◆ · you have {have}', dimBuy: 'OPEN FOR {p} ◆', dimAfter: 'open {d} first', dimOpened: '{d} is open!', worldNeedStars: '{need}★ in the previous world ({have}/{need})', lockedLvl: 'Finish the previous level', newTag: 'NEW', newWorld: 'NEW WORLD', leftBehind: 'LEFT BEHIND', kidFell: 'A LITTLE ONE FELL', antPush: 'AN ANT PUSHED YOU', inWater: 'INTO THE WATER', oneFell: 'ONE GOAT FELL', hawk: 'THE HAWK GOT YOU', tooFar: 'TOO FAR', spiked: 'SPIKED', rockfall: 'ROCKFALL', kidFell: 'A KID FELL',
     camMsg: 'The mountain stopped waiting for you.', tiredMsg: 'That drop was too long. The goat is exhausted and cannot go on.', spikeMsg: 'Those spikes were not a landing spot.', rockMsg: 'A boulder came down the chute.', kidMsg: 'The little one did not make that jump.',
     tipCamera: 'Tip: the top of the screen is the deadline — jump before it reaches you.', tipTired: 'Tip: never drop past more than 3 rows of ledges in one jump.', tipSpikes: 'Tip: land on the clear half of a spiked ledge.', tipHawk: 'Tip: birds only strike in the air — let one pass, then jump.', tipRock: 'Tip: the dark shadow at a crevice means a boulder is about to drop.', tipKid: 'Tip: kids replay your exact jumps — a jump you barely made, they may not.', tipFall: 'Tip: an edge within an arm\'s reach still counts — aim for the ledge, not past it.',
     jumps: 'Jumps', saves: 'Edge saves', kidsRescued: 'Kids rescued', under: 'UNDER', allKids: 'ALL KIDS RESCUED', noSaves: 'NO EDGE SAVES', cleanRun: 'CLEAN RUN', today: 'today', streak: 'Streak', newBest: 'NEW BEST!', best: 'best', youHave: 'you have', salt: 'salt',
-    devUnlock: 'Unlock everything (dev)', p_SLIPPERS: 'SLIPPERS', p_BALLS: 'BALLS', p_STICKS: 'STICKS', p_FISH: 'FISH', p_FLIES: 'FLIES', dimSoon: 'COMING SOON', dimSoonSub: 'a new world is being carved…', dimFrog: 'THE UNDERGROWTH', dimFrogSub: 'a tiny frog · leaves, stones and lily pads below the grass', h_ants: 'Ants patrol the leaves — they shove you off<br>Wait for them to turn, or hop over', m_ants: 'Ants', m_ants_d: 'They walk back and forth along a ledge. Land right on one and it knocks you off; stand still and it turns back.', 'p_MOON ROCK': 'MOON ROCK', dimMoon: 'THE MOON', dimMoonSub: 'ibex in a helmet · one sixth of the gravity, long slow arcs', h_moon: 'Low gravity: arcs are long and slow<br>Tap while flying for one extra kick', h_meteors: 'Asteroids burn through the air<br>Let one pass, then jump', 'p_ICE CREAM': 'ICE CREAM', h_soft: 'Snowdrift — a soft landing from any height<br>but powder edges give no grip', m_soft: 'Soft landings', m_soft_d: 'Snowdrifts and cushions absorb any fall — no exhaustion, no hard landing. But their edges crumble: no edge catches.', h_seesaw: 'A seesaw — land on one end, the other rises<br>Jump off the rising end for a boost', m_seesaw: 'Seesaw', m_seesaw_d: 'A plank on a pivot. Your weight tips it; jump off the end that is swinging up and it throws you higher.',
+    devUnlock: 'Unlock everything (dev)', p_SLIPPERS: 'SLIPPERS', p_BALLS: 'BALLS', p_STICKS: 'STICKS', p_FISH: 'FISH', p_FLIES: 'FLIES', dimSoon: 'COMING SOON', dimSoonSub: 'a new world is being carved…', dimFrog: 'THE UNDERGROWTH', dimFrogSub: 'a tiny frog · leaves, stones and lily pads below the grass', h_ants: 'Ants patrol the leaves — they shove you off<br>Wait for them to turn, or hop over', m_ants: 'Ants', m_ants_d: 'They walk back and forth along a ledge. Land right on one and it knocks you off; stand still and it turns back.', 'p_MOON ROCK': 'MOON ROCK', dimMoon: 'THE MOON', dimMoonSub: 'ibex in a helmet · one sixth of the gravity, long slow arcs', h_moon: 'Low gravity: arcs are long and slow<br>Tap while flying for one extra kick', h_meteors: 'Asteroids burn through the air<br>Let one pass, then jump', 'p_ICE CREAM': 'ICE CREAM', h_soft: 'Snowdrift — a soft landing from any height<br>but powder edges give no grip', h_bounce: 'Trampoline — it throws you higher<br>aim the first jump for the second', m_bounce: 'Trampolines', m_bounce_d: 'Land on one and it throws you straight back up, 35% harder, with no control until you land again. Pick the first jump so the rebound reaches the target.', m_soft: 'Soft landings', m_soft_d: 'Snowdrifts and cushions absorb any fall — no exhaustion, no hard landing. But their edges crumble: no edge catches.', h_seesaw: 'A seesaw — land on one end, the other rises<br>Jump off the rising end for a boost', m_seesaw: 'Seesaw', m_seesaw_d: 'A plank on a pivot. Your weight tips it; jump off the end that is swinging up and it throws you higher.',
     soundOn: 'Sound', musicOn: 'Music', vibro: 'Vibration', leftHand: 'Left-handed', dragSens: 'Drag sensitivity', quality: 'Quality', lang: 'Language', resetProgress: 'RESET PROGRESS', resetConfirm: 'Erase all progress, salt and custom levels?', low: 'low', high: 'high', short: 'short', normal: 'normal', long: 'long', auto: 'auto',
     skinsNote: 'Skins change the coat only — never the jump.', selected: 'SELECTED', equip: 'EQUIP', unlock: 'UNLOCK', playing: 'PLAYING', reachWorld: 'Reach the {w} world',
     endlessSub: 'Procedural mountain. Ledges shrink, gaps grow,<br>spikes and birds appear, biomes drift from day to night.', endlessDown: 'ENDLESS DESCENT', endlessUp: 'ENDLESS ASCENT', resumeRun: 'RESUME',
@@ -488,11 +488,11 @@ const I18N = {
     menu: '◀ МЕНЮ', worlds: '◀ МИРЫ', resume: 'ПРОДОЛЖИТЬ', restart: 'ЗАНОВО', exit: 'ВЫЙТИ', paused: 'ПАУЗА', retry: 'ЕЩЁ РАЗ', next: 'СЛЕДУЮЩИЙ', levels: 'УРОВНИ', editor: 'РЕДАКТОР', continueFrom: 'ПРОДОЛЖИТЬ С ПОСЛЕДНЕГО УСТУПА',
     descent: 'СПУСК', ascent: 'ПОДЪЁМ', distance: 'ПУТЬ', time: 'ВРЕМЯ', kids: 'МАЛЫШИ', world: 'МИР', level: 'УРОВЕНЬ', locked: 'ЗАКРЫТО', earnStars: 'набери {n} ★ в {w} (пока {g})', levelsN: 'уровней: {n}',
     run: '▶ забег', up: '▲ подъём', down: '▼ спуск', twin: '⇊ двойной спуск', birds: 'птицы',
-    complete: 'ПРОЙДЕНО', descentDone: 'СПУСК ЗАВЕРШЁН', summit: 'ВЕРШИНА ВЗЯТА', across: 'ДОБРАЛСЯ', fell: 'ТЫ УПАЛ', newTag: 'НОВЫЙ', newWorld: 'НОВЫЙ МИР', leftBehind: 'ОТСТАЛ', kidFell: 'МАЛЫШ УПАЛ', antPush: 'МУРАВЕЙ СТОЛКНУЛ', inWater: 'В ВОДУ', oneFell: 'ОДИН КОЗЁЛ УПАЛ', hawk: 'ПТИЦА СБИЛА', tooFar: 'СЛИШКОМ ДАЛЕКО', spiked: 'НА ШИПЫ', rockfall: 'КАМНЕПАД', kidFell: 'МАЛЫШ УПАЛ',
+    complete: 'ПРОЙДЕНО', descentDone: 'СПУСК ЗАВЕРШЁН', summit: 'ВЕРШИНА ВЗЯТА', across: 'ДОБРАЛСЯ', fell: 'ТЫ УПАЛ', dimPrice: 'откроется за {p} ◆ · у тебя {have}', dimBuy: 'ОТКРЫТЬ ЗА {p} ◆', dimAfter: 'сначала открой «{d}»', dimOpened: '«{d}» открыто!', worldNeedStars: '{need}★ в предыдущем мире ({have}/{need})', lockedLvl: 'Пройди предыдущий уровень', newTag: 'НОВЫЙ', newWorld: 'НОВЫЙ МИР', leftBehind: 'ОТСТАЛ', kidFell: 'МАЛЫШ УПАЛ', antPush: 'МУРАВЕЙ СТОЛКНУЛ', inWater: 'В ВОДУ', oneFell: 'ОДИН КОЗЁЛ УПАЛ', hawk: 'ПТИЦА СБИЛА', tooFar: 'СЛИШКОМ ДАЛЕКО', spiked: 'НА ШИПЫ', rockfall: 'КАМНЕПАД', kidFell: 'МАЛЫШ УПАЛ',
     camMsg: 'Гора перестала ждать.', tiredMsg: 'Слишком долгое падение. Козёл выбился из сил.', spikeMsg: 'Шипы — не место для посадки.', rockMsg: 'Валун прилетел из расщелины.', kidMsg: 'Малыш не осилил этот прыжок.',
     tipCamera: 'Совет: верх экрана — это дедлайн, прыгай раньше, чем он дойдёт до тебя.', tipTired: 'Совет: не пролетай больше 3 рядов уступов за прыжок.', tipSpikes: 'Совет: приземляйся на чистую половину площадки.', tipHawk: 'Совет: птицы бьют только в воздухе — пропусти и прыгай.', tipRock: 'Совет: тёмное пятно у расщелины — сейчас упадёт валун.', tipKid: 'Совет: малыши повторяют твой прыжок точь-в-точь — то, что ты еле взял, они могут не взять.', tipFall: 'Совет: край в пределах досягаемости всё ещё считается — целься в уступ, а не дальше.',
     jumps: 'Прыжков', saves: 'Зацепов', kidsRescued: 'Спасено малышей', under: 'БЫСТРЕЕ', allKids: 'ВСЕ МАЛЫШИ СПАСЕНЫ', noSaves: 'БЕЗ ЗАЦЕПОВ', cleanRun: 'ЧИСТЫЙ ЗАБЕГ', today: 'сегодня', streak: 'Серия', newBest: 'НОВЫЙ РЕКОРД!', best: 'рекорд', youHave: 'у тебя', salt: 'соли',
-    devUnlock: 'Открыть всё (dev)', p_SLIPPERS: 'ТАПКИ', p_BALLS: 'МЯЧИ', p_STICKS: 'ПАЛКИ', p_FISH: 'РЫБА', p_FLIES: 'МУХИ', dimSoon: 'СКОРО', dimSoonSub: 'новый мир ещё вырубается из камня…', dimFrog: 'ПОДЛЕСОК', dimFrogSub: 'крошечная жаба · листья, камни и кувшинки ниже травы', h_ants: 'Муравьи ходят по листьям — сталкивают<br>Дождись, пока развернутся, или перепрыгни', m_ants: 'Муравьи', m_ants_d: 'Ходят туда-сюда по уступу. Приземлишься прямо на муравья — столкнёт; стоишь — он развернётся.', 'p_MOON ROCK': 'ЛУННЫЙ КАМЕНЬ', dimMoon: 'ЛУНА', dimMoonSub: 'ибекс в шлеме · гравитация в шесть раз слабее, долгие дуги', h_moon: 'Низкая гравитация: дуги длинные и медленные<br>Тап в полёте — ещё один толчок', h_meteors: 'Астероиды прожигают воздух<br>Пропусти и прыгай', 'p_ICE CREAM': 'МОРОЖЕНОЕ', h_soft: 'Сугроб — мягкая посадка с любой высоты<br>но за рыхлый край не зацепиться', m_soft: 'Мягкая посадка', m_soft_d: 'Сугробы и подушки гасят любое падение — без усталости и жёсткой посадки. Но их края осыпаются: зацепа нет.', h_seesaw: 'Балансир — сядь на один край, второй поднимется<br>Прыгни с поднимающегося края — подбросит', m_seesaw: 'Балансир', m_seesaw_d: 'Доска на опоре. Твой вес её наклоняет; прыгни с края, который идёт вверх, — подбросит выше.',
+    devUnlock: 'Открыть всё (dev)', p_SLIPPERS: 'ТАПКИ', p_BALLS: 'МЯЧИ', p_STICKS: 'ПАЛКИ', p_FISH: 'РЫБА', p_FLIES: 'МУХИ', dimSoon: 'СКОРО', dimSoonSub: 'новый мир ещё вырубается из камня…', dimFrog: 'ПОДЛЕСОК', dimFrogSub: 'крошечная жаба · листья, камни и кувшинки ниже травы', h_ants: 'Муравьи ходят по листьям — сталкивают<br>Дождись, пока развернутся, или перепрыгни', m_ants: 'Муравьи', m_ants_d: 'Ходят туда-сюда по уступу. Приземлишься прямо на муравья — столкнёт; стоишь — он развернётся.', 'p_MOON ROCK': 'ЛУННЫЙ КАМЕНЬ', dimMoon: 'ЛУНА', dimMoonSub: 'ибекс в шлеме · гравитация в шесть раз слабее, долгие дуги', h_moon: 'Низкая гравитация: дуги длинные и медленные<br>Тап в полёте — ещё один толчок', h_meteors: 'Астероиды прожигают воздух<br>Пропусти и прыгай', 'p_ICE CREAM': 'МОРОЖЕНОЕ', h_soft: 'Сугроб — мягкая посадка с любой высоты<br>но за рыхлый край не зацепиться', h_bounce: 'Трамплин — подбросит выше<br>целься первым прыжком во второй', m_bounce: 'Трамплины', m_bounce_d: 'Приземлишься — подбросит обратно вверх на 35% сильнее, без управления до следующей посадки. Выбери первый прыжок так, чтобы отскок попал в цель.', m_soft: 'Мягкая посадка', m_soft_d: 'Сугробы и подушки гасят любое падение — без усталости и жёсткой посадки. Но их края осыпаются: зацепа нет.', h_seesaw: 'Балансир — сядь на один край, второй поднимется<br>Прыгни с поднимающегося края — подбросит', m_seesaw: 'Балансир', m_seesaw_d: 'Доска на опоре. Твой вес её наклоняет; прыгни с края, который идёт вверх, — подбросит выше.',
     soundOn: 'Звук', musicOn: 'Музыка', vibro: 'Вибрация', leftHand: 'Левая рука', dragSens: 'Чувствительность драга', quality: 'Качество', lang: 'Язык', resetProgress: 'СБРОСИТЬ ПРОГРЕСС', resetConfirm: 'Стереть весь прогресс, соль и свои уровни?', low: 'низкое', high: 'высокое', short: 'короткий', normal: 'обычный', long: 'длинный', auto: 'авто',
     skinsNote: 'Скины меняют только шкуру — никогда прыжок.', selected: 'ВЫБРАНО', equip: 'НАДЕТЬ', unlock: 'ОТКРЫТЬ', playing: 'ИГРАЕШЬ', reachWorld: 'Дойди до мира {w}',
     endlessSub: 'Процедурная гора. Уступы сужаются, пролёты растут,<br>появляются шипы и птицы, биомы плывут от дня к ночи.', endlessDown: 'БЕСКОНЕЧНЫЙ СПУСК', endlessUp: 'БЕСКОНЕЧНЫЙ ПОДЪЁМ', resumeRun: 'ПРОДОЛЖИТЬ',
@@ -542,8 +542,9 @@ const I18N = {
 let LANG = 'en';
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v124', date: '2026-09-23' };
-const NEW_NOW = { chars: new Set(), worlds: new Set() };   // what was new when a screen opened: tagged there until you leave it
+const BUILD = { version: 'v130', date: '2026-09-23' };
+const NEW_NOW = { chars: new Set(), worlds: new Set() };
+const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
   try { const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]'); log.push({ at: new Date().toISOString(), v: BUILD.version, msg }); localStorage.setItem('mountainGoatErrors', JSON.stringify(log.slice(-20))); } catch (x) {}
   if (dev) { const t = document.getElementById('errToast'); t.style.display = 'block'; t.textContent = msg; } }
@@ -565,6 +566,7 @@ const CONFIG = {
   hardLandingSpeed: 12, perfectLandingSpeed: 8.5, deathFallTime: 1.5,
   crumbleTime: 2.0,          // seconds a crumbling ledge holds after someone lands on it
   crumbleHazardGap: 9,       // no crumbling ledge within this many metres of a bird lane or a rock chute
+  bounceGain: 1.35, bounceMin: 9, bounceMax: 17,   // trampoline: the fall is thrown back up 35% harder (within limits); no control until you land
   slopeSlideSpeed: 0.25,     // m/s the goat slides toward the low edge of a sloped shelf while standing
   iceKeep: 0.85, iceFriction: 1.1,   // ice: fraction of landing speed kept, and how fast it decays
   rockWarn: 1.0, rockHitRadius: 0.65, // rockfall: warning time before the boulder drops
@@ -684,6 +686,7 @@ function applySeason() { // rewrite STYLES in place from the untouched base, the
   }
   STYLE = STYLES[Object.keys(STYLES).find(k => STYLES[k] === STYLE) || 'desert'] || STYLES.desert;
 }
+STYLES.roofs = Object.assign({}, STYLES.city, { sky: [0x141c33, 0x3a4668], haze: 0x2c3550, sun: 0xb8c8ff, sunI: 1.1, hemi: [0x6a7aa8, 0x1c2030], hemiI: 0.75, windows: [0x1a2233, 0xffd878] });   // the city at night, over the roofs
 const TYPE = { // every ledge has the same depth so the goat always stands on rock, whatever the width
   terrace:  { h: 2.6, d: 5.5, jitter: 0.22 }, broad: { h: 2.0, d: 4.6, jitter: 0.25 }, slab: { h: 1.5, d: 4.6, jitter: 0.22 },
   narrow:   { h: 1.5, d: 4.6, jitter: 0.28 }, sloped: { h: 1.7, d: 4.6, jitter: 0.22, tilt: 0.11 },
@@ -851,6 +854,9 @@ function defineLevels() { LEVELS = [
   makeDescent({ key: 'paneldown', name: 'BALCONY HOP', style: 'panel', seed: 51, n: 16, spikes: false, hawks: 1, kid: true }),
   makeDescent({ key: 'panelrun', name: 'PIGEON YARD', style: 'panel', seed: 52, n: 18, spikes: true, hawks: 2, crumble: true }),
   makeClimb({ key: 'panelup', name: 'NINTH FLOOR', style: 'panel', seed: 53, n: 20, spikes: false, hawks: [{ x1: -7, x2: 7, y: 20, speed: 5 }] }),
+  makeDescent({ key: 'roofdown', name: 'CHIMNEY HOPS', style: 'roofs', seed: 61, n: 16, spikes: true, hawks: 2, crumble: true }),
+  makeDescent({ key: 'roofrun', name: 'NIGHT DASH', style: 'roofs', seed: 63, n: 20, spikes: true, hawks: 3, wind: true }),
+  makeClimb({ key: 'roofup', name: 'TV ANTENNA FOREST', style: 'roofs', seed: 65, n: 22, spikes: false, hawks: [{ x1: -7, x2: 7, y: 22, speed: 6 }, { x1: -6, x2: 8, y: 44, speed: 7 }] }),
   tutorialOf(makeRun({ key: 'yard0', name: 'SHORT LEGS', style: 'yard', seed: 60, n: 8, character: 'dog' }), 'shortLegs', ['tutD1', 'tut2', 'tutD2']),
   makeRun({ key: 'yard1', name: 'GARDEN FENCE', style: 'yard', seed: 61, n: 14, character: 'dog' }),
   makeRun({ key: 'yard2', name: 'WASP ALLEY', style: 'yard', seed: 62, n: 16, hawks: 3, spikes: true, character: 'dog' }),
@@ -916,7 +922,7 @@ function defineLevels() { LEVELS = [
   // secret entrances: an off-route stone with a dark cave mouth in an existing level
   const cr = LEVELS.find(l => l.key === 'crystal'); cr.surfaces.push(['sec', 11, -34, 2, 'stone']); cr.secretEntry = { surface: 'sec', level: 'negevSecret' };
   { const lv = LEVELS.find(l => l.key === 'moon1'); const a = lv.surfaces[6]; lv.surfaces.push(['sec', a[1] > 0 ? -12 : 12, +(a[2] - 2).toFixed(1), 2, 'stone']); lv.secretEntry = { surface: 'sec', level: 'moonSecret' }; }
-  for (const [lvl, sec] of [['house1', 'houseSecret'], ['park1', 'parkSecret'], ['flat1', 'flatSecret'], ['lake1', 'lakeSecret'], ['pond1', 'pondSecret']]) { const lv = LEVELS.find(l => l.key === lvl); const a = lv.surfaces[5], nb = lv.surfaces[6]; lv.surfaces.push(['sec', +((a[1] + a[3] / 2 + nb[1] - nb[3] / 2) / 2).toFixed(1), +(Math.max(a[2], nb[2]) + 3.6).toFixed(1), 1.6, 'stone']); lv.secretEntry = { surface: 'sec', level: sec }; lv.scent = true; }
+  for (const [lvl, sec] of [['house1', 'houseSecret'], ['park1', 'parkSecret'], ['flat1', 'flatSecret'], ['lake1', 'lakeSecret'], ['pond1', 'pondSecret']]) { const lv = LEVELS.find(l => l.key === lvl); const route = lv.surfaces.filter(q => /^r\d/.test(q[0]) || q[0] === 'start'), roofs = lv.surfaces.filter(q => /arch/.test(q[5] || '')); const free = k => !roofs.some(q => Math.abs(q[1] - route[k][1]) < 7) && !roofs.some(q => Math.abs(q[1] - route[k + 1][1]) < 7); let k0 = 5; while (k0 < route.length - 2 && !free(k0)) k0++; const a = route[k0], nb = route[k0 + 1]; lv.surfaces.push(['sec', +((a[1] + a[3] / 2 + nb[1] - nb[3] / 2) / 2).toFixed(1), +(Math.max(a[2], nb[2]) + 3.6).toFixed(1), 1.6, 'stone']); lv.secretEntry = { surface: 'sec', level: sec }; lv.scent = true; }
   const cd = LEVELS.find(l => l.key === 'citydown'); const mid = cd.surfaces[Math.floor(cd.surfaces.length / 2)]; cd.surfaces.push(['sec', mid[1] > 0 ? -9 : 9, +(mid[2] - 3).toFixed(1), 2, 'stone']); cd.secretEntry = { surface: 'sec', level: 'citySecret' };
 }
 function tutorialOf(def, nameKey, keys) { def.tutorial = true; def.nameKey = nameKey; def.stars = { crystals: 0, time: 0 }; def.hawks = (def.hawks || []).slice(0, 1); def.rocks = []; def.kids = []; def.tutHints = {}; const ids = def.surfaces.map(r => r[0]); keys.forEach((k, i) => { const id = ids[Math.min(ids.length - 2, i * 2)]; if (id) def.tutHints[id] = k; }); return def; }
@@ -929,6 +935,7 @@ function twistOf(def, twists) { def.twists = twists; return def; }
 const NAME_POOL = {
   desert: ['SALT FLATS', 'DUST DEVIL', 'THE WADI', 'ACACIA SHELF', 'THE GORGE', 'SANDSTONE STAIR', 'THE OVERHANG', 'NOON HEAT'], red: ['RUST LADDER', 'THE ARCH', 'EMBER RIDGE', 'RED SHELVES', 'DUSK CHIMNEY', 'THE FUNNEL', 'OCHRE RUN', 'LAST LIGHT'],
   chalk: ['GULL ROCK', 'WHITE STAIR', 'THE STACK', 'TIDE LINE', 'FLINT SHELF', 'THE COVE', 'SEA WIND', 'CLIFF EDGE'], night: ['STARFALL', 'THE OWL', 'MOONDUST', 'DARK STAIR', 'FIREFLY LEDGE', 'THE HOLLOW', 'MIDNIGHT', 'FIRST LIGHT'], alpine: ['THE SERAC', 'ICE STAIR', 'THE COL', 'FROSTBITE', 'AVALANCHE', 'THE CORNICE', 'WHITEOUT', 'THE GLACIER'],
+  roofs: ['CHIMNEY STACK', 'SATELLITE DISH', 'THE SKYLIGHT', 'PIGEON LOFT', 'ROOF HATCH', 'NEON SIGN', 'GUTTER RUN', 'MOONLIT ROOF'],
   city: ['FIRE ESCAPE', 'THE CRANE', 'BILLBOARD', 'NEON LEDGE', 'WATER TOWER', 'THE SCAFFOLD', 'ROOF GARDEN', 'CHOPPER PAD'], panel: ['LAUNDRY LINE', 'THE STAIRWELL', 'SATELLITE DISH', 'NINTH FLOOR', 'THE COURTYARD', 'BALCONY ROW', 'PIGEON LOFT', 'THE ROOFTOP'],
   yard: ['THE FENCE', 'FLOWER BED', 'GARDEN HOSE', 'THE SANDBOX', 'WOODPILE', 'THE GATE', 'COMPOST HEAP', 'BIRD BATH'], house: ['THE HALLWAY', 'KITCHEN COUNTER', 'THE ATTIC STAIR', 'WINDOW SILL', 'THE PIANO', 'LAUNDRY BASKET', 'THE FRIDGE', 'BOOK TOWER'], park: ['THE FOUNTAIN', 'SWING SET', 'THE SLIDE', 'DUCK POND', 'PICNIC ROW', 'THE BANDSTAND', 'BIKE RACK', 'THE HEDGE'],
   lot: ['CEMENT MIXER', 'THE SCAFFOLD', 'GRAVEL PILE', 'THE CRANE', 'REBAR ROW', 'THE DUMPSTER', 'PLANK BRIDGE', 'FENCE LINE'], winter: ['SNOWPLOW', 'THE ICICLES', 'SLED HILL', 'BUS STOP', 'THE MARKET', 'FROZEN FOUNTAIN', 'CHRISTMAS TREE', 'THE RINK'], flat: ['COFFEE TABLE', 'THE WARDROBE', 'BATHTUB', 'THE BALCONY', 'TV STAND', 'THE CRIB', 'HALLWAY RUG', 'WINDOW SEAT'], lake: ['THE JETTY', 'REED BEDS', 'THE SANDBAR', 'DRIFTWOOD', 'THE HERON', 'LILY COVE', 'BEAVER DAM', 'THE FERRY'],
@@ -989,6 +996,10 @@ function makeRun(o) {
   const hawkAt = []; for (let k = 0; k < (o.hawks || 0); k++) hawkAt.push(Math.floor((k + 1) * o.n / ((o.hawks || 0) + 1)));
   for (let i = 1; i <= o.n; i++) {
     const t = i / o.n; const prevX = x, prevW = w, prevY = y;
+    if (['forest', 'pond', 'anthill', 'yard', 'park', 'moon'].includes(o.style) && !o.noBounce && i > 2 && i < o.n - 1 && i % 7 === 3 && !(TERRAIN_STYLES.includes(o.style) && i % 6 === 4)) {   // trampoline: drop into a dip, get thrown up to a ledge a normal jump can't reach
+      const g1 = 1.8 + r() * 0.5, pw = 2.4, py = +(prevY - 1.5 - r()).toFixed(1), px = +(prevX + prevW / 2 + g1 + pw / 2).toFixed(1); surfaces.push(['b' + i, px, py, pw, 'narrow', 'bounce']);
+      const tw = 2.8, tx = +(px + pw / 2 + 2.4 + r() * 0.6 + tw / 2).toFixed(1), ty = +(py + 5.2).toFixed(1); surfaces.push(['r' + i, tx, ty, tw, 'slab']); crystals.push([tx, +(ty + 0.6).toFixed(1)]);
+      x = tx; y = ty; w = tw; continue; }
     if (TERRAIN_STYLES.includes(o.style) && !o.noArch && i > 2 && i < o.n - 1 && i % 6 === 4) {
       const gap = 1.9 + r() * 0.5, Lw = 4.6, ly = prevY, a = prevX + prevW / 2 + gap, lx1 = a + 0.6, Fw = Lw + 0.6 + 1.6;   // the low ledge runs from before the log to 1.6 m past its end
       surfaces.push(['r' + i, +(a + Fw / 2).toFixed(1), +ly.toFixed(1), +Fw.toFixed(1), 'broad']);
@@ -1176,10 +1187,10 @@ function towerDef() {
 function towerState() { const wk = weekId(); save.tower = save.tower || {}; if (save.tower.week !== wk) { if (save.tower.week && save.ghosts && save.ghosts['tower:' + save.tower.week]) { save.ghosts['tower:last'] = save.ghosts['tower:' + save.tower.week]; delete save.ghosts['tower:' + save.tower.week]; } save.tower = { week: wk, cp: 0, best: 0, time: 0, done: false }; } return save.tower; }
 const DIMS = [
   { key: 'mountain', nameKey: 'dimMountain', subKey: 'dimMountainSub', worlds: ['NEGEV', 'RED CANYON', 'CHALK COAST', 'MOONLIT RIDGE', 'THE ALPS'] },
-  { key: 'city', nameKey: 'dimCity', subKey: 'dimCitySub', worlds: ['SKYSCRAPER', 'PANELKI'], need: { dim: 0, n: 8 } },
-  { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET', 'THE APARTMENT', 'THE LAKE'], need: { dim: 1, n: 5 } },
-  { key: 'frog', nameKey: 'dimFrog', subKey: 'dimFrogSub', worlds: ['FOREST FLOOR', 'THE POND', 'THE ANTHILL'], need: { dim: 2, n: 8 } },
-  { key: 'moon', nameKey: 'dimMoon', subKey: 'dimMoonSub', worlds: ['MARE TRANQUILLITATIS', 'CRATER HIGHLANDS', 'THE FAR SIDE'], need: { dim: 0, n: 14 } },
+  { key: 'city', nameKey: 'dimCity', subKey: 'dimCitySub', worlds: ['SKYSCRAPER', 'PANELKI', 'THE ROOFTOPS'], need: { dim: 0, n: 8 }, price: 120 },
+  { key: 'yard', nameKey: 'dimYard', subKey: 'dimYardSub', worlds: ['DACHSHUND YARD', 'THE HOUSE', 'THE PARK', 'THE LOT', 'WINTER STREET', 'THE APARTMENT', 'THE LAKE'], need: { dim: 1, n: 5 }, price: 150 },
+  { key: 'frog', nameKey: 'dimFrog', subKey: 'dimFrogSub', worlds: ['FOREST FLOOR', 'THE POND', 'THE ANTHILL'], need: { dim: 2, n: 8 }, price: 400 },
+  { key: 'moon', nameKey: 'dimMoon', subKey: 'dimMoonSub', worlds: ['MARE TRANQUILLITATIS', 'CRATER HIGHLANDS', 'THE FAR SIDE'], need: { dim: 3, n: 8 }, price: 500 },
   { key: 'soon', nameKey: 'dimSoon', subKey: 'dimSoonSub', worlds: [], soon: true },
 ];
 const WORLDS = [
@@ -1190,6 +1201,7 @@ const WORLDS = [
   { name: 'THE ALPS', sub: 'snow and granite', levels: ['alpine', 'icefall', 'summit', 'alpsPuzzle', 'alpsChal'] },
   { name: 'SKYSCRAPER', sub: 'balconies and cornices', character: 'kong', levels: ['city0', 'citydown', 'cityrun', 'cityup', 'citySecret'] },
   { name: 'PANELKI', sub: 'soviet housing blocks', character: 'cat', levels: ['panel0', 'paneldown', 'panelrun', 'panelup'] },
+  { name: 'THE ROOFTOPS', sub: 'night roofs and chimneys', character: 'kong', levels: ['roofdown', 'roofrun', 'roofup'] },
   { name: 'DACHSHUND YARD', sub: 'a long dog, a long fence', character: 'dog', levels: ['yard0', 'yard1', 'yard2', 'yard3'] },
   { name: 'THE HOUSE', sub: 'corgi · sofa, shelves, a toy drone', character: 'corgi', levels: ['house1', 'house2', 'house3', 'houseSecret'] },
   { name: 'THE PARK', sub: 'border collie · swings, ducks, benches', character: 'collie', levels: ['park1', 'park2', 'park3', 'parkSecret'] },
@@ -1209,7 +1221,7 @@ function orderLevels() { const byKey = Object.fromEntries(LEVELS.map(l => [l.key
 // which level introduces each mechanic (by world order) — those levels get a gentler first version of it
 function levelMechanics(l) {
   const m = new Set(); const flag = f => l.surfaces.some(r => r[5] && r[5].split(' ').includes(f));
-  if ((l.ants || []).length) m.add('ants'); if (l.surfaces.some(r => r[6])) m.add('moving'); if (l.surfaces.some(r => r[4] === 'seesaw')) m.add('seesaw'); if (flag('soft')) m.add('soft'); if (flag('L') || flag('R')) m.add('spikes'); if (flag('ice')) m.add('ice'); if (flag('crumble')) m.add('crumble');
+  if ((l.ants || []).length) m.add('ants'); if (l.surfaces.some(r => r[6])) m.add('moving'); if (l.surfaces.some(r => r[4] === 'seesaw')) m.add('seesaw'); if (flag('soft')) m.add('soft'); if (flag('bounce')) m.add('bounce'); if (flag('L') || flag('R')) m.add('spikes'); if (flag('ice')) m.add('ice'); if (flag('crumble')) m.add('crumble');
   if (l.hawks && l.hawks.length) m.add('birds'); if (l.rocks && l.rocks.length) m.add('rocks'); if (l.winds && l.winds.length) m.add('wind'); if (l.updrafts && l.updrafts.length) m.add('updraft'); if (l.kids && l.kids.length) m.add('kids'); if (l.twin) m.add('twin');
   return m;
 }
@@ -1553,6 +1565,16 @@ function buildRunTerrain(def, idx) {
     if (!T.pit) for (let k = 0; k < 2; k++) { const v = makeVegetation(rr); v.position.set(G2.a + rr() * (G2.b - G2.a), G2.y, -5 - rr() * 8); v.scale.setScalar(0.6); g.add(v); } }
   buildWater(); ENV.groundCalls = mergeStatic(g); scene.add(g); ENV.ground = g; return T;
 }
+function buildTrampoline(s, g) {   // looks springy in every world: a mushroom trampoline in the undergrowth, a garden trampoline in the yard and park, a glowing pad on the moon
+  const M = (c, e) => new THREE.MeshLambertMaterial({ color: c, flatShading: true, emissive: e || 0 }); const st = styleKey(), z0 = LEDGE_FRONT_Z - 1.6, W = s.w, H = (TYPE[s.type] || TYPE.narrow).h + 0.6;
+  const add = (geo, mat, x, y, z) => { const o = new THREE.Mesh(geo, mat); o.position.set(x, y, z); o.castShadow = o.receiveShadow = true; g.add(o); return o; };
+  if (['forest', 'pond', 'anthill'].includes(st)) { add(new THREE.CylinderGeometry(0.32, 0.45, H + 0.2, 8), M(0xefe6d2), s.x, s.y - H / 2 - 0.25, z0);
+    add(new THREE.CylinderGeometry(W / 2 + 0.15, W / 2 + 0.35, 0.45, 14), M(0xd8352a), s.x, s.y - 0.22, z0); add(new THREE.CylinderGeometry(W / 2 + 0.05, W / 2 + 0.15, 0.06, 14), M(0xe24a3a), s.x, s.y + 0.02, z0);
+    for (const [dx, dz, r] of [[-0.55, 0.3, 0.16], [0.4, -0.35, 0.2], [0.1, 0.5, 0.12], [0.75, 0.25, 0.13], [-0.3, -0.55, 0.14]]) add(new THREE.CylinderGeometry(r, r, 0.03, 8), M(0xfff6ea), s.x + dx * W / 2.4, s.y + 0.06, z0 + dz); }
+  else if (st === 'moon') { add(new THREE.CylinderGeometry(W / 2 + 0.1, W / 2 + 0.6, H + 0.3, 7), M(0x7a7a84), s.x, s.y - H / 2 - 0.35, z0); add(new THREE.CylinderGeometry(W / 2, W / 2, 0.14, 16), M(0x3ad8f0, 0x1a8aa0), s.x, s.y - 0.07, z0); }
+  else { for (const [dx, dz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) add(new THREE.CylinderGeometry(0.06, 0.06, H, 5), M(0x4a4a52), s.x + dx * W * 0.36, s.y - H / 2 - 0.1, z0 + dz * 0.8);
+    add(new THREE.CylinderGeometry(W / 2 + 0.2, W / 2 + 0.2, 0.18, 16), M(0x2f6fd0), s.x, s.y - 0.12, z0); add(new THREE.CylinderGeometry(W / 2 - 0.05, W / 2 - 0.05, 0.04, 16), M(0x1c1c22), s.x, s.y - 0.01, z0); }
+}
 function buildArch(s, g, seed) {
   const M = c => new THREE.MeshLambertMaterial({ color: c, flatShading: true }); const st = styleKey(), plank = ['yard', 'park', 'lot'].includes(st); const z0 = LEDGE_FRONT_Z - 1.6, back = z0 - 1.5;   // posts at z -3.4: behind every prop, never in the jump plane
   const gy = ENV.terrain ? Math.min(ENV.terrain.at(s.x1).y, ENV.terrain.at(s.x2).y) : s.y - 8;
@@ -1588,7 +1610,7 @@ function makeVegetation(r) {
     const crown = new THREE.Mesh(new THREE.IcosahedronGeometry(0.5 + r() * 0.2, 0), leaf); crown.position.y = 1.0; crown.castShadow = true; g.add(crown);
   } else if (STYLE.veg === 'plant') {
     const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.16, 0.34, 6), new THREE.MeshLambertMaterial({ color: 0xb5623a, flatShading: true })); pot.position.y = 0.17; g.add(pot);
-    for (let i = 0; i < 4; i++) { const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.6, 4), leaf); leaf.position.set((r() - .5) * 0.2, 0.55, (r() - .5) * 0.2); leaf.rotation.z = (r() - .5) * 0.9; leaf.rotation.x = (r() - .5) * 0.6; g.add(leaf); }
+    for (let i = 0; i < 4; i++) { const blade = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.6, 4), leaf); blade.position.set((r() - .5) * 0.2, 0.55, (r() - .5) * 0.2); blade.rotation.z = (r() - .5) * 0.9; blade.rotation.x = (r() - .5) * 0.6; g.add(blade); }
   } else if (STYLE.veg === 'flowers') {
     const stem = new THREE.MeshLambertMaterial({ color: 0x4f7a34, flatShading: true }); const cols = [0xe85a6a, 0xf0c040, 0xf6f0e8, 0xc06ad0];
     for (let i = 0; i < 3; i++) { const st = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.03, 0.5 + r() * 0.3, 4), stem); st.position.set(-0.25 + i * 0.25, 0.3, (r() - .5) * 0.2); g.add(st); const head = new THREE.Mesh(new THREE.IcosahedronGeometry(0.11, 0), new THREE.MeshLambertMaterial({ color: cols[Math.floor(r() * cols.length)], flatShading: true })); head.position.set(st.position.x, 0.62 + r() * 0.2, st.position.z); g.add(head); }
@@ -1615,7 +1637,7 @@ function makeSurface(r, i, seed) {
   // 6th element: space-separated flags — 'L' / 'R' spikes on that half, 'crumble', 'ice'
   for (const f of String(r[5] || '').split(' ').filter(Boolean)) {
     if (f === 'L') s.spikes = { x1: s.x1, x2: s.x }; else if (f === 'R') s.spikes = { x1: s.x, x2: s.x2 };
-    else if (f === 'crumble') s.crumble = true; else if (f === 'ice') s.ice = true; else if (f === 'soft') s.soft = true; else if (f === 'arch') s.arch = true;
+    else if (f === 'crumble') s.crumble = true; else if (f === 'ice') s.ice = true; else if (f === 'soft') s.soft = true; else if (f === 'arch') s.arch = true; else if (f === 'bounce') s.bounce = true;
   }
   if (r.softSpikes && s.spikes) { const mid = s.x; s.spikes = s.spikes.x1 < mid ? { x1: s.x1, x2: s.x1 + s.w * 0.4 } : { x1: s.x2 - s.w * 0.4, x2: s.x2 }; }
   s.iceStop = !!r.iceStop; s.crumbleSlow = !!r.crumbleSlow;
@@ -1628,12 +1650,13 @@ function makeSurface(r, i, seed) {
   if (ground) { s.x1 -= ext[0]; s.x2 += ext[1]; s.w = s.x2 - s.x1; s.x = (s.x1 + s.x2) / 2; }
   const m = new THREE.Mesh(makeRock(ground ? s.w : s.w + 0.3, ground ? 12 : s.h + 0.6, ground ? 26 : s.d, seed, STYLE.flat ? 0.02 : (ground ? 0.35 : s.jitter), { undercut: !STYLE.flat, solid: true }), mats);
   m.position.set(s.x, ground ? s.y - 6 : s.y - (s.h + 0.6) / 2, ground ? LEDGE_FRONT_Z - 13 + 0.6 : LEDGE_FRONT_Z - s.d / 2); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m); s.mesh = m;
-  if (s.arch) { m.visible = false; m.castShadow = false; s.prop = true; buildArch(s, g, seed); }
+  if (s.bounce) { m.visible = false; m.castShadow = false; s.prop = true; buildTrampoline(s, g); }
+  else if (s.arch) { m.visible = false; m.castShadow = false; s.prop = true; buildArch(s, g, seed); }
   else if (propLedge(s, g, seed, mats)) { m.visible = false; m.castShadow = false; s.prop = true; }
   if (ENV.terrain && (s.finish || s.type === 'terrace') && !s.move) { m.visible = false; m.castShadow = false; }   // the run's terrain is the surface here
   else if (ground) dressGround(s, g, seed); else if (s.type === 'terrace') dressGround(s, g, seed, true);
   if (s.seesaw) { const piv = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 1.0, 1.6, 3), new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true })); piv.position.set(s.x, s.y - 1.4, LEDGE_FRONT_Z - s.d / 2); piv.rotation.y = Math.PI / 2; piv.castShadow = true; g.add(piv); }
-  if ((styleKey() === 'city' || styleKey() === 'panel') && !s.finish && s.w < 20) { // balcony railing along the back edge
+  if (['city', 'panel', 'roofs'].includes(styleKey()) && !s.finish && s.w < 20) { // balcony railing along the back edge
     const rail = new THREE.MeshLambertMaterial({ color: STYLE.dark, flatShading: true }); const bar = new THREE.Mesh(new THREE.BoxGeometry(s.w + 0.2, 0.05, 0.05), rail); bar.position.set(s.x, s.y + 0.95, -1.2); g.add(bar);
     for (let k = 0; k <= Math.round(s.w / 0.6); k++) { const post = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.95, 0.05), rail); post.position.set(s.x - s.w / 2 + k * (s.w / Math.max(1, Math.round(s.w / 0.6))), s.y + 0.48, -1.2); g.add(post); }
   }
@@ -1683,6 +1706,11 @@ function fixLane(h, rects) {
     for (const r of rects) { if (h.x2 < r.x1 - 0.5 || h.x1 > r.x2 + 0.5) continue; if (h.y > r.y - r.h - 1.6 && h.y < r.y + 3.0) { h.y = +(r.y + 3.2).toFixed(1); moved = true; } }
     if (!moved) break;
   }
+  // stacked ledges can leave no free height: then the bird turns back at the rock instead of flying through it (wings count)
+  const lo = Math.min(h.x1, h.x2), hi = Math.max(h.x1, h.x2), blocks = rects.filter(r => h.y + 0.45 > r.y - r.h && h.y - 0.45 < r.y + 0.35).map(r => [r.x1 - 1.3, r.x2 + 1.3]).filter(b => b[1] > lo && b[0] < hi).sort((a, b) => a[0] - b[0]);
+  if (blocks.length) { let best = null, x = lo; for (const [a, b] of blocks.concat([[hi, hi]])) { if (a - x > (best ? best[1] - best[0] : 0)) best = [x, Math.min(a, hi)]; x = Math.max(x, b); }
+    if (best && best[1] - best[0] >= 3) { if (h.x1 <= h.x2) { h.x1 = +best[0].toFixed(1); h.x2 = +best[1].toFixed(1); } else { h.x2 = +best[0].toFixed(1); h.x1 = +best[1].toFixed(1); } }
+    else { const hit = rects.filter(r => h.y + 0.45 > r.y - r.h && h.y - 0.45 < r.y + 0.35 && r.x2 + 1.2 > lo && r.x1 - 1.2 < hi); if (hit.length) h.y = +(Math.max(...hit.map(r => r.y)) + 1.0).toFixed(1); } }
 }
 // horizontal levels run far along x: stretch the backdrop wall along the route and drop the canyon side walls
 function layoutEnv(def, surfaces) {
@@ -2069,7 +2097,7 @@ class Goat {
     const prev = this.pos.clone(); integrate(this.pos, this.vel, this.corr, FIXED); this.graceT -= FIXED; if (this.path) this.path.push(this.pos.clone());
     const p = this.pos, v = this.vel, tol = CONFIG.landingTolerance, o = this.originSurface, g = this.graceT > 0;
     if (v.y > 0) { const r = roofHit(prev, p); if (r) { p.y = r; v.y = -1.6; v.x *= 0.4; this.corr = 0; if (!this.isKid) { thud(0.5, 320, 0.08); spawnDust(p.x, r + CONFIG.goatBodyHeight, 4, 0.8); } } }   // head against the underside of a log
-    if (v.y <= 0) for (const s of L.surfaces) { if (s === o && g) continue; const m = s === o ? 0 : tol; if (prev.y >= s.y - 1e-4 && p.y < s.y && p.x >= s.x1 - m && p.x <= s.x2 + m) return { type: 'land', s, speed: -v.y }; }
+    if (v.y <= 0) for (const s of L.surfaces) { if (s === o && g) continue; const m = s === o ? 0 : tol; if (prev.y >= s.y - 1e-4 && p.y < s.y && p.x >= s.x1 - m && p.x <= s.x2 + m) { if (s.bounce) { p.y = s.y; v.y = clamp(-v.y * CONFIG.bounceGain, CONFIG.bounceMin, CONFIG.bounceMax); this.originSurface = s; this.graceT = 0.12; this.corr = 0; if (!this.isKid) { AudioSys.play('jump'); vib(15); spawnDust(p.x, s.y, 6, 1.0); } return null; } return { type: 'land', s, speed: -v.y }; } }
     if (v.y < 0 && -v.y <= CONFIG.maxEdgeGrabFallSpeed * (G.boosts && G.boosts.strong && !this.isKid ? 3 : 1) && L.def.mod !== 'noCatch') for (const s of L.surfaces) {
       if (s === o && g) continue; if (p.y > s.y - 0.05 || p.y < s.y - CONFIG.edgeGrabDepth) continue; const gd = CONFIG.edgeGrabDistance * (G.boosts && G.boosts.reach && !this.isKid ? 1.6 : 1);
       if (s === o || s.soft) continue;   // never grab the ledge you just left; snow edges give way — a missed hop falls on to whatever is below
@@ -2231,7 +2259,7 @@ function launchStart(goat, aim) {
   return { x: ex, y: s.y, walk: Math.abs(ex - p.x) > 0.05 };
 }
 // the underside of an arch (log / plank bridge) is solid: a rising hero bumps his head on it, and the preview arc ends there
-function roofHit(prev, p) { const h = CONFIG.goatBodyHeight; for (const s of L.surfaces) { if (!s.arch) continue; const b = s.y - 1.0; if (prev.y + h <= b && p.y + h > b && p.x > s.x1 - 0.25 && p.x < s.x2 + 0.25) return b - h; } return null; }
+function roofHit(prev, p) { if (!L || !L.surfaces) return null; const h = CONFIG.goatBodyHeight; for (const s of L.surfaces) { if (!s.arch) continue; const b = s.y - 1.0; if (prev.y + h <= b && p.y + h > b && p.x > s.x1 - 0.25 && p.x < s.x2 + 0.25) return b - h; } return null; }
 function previewTrajectory(from, aim, carry) {
   const pos = from.clone(), vel = launchVelocity(aim, carry); const pts = [pos.clone()]; let t = 0;
   while (t < 2.4 && pos.y > from.y - 11) { const prev = pos.clone(); integrate(pos, vel, 0, FIXED, CONFIG.windPreviewFactor); t += FIXED; if (vel.y > 0) { const r = roofHit(prev, pos); if (r != null) { pos.y = r; pts.push(pos.clone()); break; } } pts.push(pos.clone()); }
@@ -2452,7 +2480,7 @@ function activeHint() {
   if (L.rocks.some(r => inView(r.y) || inView(r.y - r.len / 2))) return 'rocks';
   if (L.winds.some(w => inView(w.y1) || inView(w.y2))) return 'wind';
   if ((L.updrafts || []).some(u => inView(u.y1) || inView(u.y2))) return 'updraft';
-  for (const s of L.surfaces) if (inView(s.y)) { if (s.soft) return 'soft'; if (s.seesaw) return 'seesaw'; if (s.move) return 'moving'; if (s.spikes) return 'spikes'; if (s.crumble) return 'crumble'; if (s.ice) return 'ice'; }
+  for (const s of L.surfaces) if (inView(s.y)) { if (s.bounce) return 'bounce'; if (s.soft) return 'soft'; if (s.seesaw) return 'seesaw'; if (s.move) return 'moving'; if (s.spikes) return 'spikes'; if (s.crumble) return 'crumble'; if (s.ice) return 'ice'; }
   return null;
 }
 function updateHints(dt, playing) {
@@ -2470,7 +2498,7 @@ function updateHints(dt, playing) {
   H.idleT += dt;
   if (key && key !== H.key) {
     const fresh = !H.seen[key], idleAgain = H.idleT > 2.5;
-    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; save.mechSeen = save.mechSeen || {}; if (['birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'scent', 'ants', 'kids', 'twin'].includes(key) && !save.mechSeen[key]) { save.mechSeen[key] = true; persist(); } H.shownAt = now; hint.innerHTML = (key.startsWith('tut') ? t(key) : t('h_' + key)) + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
+    if (fresh || idleAgain) { H.seen[key] = true; H.key = key; save.mechSeen = save.mechSeen || {}; if (['birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'bounce', 'scent', 'ants', 'kids', 'twin'].includes(key) && !save.mechSeen[key]) { save.mechSeen[key] = true; persist(); } H.shownAt = now; hint.innerHTML = (key.startsWith('tut') ? t(key) : t('h_' + key)) + (key === 'daily' ? `<br>${L.def.mods.join(', ')}` : ''); hint.style.opacity = 1; }
   }
   if (H.key && now - H.shownAt > 7 && H.idleT < 2.5) { hint.style.opacity = 0; H.hiddenKey = H.key; H.key = null; }
   if (!key && H.key) { hint.style.opacity = 0; H.key = null; }
@@ -2557,7 +2585,7 @@ function goSettings(from) {
 }
 document.getElementById('bSettings').addEventListener('click', e => { e.stopPropagation(); goSettings('menu'); });
 // ---- mechanics reference: cards with a live mini-scene on the expanded card ----
-const MECHS = ['drag', 'catch', 'air', 'up', 'camera', 'birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'scent', 'ants', 'kids', 'twin'];
+const MECHS = ['drag', 'catch', 'air', 'up', 'camera', 'birds', 'spikes', 'ice', 'crumble', 'rocks', 'wind', 'updraft', 'moving', 'seesaw', 'soft', 'bounce', 'scent', 'ants', 'kids', 'twin'];
 let mechFrom = 'menu', mechOpen = null, mechScene = null;
 function goMech(from) {
   mechFrom = from; mode = from === 'pause' ? 'pause' : 'mech'; hud.style.display = 'none'; const list = document.getElementById('mechList'); list.innerHTML = ''; mechOpen = null; mechScene = null;
@@ -2595,6 +2623,8 @@ function buildMechScene(m, canvas) {
   else if (m === 'ants') { rock(-3.2, 0.8, 2.2); rock(2, -1.2, 4.2); const ant = makeAnt(); ant.position.set(2, -1.2, 0.3); ps.add(ant); S.extra.ant = ant; S.path = arc({ x: -3.2, y: 0.8 }, { x: 2, y: -1.2 }, 1.4, 3); }
   else if (m === 'scent') { rock(-3, -1.2, 3); rock(3.2, 1.6, 2); S.extra.paws = []; for (let i = 1; i <= 6; i++) { const paw = new THREE.Mesh(new THREE.CircleGeometry(0.16, 8), new THREE.MeshBasicMaterial({ color: 0x3a2a1a, transparent: true, opacity: 0.5 })); paw.position.set(lerp(-3, 3.2, i / 6), lerp(-0.9, 1.9, i / 6) + Math.sin(i / 6 * Math.PI), 0.6); ps.add(paw); S.extra.paws.push(paw); } goat.spawn({ y: -1.2, x1: -10, x2: 10, w: 20, x: 0 }, -3); }
   else if (m === 'soft') { rock(-3.2, 2.2, 2.2); const r2 = rock(2, -1.4, 4); const snow = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshLambertMaterial({ color: 0xf6f9fc, flatShading: true })); snow.scale.set(2.2, 0.45, 1.6); snow.position.set(2, -1.35, -0.4); ps.add(snow); S.path = arc({ x: -3.2, y: 2.2 }, { x: 2, y: -1.3 }, 1.2, 2.8); }
+  else if (m === 'bounce') { rock(-3.6, 0.6, 2.0); rock(3.4, 2.4, 2.2); const pad = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.15, 0.4, 14), new THREE.MeshLambertMaterial({ color: 0xd8352a, flatShading: true })); pad.position.set(-0.2, -1.7, 0); ps.add(pad);
+    S.path = t => { const k = (t % 3.2) / 3.2; if (k < 0.45) { const q = k / 0.45; return { x: -3.6 + 3.4 * q, y: 0.6 + 1.2 * 4 * q * (1 - q) - 2.1 * q }; } const q = (k - 0.45) / 0.55; return { x: -0.2 + 3.6 * q, y: -1.5 + 3.9 * q + 3.2 * 4 * q * (1 - q) }; }; }
   else if (m === 'seesaw') { rock(-3.4, 0.8, 2.2); S.extra.ss = rock(1.6, -1.2, 4.6); S.extra.ss.position.y = -1.2 - 0.9; S.path = t => { const k = (t % 3.2) / 3.2; return { x: -3.4 + 4.2 * Math.min(1, k * 1.3), y: 0.8 - 2 * Math.min(1, k * 1.3) + 1.6 * 4 * k * (1 - k), k }; }; }
   else if (m === 'moving') { rock(-3.2, 0.8, 2.2); S.extra.mv = rock(2.4, -1.2, 2.6); S.path = t => { const k = (t % 3) / 3; const mx = 2.4 + Math.sin(t * 1.6) * 1.4; return { x: -3.2 + (mx + 3.2) * k, y: 0.8 - 2 * k + 1.5 * 4 * k * (1 - k), k }; }; }
   else if (m === 'kids') { rock(-3, 0.5, 2.6); rock(3, -1.2, 2.6); const kid = new Goat(currentSkin().sk, 0.6, currentSkin().ch); scene.remove(kid.root); ps.add(kid.root); kid.root.rotation.y = 0.35; S.extra.kid = kid; S.path = arc({ x: -3, y: 0.5 }, { x: 3, y: -1.2 }, 1.4, 3.2); }
@@ -2695,7 +2725,9 @@ function showScreen(id) {
   if (tabbed) { paintIcons(); refreshBadges(); }
 }
 const fresh = () => performance.now() - screenShownAt < 300;
-function goMenu() {
+function migrateDims() { if (save.dimsMigrated) return; save.dimsOpen = save.dimsOpen || {}; const old = { city: [0, 8], yard: [1, 5], frog: [2, 8], moon: [0, 14] };   // what the old level-count rule had already opened stays open
+  for (const d of DIMS) { const o = old[d.key]; if (o && levelsDone(dimKeys(o[0])) >= o[1]) save.dimsOpen[d.key] = true; } save.dimsMigrated = true; persist(); }
+function goMenu() { migrateDims();
   if (pendingReload) { pendingReload = false; location.reload(); return; }
   $('boostBar').classList.remove('show');
   forcedChar = null; if (dio.scene) dioCluster(false);
@@ -2762,7 +2794,7 @@ function refreshChal() {
   $('expInfo').textContent = t('expBest', { n: stats().expBest || 0 }); $('endInfo').textContent = t('runsN', { n: Math.max(0, ...Object.values(save.endless || {}).map(Number).filter(n => !isNaN(n))) }) + ' · ' + t('endlessNote', { n: CONFIG.endlessDailySalt });
 
 }
-const CHANGELOG = { en: ['Home hub with tiles, tab bar and one-tap PLAY', 'Heroes screen with a big figure and a separate customisation window', 'Seasons, accessories, expeditions of 5/7/9 stages, synthesized sound', 'Ghost runs and share links', 'Route bot checks that every level can be finished', 'Outdoor runs stand on real ground: stems, pools and ditches — nothing floats', 'Logs and plank bridges over the route: pass under, climb up past the end, walk back for the fly', 'The result says why you lost; ants turn back from a hero who stands still', 'Runs: water fills its ditches, soil cuts with strata, stones and roots, a higher camera', 'Red dots now point at the exact item inside a screen; stats open from the profile button', 'Runs: the hero stands on caps and pads, aim follows the camera, smoother frame rate, a lived-in finish', 'Heroes by dimension: flip pages with ‹ ›, each dimension keeps its own hero; head bumps on logs'], ru: ['Хаб «Домой»: плитки, таб-бар, «Играть» в один тап', 'Экран героев с крупной фигуркой и отдельной кастомизацией', 'Сезоны, аксессуары, походы на 5/7/9 этапов, синтезированный звук', 'Призраки забегов и ссылки-вызовы', 'Бот маршрутов проверяет проходимость каждого уровня', 'Уличные забеги стоят на настоящей земле: стебли, пруды и канавы — ничего не парит', 'Брёвна и мостики над маршрутом: пройди под ними, поднимись за дальним концом и вернись за мухой', 'Экран результата называет причину проигрыша; муравей разворачивается перед стоящим героем', 'Забеги: вода заполняет канавы, срезы земли со слоями, камнями и корнями, камера выше', 'Красные метки показывают конкретный пункт внутри экрана; статистика открывается с кнопки профиля', 'Забеги: герой стоит на шляпках и кувшинках, прицел учитывает камеру, плавнее кадр, живой финиш', 'Герои по измерениям: листай ‹ ›, у каждого измерения свой герой; удар головой о бревно'] };
+const CHANGELOG = { en: ['Home hub with tiles, tab bar and one-tap PLAY', 'Heroes screen with a big figure and a separate customisation window', 'Seasons, accessories, expeditions of 5/7/9 stages, synthesized sound', 'Ghost runs and share links', 'Route bot checks that every level can be finished', 'Outdoor runs stand on real ground: stems, pools and ditches — nothing floats', 'Logs and plank bridges over the route: pass under, climb up past the end, walk back for the fly', 'The result says why you lost; ants turn back from a hero who stands still', 'Runs: water fills its ditches, soil cuts with strata, stones and roots, a higher camera', 'Red dots now point at the exact item inside a screen; stats open from the profile button', 'Runs: the hero stands on caps and pads, aim follows the camera, smoother frame rate, a lived-in finish', 'Heroes by dimension: flip pages with ‹ ›, each dimension keeps its own hero; head bumps on logs', 'Trampolines in the undergrowth, yard, park and on the moon: aim the first jump for the rebound'], ru: ['Хаб «Домой»: плитки, таб-бар, «Играть» в один тап', 'Экран героев с крупной фигуркой и отдельной кастомизацией', 'Сезоны, аксессуары, походы на 5/7/9 этапов, синтезированный звук', 'Призраки забегов и ссылки-вызовы', 'Бот маршрутов проверяет проходимость каждого уровня', 'Уличные забеги стоят на настоящей земле: стебли, пруды и канавы — ничего не парит', 'Брёвна и мостики над маршрутом: пройди под ними, поднимись за дальним концом и вернись за мухой', 'Экран результата называет причину проигрыша; муравей разворачивается перед стоящим героем', 'Забеги: вода заполняет канавы, срезы земли со слоями, камнями и корнями, камера выше', 'Красные метки показывают конкретный пункт внутри экрана; статистика открывается с кнопки профиля', 'Забеги: герой стоит на шляпках и кувшинках, прицел учитывает камеру, плавнее кадр, живой финиш', 'Герои по измерениям: листай ‹ ›, у каждого измерения свой герой; удар головой о бревно', 'Трамплины в Подлеске, во дворе, в парке и на Луне: целься первым прыжком в отскок'] };
 let verTaps = 0;
 function goAbout() {
   mode = 'select'; hud.style.display = 'none'; const log = JSON.parse(localStorage.getItem('mountainGoatErrors') || '[]');
@@ -2804,14 +2836,19 @@ function worldLevelsDone(wi) { return levelsDone(WORLDS[wi].levels); }
 function worldCount(wi) { return WORLDS[wi].levels.filter(k => { const l = LEVELS.find(l => l.key === k); return l && !l.tutorial && !l.secret; }).length; }
 function dimOf(wi) { return DIMS.find(d => d.worlds.includes(WORLDS[wi].name)); }
 function dimKeys(i) { return DIMS[i].worlds.flatMap(n => (WORLDS.find(w => w.name === n) || { levels: [] }).levels); }
-function dimOpen(d) { if (d.soon) return false; if (save.settings.devUnlock) return true; if (!d.need) return true; return levelsDone(dimKeys(d.need.dim)) >= d.need.n; }
-function dimLockText(d) { if (d.soon) return t('dimSoonSub'); const nd = DIMS[d.need.dim]; return t('dimLocked', { n: d.need.n, d: t(nd.nameKey), have: levelsDone(dimKeys(d.need.dim)) }); }
+function dimOpen(d) { if (d.soon) return false; if (save.settings.devUnlock) return true; if (!d.price) return true; return !!(save.dimsOpen && save.dimsOpen[d.key]); }
+function dimPrevOpen(d) { const i = DIMS.indexOf(d); return i <= 0 || dimOpen(DIMS[i - 1]); }
+function dimCanBuy(d) { return !!d.price && !dimOpen(d) && dimPrevOpen(d) && save.totalSaltCrystals >= d.price; }
+function buyDim(d) { if (!dimCanBuy(d)) return false; save.totalSaltCrystals -= d.price; save.dimsOpen = save.dimsOpen || {}; save.dimsOpen[d.key] = true; persist(); return true; }
+function dimLockText(d) { if (d.soon) return t('dimSoonSub'); if (!dimPrevOpen(d)) return t('dimAfter', { d: t(DIMS[DIMS.indexOf(d) - 1].nameKey) }); return t(dimCanBuy(d) ? 'dimBuy' : 'dimPrice', { p: d.price, have: save.totalSaltCrystals }); }
 function worldOpen(wi) { if (save.settings.devUnlock) return true; // first world of a dimension: the dimension must be open; otherwise 60% of the previous world's stars OR all its levels done
   const d = dimOf(wi); const pos = d.worlds.indexOf(WORLDS[wi].name);
   if (pos === 0) return dimOpen(d);
   const prev = WORLDS.findIndex(w => w.name === d.worlds[pos - 1]);
-  return worldStars(prev) >= Math.ceil(worldMax(prev) * 0.6) || worldLevelsDone(prev) >= worldCount(prev);
+  return worldStars(prev) >= worldNeed(prev);
 }
+function worldNeed(wi) { return Math.ceil(worldMax(wi) * 0.75); }
+function lockLabel(wi) { const d = dimOf(wi); const pos = d ? d.worlds.indexOf(WORLDS[wi].name) : 0; if (pos <= 0 || !d) return t('locked'); const prev = WORLDS.findIndex(w => w.name === d.worlds[pos - 1]); return `🔒 ★ ${worldStars(prev)} / ${worldNeed(prev)}`; }
 function goSelect() {
   mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; $('bBackMenu').style.display = ''; $('bBackMenu').textContent = t('menu'); if (save.worldsSeen) for (const w of WORLDS.filter((w, i) => worldOpen(i))) if (!save.worldsSeen.includes(w.name)) NEW_NOW.worlds.add(w.name);
   { const nw = [...NEW_NOW.worlds]; $('mapNew').textContent = nw.length ? t('newWorld') + ': ' + nw.join(' · ') : ''; $('mapNew').classList.toggle('show', nw.length > 0); }
@@ -2829,20 +2866,21 @@ function goSelect() {
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y, r, col] = pts[i];
       svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="${r}" fill="${open ? col : '#3a3c44'}"/>`; for (let c = 0; c < 5; c++) { const a = c * 1.9 + i, rr = r * (0.16 + (c % 3) * 0.05); svg += `<ellipse cx="${x + Math.cos(a) * r * 0.55}" cy="${y + Math.sin(a) * r * 0.55}" rx="${rr}" ry="${rr * 0.7}" fill="#000" opacity=".22"/>`; }
       svg += `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#fff8ee" stroke-width="3" opacity=".9"/><text x="${x}" y="${y + 8}" text-anchor="middle" font-size="22" fill="#1a1c24" font-weight="800">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
-      svg += `<text x="${x}" y="${y + r + 24}" text-anchor="middle" font-size="14" font-weight="700" fill="#fff8ee">${esc(w.name)}</text><text x="${x}" y="${y + r + 42}" text-anchor="middle" font-size="12" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
+      svg += `<text x="${x}" y="${y + r + 24}" text-anchor="middle" font-size="14" font-weight="700" fill="#fff8ee">${esc(w.name)}</text><text x="${x}" y="${y + r + 42}" text-anchor="middle" font-size="12" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else if (d.key === 'mountain') { // a mountain: worlds are tiers from the summit down
     const pts = wis.map((wi, i) => [i % 2 ? 250 : 110, 90 + i * 112]);
     svg += `<path d="M0 640 L0 420 L70 300 L130 340 L180 120 L230 190 L270 60 L320 200 L360 140 L360 640 Z" fill="#8d6240" opacity=".55"/><path d="M0 640 L0 500 L90 420 L160 470 L240 330 L300 400 L360 320 L360 640 Z" fill="#b9865a" opacity=".55"/><path d="M160 160 L180 120 L200 160 Z" fill="#f4f7fa" opacity=".8"/>`;
     svg += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#fff8ee" stroke-width="3" stroke-dasharray="6 8" opacity=".7"/>`;
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
       svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d9bc8e') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
-      svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
+      svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else if (d.key === 'city') { // a tower block: worlds are floors from the ground up
     svg += `<rect x="70" y="60" width="220" height="580" fill="#7c8189" opacity=".8"/><rect x="60" y="50" width="240" height="14" fill="#5c6169"/>`; for (let f = 0; f < 9; f++) for (let c = 0; c < 6; c++) svg += `<rect x="${86 + c * 36}" y="${80 + f * 60}" width="22" height="28" fill="${(f * 7 + c) % 3 ? '#3a4658' : '#ffe9a8'}" opacity=".9"/>`;
-    const n = wis.length; const pts = wis.map((wi, i) => [180, 560 - i * (440 / Math.max(1, n - 1))]);
+    const n = wis.length; const pts = wis.map((wi, i) => [i % 2 ? 236 : 124, 560 - i * (440 / Math.max(1, n - 1))]);   // floors zig-zag up the block
+    for (let i = 1; i < n; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], ym = (y0 + y1) / 2; svg += `<path d="M ${x0} ${y0} C ${x0} ${ym}, ${x1} ${ym}, ${x1} ${y1}" stroke="#fff8ee" stroke-width="5" stroke-dasharray="10 9" fill="none" opacity=".85"/>`; }   // the fire-escape path between floors
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
       svg += `<rect x="70" y="${y - 30}" width="220" height="60" fill="#c9ccd3" opacity="${open ? .35 : .15}"/><g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#c0c5cd') : '#4a4e55'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#2a2f38">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
-      svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
+      svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else { // a street: worlds left to right, the map scrolls sideways
     W = Math.max(360, 80 + wis.length * 150); H = 360;
     svg += `<rect x="0" y="0" width="${W}" height="230" fill="#a8d0ea" opacity=".55"/><rect x="0" y="230" width="${W}" height="130" fill="#7fa74e" opacity=".8"/><rect x="0" y="250" width="${W}" height="8" fill="#b98a5a"/>`; for (let i = 0; i < W / 30; i++) svg += `<rect x="${i * 30 + 6}" y="212" width="8" height="40" fill="#b98a5a"/>`;
@@ -2851,12 +2889,12 @@ function goSelect() {
     svg += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#fff8ee" stroke-width="3" stroke-dasharray="6 8" opacity=".7"/>`;
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
       svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d2a878') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
-      svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : t('locked')}</text></g>`; });
+      svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   }
   const space = d.key === 'moon', street = !space && W > 360; $('selTitle').style.display = ''; $('selTitle').textContent = t(d.nameKey); mv.className = space ? 'space' : street ? 'street' : 'tall'; mv.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="${space ? 'xMidYMid' : street ? 'xMinYMid' : 'xMidYMin'} slice">${svg}</svg>`;
   setTimeout(() => { if (space) { const sz = Math.max(mv.clientWidth, mv.clientHeight) * 1.9; const sv = mv.querySelector('svg'); sv.style.width = sv.style.height = sz + 'px'; mv.dataset.k = 1; let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; const sp = [[560, 380], [860, 640], [330, 760], [900, 250], [640, 900]][cur % 5]; mv.scrollLeft = sp[0] / W * sz - mv.clientWidth / 2; mv.scrollTop = sp[1] / H * sz - mv.clientHeight / 2; }
     if (!space && !street) { const sv = mv.querySelector('svg'); const kk = sv.getBoundingClientRect().height / H; let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; const ny = d.key === 'city' ? 560 - cur * (440 / Math.max(1, wis.length - 1)) : 90 + cur * 112; mv.scrollTop = Math.max(0, ny * kk - mv.clientHeight * 0.55); }
-    const k = street ? mv.clientHeight / H : mv.clientWidth / W; if (street) { let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; mv.scrollLeft = Math.max(0, (cur * 150 + 80) * k - mv.clientWidth / 2); }
+    const k = street ? mv.clientHeight / H : mv.clientWidth / W; const back = MAP_POS[curDim]; if (back) setTimeout(() => { mv.scrollLeft = back[0]; mv.scrollTop = back[1]; }, 0); if (street) { let cur = wis.findIndex(wi => worldOpen(wi) && worldLevelsDone(wi) < worldCount(wi)); if (cur < 0) cur = 0; mv.scrollLeft = Math.max(0, (cur * 150 + 80) * k - mv.clientWidth / 2); }
     const canScroll = space || (street ? mv.scrollWidth > mv.clientWidth + 8 : mv.scrollHeight > mv.clientHeight + 8); const hint = $('mapHint'); hint.textContent = space ? t('spacePan') : street ? t('swipeLR') : t('swipeUD'); hint.classList.toggle('show', canScroll && !(save.mapHinted || {})[d.key]);
     const done = () => { hint.classList.remove('show'); save.mapHinted = save.mapHinted || {}; save.mapHinted[d.key] = true; persist(); mv.removeEventListener('scroll', done); }; if (canScroll) { mv.addEventListener('scroll', done, { once: true }); setTimeout(() => hint.classList.remove('show'), 6000); } }, 0);
   for (const n of mv.querySelectorAll('.node')) n.addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; const wi = +n.dataset.wi; if (worldOpen(wi)) goWorld(wi); else { const { w } = nodeInfo(wi); const pos = d.worlds.indexOf(w.name); if (pos > 0) { const prev = WORLDS.findIndex(x => x.name === d.worlds[pos - 1]); UI.alert(`<b>${w.name}</b><br>${t('earnStars', { n: Math.ceil(worldMax(prev) * 0.6), w: WORLDS[prev].name, g: worldStars(prev) })}<br>${t('worldsDone', { a: worldLevelsDone(prev), b: worldCount(prev) })}`, { kind: 'err', title: t('lockedTitle') }); } } });
@@ -2865,13 +2903,16 @@ function goSelect() {
 function goWorld(wi) {
   $('mapHint').classList.remove('show'); $('selTitle').style.display = ''; $('selTitle').style.fontSize = ''; $('selTitle').textContent = WORLDS[wi].name; $('bBackMenu').style.display = ''; mode = 'select'; curWorld = wi; hud.style.display = 'none'; hint.style.opacity = 0; $('mapView').style.display = 'none'; $('levelList').style.display = 'block'; if (!dio.scene) buildDio(); dio.bg = true; const w = WORLDS[wi]; const list = $('levelList'); list.innerHTML = ''; $('bBackMenu').textContent = t('worlds');
   const h = document.createElement('div'); h.className = 'lbl'; h.style.margin = '0 0 6px'; h.textContent = `${t('world')} ${wi + 1} · ${w.name}`; list.appendChild(h);
+  let prevDone = true;
   w.levels.forEach((k, li) => {
     const idx = LEVELS.findIndex(l => l.key === k), lv = LEVELS[idx]; const stars = (save.levels[k] || { stars: 0 }).stars;
+    const open = lv.secret || save.settings.devUnlock || prevDone || !!save.levels[k]; if (!lv.secret) prevDone = !!save.levels[k];   // levels open one by one: beat one to open the next
     const b = document.createElement('div'); b.className = 'btn';
     const found = !lv.secret || save.settings.devUnlock || (save.secretFound && save.secretFound[k]);
     const nm = lv.secret && !found ? t('secretHidden') : lv.nameKey ? t(lv.nameKey) : lv.name; const ICO = { ants: '🐜', birds: '🐦', spikes: '▲', ice: '❄', crumble: '✶', rocks: '●', wind: '≋', updraft: '⇧', moving: '⇄', seesaw: '⚖', soft: '☁', kids: '♥', twin: '⇊' }; const icons = [...levelMechanics(lv)].map(m => ICO[m]).join(' ');
     b.innerHTML = lv.tutorial ? `${wi + 1}-${li} · ${nm}<small>${t('firstStepsSub')}</small><small>${stars ? '✓' : ''}</small>` : `${wi + 1}-${li + (WORLDS[wi].levels.some(k => (LEVELS.find(l => l.key === k) || {}).tutorial) ? 0 : 1)} · ${nm}<small>${lv.secret ? (found ? '✦ ' + t('secret') + ' · ' : t('secretHint')) : ''}${lv.puzzle ? '🧩 ' + t('puzzle') + ' · ' : ''}${lv.challenge ? '⚡ ' + t('mod_' + lv.mod) + ' · ' : ''}${(lv.twists || []).map(m => '✦ ' + t('mut_' + m) + ' · ').join('')}${(lv.secret && !found) ? '' : t(lv.horizontal ? 'run' : lv.ascent ? 'up' : lv.twin ? 'twin' : 'down')}${icons && found ? ' · ' + icons : ''}</small><small>${'★'.repeat(Math.min(5, stars)) + '☆'.repeat(Math.max(0, 5 - stars))}</small>${stars ? `<small style="opacity:.7">${goalsText(lv).join(' · ')}</small>` : ''}`;
-    if (lv.secret && !found) b.classList.add('dim'); else b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startLevel(idx); });
+    if (!open) { b.classList.add('dim'); b.innerHTML = `🔒 ${b.innerHTML.split('<small>')[0]}<small>${t('lockedLvl')}</small>`; }
+    else if (lv.secret && !found) b.classList.add('dim'); else b.addEventListener('click', e => { e.stopPropagation(); if (!fresh()) startLevel(idx); });
     list.appendChild(b);
   });
   showScreen('scSelect');
@@ -3009,7 +3050,7 @@ function finishLevel(win, reason) {
 }
 
 $('bPlay').addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; initAudio(); const d = DIMS[curDim];
-  if (!dimOpen(d)) { hubToast(dimLockText(d)); return; }
+  if (!dimOpen(d)) { if (dimCanBuy(d)) { buyDim(d); AudioSys.play('secret'); hubToast(t('dimOpened', { d: t(d.nameKey) })); goMenu(); } else hubToast(dimLockText(d)); return; }
   if (!save.levels.steps && !Object.keys(save.levels).length) { startLevel(LEVELS.findIndex(l => l.key === 'steps')); return; }
   const nx = nextLevelIn(curDim); if (nx.l) startLevel(LEVELS.indexOf(nx.l)); });
 $('bMode').addEventListener('click', e => { e.stopPropagation(); if (fresh()) return; if (!dimOpen(DIMS[curDim])) { hubToast(dimLockText(DIMS[curDim])); return; } goSelect(); });
@@ -3028,6 +3069,7 @@ $('tabColl').addEventListener('click', e => { e.stopPropagation(); goColl(); });
 $('bCollMech').addEventListener('click', e => { e.stopPropagation(); if (!fresh()) goMech('menu'); });
 $('bBackMenu').addEventListener('click', e => { e.stopPropagation(); if ($('bBackMenu').textContent === t('worlds')) goSelect(); else goMenu(); });
 // space map: pinch / wheel / double-tap zoom, keeping the point under the fingers still
+$('mapView').addEventListener('scroll', () => { const mv = $('mapView'); if (mv.style.display !== 'none' && mode === 'select') MAP_POS[curDim] = [mv.scrollLeft, mv.scrollTop]; }, { passive: true });
 { const mv = $('mapView'); const ptrs = new Map(); let pinch = null, lastTap = 0;
   const base = () => Math.max(mv.clientWidth, mv.clientHeight) * 1.9;
   const setScale = (k, cx, cy) => { const sv = mv.querySelector('svg'); if (!sv) return; const cur = sv.getBoundingClientRect().width; const b = base(); k = clamp(k, 0.75, 3.2); const nw = b * k; const r = mv.getBoundingClientRect(); const px = cx - r.left + mv.scrollLeft, py = cy - r.top + mv.scrollTop; const f = nw / cur;
@@ -3346,7 +3388,7 @@ history.pushState({ mg: 1 }, ''); window.addEventListener('popstate', () => { if
 document.addEventListener('visibilitychange', () => { if (document.hidden && mode === 'play') pauseGame(); if (actx) { if (document.hidden) actx.suspend(); else actx.resume(); } });
 
 // ---------- run snapshots (endless & daily): resume from the last safe ledge ----------
-function rowOf(s) { const f = []; if (s.spikes) f.push(s.spikes.x1 <= s.x1 + 1e-6 ? 'L' : 'R'); if (s.crumble) f.push('crumble'); if (s.ice) f.push('ice'); if (s.soft) f.push('soft'); const r = [s.id, s.x0, s.y0, s.w, s.type]; if (f.length || s.move) r.push(f.join(' ')); if (s.move) r.push(s.move); return r; }
+function rowOf(s) { const f = []; if (s.bounce) f.push('bounce'); if (s.spikes) f.push(s.spikes.x1 <= s.x1 + 1e-6 ? 'L' : 'R'); if (s.crumble) f.push('crumble'); if (s.ice) f.push('ice'); if (s.soft) f.push('soft'); const r = [s.id, s.x0, s.y0, s.w, s.type]; if (f.length || s.move) r.push(f.join(' ')); if (s.move) r.push(s.move); return r; }
 function snapshotRun() {
   if (!L || !(L.endless || L.def.daily) || mode === 'result') return; const g = goats[0]; if (!g || !g.lastSafe || !L.surfaces.includes(g.lastSafe.s)) return;
   const d = L.def, def = { key: d.key, name: d.name, style: L.endless ? BIOME_CYCLE[L.gen.biome % BIOME_CYCLE.length] : d.style, endless: !!d.endless, ascent: !!d.ascent, daily: !!d.daily, biome: d.biome, character: d.character, forceChar: d.forceChar, horizontal: !!d.horizontal, date: d.date, mods: d.mods, stars: d.stars, zones: d.zones || [], blockers: [], herd: d.herd || [],
