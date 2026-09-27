@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v331 -->
+<!-- build v332 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -83,7 +83,8 @@
   .zoomBox { width:100%; max-height:62vh; overflow:auto; border-radius:var(--r-10); touch-action:pan-x pan-y; overscroll-behavior:contain; scrollbar-width:none; } .zoomBox::-webkit-scrollbar { display:none; } .zoomBox img { max-width:none; }
   #mapHint { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(140px + env(safe-area-inset-bottom)); z-index:3; display:none; padding:6px 14px; border-radius:var(--r-14); background:var(--dust-80); font-size:var(--t-cap); font-weight:700; letter-spacing:.06em; pointer-events:none; animation:hintPulse 1.6s ease-in-out infinite; }
   #mapHint.show { display:block; } @keyframes hintPulse { 0%,100% { opacity:.55; transform:translateX(-50%) scale(1); } 50% { opacity:1; transform:translateX(-50%) scale(1.06); } }
-  #scSelect #selTitle { text-shadow:0 2px 10px var(--shade-3), 0 0 3px rgba(0,0,0,.8); } #mapView .node { cursor:pointer; } #mapView .node text { font-family:inherit; }
+  #scSelect #selTitle { text-shadow:0 2px 10px var(--shade-3), 0 0 3px rgba(0,0,0,.8); } #mapView .node { cursor:pointer; filter:drop-shadow(0 5px 5px rgba(0,0,0,.6)) drop-shadow(0 0 2px rgba(0,0,0,.5)); }   /* SP4: badges float above the painted map */
+#mapView .node text { paint-order:stroke; stroke:rgba(40,24,10,.9); stroke-width:3px; font-weight:900; } #mapView .node text { font-family:inherit; }
   .list { max-height:none; overflow-y:visible; overflow-x:hidden !important; scrollbar-width:none; touch-action:pan-y; width:100%; max-width:420px; padding:0 4px; box-sizing:border-box; }
   .screen.show { display:flex; }
   .screen h1 { font-size:var(--t-display); margin:0 0 4px; letter-spacing:.06em; font-weight:800; }
@@ -386,7 +387,7 @@ body > #bMgNext .snT { display:none !important; } body > #bMgNext .snPlay { widt
 #splash.show { display:block; } #splash.fade { opacity:0; transition:opacity .5s; pointer-events:none; }
 #splash .splashBar { position:absolute; left:12%; right:12%; bottom:calc(9% + env(safe-area-inset-bottom)); height:8px; border-radius:4px; background:rgba(255,246,216,.25); overflow:hidden; }
 #splash .splashBar i { display:block; height:100%; width:0; background:#ffd76a; border-radius:4px; animation:splashFill 1.4s ease-out forwards; } @keyframes splashFill { to { width:100%; } }
-#scSelect[data-bg] { background-size:cover; background-position:center; }
+#scSelect[data-bg] { background-size:cover; background-position:center; background-blend-mode:multiply; background-color:#9a8b7a; }   /* SP4: the painting is dimmed and slightly desaturated under the map */
 #scSelect[data-bg="mountain"] { background-image:url(img/dim-mountain.png); } #scSelect[data-bg="city"] { background-image:url(img/dim-city.png); } #scSelect[data-bg="yard"] { background-image:url(img/dim-yard.png); } #scSelect[data-bg="frog"] { background-image:url(img/dim-frog.png); } #scSelect[data-bg="moon"] { background-image:url(img/dim-moon.png); }
 #scResult.win { background-image:url(img/win.png); background-size:cover; background-position:center; }
 .pixTxt { display:block; margin:0 auto; image-rendering:pixelated; pointer-events:none; }
@@ -1041,7 +1042,7 @@ const FOE = { en: { hawk: 'hawks', eagle: 'eagles', falcon: 'falcons', raven: 'r
 function foeName() { const b = (typeof STYLE !== 'undefined' && STYLE && STYLE.bird) || 'hawk'; const f = FOE[LANG] || FOE.en; return f[b] || FOE.en[b] || (LANG === 'ru' ? 'птицы' : 'birds'); }
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (str.includes('{foe}') || str.includes('{Foe}')) { const f = foeName(); str = str.split('{foe}').join(f).split('{Foe}').join(f[0].toUpperCase() + f.slice(1)); } if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v331', date: '2026-09-23' };
+const BUILD = { version: 'v332', date: '2026-09-23' };
 const NEW_NOW = { chars: new Set(), worlds: new Set() };
 const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
@@ -4172,21 +4173,21 @@ function goSelect() { clearLevelOverlays(); { const sc = $('scSelect'); delete s
     for (let i = 1; i < pts.length; i++) svg += `<path d="M${pts[i - 1][0]} ${pts[i - 1][1]} Q${(pts[i - 1][0] + pts[i][0]) / 2 + 60} ${(pts[i - 1][1] + pts[i][1]) / 2 - 80} ${pts[i][0]} ${pts[i][1]}" fill="none" stroke="#fff8ee" stroke-width="2" stroke-dasharray="4 10" opacity=".5"/>`;
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y, r, col] = pts[i];
       svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="${r}" fill="${open ? col : '#3a3c44'}"/>`; svg += nodeArt(wi, x, y, r, open); for (let c = 0; c < 5; c++) { const a = c * 1.9 + i, rr = r * (0.16 + (c % 3) * 0.05); svg += `<ellipse cx="${x + Math.cos(a) * r * 0.55}" cy="${y + Math.sin(a) * r * 0.55}" rx="${rr}" ry="${rr * 0.7}" fill="#000" opacity=".22"/>`; }
-      svg += `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#fff8ee" stroke-width="3" opacity=".9"/><text x="${x}" y="${y + 11}" text-anchor="middle" font-size="30" fill="#1a1c24" font-weight="800">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#fff8ee" stroke-width="3" opacity=".9"/><text x="${x}" y="${y + 11}" text-anchor="middle" font-size="30" fill="#fff8ee" font-weight="800">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + r + 36}" text-anchor="middle" font-size="26" font-weight="800" fill="#fff8ee">${esc(w.name)}</text><text x="${x}" y="${y + r + 64}" text-anchor="middle" font-size="22" fill="#fff8ee" opacity=".9">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else if (d.key === 'mountain') { // a mountain: worlds are tiers from the summit down
     const pts = wis.map((wi, i) => [i % 2 ? 250 : 110, 90 + i * 112]);
     if (!ART) svg += `<path d="M0 640 L0 420 L70 300 L130 340 L180 120 L230 190 L270 60 L320 200 L360 140 L360 640 Z" fill="#8d6240" opacity=".55"/><path d="M0 640 L0 500 L90 420 L160 470 L240 330 L300 400 L360 320 L360 640 Z" fill="#b9865a" opacity=".55"/><path d="M160 160 L180 120 L200 160 Z" fill="#f4f7fa" opacity=".8"/>`;
     svg += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#fff8ee" stroke-width="3" stroke-dasharray="6 8" opacity=".7"/>`;
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
-      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d9bc8e') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d9bc8e') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="20" fill="#fff8ee">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else if (d.key === 'city') { // a tower block: worlds are floors from the ground up
     if (!ART) { svg += `<rect x="70" y="60" width="220" height="580" fill="#7c8189" opacity=".8"/><rect x="60" y="50" width="240" height="14" fill="#5c6169"/>`; for (let f = 0; f < 9; f++) for (let c = 0; c < 6; c++) svg += `<rect x="${86 + c * 36}" y="${80 + f * 60}" width="22" height="28" fill="${(f * 7 + c) % 3 ? '#3a4658' : '#ffe9a8'}" opacity=".9"/>`; }
     const n = wis.length; const pts = wis.map((wi, i) => [i % 2 ? 236 : 124, 560 - i * (440 / Math.max(1, n - 1))]);   // floors zig-zag up the block
     for (let i = 1; i < n; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], ym = (y0 + y1) / 2; svg += `<path d="M ${x0} ${y0} C ${x0} ${ym}, ${x1} ${ym}, ${x1} ${y1}" stroke="#fff8ee" stroke-width="5" stroke-dasharray="10 9" fill="none" opacity=".85"/>`; }   // the fire-escape path between floors
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
-      svg += `<rect x="70" y="${y - 30}" width="220" height="60" fill="#c9ccd3" opacity="${open ? .35 : .15}"/><g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#c0c5cd') : '#4a4e55'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#2a2f38">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `${ART ? '' : `<rect x="70" y="${y - 30}" width="220" height="60" fill="#c9ccd3" opacity="${open ? .35 : .15}"/>`}<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#c0c5cd') : '#4a4e55'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="20" fill="#fff8ee">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else { // a street: worlds left to right, the map scrolls sideways
     W = Math.max(360, 80 + wis.length * 150); H = 360;
@@ -4195,7 +4196,7 @@ function goSelect() { clearLevelOverlays(); { const sc = $('scSelect'); delete s
     const pts = wis.map((wi, i) => [80 + i * 150, 250 + (i % 2 ? 24 : -24)]);
     svg += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#fff8ee" stroke-width="3" stroke-dasharray="6 8" opacity=".7"/>`;
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
-      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d2a878') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d2a878') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="20" fill="#fff8ee">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   }
   const space = d.key === 'moon', street = !space && W > 360; $('selTitle').style.display = ''; $('selTitle').textContent = t(d.nameKey); mv.className = space ? 'space' : street ? 'street' : 'tall'; $('mapZoom').style.display = space ? 'flex' : 'none'; mv.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="${space ? 'xMidYMid' : street ? 'xMinYMid' : 'xMidYMin'} slice">${svg}</svg>`;
