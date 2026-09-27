@@ -1,6 +1,6 @@
 // Network-first for the app itself (so every deploy shows up on the next launch),
 // cache-first only for the Three.js CDN module. Cached copies are used when offline.
-const CACHE = 'mountain-goat-v330';
+const CACHE = 'mountain-goat-v331';
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./index.html', './manifest.json']).catch(() => {}).then(() => Promise.all(['img/splash.png', 'img/loading.png', 'img/dim-mountain.png', 'img/dim-city.png', 'img/dim-yard.png', 'img/dim-frog.png', 'img/dim-moon.png', 'img/win.png', 'img/icon.ico', 'img/icon-180.png', './icon-192.png', './icon-512.png'].map(f => c.add(f).catch(() => {})))))); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

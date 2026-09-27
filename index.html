@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v330 -->
+<!-- build v331 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -917,7 +917,7 @@ window.MGBoot = (function () { const ru = /^ru/i.test(navigator.language || ''),
 (function () { const local = location.hostname === 'localhost' || location.protocol === 'capacitor:' || location.protocol === 'file:';
   const im = document.createElement('script'); im.type = 'importmap'; im.textContent = JSON.stringify({ imports: { three: local ? './lib/three.module.js' : 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js' } }); document.currentScript.after(im); })();
 </script>
-<script>(function () { const sp = document.getElementById('splash'); if (!sp) return; const im = new Image(); im.onload = () => { sp.style.backgroundImage = 'url(img/splash.png)'; sp.classList.add('show'); window.__splashT = performance.now(); }; im.onerror = () => { window.__splashT = -1; }; im.src = 'img/splash.png'; })();</script>
+<script>(function () { const sp = document.getElementById('splash'); if (!sp) return; const im = new Image(); sp.classList.add('show'); window.__splashT = performance.now(); im.onload = () => { if (!window.__gameReady) sp.style.backgroundImage = 'url(img/splash.png)'; }; im.onerror = () => {}; im.src = 'img/splash.png'; setTimeout(() => { sp.classList.add('fade'); setTimeout(() => sp.classList.remove('show'), 600); }, 8000); })();</script>
 <script type="module">
 import * as THREE from 'three';
 // ============================================================
@@ -1041,7 +1041,7 @@ const FOE = { en: { hawk: 'hawks', eagle: 'eagles', falcon: 'falcons', raven: 'r
 function foeName() { const b = (typeof STYLE !== 'undefined' && STYLE && STYLE.bird) || 'hawk'; const f = FOE[LANG] || FOE.en; return f[b] || FOE.en[b] || (LANG === 'ru' ? 'птицы' : 'birds'); }
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (str.includes('{foe}') || str.includes('{Foe}')) { const f = foeName(); str = str.split('{foe}').join(f).split('{Foe}').join(f[0].toUpperCase() + f.slice(1)); } if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v330', date: '2026-09-23' };
+const BUILD = { version: 'v331', date: '2026-09-23' };
 const NEW_NOW = { chars: new Set(), worlds: new Set() };
 const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
@@ -6254,7 +6254,7 @@ function update(dt) {
 //  Main loop
 // ============================================================
 applySettings(); buildLevel(0); paintIcons(); goMenu();
-{ const sp = $('splash'); const hide = () => { sp.classList.add('fade'); setTimeout(() => sp.classList.remove('show'), 600); }; if (sp) { if (window.__splashT == null || window.__splashT < 0) sp.classList.remove('show'); else { const left = Math.max(0, 1400 - (performance.now() - window.__splashT)); setTimeout(hide, left); } } }   // SP1: the splash stays at least 1.4 s once the game is ready
+{ const sp = $('splash'); window.__gameReady = true; const hide = () => { sp.classList.add('fade'); setTimeout(() => sp.classList.remove('show'), 600); }; if (sp) { if (window.__splashT == null || window.__splashT < 0) sp.classList.remove('show'); else { const left = Math.max(0, 1400 - (performance.now() - window.__splashT)); setTimeout(hide, left); } } }   // SP1: the splash stays at least 1.4 s once the game is ready
 if (!save.settings.lang) { buildDio(); mode = 'lang'; showScreen('scLang'); } else if (location.hash === '#selftest') { history.replaceState(null, '', location.pathname); setTimeout(layoutSelfTest, 300); } else handleLink();
 window.addEventListener('pointerdown', () => { initAudio(); if (!AudioSys._mus && mode !== 'play') AudioSys.music('menu'); }, { once: true });
 for (const [id, l] of [['bLangEn', 'en'], ['bLangRu', 'ru']]) document.getElementById(id).addEventListener('click', e => { e.stopPropagation(); save.settings.lang = l; persist(); applySettings(); goMenu(); handleLink(); });
