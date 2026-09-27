@@ -4,13 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v326 -->
+<!-- build v330 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="img/icon.ico" sizes="any">
 <link rel="icon" href="icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-180.png">
 <style>
   /* design tokens (UI-REDESIGN-PLAN §3) — phase 1: values equal the v131 look */
   :root {
@@ -76,7 +77,7 @@
   .screen > * { flex-shrink:0; }
   #mapView { display:none; position:fixed; left:0; right:0; top:0; bottom:calc(72px + env(safe-area-inset-bottom)); overflow:auto; touch-action:pan-x pan-y; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; scrollbar-width:none; }
   #mapView::-webkit-scrollbar { display:none; } #mapView svg { display:block; } #mapView > svg[preserveAspectRatio^="xMidYMin"] { width:min(100%, 480px) !important; height:auto !important; margin:0 auto; box-shadow:0 0 0 1px var(--edge-2), 0 10px 30px rgba(43,33,24,.35); }   /* vertical maps stay paper-sized on tablets and in landscape (phase 7) */
-  #mapView.street svg { height:100%; width:auto; } #mapView.space { background:#070812; touch-action:pan-x pan-y; } #mapView.space svg { width:200vmax; height:200vmax; } #mapView.tall svg { width:100%; height:auto; min-height:100%; }
+  #mapView.street svg { height:100%; width:auto; } #mapView.space { background:transparent; touch-action:pan-x pan-y; }   /* SP3: the painted moon backdrop shows through */ #mapView.space svg { width:200vmax; height:200vmax; } #mapView.tall svg { width:100%; height:auto; min-height:100%; }
   #scSelect { padding-top:calc(60px + env(safe-area-inset-top)) !important; justify-content:flex-start; }
   #scSelect #selTitle { position:fixed; top:calc(6px + env(safe-area-inset-top)); left:0; right:0; margin:0; z-index:2; font-size:clamp(20px, 6.5vw, 30px); pointer-events:none; }
   .zoomBox { width:100%; max-height:62vh; overflow:auto; border-radius:var(--r-10); touch-action:pan-x pan-y; overscroll-behavior:contain; scrollbar-width:none; } .zoomBox::-webkit-scrollbar { display:none; } .zoomBox img { max-width:none; }
@@ -380,6 +381,14 @@ body > #bMgNext .snT { display:none !important; } body > #bMgNext .snPlay { widt
 #gustWarn, #avaWarn { position:fixed; left:50%; transform:translateX(-50%); z-index:6; padding:6px 14px; border-radius:14px; font-weight:900; font-size:20px; opacity:0; pointer-events:none; transition:opacity .15s; }
 #gustWarn { top:calc(150px + env(safe-area-inset-top)); background:rgba(230,242,250,.9); color:#2a4a6a; } #avaWarn { top:calc(186px + env(safe-area-inset-top)); background:rgba(217,73,63,.9); color:#fff; font-size:16px; }
 #gustWarn.show, #avaWarn.show { opacity:1; animation:gustPulse .5s ease-in-out infinite; } @keyframes gustPulse { 50% { transform:translateX(-50%) scale(1.12); } }
+/* SP1: art slots (img/splash.png, img/loading.png, img/dim-<key>.jpg, img/win.png) — the game works without them */
+#splash { position:fixed; inset:0; z-index:200; background:#3d2616 center/cover no-repeat; display:none; }
+#splash.show { display:block; } #splash.fade { opacity:0; transition:opacity .5s; pointer-events:none; }
+#splash .splashBar { position:absolute; left:12%; right:12%; bottom:calc(9% + env(safe-area-inset-bottom)); height:8px; border-radius:4px; background:rgba(255,246,216,.25); overflow:hidden; }
+#splash .splashBar i { display:block; height:100%; width:0; background:#ffd76a; border-radius:4px; animation:splashFill 1.4s ease-out forwards; } @keyframes splashFill { to { width:100%; } }
+#scSelect[data-bg] { background-size:cover; background-position:center; }
+#scSelect[data-bg="mountain"] { background-image:url(img/dim-mountain.png); } #scSelect[data-bg="city"] { background-image:url(img/dim-city.png); } #scSelect[data-bg="yard"] { background-image:url(img/dim-yard.png); } #scSelect[data-bg="frog"] { background-image:url(img/dim-frog.png); } #scSelect[data-bg="moon"] { background-image:url(img/dim-moon.png); }
+#scResult.win { background-image:url(img/win.png); background-size:cover; background-position:center; }
 .pixTxt { display:block; margin:0 auto; image-rendering:pixelated; pointer-events:none; }
 #hudPix { position:fixed; inset:0; z-index:5; pointer-events:none; display:none; } #hudPix canvas { position:absolute; image-rendering:pixelated; }
 #hintPix { position:fixed; z-index:5; pointer-events:none; image-rendering:pixelated; display:none; } body.pixMode #hintPix { display:block; }
@@ -880,7 +889,7 @@ window.MGBoot = (function () { const ru = /^ru/i.test(navigator.language || ''),
 </div>
 <div id="boostVeil"></div><div id="boostBar"><div class="bTitle" data-i18n="boostsTitle">Boosts</div><div class="bRow" id="boostRow"></div><div class="bHint" data-i18n="boostHint"></div><div class="btn primary" id="boostGo"></div></div>
 <div id="modal"><div class="mBox"><div class="mIcon" id="mIcon"></div><div class="mTitle" id="mTitle"></div><div class="mText" id="mText"></div><textarea id="mInput" rows="4"></textarea><div class="mRow" id="mRow"></div></div></div>
-<div id="selfTestOut"></div><div id="gustWarn"></div><div id="avaWarn">❄ <span data-i18n="avaNear">AVALANCHE!</span></div><div id="bDoor">🚪 <span data-i18n="doorGo">ENTER</span></div><div id="doorFade"></div>
+<div id="selfTestOut"></div><div id="splash"><div class="splashBar"><i></i></div></div><div id="gustWarn"></div><div id="avaWarn">❄ <span data-i18n="avaNear">AVALANCHE!</span></div><div id="bDoor">🚪 <span data-i18n="doorGo">ENTER</span></div><div id="doorFade"></div>
 <div id="peekBubble"></div>
 <input type="file" id="importFile" accept="application/json,.json" style="display:none">
 <div id="updBanner"><span data-i18n="updAvail">A new version is ready</span><div class="btn primary" id="bUpdate" data-i18n="updNow">UPDATE</div></div>
@@ -908,6 +917,7 @@ window.MGBoot = (function () { const ru = /^ru/i.test(navigator.language || ''),
 (function () { const local = location.hostname === 'localhost' || location.protocol === 'capacitor:' || location.protocol === 'file:';
   const im = document.createElement('script'); im.type = 'importmap'; im.textContent = JSON.stringify({ imports: { three: local ? './lib/three.module.js' : 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js' } }); document.currentScript.after(im); })();
 </script>
+<script>(function () { const sp = document.getElementById('splash'); if (!sp) return; const im = new Image(); im.onload = () => { sp.style.backgroundImage = 'url(img/splash.png)'; sp.classList.add('show'); window.__splashT = performance.now(); }; im.onerror = () => { window.__splashT = -1; }; im.src = 'img/splash.png'; })();</script>
 <script type="module">
 import * as THREE from 'three';
 // ============================================================
@@ -1031,7 +1041,7 @@ const FOE = { en: { hawk: 'hawks', eagle: 'eagles', falcon: 'falcons', raven: 'r
 function foeName() { const b = (typeof STYLE !== 'undefined' && STYLE && STYLE.bird) || 'hawk'; const f = FOE[LANG] || FOE.en; return f[b] || FOE.en[b] || (LANG === 'ru' ? 'птицы' : 'birds'); }
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (str.includes('{foe}') || str.includes('{Foe}')) { const f = foeName(); str = str.split('{foe}').join(f).split('{Foe}').join(f[0].toUpperCase() + f.slice(1)); } if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v326', date: '2026-09-23' };
+const BUILD = { version: 'v330', date: '2026-09-23' };
 const NEW_NOW = { chars: new Set(), worlds: new Set() };
 const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
@@ -3172,22 +3182,31 @@ class Goat {
     limb(0.04, 1.18, 0.22, 0.5, M.shirt, true); limb(0.04, 1.18, -0.22, 0.5, M.shirt, true); limb(0, 0.7, 0.08, 0.7, M.pants, false); limb(0, 0.7, -0.08, 0.7, M.pants, false);
     root.traverse(o => { if (o.isMesh) o.castShadow = true; }); root.scale.setScalar(this.scale); scene.add(root);
   }
-  buildKong(sk) { // hunched ape: long arms as the "front legs", short bowed legs behind
-    const M = { fur: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), chest: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }), skin: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0xf0e0c0 }) };
+  buildKong(sk) { // a proper low-poly gorilla (after the papercraft King Kong): a barrel chest with pectoral plates, huge shoulders and a hump, a small heavy-browed head with a crest, long thick arms on knuckles, short bowed legs
+    const M = { fur: new THREE.MeshLambertMaterial({ color: sk.body, flatShading: true }), chest: new THREE.MeshLambertMaterial({ color: sk.belly, flatShading: true }), skin: new THREE.MeshLambertMaterial({ color: sk.dark, flatShading: true }), eye: new THREE.MeshBasicMaterial({ color: 0xf0e0c0 }), pupil: new THREE.MeshBasicMaterial({ color: 0x141418 }) }; { const c = new THREE.Color(sk.belly), hsl = {}; c.getHSL(hsl); c.setHSL(hsl.h, Math.max(0, hsl.s - 0.1), Math.min(0.62, Math.max(0.36, hsl.l - 0.12))); M.face = new THREE.MeshLambertMaterial({ color: c.getHex(), flatShading: true }); }   // face and hands: a leathery grey, lighter than the fur
     const root = this.root = new THREE.Group(); const bodyG = this.bodyG = new THREE.Group(); root.add(bodyG); this.legs = [];
-    const torso = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.0, 0.9), M.fur); torso.position.set(-0.05, 1.05, 0); torso.rotation.z = 0.35; bodyG.add(torso);
-    const chest = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.6, 0.7), M.chest); chest.position.set(0.45, 1.0, 0); chest.rotation.z = 0.35; bodyG.add(chest);
-    const hump = new THREE.Mesh(new THREE.IcosahedronGeometry(0.45, 0), M.fur); hump.position.set(-0.45, 1.45, 0); hump.scale.set(1, 0.7, 0.9); bodyG.add(hump);
-    const headG = this.headG = new THREE.Group(); headG.position.set(0.75, 1.55, 0); bodyG.add(headG);
-    const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.5), M.fur); headG.add(head);
-    const brow = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.12, 0.54), M.skin); brow.position.set(0.16, 0.1, 0); headG.add(brow);
-    const face = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.3, 0.42), M.skin); face.position.set(0.24, -0.08, 0); headG.add(face);
-    for (const sd of [-1, 1]) { const eye = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.06), M.eye); eye.position.set(0.32, 0.02, sd * 0.12); headG.add(eye); }
-    const makeLimb = (x, z, front) => { const g = new THREE.Group(); g.position.set(x, front ? 1.25 : 0.84, z); bodyG.add(g);
-      const len = front ? 1.25 : 0.84; const up = new THREE.Mesh(new THREE.CylinderGeometry(front ? 0.13 : 0.12, front ? 0.16 : 0.15, len * 0.5, 6), M.fur); up.position.y = -len * 0.25; g.add(up);
-      const low = new THREE.Mesh(new THREE.CylinderGeometry(front ? 0.11 : 0.1, front ? 0.13 : 0.12, len * 0.42, 6), M.fur); low.position.y = -len * 0.71; g.add(low);
-      const hand = new THREE.Mesh(new THREE.BoxGeometry(front ? 0.3 : 0.26, 0.12, front ? 0.22 : 0.3), M.skin); hand.position.y = -len + 0.06; hand.position.x = front ? 0.06 : 0.05; g.add(hand); g.userData.front = front; this.legs.push(g); };
-    makeLimb(0.55, 0.3, true); makeLimb(0.55, -0.3, true); makeLimb(-0.45, 0.24, false); makeLimb(-0.45, -0.24, false);
+    const add = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1, rz = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); m.rotation.z = rz; bodyG.add(m); return m; };
+    add(new THREE.IcosahedronGeometry(0.62, 1), M.fur, -0.05, 1.15, 0, 1.25, 0.95, 1.0, 0.3);   // barrel torso, leaning forward
+    add(new THREE.IcosahedronGeometry(0.5, 0), M.fur, -0.55, 1.35, 0, 1.0, 0.75, 1.1);   // the hump over the shoulders
+    for (const sd of [-1, 1]) add(new THREE.IcosahedronGeometry(0.34, 0), M.fur, 0.25, 1.5, sd * 0.5, 1.1, 0.9, 1.0);   // huge round shoulders
+    for (const sd of [-1, 1]) add(new THREE.BoxGeometry(0.42, 0.34, 0.36), M.chest, 0.55, 1.12, sd * 0.24, 1, 1, 1, 0.35);   // pectoral plates
+    add(new THREE.IcosahedronGeometry(0.42, 0), M.chest, 0.3, 0.72, 0, 1.15, 0.8, 1.05);   // the belly
+    const headG = this.headG = new THREE.Group(); headG.position.set(0.82, 1.62, 0); bodyG.add(headG);
+    const H = (geo, mat, x, y, z, sx = 1, sy = 1, sz = 1) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.scale.set(sx, sy, sz); headG.add(m); return m; };
+    H(new THREE.IcosahedronGeometry(0.34, 0), M.fur, 0, 0, 0, 1.05, 1.0, 1.05);   // the skull, small against the body
+    H(new THREE.ConeGeometry(0.16, 0.34, 4), M.fur, -0.08, 0.26, 0, 1, 1, 0.6);   // sagittal crest
+    H(new THREE.BoxGeometry(0.3, 0.12, 0.5), M.fur, 0.16, 0.12, 0);   // the heavy brow
+    H(new THREE.BoxGeometry(0.28, 0.3, 0.44), M.face, 0.22, -0.08, 0);   // the face
+    H(new THREE.BoxGeometry(0.18, 0.16, 0.32), M.face, 0.36, -0.18, 0);   // the muzzle
+    for (const sd of [-1, 1]) { H(new THREE.BoxGeometry(0.03, 0.03, 0.05), M.pupil, 0.42, -0.14, sd * 0.07); H(new THREE.BoxGeometry(0.05, 0.05, 0.06), M.eye, 0.33, 0.03, sd * 0.11); H(new THREE.BoxGeometry(0.03, 0.03, 0.03), M.pupil, 0.36, 0.03, sd * 0.11); H(new THREE.IcosahedronGeometry(0.07, 0), M.face, 0.02, 0.0, sd * 0.34); }   // nostrils, eyes under the brow, ears
+    const makeLimb = (x, z, front) => { const g = new THREE.Group(); g.position.set(x, front ? 1.42 : 0.9, z); bodyG.add(g);
+      const len = front ? 1.42 : 0.9, r1 = front ? 0.2 : 0.17, r2 = front ? 0.17 : 0.15;
+      const up = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2 * 1.15, len * 0.5, 7), M.fur); up.position.y = -len * 0.25; g.add(up);
+      const low = new THREE.Mesh(new THREE.CylinderGeometry(r2, r2 * 1.25, len * 0.44, 7), M.fur); low.position.y = -len * 0.72; g.add(low);   // forearms and calves widen toward the ends
+      const hand = new THREE.Mesh(new THREE.BoxGeometry(front ? 0.34 : 0.3, 0.16, front ? 0.28 : 0.34), M.face); hand.position.set(front ? 0.08 : 0.06, -len + 0.08, 0); g.add(hand);
+      if (front) for (let k = 0; k < 3; k++) { const kn = new THREE.Mesh(new THREE.IcosahedronGeometry(0.05, 0), M.face); kn.position.set(0.24, -len + 0.13, (k - 1) * 0.09); g.add(kn); }   // knuckles
+      g.userData.front = front; this.legs.push(g); };
+    makeLimb(0.42, 0.42, true); makeLimb(0.42, -0.42, true); makeLimb(-0.5, 0.26, false); makeLimb(-0.5, -0.26, false);
     root.traverse(o => { if (o.isMesh) o.castShadow = true; }); root.scale.setScalar(this.scale); scene.add(root);
   }
   buildDragon(sk) { // D2a: a young dragon on four legs — long neck, horned head, spiked tail, two wings (flap in the air, fold at rest)
@@ -4131,7 +4150,7 @@ function worldOpen(wi) { if (save.settings.devUnlock) return true; // first worl
 function worldNeed(wi) { return Math.ceil(worldMax(wi) * 0.75); }
 function lockLabel(wi) { const d = dimOf(wi); const pos = d ? d.worlds.indexOf(WORLDS[wi].name) : 0; if (pos <= 0 || !d) return t('locked'); const prev = WORLDS.findIndex(w => w.name === d.worlds[pos - 1]); return `🔒 ★ ${worldStars(prev)} / ${worldNeed(prev)}`; }
 // G2: the map keeps its own art (no dimension palette)
-function goSelect() { clearLevelOverlays(); { const sc = $('scSelect'); delete sc.dataset.dim; delete sc.dataset.w; $('mapZoom').style.display = 'none'; } if (DIMS[curDim] && DIMS[curDim].golden) { goMagicMap(); return; }   // H4
+function goSelect() { clearLevelOverlays(); { const sc = $('scSelect'); delete sc.dataset.dim; delete sc.dataset.w; sc.dataset.bg = (DIMS[curDim] && DIMS[curDim].key) || ''; $('mapZoom').style.display = 'none'; } if (DIMS[curDim] && DIMS[curDim].golden) { goMagicMap(); return; }   // H4
   requestAnimationFrame(() => { if ($('mapView').style.display === 'none') return; selNextSync('bSelNext'); requestAnimationFrame(() => {   // R7a: goWorld may have replaced the map meanwhile — the strip stays hidden then
    // v224: if a world's node or label sits under the «Continue» strip, scroll the map just enough to lift it clear
     const b = $('bSelNext'), mv = $('mapView'); if (!b || b.style.display === 'none') return; const top = b.getBoundingClientRect().top - 6, els = [...mv.querySelectorAll('text, .mapNode, [data-wi]')];
@@ -4141,42 +4160,42 @@ function goSelect() { clearLevelOverlays(); { const sc = $('scSelect'); delete s
   mode = 'select'; hud.style.display = 'none'; dio.bg = !!dio.scene; $('bBackMenu').style.display = ''; $('bBackMenu').textContent = t('menu'); if (save.worldsSeen) for (const w of WORLDS.filter((w, i) => worldOpen(i) && !w.magic && dimOf(i) === DIMS[curDim])) if (!save.worldsSeen.includes(w.name)) NEW_NOW.worlds.add(w.name);   // H5: only this dimension's new worlds (Sword & Magic's were listed on the mountain map)
   { const nw = [...NEW_NOW.worlds]; $('mapNew').textContent = nw.length ? t('newWorld') + ': ' + nw.join(' · ') : ''; $('mapNew').classList.toggle('show', nw.length > 0); }
   save.worldsSeen = WORLDS.filter((w, i) => worldOpen(i)).map(w => w.name); persist(); const list = $('levelList'); list.innerHTML = ''; list.style.display = 'none'; $('bBackMenu').textContent = t('menu'); $('bBackMenu').onclick = null;
-  const d = DIMS[curDim]; const wis = d.worlds.map(n => WORLDS.findIndex(w => w.name === n)); const mv = $('mapView'); mv.style.display = 'block';
+  const d = DIMS[curDim]; const wis = d.worlds.map(n => WORLDS.findIndex(w => w.name === n)); const mv = $('mapView'); mv.style.display = 'block'; const ART = ['mountain', 'city', 'yard', 'frog', 'moon'].includes(d.key); const nodeArt = (wi, x, y, r, open) => ART ? `<image onerror="this.remove()" href="img/node-${WORLDS[wi].name.toLowerCase().replace(/[^a-z]/g, '')}.png" x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}"${open ? '' : ' style="filter:grayscale(1) brightness(.55)"'}/>` : '';   // SP3: painted node badges when present   // SP3: these dimensions have a painted backdrop (img/dim-*.png) — the drawn one is dropped
   const esc = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const nodeInfo = wi => { const w = WORLDS[wi], open = worldOpen(wi), got = worldStars(wi), max = worldMax(wi), done = worldLevelsDone(wi) >= worldCount(wi); return { w, open, got, max, done }; };
   let svg = '', W = 360, H = 640;
   if (d.key === 'moon') { // space: worlds are planets scattered across a field you drag around
-    W = 1100; H = 1100; svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#070812"/>`; for (let i = 0; i < 160; i++) svg += `<circle cx="${(i * 233) % W}" cy="${(i * 151 + 37) % H}" r="${i % 7 ? 1.1 : 2}" fill="#fff" opacity="${0.3 + (i % 5) * 0.14}"/>`;
-    svg += `<circle cx="180" cy="200" r="70" fill="#3a78c8"/><path d="M130 180q30-30 60 0t60 10q-20 30-60 20t-60-30z" fill="#6fd08a" opacity=".85"/><ellipse cx="180" cy="176" rx="64" ry="18" fill="#fff" opacity=".18"/>`;
+    W = 1100; H = 1100; if (!ART) { svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#070812"/>`; for (let i = 0; i < 160; i++) svg += `<circle cx="${(i * 233) % W}" cy="${(i * 151 + 37) % H}" r="${i % 7 ? 1.1 : 2}" fill="#fff" opacity="${0.3 + (i % 5) * 0.14}"/>`;
+    svg += `<circle cx="180" cy="200" r="70" fill="#3a78c8"/><path d="M130 180q30-30 60 0t60 10q-20 30-60 20t-60-30z" fill="#6fd08a" opacity=".85"/><ellipse cx="180" cy="176" rx="64" ry="18" fill="#fff" opacity=".18"/>`; }
     const spots = [[560, 380, 60, '#b4b6be'], [860, 640, 44, '#c8b090'], [330, 760, 52, '#9aa4b8'], [900, 250, 36, '#d0c0a0'], [640, 900, 48, '#aeb6c0']];
     const pts = wis.map((wi, i) => spots[i % spots.length]);
     for (let i = 1; i < pts.length; i++) svg += `<path d="M${pts[i - 1][0]} ${pts[i - 1][1]} Q${(pts[i - 1][0] + pts[i][0]) / 2 + 60} ${(pts[i - 1][1] + pts[i][1]) / 2 - 80} ${pts[i][0]} ${pts[i][1]}" fill="none" stroke="#fff8ee" stroke-width="2" stroke-dasharray="4 10" opacity=".5"/>`;
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y, r, col] = pts[i];
-      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="${r}" fill="${open ? col : '#3a3c44'}"/>`; for (let c = 0; c < 5; c++) { const a = c * 1.9 + i, rr = r * (0.16 + (c % 3) * 0.05); svg += `<ellipse cx="${x + Math.cos(a) * r * 0.55}" cy="${y + Math.sin(a) * r * 0.55}" rx="${rr}" ry="${rr * 0.7}" fill="#000" opacity=".22"/>`; }
+      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="${r}" fill="${open ? col : '#3a3c44'}"/>`; svg += nodeArt(wi, x, y, r, open); for (let c = 0; c < 5; c++) { const a = c * 1.9 + i, rr = r * (0.16 + (c % 3) * 0.05); svg += `<ellipse cx="${x + Math.cos(a) * r * 0.55}" cy="${y + Math.sin(a) * r * 0.55}" rx="${rr}" ry="${rr * 0.7}" fill="#000" opacity=".22"/>`; }
       svg += `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#fff8ee" stroke-width="3" opacity=".9"/><text x="${x}" y="${y + 11}" text-anchor="middle" font-size="30" fill="#1a1c24" font-weight="800">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + r + 36}" text-anchor="middle" font-size="26" font-weight="800" fill="#fff8ee">${esc(w.name)}</text><text x="${x}" y="${y + r + 64}" text-anchor="middle" font-size="22" fill="#fff8ee" opacity=".9">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else if (d.key === 'mountain') { // a mountain: worlds are tiers from the summit down
     const pts = wis.map((wi, i) => [i % 2 ? 250 : 110, 90 + i * 112]);
-    svg += `<path d="M0 640 L0 420 L70 300 L130 340 L180 120 L230 190 L270 60 L320 200 L360 140 L360 640 Z" fill="#8d6240" opacity=".55"/><path d="M0 640 L0 500 L90 420 L160 470 L240 330 L300 400 L360 320 L360 640 Z" fill="#b9865a" opacity=".55"/><path d="M160 160 L180 120 L200 160 Z" fill="#f4f7fa" opacity=".8"/>`;
+    if (!ART) svg += `<path d="M0 640 L0 420 L70 300 L130 340 L180 120 L230 190 L270 60 L320 200 L360 140 L360 640 Z" fill="#8d6240" opacity=".55"/><path d="M0 640 L0 500 L90 420 L160 470 L240 330 L300 400 L360 320 L360 640 Z" fill="#b9865a" opacity=".55"/><path d="M160 160 L180 120 L200 160 Z" fill="#f4f7fa" opacity=".8"/>`;
     svg += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#fff8ee" stroke-width="3" stroke-dasharray="6 8" opacity=".7"/>`;
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
-      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d9bc8e') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d9bc8e') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else if (d.key === 'city') { // a tower block: worlds are floors from the ground up
-    svg += `<rect x="70" y="60" width="220" height="580" fill="#7c8189" opacity=".8"/><rect x="60" y="50" width="240" height="14" fill="#5c6169"/>`; for (let f = 0; f < 9; f++) for (let c = 0; c < 6; c++) svg += `<rect x="${86 + c * 36}" y="${80 + f * 60}" width="22" height="28" fill="${(f * 7 + c) % 3 ? '#3a4658' : '#ffe9a8'}" opacity=".9"/>`;
+    if (!ART) { svg += `<rect x="70" y="60" width="220" height="580" fill="#7c8189" opacity=".8"/><rect x="60" y="50" width="240" height="14" fill="#5c6169"/>`; for (let f = 0; f < 9; f++) for (let c = 0; c < 6; c++) svg += `<rect x="${86 + c * 36}" y="${80 + f * 60}" width="22" height="28" fill="${(f * 7 + c) % 3 ? '#3a4658' : '#ffe9a8'}" opacity=".9"/>`; }
     const n = wis.length; const pts = wis.map((wi, i) => [i % 2 ? 236 : 124, 560 - i * (440 / Math.max(1, n - 1))]);   // floors zig-zag up the block
     for (let i = 1; i < n; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], ym = (y0 + y1) / 2; svg += `<path d="M ${x0} ${y0} C ${x0} ${ym}, ${x1} ${ym}, ${x1} ${y1}" stroke="#fff8ee" stroke-width="5" stroke-dasharray="10 9" fill="none" opacity=".85"/>`; }   // the fire-escape path between floors
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
-      svg += `<rect x="70" y="${y - 30}" width="220" height="60" fill="#c9ccd3" opacity="${open ? .35 : .15}"/><g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#c0c5cd') : '#4a4e55'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#2a2f38">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `<rect x="70" y="${y - 30}" width="220" height="60" fill="#c9ccd3" opacity="${open ? .35 : .15}"/><g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#c0c5cd') : '#4a4e55'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#2a2f38">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   } else { // a street: worlds left to right, the map scrolls sideways
     W = Math.max(360, 80 + wis.length * 150); H = 360;
-    svg += `<rect x="0" y="0" width="${W}" height="230" fill="#a8d0ea" opacity=".55"/><rect x="0" y="230" width="${W}" height="130" fill="#7fa74e" opacity=".8"/><rect x="0" y="250" width="${W}" height="8" fill="#b98a5a"/>`; for (let i = 0; i < W / 30; i++) svg += `<rect x="${i * 30 + 6}" y="212" width="8" height="40" fill="#b98a5a"/>`;
-    for (let i = 0; i < W / 120; i++) svg += `<circle cx="${i * 120 + 60}" cy="${140 + (i % 2) * 20}" r="34" fill="#4f7a34" opacity=".7"/><rect x="${i * 120 + 56}" y="170" width="8" height="60" fill="#6e4e30"/>`;
+    if (!ART) { svg += `<rect x="0" y="0" width="${W}" height="230" fill="#a8d0ea" opacity=".55"/><rect x="0" y="230" width="${W}" height="130" fill="#7fa74e" opacity=".8"/><rect x="0" y="250" width="${W}" height="8" fill="#b98a5a"/>`; for (let i = 0; i < W / 30; i++) svg += `<rect x="${i * 30 + 6}" y="212" width="8" height="40" fill="#b98a5a"/>`;
+    for (let i = 0; i < W / 120; i++) svg += `<circle cx="${i * 120 + 60}" cy="${140 + (i % 2) * 20}" r="34" fill="#4f7a34" opacity=".7"/><rect x="${i * 120 + 56}" y="170" width="8" height="60" fill="#6e4e30"/>`; }
     const pts = wis.map((wi, i) => [80 + i * 150, 250 + (i % 2 ? 24 : -24)]);
     svg += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#fff8ee" stroke-width="3" stroke-dasharray="6 8" opacity=".7"/>`;
     wis.forEach((wi, i) => { const { w, open, got, max, done } = nodeInfo(wi), [x, y] = pts[i];
-      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d2a878') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/><text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
+      svg += `<g class="node" data-wi="${wi}"><circle cx="${x}" cy="${y}" r="26" fill="${open ? (done ? '#ffd76a' : '#d2a878') : '#5a4a3a'}" stroke="#fff8ee" stroke-width="3"/>${nodeArt(wi, x, y, 26, open)}<text x="${x}" y="${y + 6}" text-anchor="middle" font-size="18" fill="#3a2410">${open ? (done ? '★' : i + 1) : '🔒'}</text>`;
       svg += `<text x="${x}" y="${y + 46}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff8ee" style="text-shadow:0 1px 3px #000">${esc(w.name)}</text><text x="${x}" y="${y + 62}" text-anchor="middle" font-size="11" fill="#fff8ee" opacity=".85">${open ? `★ ${got} / ${max}` : lockLabel(wi)}</text></g>`; });
   }
   const space = d.key === 'moon', street = !space && W > 360; $('selTitle').style.display = ''; $('selTitle').textContent = t(d.nameKey); mv.className = space ? 'space' : street ? 'street' : 'tall'; $('mapZoom').style.display = space ? 'flex' : 'none'; mv.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="${space ? 'xMidYMid' : street ? 'xMinYMid' : 'xMidYMin'} slice">${svg}</svg>`;
@@ -6235,6 +6254,7 @@ function update(dt) {
 //  Main loop
 // ============================================================
 applySettings(); buildLevel(0); paintIcons(); goMenu();
+{ const sp = $('splash'); const hide = () => { sp.classList.add('fade'); setTimeout(() => sp.classList.remove('show'), 600); }; if (sp) { if (window.__splashT == null || window.__splashT < 0) sp.classList.remove('show'); else { const left = Math.max(0, 1400 - (performance.now() - window.__splashT)); setTimeout(hide, left); } } }   // SP1: the splash stays at least 1.4 s once the game is ready
 if (!save.settings.lang) { buildDio(); mode = 'lang'; showScreen('scLang'); } else if (location.hash === '#selftest') { history.replaceState(null, '', location.pathname); setTimeout(layoutSelfTest, 300); } else handleLink();
 window.addEventListener('pointerdown', () => { initAudio(); if (!AudioSys._mus && mode !== 'play') AudioSys.music('menu'); }, { once: true });
 for (const [id, l] of [['bLangEn', 'en'], ['bLangRu', 'ru']]) document.getElementById(id).addEventListener('click', e => { e.stopPropagation(); save.settings.lang = l; persist(); applySettings(); goMenu(); handleLink(); });
