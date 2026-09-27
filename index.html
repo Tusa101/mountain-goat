@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v324 -->
+<!-- build v326 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1031,7 +1031,7 @@ const FOE = { en: { hawk: 'hawks', eagle: 'eagles', falcon: 'falcons', raven: 'r
 function foeName() { const b = (typeof STYLE !== 'undefined' && STYLE && STYLE.bird) || 'hawk'; const f = FOE[LANG] || FOE.en; return f[b] || FOE.en[b] || (LANG === 'ru' ? 'птицы' : 'birds'); }
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (str.includes('{foe}') || str.includes('{Foe}')) { const f = foeName(); str = str.split('{foe}').join(f).split('{Foe}').join(f[0].toUpperCase() + f.slice(1)); } if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v324', date: '2026-09-23' };
+const BUILD = { version: 'v326', date: '2026-09-23' };
 const NEW_NOW = { chars: new Set(), worlds: new Set() };
 const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
@@ -3942,12 +3942,17 @@ function hubWide() { return innerWidth > innerHeight && innerHeight <= 480; }   
 function fitTiles() { for (const b of document.querySelectorAll('#scMenu .tile b')) { const key = b.dataset.i18n; if (key) b.textContent = t(key); b.style.fontSize = ''; let fs = parseFloat(getComputedStyle(b).fontSize); while (b.scrollWidth > b.clientWidth + 0.5 && fs > 11) { fs = Math.max(11, fs - 0.5); b.style.fontSize = fs + 'px'; if (fs === 11) break; }
     if (b.scrollWidth > b.clientWidth + 0.5 && key && I18N.en[key + 'Short']) b.textContent = t(key + 'Short'); } }   // at the 11 px floor a name that still does not fit switches to its short form   // long names shrink a little instead of spilling past the tile
 window.addEventListener('resize', () => requestAnimationFrame(fitTiles));
+// leaving a level (pause → menu, result → menu, …): every in-level overlay goes away — the wind streaks, the edge warnings, the vignette, gust/avalanche signs, the door button, the crevice bar, power-up chips, fades — and any ride/cling in progress ends
+function clearLevelOverlays() { for (const el of [wind, vig, topwarn, botwarn, leftwarn]) if (el) el.style.opacity = 0;
+  for (const id of ['gustWarn', 'avaWarn', 'bDoor', 'clingUI', 'puHud']) { const el = $(id); if (el) el.classList.remove('show'); } const f = $('doorFade'); if (f) f.classList.remove('on');
+  if (typeof G !== 'undefined') { G.cling = null; G.zip = null; G.river = null; G.hZone = false; G.aiming = false; G.drag = null; } }
 function goMenu() { migrateDims(); migrateAcc(); $('tNoads').style.display = save.noAds ? 'none' : ''; requestAnimationFrame(fitTiles);
   if (pendingReload) { pendingReload = false; location.reload(); return; }
   $('boostBar').classList.remove('show');
   forcedChar = null; if (dio.scene) dioCluster(false);
   AudioSys.ambient(null); AudioSys.music('menu');
   $('dimUI').style.display = 'none'; dio.bg = false; hud.style.display = 'none'; hint.style.opacity = 0;
+  clearLevelOverlays();
   mode = 'menu'; buildDio(); if (dio.focus !== curDim) { dio.focus = curDim; dio.camZ = -curDim * 11 + 17; dio.lookZ = -curDim * 11; }
   refreshChal(); refreshHub(); showScreen('scMenu');
 }
@@ -4126,7 +4131,7 @@ function worldOpen(wi) { if (save.settings.devUnlock) return true; // first worl
 function worldNeed(wi) { return Math.ceil(worldMax(wi) * 0.75); }
 function lockLabel(wi) { const d = dimOf(wi); const pos = d ? d.worlds.indexOf(WORLDS[wi].name) : 0; if (pos <= 0 || !d) return t('locked'); const prev = WORLDS.findIndex(w => w.name === d.worlds[pos - 1]); return `🔒 ★ ${worldStars(prev)} / ${worldNeed(prev)}`; }
 // G2: the map keeps its own art (no dimension palette)
-function goSelect() { { const sc = $('scSelect'); delete sc.dataset.dim; delete sc.dataset.w; $('mapZoom').style.display = 'none'; } if (DIMS[curDim] && DIMS[curDim].golden) { goMagicMap(); return; }   // H4
+function goSelect() { clearLevelOverlays(); { const sc = $('scSelect'); delete sc.dataset.dim; delete sc.dataset.w; $('mapZoom').style.display = 'none'; } if (DIMS[curDim] && DIMS[curDim].golden) { goMagicMap(); return; }   // H4
   requestAnimationFrame(() => { if ($('mapView').style.display === 'none') return; selNextSync('bSelNext'); requestAnimationFrame(() => {   // R7a: goWorld may have replaced the map meanwhile — the strip stays hidden then
    // v224: if a world's node or label sits under the «Continue» strip, scroll the map just enough to lift it clear
     const b = $('bSelNext'), mv = $('mapView'); if (!b || b.style.display === 'none') return; const top = b.getBoundingClientRect().top - 6, els = [...mv.querySelectorAll('text, .mapNode, [data-wi]')];
@@ -4220,6 +4225,7 @@ function startLevel(idx, defOverride) {
   { const w = !defOverride && WORLDS.find(w => w.levels.includes(LEVELS[idx].key)); if (w && w.character && !(save.charSeen && save.charSeen[w.character])) { save.charSeen = save.charSeen || {}; save.charSeen[w.character] = true; save.character = w.character; persist(); G.newCharToast = CHARACTERS[w.character].name; } }
   { const d = defOverride || LEVELS[idx]; if (d.character && !(save.charSeen && save.charSeen[d.character])) { save.charSeen = save.charSeen || {}; save.charSeen[d.character] = true; persist(); } }
   if (!defOverride && LEVELS[idx].tutorial) { const w = WORLDS.find(w => w.levels.includes(LEVELS[idx].key)); if (w && w.character) { defOverride = JSON.parse(JSON.stringify(LEVELS[idx])); defOverride.forceChar = w.character; defOverride.firstOf = []; defOverride.softened = true; } }
+  for (const p of particles) scene.remove(p); particles.length = 0;   // no dust, pebbles or sparks carried over from the previous level
   buildLevel(idx, defOverride); addIndoorSupports(); buildHeightArt(); decorateWall(L.def); decorateRun(L.def); if (ENV.wall) ENV.wall.visible = true; if (ENV.windows) ENV.windows.visible = !!(STYLE && STYLE.windows); buildFacade(L.def);   // restore only what this style wants (the mountains have no windows) doorArt(); wallArt(); screeArt(); zipArt(); neonArt(); G.zip = null; L.avaM = null; L.avaT = 0; L.gustFx = []; G.cling = null; clingUI(false); G.pu = {}; G.glideT = 0; puHud(); G.hZone = false; G.hTop = false; G.hDone = false; resetDemo(); clearParticles(); styleTween = null; G.muts = muts; G.boosts = {}; $('contCost').textContent = '◆ ' + priceOf('continue'); showBoostBar(defOverride || LEVELS[idx]); scene.fog.near = muts.includes('fog') ? 4 : 45; scene.fog.far = muts.includes('fog') ? 17 : 170; if (muts.includes('fog')) scene.fog.color.set(STYLE.haze); fogFit();
   G.ghost = null; G.echoRec = []; G.recAcc = 0;
   if (muts.includes('echo') && G.echoPath && G.echoKey === (defOverride || LEVELS[idx]).key) { const cs = currentSkin(); makeGhost(G.echoPath, cs.ch, cs.sk, 'echo'); } else loadGhostFor(defOverride || LEVELS[idx]);
@@ -4764,7 +4770,7 @@ function resumeGame() { if (mode !== 'pause') return; AudioSys.music('play'); ap
 $('hPause').addEventListener('click', e => { e.stopPropagation(); pauseGame(); });
 $('bResume').addEventListener('click', e => { e.stopPropagation(); resumeGame(); });
 $('bPauseRestart').addEventListener('click', e => { e.stopPropagation(); mode = 'play'; $('bRetry').click(); });
-$('bPauseExit').addEventListener('click', e => { e.stopPropagation(); snapshotRun(); mode = 'menu';
+$('bPauseExit').addEventListener('click', e => { e.stopPropagation(); snapshotRun(); clearLevelOverlays(); mode = 'menu';
   if (L.def.tower) { const ts = towerState(); ts.best = Math.max(ts.best, G.maxDesc); persist(); goTower(); return; }
   if (L.def.custom) openEditor(G.customId); else if (L.def.daily) goMenu(); else if (L.endless) goEndless(); else { const wi = WORLDS.findIndex(w => w.levels.includes(L.def.key)); curDim = DIMS.indexOf(dimOf(wi)); goWorld(wi); } });
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.btn,.ebtn,.back,.tile,.tab,.hubIcon,.modePill,.playBtn')) AudioSys.play('ui'); }, true);
@@ -6177,7 +6183,7 @@ function update(dt) {
   }
   topwarn.style.opacity = (L.ascent || L.horizontal) ? 0 : warn; botwarn.style.opacity = L.ascent ? warn : 0; leftwarn.style.opacity = L.horizontal ? warn : 0; vig.style.opacity = warn * 0.6;
   let windAmt = 0; for (const g of goats) if (g.state === ST.JUMP || g.state === ST.FALL) windAmt = Math.max(windAmt, clamp((-g.vel.y - 9) / 12, 0, 1));
-  wind.style.opacity = windAmt * 0.8;
+  wind.style.opacity = mode === 'play' ? windAmt * 0.8 : 0;
 
   // ---- aim visuals (one preview per goat, same physics) ----
   const AIM = (G.aiming && G.aim) || (DEMO.show && DEMO.aim) || null; const showAim = playing && !!AIM;
