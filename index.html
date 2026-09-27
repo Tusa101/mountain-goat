@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v321 -->
+<!-- build v322 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1031,7 +1031,7 @@ const FOE = { en: { hawk: 'hawks', eagle: 'eagles', falcon: 'falcons', raven: 'r
 function foeName() { const b = (typeof STYLE !== 'undefined' && STYLE && STYLE.bird) || 'hawk'; const f = FOE[LANG] || FOE.en; return f[b] || FOE.en[b] || (LANG === 'ru' ? 'птицы' : 'birds'); }
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (str.includes('{foe}') || str.includes('{Foe}')) { const f = foeName(); str = str.split('{foe}').join(f).split('{Foe}').join(f[0].toUpperCase() + f.slice(1)); } if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v321', date: '2026-09-23' };
+const BUILD = { version: 'v322', date: '2026-09-23' };
 const NEW_NOW = { chars: new Set(), worlds: new Set() };
 const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
@@ -2667,7 +2667,7 @@ function makeSurface(r, i, seed) {
   if (s.ice) mats[2] = new THREE.MeshPhongMaterial({ color: 0xd8eefc, emissive: 0x6aa9d8, emissiveIntensity: 0.15, shininess: 90, specular: 0xffffff, flatShading: true });
   if (s.crumble) { mats[0].color.offsetHSL(0, 0.05, -0.12); mats[2].color.offsetHSL(0, 0, -0.1); }
   // the finish is real ground: the canyon floor (descents), a summit shelf running away from the route (ascents), or land continuing past the finish (runs)
-  const ground = s.finish && !s.move; const ext = ground ? (makeSurface.ctx.horizontal ? [0, 40] : makeSurface.ctx.ascent ? (s.x >= 0 ? [0, 40] : [40, 0]) : [30, 30]) : [0, 0];
+  const ground = s.finish && !s.move && !(makeSurface.ctx.ascent && ['city', 'panel', 'roofs'].includes(styleKey()) && Math.abs(s.x) < 12); const ext = ground ? (makeSurface.ctx.horizontal ? [0, 40] : makeSurface.ctx.ascent ? (s.x >= 0 ? [0, 40] : [40, 0]) : [30, 30]) : [0, 0];
   if (ground) { s.x1 -= ext[0]; s.x2 += ext[1]; s.w = s.x2 - s.x1; s.x = (s.x1 + s.x2) / 2; }
   const m = new THREE.Mesh(makeRock(ground ? s.w : s.w + 0.3, ground ? 12 : s.h + 0.6, ground ? 26 : s.d, seed, STYLE.flat ? 0.02 : (ground ? 0.35 : s.jitter), { undercut: !STYLE.flat, solid: true }), mats);
   m.position.set(s.x, ground ? s.y - 6 : s.y - (s.h + 0.6) / 2, ground ? LEDGE_FRONT_Z - 13 + 0.6 : LEDGE_FRONT_Z - s.d / 2); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m); s.mesh = m;
