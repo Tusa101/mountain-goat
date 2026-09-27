@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v322 -->
+<!-- build v323 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1031,7 +1031,7 @@ const FOE = { en: { hawk: 'hawks', eagle: 'eagles', falcon: 'falcons', raven: 'r
 function foeName() { const b = (typeof STYLE !== 'undefined' && STYLE && STYLE.bird) || 'hawk'; const f = FOE[LANG] || FOE.en; return f[b] || FOE.en[b] || (LANG === 'ru' ? 'птицы' : 'birds'); }
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (str.includes('{foe}') || str.includes('{Foe}')) { const f = foeName(); str = str.split('{foe}').join(f).split('{Foe}').join(f[0].toUpperCase() + f.slice(1)); } if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v322', date: '2026-09-23' };
+const BUILD = { version: 'v323', date: '2026-09-23' };
 const NEW_NOW = { chars: new Set(), worlds: new Set() };
 const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
@@ -2412,7 +2412,7 @@ function glassCracks(s, g) {   // CF4a2: a crumbling ledge on the Skyscraper is 
 function skyLedge(s, g, seed) { const M = (c, e, o) => new THREE.MeshLambertMaterial({ color: c, flatShading: true, emissive: e || 0, transparent: o != null, opacity: o ?? 1 }), zf = LEDGE_FRONT_Z, zb = -2.0, d = zf - zb, W = s.w, top = s.y, cz = (zf + zb) / 2;
   for (const c of g.children) if (c.isMesh && c.geometry && c.geometry.type === 'BoxGeometry' && Math.abs(c.position.y - (s.y - (s.h || 1) / 2)) < 1.2 && !c.userData.keep) c.visible = false;   // the generic slab
   const add = (geo, mat, x, y, z) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.userData.keep = 1; m.castShadow = true; g.add(m); return m; };
-  const kind = W < 2.2 ? 'grate' : seed % 4 === 0 ? 'cornice' : seed % 4 === 1 ? 'canopy' : 'glass';
+  const kind = W < 2.2 ? 'grate' : seed % 4 === 0 ? 'cornice' : seed % 4 === 1 ? 'canopy' : 'glass'; s.hitH = { grate: 0.3, cornice: 0.8, canopy: 0.3, glass: 0.5 }[kind];
   if (kind === 'glass') { add(new THREE.BoxGeometry(W, 0.28, d), M(0xe6dccb), s.x, top - 0.14, cz); add(new THREE.BoxGeometry(W + 0.1, 0.1, 0.12), M(0xfff4dc), s.x, top - 0.02, zf); add(new THREE.BoxGeometry(W, 0.12, d), M(0x3a4250), s.x, top - 0.34, cz);   // concrete slab with a nosing
     const glass = M(0x8fc8ea, 0x10283a, 0.45); add(new THREE.BoxGeometry(W - 0.1, 0.85, 0.04), glass, s.x, top + 0.45, zf - 0.06); for (const sd of [-1, 1]) add(new THREE.BoxGeometry(0.04, 0.85, d - 0.1), glass, s.x + sd * (W / 2 - 0.05), top + 0.45, cz);   // glass parapet, front and sides
     add(new THREE.BoxGeometry(W, 0.06, 0.08), M(0xe8ecf0), s.x, top + 0.9, zf - 0.06); for (const sd of [-1, 1]) add(new THREE.BoxGeometry(0.06, 0.06, d - 0.1), M(0xe8ecf0), s.x + sd * (W / 2 - 0.05), top + 0.9, cz); }   // steel handrail
@@ -2434,7 +2434,7 @@ function propLedge(s, g, seed, mats) {
     else { for (let k = 0, n = Math.max(2, Math.round(W / 0.45)); k < n; k++) box(0.3, H, 0.14, wood, -W / 2 + 0.22 + k * (W - 0.44) / (n - 1), -H / 2, 1.2); box(W, 0.14, 0.14, wood, 0, -0.5, 1.28); }   // fence pickets
   } else if (kind === 'house' || kind === 'flat') {
     const room = roomAt(s.x), set = ROOM_SETS[room] || ROOM_SETS.living, list = set[size === 'big' ? 'big' : size === 'mid' ? 'mid' : 'small'];
-    let pick = list[seed % list.length]; if (pick === PROP_PREV && list.length > 1) pick = list[(seed + 1) % list.length]; PROP_PREV = pick;   // HV: variety — no two identical pieces in a row
+    let pick = list[seed % list.length]; if (pick === PROP_PREV && list.length > 1) pick = list[(seed + 1) % list.length]; PROP_PREV = pick; if (['coffee', 'lamp', 'desk', 'globe', 'stool', 'dining', 'bench', 'shelf', 'bookcase', 'bookcase2'].includes(pick)) s.hitH = 0.4;   // a table top or a shelf board is solid — not the air between its legs   // HV: variety — no two identical pieces in a row
     const fabric = [0x5a78b8, 0x8a5a9a, 0x4a8a6a, 0xc06a5a][seed % 4], white = 0xeef0f2, steel = 0xb9bec8, dark = 0x2a2f3a, tile = 0xdfe8ee;
     const legs = (c, hh = H, inset = 0.2, dz = 1.2) => { for (const sx of [-1, 1]) for (const sz of [-1, 1]) box(0.12, hh, 0.12, c, sx * (W / 2 - inset), -hh / 2, sz * dz); };
     switch (pick) {
@@ -2671,7 +2671,7 @@ function makeSurface(r, i, seed) {
   if (ground) { s.x1 -= ext[0]; s.x2 += ext[1]; s.w = s.x2 - s.x1; s.x = (s.x1 + s.x2) / 2; }
   const m = new THREE.Mesh(makeRock(ground ? s.w : s.w + 0.3, ground ? 12 : s.h + 0.6, ground ? 26 : s.d, seed, STYLE.flat ? 0.02 : (ground ? 0.35 : s.jitter), { undercut: !STYLE.flat, solid: true }), mats);
   m.position.set(s.x, ground ? s.y - 6 : s.y - (s.h + 0.6) / 2, ground ? LEDGE_FRONT_Z - 13 + 0.6 : LEDGE_FRONT_Z - s.d / 2); m.rotation.z = s.tilt; m.castShadow = m.receiveShadow = true; g.add(m); s.mesh = m;
-  if (s.bounce) { m.visible = false; m.castShadow = false; s.prop = true; buildTrampoline(s, g); }
+  if (s.bounce) { m.visible = false; m.castShadow = false; s.prop = true; s.hitH = 0.45; buildTrampoline(s, g); }
   else if (s.arch) { m.visible = false; m.castShadow = false; s.prop = true; buildArch(s, g, seed); }
   else if (propLedge(s, g, seed, mats)) { m.visible = false; m.castShadow = false; s.prop = true; }
   if (ENV.terrain && (s.finish || s.type === 'terrace') && !s.move) { m.visible = false; m.castShadow = false; }   // the run's terrain is the surface here
@@ -2688,7 +2688,7 @@ function makeSurface(r, i, seed) {
   if (s.soft && styleKey() === 'panel') { const rugC = [0xa83a3a, 0x3a5aa8, 0x8a3a8a][seed % 3], rug = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.12, 2.4), new THREE.MeshLambertMaterial({ color: rugC, flatShading: true })); rug.position.set(s.x, s.y + 0.02, -0.3); g.add(rug); const hang = new THREE.Mesh(new THREE.BoxGeometry(s.w, 1.1, 0.06), new THREE.MeshLambertMaterial({ color: rugC, flatShading: true })); hang.position.set(s.x, s.y - 0.55, LEDGE_FRONT_Z + 0.02); g.add(hang); for (let k = 0; k < Math.round(s.w * 2); k++) { const fr = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.2, 0.04), new THREE.MeshLambertMaterial({ color: 0xf0e0b0 })); fr.position.set(s.x - s.w / 2 + 0.1 + k * 0.5, s.y - 1.2, LEDGE_FRONT_Z + 0.02); g.add(fr); } }   // CF4c: a rug thrown over the rail — a soft landing
   else if (s.soft) { const snow = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 1), new THREE.MeshLambertMaterial({ color: STYLE.snow ? 0xf6f9fc : ['house', 'flat'].includes(styleKey()) ? 0xc8a878 : STYLE.bush, flatShading: true })); snow.scale.set(s.w / 2 + 0.2, 0.45, 1.6); snow.position.set(s.x, s.y + 0.05, -0.4); snow.receiveShadow = true; g.add(snow); }
   if (s.iceStop) { const stop = new THREE.Mesh(makeRock(0.5, 0.7, 1.2, seed + 9, 0.2, { solid: true }), rockMaterials(seed + 9)); stop.position.set(s.x2 - 0.3, s.y + 0.35, -0.3); s.stopX = s.x2 - 0.65; g.add(stop); const stop2 = stop.clone(); stop2.position.x = s.x1 + 0.3; s.stopX1 = s.x1 + 0.65; g.add(stop2); }
-  if (s.move && s.vehicle === 'raft') { for (const c of [...g.children]) g.remove(c); const logM = new THREE.MeshLambertMaterial({ color: 0x8a5a2a, flatShading: true }), ropeM = new THREE.MeshLambertMaterial({ color: 0xd8c08a }); const n = Math.max(3, Math.round(s.w / 0.55));   // Y6: a raft of lashed logs, riding on the lake
+  if (s.move && s.vehicle === 'raft') { s.hitH = 0.6; for (const c of [...g.children]) g.remove(c); const logM = new THREE.MeshLambertMaterial({ color: 0x8a5a2a, flatShading: true }), ropeM = new THREE.MeshLambertMaterial({ color: 0xd8c08a }); const n = Math.max(3, Math.round(s.w / 0.55));   // Y6: a raft of lashed logs, riding on the lake
     for (let k = 0; k < n; k++) { const lg = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 2.6, 7), logM); lg.rotation.x = Math.PI / 2; lg.position.set(s.x - s.w / 2 + 0.28 + k * (s.w - 0.56) / (n - 1), s.y - 0.26, -0.4); g.add(lg); } for (const dz of [-0.9, 0.3]) { const rp = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.06, 0.12), ropeM); rp.position.set(s.x, s.y + 0.01, dz); g.add(rp); } }
   else if (s.move && s.vehicle) { // E1: a car / bus you ride on its roof — the rock is replaced by the vehicle, its roof is the ledge
     for (const c of [...g.children]) g.remove(c); const bus = s.vehicle === 'bus', col = bus ? 0xe2b24a : [0xd9493f, 0x4f74c8, 0x5fa24a, 0xe4e2ec][Math.abs(Math.round(s.x0 * 7)) % 4], hgt = bus ? 1.9 : 1.2;
@@ -2696,10 +2696,10 @@ function makeSurface(r, i, seed) {
     const win = L_(0x2a3448); for (let k = 0; k < (bus ? 5 : 2); k++) { const w = new THREE.Mesh(new THREE.BoxGeometry(s.w / (bus ? 6.5 : 3.2), hgt * 0.32, 1.82), win); w.position.set(s.x - s.w / 2 + (k + 0.75) * s.w / (bus ? 5.5 : 2.6), s.y - hgt * 0.3, 0); g.add(w); }
     for (const dx of [-s.w / 2 + 0.55, s.w / 2 - 0.55]) for (const dz of [-0.8, 0.8]) { const wh = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.25, 10), L_(0x1b1522)); wh.rotation.x = Math.PI / 2; wh.position.set(s.x + dx, s.y - hgt - 0.05, dz); g.add(wh); } }
   else if (s.move && styleKey() === 'panel') { for (const c of [...g.children]) g.remove(c); const Mt = c => new THREE.MeshLambertMaterial({ color: c, flatShading: true }), z0 = LEDGE_FRONT_Z - 1.6;   // CF4c: a builders' hoist — a cage running on a lattice mast
-    const floor = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.16, 1.8), Mt(0x6a6a70)); floor.position.set(s.x, s.y - 0.08, z0 + 0.3); g.add(floor); for (const sd of [-1, 1]) for (const dz of [-0.6, 1.1]) { const post = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.8, 0.06), Mt(0xe86a2a)); post.position.set(s.x + sd * s.w / 2, s.y + 0.9, z0 + dz); g.add(post); } const topb = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.08, 1.8), Mt(0xe86a2a)); topb.position.set(s.x, s.y + 1.8, z0 + 0.3); g.add(topb);
+    s.hitH = 0.35; const floor = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.16, 1.8), Mt(0x6a6a70)); floor.position.set(s.x, s.y - 0.08, z0 + 0.3); g.add(floor); for (const sd of [-1, 1]) for (const dz of [-0.6, 1.1]) { const post = new THREE.Mesh(new THREE.BoxGeometry(0.06, 1.8, 0.06), Mt(0xe86a2a)); post.position.set(s.x + sd * s.w / 2, s.y + 0.9, z0 + dz); g.add(post); } const topb = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.08, 1.8), Mt(0xe86a2a)); topb.position.set(s.x, s.y + 1.8, z0 + 0.3); g.add(topb);
     const mast = new THREE.Mesh(new THREE.BoxGeometry(0.5, 60, 0.5), Mt(0x8a8f98)); mast.position.set(s.x0 + s.w / 2 + 0.4, s.y0, z0 - 0.6); levelGroup.add(mast); for (let y = -30; y < 30; y += 1.2) { const rung = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.05, 0.55), Mt(0x5a5f68)); rung.position.set(s.x0 + s.w / 2 + 0.4, s.y0 + y, z0 - 0.6); levelGroup.add(rung); } }
   else if (s.move && ['city', 'panel', 'roofs'].includes(styleKey())) { for (const c of [...g.children]) g.remove(c); const Mt = c => new THREE.MeshLambertMaterial({ color: c, flatShading: true }), z0 = LEDGE_FRONT_Z - 1.6;   // CF4a2: a window-washer gondola
-    const deck = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.18, 1.6), Mt(0x5a5f68)); deck.position.set(s.x, s.y - 0.09, z0 + 0.3); g.add(deck); const side = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.7, 0.06), Mt(0xffc830)); side.position.set(s.x, s.y + 0.35, z0 + 1.1); g.add(side); for (const sd of [-1, 1]) { const end = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.7, 1.6), Mt(0xffc830)); end.position.set(s.x + sd * s.w / 2, s.y + 0.35, z0 + 0.3); g.add(end); }
+    s.hitH = 0.35; const deck = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.18, 1.6), Mt(0x5a5f68)); deck.position.set(s.x, s.y - 0.09, z0 + 0.3); g.add(deck); const side = new THREE.Mesh(new THREE.BoxGeometry(s.w, 0.7, 0.06), Mt(0xffc830)); side.position.set(s.x, s.y + 0.35, z0 + 1.1); g.add(side); for (const sd of [-1, 1]) { const end = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.7, 1.6), Mt(0xffc830)); end.position.set(s.x + sd * s.w / 2, s.y + 0.35, z0 + 0.3); g.add(end); }
     for (const sd of [-1, 1]) { const cab = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 40, 4), Mt(0x2a2f3a)); cab.position.set(s.x + sd * (s.w / 2 - 0.2), s.y + 20.4, z0 + 0.3); g.add(cab); }   // cables up to the roof, moving with it
     const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.15, 0.3, 8), Mt(0x4a8ac8)); bucket.position.set(s.x - s.w / 4, s.y + 0.15, z0 + 0.3); g.add(bucket); }
   else if (s.move) { // hanging trolley on a beam (horizontal) or a cage on a rail (vertical)
@@ -3280,7 +3280,7 @@ class Goat {
         const hugging = p.y > s.y - s.h - 1.0 && p.x > s.x1 - gw - 0.6 && p.x < s.x2 + gw + 0.6;
         if (g || hugging) continue;
       }
-      rects.push({ x1: s.x1 - 0.15, x2: s.x2 + 0.15, top: s.y - 0.3, bot: s.y - s.h - 0.6 });
+      rects.push({ x1: s.x1 - 0.15, x2: s.x2 + 0.15, top: s.y - 0.3, bot: s.y - (s.hitH != null ? s.hitH : s.h + 0.6) });
     }
     for (const b of L.blockers) rects.push({ x1: b.x1, x2: b.x2, top: b.top, bot: b.top - b.h, grip: b.grip, b });
     for (const w of L.def.walls || []) rects.push({ x1: w.x - 0.6, x2: w.x + 0.6, top: w.y2, bot: w.y1, grip: true, b: w });   // MT2: rough rock columns
@@ -3298,7 +3298,7 @@ class Goat {
     this.onSurface = s; this.pos.y = s.y; this.pos.x = clamp(this.pos.x, s.x1 + inset, s.x2 - inset); this.vel.set(0, 0); this.corr = 0; this.descendT = 0;
     { // nudge away from any rock the standing body would overlap
       const gw = CONFIG.goatHalfWidth, gh = CONFIG.goatBodyHeight, p = this.pos, rects = [];
-      for (const o of L.surfaces) if (o !== s) rects.push({ x1: o.x1 - 0.15, x2: o.x2 + 0.15, top: o.y - 0.3, bot: o.y - o.h - 0.6 });
+      for (const o of L.surfaces) if (o !== s) rects.push({ x1: o.x1 - 0.15, x2: o.x2 + 0.15, top: o.y - 0.3, bot: o.y - (o.hitH != null ? o.hitH : o.h + 0.6) });
       for (const b of L.blockers) rects.push({ x1: b.x1, x2: b.x2, top: b.top, bot: b.top - b.h });
       for (const r of rects) if (p.x + gw > r.x1 && p.x - gw < r.x2 && p.y + gh > r.bot && p.y + 0.05 < r.top) p.x = clamp((p.x - r.x1 < r.x2 - p.x) ? r.x1 - gw - 0.05 : r.x2 + gw + 0.05, s.x1, s.x2);
     }
@@ -5454,11 +5454,11 @@ function updateZip(dt) { const Z = L && L.def && L.def.ziplines; if (!Z) return;
   if (R.d >= z.len) { const to = L.surfaces.find(o => o.id === z.to); G.zip = null; if (to) { h.pos.set(clamp(h.pos.x, to.x1 + 0.4, to.x2 - 0.4), to.y, h.pos.z); h.onSurface = to; h.launchY = to.y; h.setState(ST.LAND); spawnDust(h.pos.x, h.pos.y, 8, 1.2); } setTimeout(() => { if (z.tro) z.tro.position.set(z.A[0] + 0.3, z.A[1], z.tro.position.z); }, 900); } }
 function neonArt() { if (!L || typeof THREE === 'undefined' || !['city', 'panel', 'roofs'].includes(L.def.style)) return; const cols = [0xff4fa0, 0x4fd8ff, 0xffd24a, 0x7aff6a];
   if (L.def.style === 'panel') { for (const q of L.surfaces.filter(o => o.rhythm)) { const z0 = LEDGE_FRONT_Z - 1.6, M = (c, o) => new THREE.MeshLambertMaterial({ color: c, flatShading: true, transparent: o != null, opacity: o ?? 1 });   // CF4c: a window flap — open (flat, you can stand on it) or shut against the wall
-      const open = new THREE.Group(); const fr = new THREE.Mesh(new THREE.BoxGeometry(q.w, 0.12, 2.2), M(0xf4f0e8)); fr.position.set(q.x, q.y - 0.06, z0 + 0.4); open.add(fr); const gl = new THREE.Mesh(new THREE.BoxGeometry(q.w - 0.3, 0.13, 1.9), M(0xbfe0f0, 0.7)); gl.position.set(q.x, q.y - 0.05, z0 + 0.4); open.add(gl); const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, q.w, 6), M(0x8a8f98)); hinge.rotation.z = Math.PI / 2; hinge.position.set(q.x, q.y - 0.06, z0 - 0.7); open.add(hinge);
+      q.hitH = 0.3; const open = new THREE.Group(); const fr = new THREE.Mesh(new THREE.BoxGeometry(q.w, 0.12, 2.2), M(0xf4f0e8)); fr.position.set(q.x, q.y - 0.06, z0 + 0.4); open.add(fr); const gl = new THREE.Mesh(new THREE.BoxGeometry(q.w - 0.3, 0.13, 1.9), M(0xbfe0f0, 0.7)); gl.position.set(q.x, q.y - 0.05, z0 + 0.4); open.add(gl); const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, q.w, 6), M(0x8a8f98)); hinge.rotation.z = Math.PI / 2; hinge.position.set(q.x, q.y - 0.06, z0 - 0.7); open.add(hinge);
       if (q.group) { for (const ch of q.group.children) ch.visible = false; q.group.add(open); } const shut = new THREE.Mesh(new THREE.BoxGeometry(q.w, 2.2, 0.1), M(0xdfe8ee, 0.55)); shut.position.set(q.x, q.y + 1.0, z0 - 0.7); levelGroup.add(shut); q.shut = shut; q.neon = null; }
     return; }
   for (const q of L.surfaces.filter(o => o.rhythm)) { const c = cols[Math.abs(Math.round(q.x * 3)) % 4], zw = -3.3, zf = LEDGE_FRONT_Z, Md = new THREE.MeshLambertMaterial({ color: 0x1e2228, flatShading: true });
-    const lit = new THREE.Group(), box = new THREE.Mesh(new THREE.BoxGeometry(q.w, 0.8, 1.4), new THREE.MeshLambertMaterial({ color: 0x2a2a34, flatShading: true })); box.position.set(q.x, q.y - 0.4, zf - 0.75); lit.add(box);
+    q.hitH = 0.9; const lit = new THREE.Group(), box = new THREE.Mesh(new THREE.BoxGeometry(q.w, 0.8, 1.4), new THREE.MeshLambertMaterial({ color: 0x2a2a34, flatShading: true })); box.position.set(q.x, q.y - 0.4, zf - 0.75); lit.add(box);
     const glow = new THREE.Mesh(new THREE.BoxGeometry(q.w - 0.2, 0.08, 1.2), new THREE.MeshLambertMaterial({ color: c, emissive: c, emissiveIntensity: 0.9 })); glow.position.set(q.x, q.y + 0.01, zf - 0.75); lit.add(glow);   // the lit top you stand on
     const n = Math.max(2, Math.round(q.w / 0.7)); for (let k = 0; k < n; k++) { const ch = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.5, 0.06), new THREE.MeshLambertMaterial({ color: c, emissive: c, emissiveIntensity: 1 })); ch.position.set(q.x - q.w / 2 + 0.4 + k * (q.w - 0.8) / Math.max(1, n - 1), q.y - 0.4, zf - 0.02); lit.add(ch); }   // letters on its face
     if (q.group) { for (const ch of q.group.children) ch.visible = false; q.group.add(lit); } q.neon = glow; q.letters = lit;
