@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v332 -->
+<!-- build v333 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -387,9 +387,13 @@ body > #bMgNext .snT { display:none !important; } body > #bMgNext .snPlay { widt
 #splash.show { display:block; } #splash.fade { opacity:0; transition:opacity .5s; pointer-events:none; }
 #splash .splashBar { position:absolute; left:12%; right:12%; bottom:calc(9% + env(safe-area-inset-bottom)); height:8px; border-radius:4px; background:rgba(255,246,216,.25); overflow:hidden; }
 #splash .splashBar i { display:block; height:100%; width:0; background:#ffd76a; border-radius:4px; animation:splashFill 1.4s ease-out forwards; } @keyframes splashFill { to { width:100%; } }
-#scSelect[data-bg] { background-size:cover; background-position:center; background-blend-mode:multiply; background-color:#9a8b7a; }   /* SP4: the painting is dimmed and slightly desaturated under the map */
+#scSelect[data-bg] { background-size:cover; background-position:center; background-blend-mode:multiply; background-color:#76695a; }   /* SP4: the painting is dimmed and slightly desaturated under the map */
 #scSelect[data-bg="mountain"] { background-image:url(img/dim-mountain.png); } #scSelect[data-bg="city"] { background-image:url(img/dim-city.png); } #scSelect[data-bg="yard"] { background-image:url(img/dim-yard.png); } #scSelect[data-bg="frog"] { background-image:url(img/dim-frog.png); } #scSelect[data-bg="moon"] { background-image:url(img/dim-moon.png); }
 #scResult.win { background-image:url(img/win.png); background-size:cover; background-position:center; }
+/* SP5: while a map's pictures load, the map stays hidden behind a spinner, then fades in */
+body.artWait #scSelect > *:not(.back):not(h1) { opacity:0; } #scSelect > * { transition:opacity .25s; }
+body.artWait #scSelect::after { content:''; position:absolute; left:50%; top:45%; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; border:4px solid rgba(255,246,216,.25); border-top-color:#ffd76a; animation:artSpin .8s linear infinite; }
+@keyframes artSpin { to { transform:rotate(360deg); } }
 .pixTxt { display:block; margin:0 auto; image-rendering:pixelated; pointer-events:none; }
 #hudPix { position:fixed; inset:0; z-index:5; pointer-events:none; display:none; } #hudPix canvas { position:absolute; image-rendering:pixelated; }
 #hintPix { position:fixed; z-index:5; pointer-events:none; image-rendering:pixelated; display:none; } body.pixMode #hintPix { display:block; }
@@ -918,7 +922,9 @@ window.MGBoot = (function () { const ru = /^ru/i.test(navigator.language || ''),
 (function () { const local = location.hostname === 'localhost' || location.protocol === 'capacitor:' || location.protocol === 'file:';
   const im = document.createElement('script'); im.type = 'importmap'; im.textContent = JSON.stringify({ imports: { three: local ? './lib/three.module.js' : 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js' } }); document.currentScript.after(im); })();
 </script>
-<script>(function () { const sp = document.getElementById('splash'); if (!sp) return; const im = new Image(); sp.classList.add('show'); window.__splashT = performance.now(); im.onload = () => { if (!window.__gameReady) sp.style.backgroundImage = 'url(img/splash.png)'; }; im.onerror = () => {}; im.src = 'img/splash.png'; setTimeout(() => { sp.classList.add('fade'); setTimeout(() => sp.classList.remove('show'), 600); }, 8000); })();</script>
+<script>(function () { const sp = document.getElementById('splash'); if (!sp) return; sp.classList.add('show'); window.__splash = { img: false, shownAt: 0 };   // SP1/v333: the splash waits for its own picture — the game hides it only once the picture has been on screen ≥1.4 s (or failed), hard cap 10 s
+  const im = new Image(); im.onload = () => { sp.style.backgroundImage = 'url(img/splash.png)'; window.__splash.img = true; window.__splash.shownAt = performance.now(); if (window.__splashTry) window.__splashTry(); }; im.onerror = () => { window.__splash.img = true; window.__splash.shownAt = performance.now() - 1400; if (window.__splashTry) window.__splashTry(); }; im.src = 'img/splash.png';
+  setTimeout(() => { sp.classList.add('fade'); setTimeout(() => sp.classList.remove('show'), 600); }, 10000); })();</script>
 <script type="module">
 import * as THREE from 'three';
 // ============================================================
@@ -1042,7 +1048,7 @@ const FOE = { en: { hawk: 'hawks', eagle: 'eagles', falcon: 'falcons', raven: 'r
 function foeName() { const b = (typeof STYLE !== 'undefined' && STYLE && STYLE.bird) || 'hawk'; const f = FOE[LANG] || FOE.en; return f[b] || FOE.en[b] || (LANG === 'ru' ? 'птицы' : 'birds'); }
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (str.includes('{foe}') || str.includes('{Foe}')) { const f = foeName(); str = str.split('{foe}').join(f).split('{Foe}').join(f[0].toUpperCase() + f.slice(1)); } if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v332', date: '2026-09-23' };
+const BUILD = { version: 'v333', date: '2026-09-23' };
 const NEW_NOW = { chars: new Set(), worlds: new Set() };
 const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
@@ -3963,7 +3969,7 @@ function fitTiles() { for (const b of document.querySelectorAll('#scMenu .tile b
     if (b.scrollWidth > b.clientWidth + 0.5 && key && I18N.en[key + 'Short']) b.textContent = t(key + 'Short'); } }   // at the 11 px floor a name that still does not fit switches to its short form   // long names shrink a little instead of spilling past the tile
 window.addEventListener('resize', () => requestAnimationFrame(fitTiles));
 // leaving a level (pause → menu, result → menu, …): every in-level overlay goes away — the wind streaks, the edge warnings, the vignette, gust/avalanche signs, the door button, the crevice bar, power-up chips, fades — and any ride/cling in progress ends
-function clearLevelOverlays() { for (const el of [wind, vig, topwarn, botwarn, leftwarn]) if (el) el.style.opacity = 0;
+function clearLevelOverlays() { document.body.classList.remove('artWait'); for (const el of [wind, vig, topwarn, botwarn, leftwarn]) if (el) el.style.opacity = 0;
   for (const id of ['gustWarn', 'avaWarn', 'bDoor', 'clingUI', 'puHud']) { const el = $(id); if (el) el.classList.remove('show'); } const f = $('doorFade'); if (f) f.classList.remove('on');
   if (typeof G !== 'undefined') { G.cling = null; G.zip = null; G.river = null; G.hZone = false; G.aiming = false; G.drag = null; } }
 function goMenu() { migrateDims(); migrateAcc(); $('tNoads').style.display = save.noAds ? 'none' : ''; requestAnimationFrame(fitTiles);
@@ -4151,7 +4157,15 @@ function worldOpen(wi) { if (save.settings.devUnlock) return true; // first worl
 function worldNeed(wi) { return Math.ceil(worldMax(wi) * 0.75); }
 function lockLabel(wi) { const d = dimOf(wi); const pos = d ? d.worlds.indexOf(WORLDS[wi].name) : 0; if (pos <= 0 || !d) return t('locked'); const prev = WORLDS.findIndex(w => w.name === d.worlds[pos - 1]); return `🔒 ★ ${worldStars(prev)} / ${worldNeed(prev)}`; }
 // G2: the map keeps its own art (no dimension palette)
-function goSelect() { clearLevelOverlays(); { const sc = $('scSelect'); delete sc.dataset.dim; delete sc.dataset.w; sc.dataset.bg = (DIMS[curDim] && DIMS[curDim].key) || ''; $('mapZoom').style.display = 'none'; } if (DIMS[curDim] && DIMS[curDim].golden) { goMagicMap(); return; }   // H4
+// SP5: map pictures are loaded before the map is shown — no pop-in. Each dimension's backdrop and badges are fetched once (kept in ART_IMG), all of them in the background right after start;
+// entering a dimension whose pictures are not in yet keeps the map hidden behind a small spinner until they are (at most 4 s).
+const ART_IMG = {}, ART_DIMS = ['mountain', 'city', 'yard', 'frog', 'moon'];
+function artLoad(url) { if (!ART_IMG[url]) { const im = new Image(); ART_IMG[url] = new Promise(res => { im.onload = () => res(true); im.onerror = () => res(false); }); ART_IMG[url].img = im; im.src = url; } return ART_IMG[url]; }
+function dimArtUrls(key) { const d = DIMS.find(x => x.key === key); if (!d || !ART_DIMS.includes(key)) return []; return [`img/dim-${key}.png`, ...d.worlds.map(n => `img/node-${n.toLowerCase().replace(/[^a-z]/g, '')}.png`)]; }
+function dimArtReady(key) { return Promise.race([Promise.all(dimArtUrls(key).map(artLoad)), new Promise(r => setTimeout(r, 4000))]); }
+function preloadAllArt() { let k = 0; const next = () => { if (k >= ART_DIMS.length) return; dimArtReady(ART_DIMS[k++]).then(next); }; next(); }   // one dimension after another, so the first map the player opens is not starved
+function goSelect() { clearLevelOverlays(); { const sc = $('scSelect'), key = (DIMS[curDim] && DIMS[curDim].key) || ''; delete sc.dataset.dim; delete sc.dataset.w;
+    const B = document.body.classList; if (ART_DIMS.includes(key) && !(sc.dataset.ready || '').split(',').includes(key)) { B.add('artWait'); dimArtReady(key).then(() => { sc.dataset.ready = (sc.dataset.ready || '') + ',' + key; sc.dataset.bg = key; requestAnimationFrame(() => B.remove('artWait')); }); } else { sc.dataset.bg = key; B.remove('artWait'); } $('mapZoom').style.display = 'none'; } if (DIMS[curDim] && DIMS[curDim].golden) { goMagicMap(); return; }   // H4
   requestAnimationFrame(() => { if ($('mapView').style.display === 'none') return; selNextSync('bSelNext'); requestAnimationFrame(() => {   // R7a: goWorld may have replaced the map meanwhile — the strip stays hidden then
    // v224: if a world's node or label sits under the «Continue» strip, scroll the map just enough to lift it clear
     const b = $('bSelNext'), mv = $('mapView'); if (!b || b.style.display === 'none') return; const top = b.getBoundingClientRect().top - 6, els = [...mv.querySelectorAll('text, .mapNode, [data-wi]')];
@@ -6255,7 +6269,8 @@ function update(dt) {
 //  Main loop
 // ============================================================
 applySettings(); buildLevel(0); paintIcons(); goMenu();
-{ const sp = $('splash'); window.__gameReady = true; const hide = () => { sp.classList.add('fade'); setTimeout(() => sp.classList.remove('show'), 600); }; if (sp) { if (window.__splashT == null || window.__splashT < 0) sp.classList.remove('show'); else { const left = Math.max(0, 1400 - (performance.now() - window.__splashT)); setTimeout(hide, left); } } }   // SP1: the splash stays at least 1.4 s once the game is ready
+setTimeout(preloadAllArt, 1500);   // SP5
+{ const sp = $('splash'); window.__gameReady = true; const hide = () => { sp.classList.add('fade'); setTimeout(() => sp.classList.remove('show'), 600); }; window.__splashTry = () => { const S = window.__splash; if (!sp || !S || !S.img) return; setTimeout(hide, Math.max(0, 1400 - (performance.now() - S.shownAt))); }; window.__splashTry(); }   // hides once the game is ready AND the picture has been shown long enough
 if (!save.settings.lang) { buildDio(); mode = 'lang'; showScreen('scLang'); } else if (location.hash === '#selftest') { history.replaceState(null, '', location.pathname); setTimeout(layoutSelfTest, 300); } else handleLink();
 window.addEventListener('pointerdown', () => { initAudio(); if (!AudioSys._mus && mode !== 'play') AudioSys.music('menu'); }, { once: true });
 for (const [id, l] of [['bLangEn', 'en'], ['bLangRu', 'ru']]) document.getElementById(id).addEventListener('click', e => { e.stopPropagation(); save.settings.lang = l; persist(); applySettings(); goMenu(); handleLink(); });
