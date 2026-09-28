@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Mountain Goat</title>
-<!-- build v333 -->
+<!-- build v334 -->
 <meta name="theme-color" content="#b9865a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -334,6 +334,10 @@ body > #bMgNext .snT { display:none !important; } body > #bMgNext .snPlay { widt
 @keyframes secGlow { 0%,100% { box-shadow:0 0 0 0 rgba(185,140,242,0); transform:scale(1); } 50% { box-shadow:0 0 0 6px rgba(185,140,242,.55), 0 0 22px rgba(185,140,242,.8); transform:scale(1.04); } }
 /* G2 (§30): level screens wear their dimension's colours (the mountain keeps the warm stone); a world may shift the hue */
 #scSelect[data-dim] { background:linear-gradient(180deg, var(--lvBg1), var(--lvBg2)) !important; }
+#scSelect[data-dim][data-bg="city"] { background:linear-gradient(rgba(28,22,16,.5), rgba(28,22,16,.68)), url(img/dim-city.png) center/cover !important; }   /* SP6: the level grid keeps its dimension's painting, under a darker veil so the tiles read */
+#scSelect[data-dim][data-bg="yard"] { background:linear-gradient(rgba(28,22,16,.5), rgba(28,22,16,.68)), url(img/dim-yard.png) center/cover !important; }
+#scSelect[data-dim][data-bg="frog"] { background:linear-gradient(rgba(28,22,16,.5), rgba(28,22,16,.68)), url(img/dim-frog.png) center/cover !important; }
+#scSelect[data-dim][data-bg="moon"] { background:linear-gradient(rgba(10,12,24,.45), rgba(10,12,24,.65)), url(img/dim-moon.png) center/cover !important; }
 #scSelect[data-dim] #levelList .lvTile:not(.dim) { background:var(--lvTile) !important; color:var(--lvTileT) !important; border-color:var(--lvEdge) !important; box-shadow:0 3px 0 rgba(0,0,0,.25) !important; }
 #scSelect[data-dim] #levelList .lvTile.dim { background:var(--lvLock) !important; color:var(--lvLockT) !important; border-color:var(--lvLockE) !important; box-shadow:none !important; }
 #scSelect[data-dim] #levelList .lvGrid.secret .lvTile { border-color:#b98cf2 !important; }
@@ -1048,7 +1052,7 @@ const FOE = { en: { hawk: 'hawks', eagle: 'eagles', falcon: 'falcons', raven: 'r
 function foeName() { const b = (typeof STYLE !== 'undefined' && STYLE && STYLE.bird) || 'hawk'; const f = FOE[LANG] || FOE.en; return f[b] || FOE.en[b] || (LANG === 'ru' ? 'птицы' : 'birds'); }
 function t(k, v) { let str = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; if (str.includes('{foe}') || str.includes('{Foe}')) { const f = foeName(); str = str.split('{foe}').join(f).split('{Foe}').join(f[0].toUpperCase() + f.slice(1)); } if (v) for (const key of Object.keys(v)) str = str.split('{' + key + '}').join(v[key]); return str; }
 function applyLang() { for (const el of document.querySelectorAll('[data-i18n]')) el.innerHTML = t(el.dataset.i18n); }
-const BUILD = { version: 'v333', date: '2026-09-23' };
+const BUILD = { version: 'v334', date: '2026-09-23' };
 const NEW_NOW = { chars: new Set(), worlds: new Set() };
 const MAP_POS = {};   // where the map was scrolled, per dimension: coming back from a level returns you to the same place   // what was new when a screen opened: tagged there until you leave it
 function reportError(msg) { let dev = true; try { dev = !!(save && save.settings && save.settings.devMode); } catch (x) { dev = true; }
